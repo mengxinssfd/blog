@@ -18,3 +18,5 @@ coverage
 docs-html
 .github
 pnpm-lock.yaml
+.nuxt
+.output

@@ -7,3 +7,5 @@
 **/*.sh
 
 /public/*
+.output
+.nuxt
