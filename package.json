@@ -4,7 +4,22 @@
   "description": "blog v2",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "husky install",
+    "husky-msg-init": "husky add .husky/pre-commit \"npx lint-staged --allow-empty \"$1\"\"&husky add .husky/commit-msg \"npx commitlint --edit \"$1\"\"",
+    "check:lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "check:ts": "tsc --noEmit",
+    "check:all": "run-p check:ts check:lint"
+  },
+  "lint-staged": {
+    "*.{json,html,md,yaml}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
@@ -18,5 +33,18 @@
   "bugs": {
     "url": "https://github.com/mengxinssfd/blog/issues"
   },
-  "homepage": "https://github.com/mengxinssfd/blog#readme"
+  "homepage": "https://github.com/mengxinssfd/blog#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
+    "typescript": "^4.9.5",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.3"
+  }
 }
