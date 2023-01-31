@@ -31,7 +31,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['apps/front/**'],
+      files: ['apps/front/**/*.vue'],
       /* 指定如何解析语法。 */
       parser: 'vue-eslint-parser',
       extends: [
