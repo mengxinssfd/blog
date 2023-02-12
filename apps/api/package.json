@@ -24,8 +24,10 @@
     "@nestjs/common": "^9.2.1",
     "@nestjs/core": "^9.2.1",
     "@nestjs/platform-express": "^9.2.1",
+    "log4js": "^6.7.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "stacktrace-js": "^2.0.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.9",

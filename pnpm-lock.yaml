@@ -6,6 +6,7 @@ importers:
       '@commitlint/cli': ^17.4.2
       '@commitlint/config-conventional': ^17.4.2
       '@nuxtjs/eslint-config-typescript': ^12.0.0
+      '@tool-pack/basic': ^0.0.10
       '@types/jest': ^29.4.0
       '@typescript-eslint/eslint-plugin': ^5.49.0
       '@typescript-eslint/parser': ^5.49.0
@@ -22,6 +23,8 @@ importers:
       ts-jest: ^29.0.5
       typescript: ^4.9.5
       vue-tsc: ^1.0.24
+    dependencies:
+      '@tool-pack/basic': 0.0.10
     devDependencies:
       '@commitlint/cli': 17.4.2
       '@commitlint/config-conventional': 17.4.2
@@ -42,6 +45,51 @@ importers:
       ts-jest: 29.0.5_wrz2f4catxnbofknv5bs36jgqa
       typescript: 4.9.5
       vue-tsc: 1.0.24_typescript@4.9.5
+
+  apps/api:
+    specifiers:
+      '@nestjs/cli': ^9.1.9
+      '@nestjs/common': ^9.2.1
+      '@nestjs/core': ^9.2.1
+      '@nestjs/platform-express': ^9.2.1
+      '@nestjs/schematics': ^9.0.4
+      '@nestjs/testing': ^9.2.1
+      '@types/express': ^4.17.16
+      '@types/node': 18.11.18
+      '@types/supertest': ^2.0.12
+      log4js: ^6.7.1
+      npm-check-updates: ^16.6.3
+      reflect-metadata: ^0.1.13
+      rxjs: ^7.8.0
+      source-map-support: ^0.5.21
+      stacktrace-js: ^2.0.2
+      supertest: ^6.3.3
+      ts-loader: ^9.4.2
+      ts-node: ^10.9.1
+      tsconfig-paths: 4.1.2
+      typescript: ^4.9.5
+    dependencies:
+      '@nestjs/common': 9.2.1_mnr6j2del53muneqly5h4y27ai
+      '@nestjs/core': 9.2.1_e6la6qvsclaae2becwjnmfvsuq
+      '@nestjs/platform-express': 9.2.1_hjcqpoaebdr7gdo5hgc22hthbe
+      log4js: 6.7.1
+      reflect-metadata: 0.1.13
+      rxjs: 7.8.0
+      stacktrace-js: 2.0.2
+    devDependencies:
+      '@nestjs/cli': 9.1.9
+      '@nestjs/schematics': 9.0.4_typescript@4.9.5
+      '@nestjs/testing': 9.2.1_wdbvfsxfdwzlwdfiyh2gynjl4m
+      '@types/express': 4.17.16
+      '@types/node': 18.11.18
+      '@types/supertest': 2.0.12
+      npm-check-updates: 16.6.3
+      source-map-support: 0.5.21
+      supertest: 6.3.3
+      ts-loader: 9.4.2_typescript@4.9.5
+      ts-node: 10.9.1_bdgp3l2zgaopogaavxusmetvge
+      tsconfig-paths: 4.1.2
+      typescript: 4.9.5
 
   packages/api:
     specifiers:
@@ -2838,6 +2886,22 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
+  /@tool-pack/basic/0.0.10:
+    resolution:
+      {
+        integrity: sha512-PiXOXkOBtyvYkcLce8dlgp2kS7Obz7NjbD81IY8JmK7Xi2S1eP1ywITGo+kNUips31MRAFRgYDf5GnWQWkRb7Q==,
+      }
+    dependencies:
+      '@tool-pack/types': 0.0.1
+    dev: false
+
+  /@tool-pack/types/0.0.1:
+    resolution:
+      {
+        integrity: sha512-PuOKplXpssrNTTj5UPEvRSSVlWT5T4Pt7WtgPpazAlFynY8FZFofLJlOmsQMXlmdZmS1P9yKHCZECNgOoPCbeA==,
+      }
+    dev: false
+
   /@tootallnate/once/2.0.0:
     resolution:
       {
@@ -2956,7 +3020,7 @@ packages:
       }
     dependencies:
       '@types/eslint': 8.4.10
-      '@types/estree': 0.0.51
+      '@types/estree': 1.0.0
     dev: true
 
   /@types/eslint/8.4.10:
@@ -2965,7 +3029,7 @@ packages:
         integrity: sha512-Sl/HOqN8NKPmhWo2VBEPm0nvHnu2LL3v9vKo8MEq0EtbJ4eVzGPl41VNPvn5E1i5poMk4/XD8UriLHpJvEP/Nw==,
       }
     dependencies:
-      '@types/estree': 0.0.51
+      '@types/estree': 1.0.0
       '@types/json-schema': 7.0.11
     dev: true
 
@@ -3946,7 +4010,7 @@ packages:
       ajv:
         optional: true
     dependencies:
-      ajv: 8.11.0
+      ajv: 8.12.0
     dev: true
 
   /ajv-keywords/3.5.2_ajv@6.12.6:
@@ -5676,6 +5740,14 @@ packages:
     engines: { node: '>= 12' }
     dev: true
 
+  /date-format/4.0.14:
+    resolution:
+      {
+        integrity: sha512-39BOQLs9ZjKh0/patS9nrT8wc3ioX3/eA/zgbKNopnF2wCqJEoxywwwElATYvRsXdnOxA/OQeQoFZ3rFjVajhg==,
+      }
+    engines: { node: '>=4.0' }
+    dev: false
+
   /de-indent/1.0.2:
     resolution:
       {
@@ -5723,7 +5795,6 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.2
-    dev: true
 
   /decamelize-keys/1.1.1:
     resolution:
@@ -6167,6 +6238,15 @@ packages:
     dependencies:
       is-arrayish: 0.2.1
     dev: true
+
+  /error-stack-parser/2.1.4:
+    resolution:
+      {
+        integrity: sha512-Sk5V6wVazPhq5MhpO+AUxJn5x7XSXGl1R93Vn7i+zS15KDVxQijejNCrz8340/2bgLBjR9GtEG8ZVKONDjcqGQ==,
+      }
+    dependencies:
+      stackframe: 1.3.4
+    dev: false
 
   /es-abstract/1.21.1:
     resolution:
@@ -7224,7 +7304,6 @@ packages:
       {
         integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==,
       }
-    dev: true
 
   /follow-redirects/1.15.2:
     resolution:
@@ -7380,6 +7459,18 @@ packages:
       jsonfile: 6.1.0
       universalify: 2.0.0
     dev: true
+
+  /fs-extra/8.1.0:
+    resolution:
+      {
+        integrity: sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==,
+      }
+    engines: { node: '>=6 <7 || >=8' }
+    dependencies:
+      graceful-fs: 4.2.10
+      jsonfile: 4.0.0
+      universalify: 0.1.2
+    dev: false
 
   /fs-minipass/2.1.0:
     resolution:
@@ -7812,7 +7903,6 @@ packages:
       {
         integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==,
       }
-    dev: true
 
   /grapheme-splitter/1.0.4:
     resolution:
@@ -9590,6 +9680,15 @@ packages:
       }
     dev: true
 
+  /jsonfile/4.0.0:
+    resolution:
+      {
+        integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==,
+      }
+    optionalDependencies:
+      graceful-fs: 4.2.10
+    dev: false
+
   /jsonfile/6.1.0:
     resolution:
       {
@@ -10024,6 +10123,22 @@ packages:
       slice-ansi: 4.0.0
       wrap-ansi: 6.2.0
     dev: true
+
+  /log4js/6.7.1:
+    resolution:
+      {
+        integrity: sha512-lzbd0Eq1HRdWM2abSD7mk6YIVY0AogGJzb/z+lqzRk+8+XJP+M6L1MS5FUSc3jjGru4dbKjEMJmqlsoYYpuivQ==,
+      }
+    engines: { node: '>=8.0' }
+    dependencies:
+      date-format: 4.0.14
+      debug: 4.3.4
+      flatted: 3.2.7
+      rfdc: 1.3.0
+      streamroller: 3.1.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /lowercase-keys/3.0.0:
     resolution:
@@ -10598,7 +10713,6 @@ packages:
       {
         integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==,
       }
-    dev: true
 
   /ms/2.1.3:
     resolution:
@@ -12890,7 +13004,6 @@ packages:
       {
         integrity: sha512-V2hovdzFbOi77/WajaSMXk2OLm+xNIeQdMMuB7icj7bk6zi2F8GGAxigcnDFpJHbNyNcgyJDiP+8nOrY5cZGrA==,
       }
-    dev: true
 
   /rimraf/3.0.2:
     resolution:
@@ -13336,6 +13449,14 @@ packages:
       source-map: 0.6.1
     dev: true
 
+  /source-map/0.5.6:
+    resolution:
+      {
+        integrity: sha512-MjZkVp0NHr5+TPihLcadqnlVoGIoWo4IBHptutGh9wI3ttUYvCG26HkSuDi+K6lsZ25syXJXcctwgyVCt//xqA==,
+      }
+    engines: { node: '>=0.10.0' }
+    dev: false
+
   /source-map/0.6.1:
     resolution:
       {
@@ -13448,6 +13569,15 @@ packages:
     deprecated: 'Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility'
     dev: true
 
+  /stack-generator/2.0.10:
+    resolution:
+      {
+        integrity: sha512-mwnua/hkqM6pF4k8SnmZ2zfETsRUpWXREfA/goT8SLCV4iOFa4bzOX2nDipWAZFPTjLvQB82f5yaodMVhK0yJQ==,
+      }
+    dependencies:
+      stackframe: 1.3.4
+    dev: false
+
   /stack-utils/2.0.6:
     resolution:
       {
@@ -13457,6 +13587,34 @@ packages:
     dependencies:
       escape-string-regexp: 2.0.0
     dev: true
+
+  /stackframe/1.3.4:
+    resolution:
+      {
+        integrity: sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==,
+      }
+    dev: false
+
+  /stacktrace-gps/3.1.2:
+    resolution:
+      {
+        integrity: sha512-GcUgbO4Jsqqg6RxfyTHFiPxdPqF+3LFmQhm7MgCuYQOYuWyqxo5pwRPz5d/u6/WYJdEnWfK4r+jGbyD8TSggXQ==,
+      }
+    dependencies:
+      source-map: 0.5.6
+      stackframe: 1.3.4
+    dev: false
+
+  /stacktrace-js/2.0.2:
+    resolution:
+      {
+        integrity: sha512-Je5vBeY4S1r/RnLydLl0TBTi3F2qdfWmYsGvtfZgEI+SCprPppaIhQf5nGcal4gI4cGpCV/duLcAzT1np6sQqg==,
+      }
+    dependencies:
+      error-stack-parser: 2.1.4
+      stack-generator: 2.0.10
+      stacktrace-gps: 3.1.2
+    dev: false
 
   /standard-as-callback/2.1.0:
     resolution:
@@ -13478,6 +13636,20 @@ packages:
         integrity: sha512-3H20QlwQsSm2OvAxWIYhs+j01MzzqwMwGiiO1NQaJYZgJZFPuAbf95/DiKRBSTYIJ2FeGUc+B/6mPGcWP9dO3Q==,
       }
     dev: true
+
+  /streamroller/3.1.4:
+    resolution:
+      {
+        integrity: sha512-Ha1Ccw2/N5C/IF8Do6zgNe8F3jQo8MPBnMBGvX0QjNv/I97BcNRzK6/mzOpZHHK7DjMLTI3c7Xw7Y1KvdChkvw==,
+      }
+    engines: { node: '>=8.0' }
+    dependencies:
+      date-format: 4.0.14
+      debug: 4.3.4
+      fs-extra: 8.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /streamsearch/1.1.0:
     resolution:
@@ -14463,6 +14635,14 @@ packages:
     dependencies:
       crypto-random-string: 4.0.0
     dev: true
+
+  /universalify/0.1.2:
+    resolution:
+      {
+        integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==,
+      }
+    engines: { node: '>= 4.0.0' }
+    dev: false
 
   /universalify/2.0.0:
     resolution:
