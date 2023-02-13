@@ -1,27 +1,18 @@
-import { isDev } from '../src/utils/utils';
-
-const productConfig = {
-  mysql: {
-    port: 3306,
-    host: 'localhost',
-    user: 'admin',
-    password: '123456',
-    database: 'blog', // 库名
-    connectionLimit: 10, // 连接限制
-  },
+let mysqlConfig: {
+  port: number;
+  host: string;
+  username: string;
+  password: string;
+  database: string;
 };
-
-const localConfig = {
-  mysql: {
-    port: 3306,
-    host: 'localhost',
-    user: 'root',
-    password: '123456',
-    database: 'blog', // 库名
-    connectionLimit: 10, // 连接限制
-  },
-};
-
-const config = isDev() ? productConfig : localConfig;
-
-export default config;
+export function getMYSQLConfig() {
+  if (mysqlConfig) return mysqlConfig;
+  mysqlConfig = {
+    port: Number(process.env['MYSQL_PORT']),
+    host: process.env['MYSQL_HOST'] as string,
+    username: process.env['MYSQL_USERNAME'] as string,
+    password: process.env['MYSQL_PASSWORD'] as string,
+    database: process.env['MYSQL_DATABASE'] as string,
+  };
+  return mysqlConfig;
+}

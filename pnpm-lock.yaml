@@ -52,6 +52,7 @@ importers:
     specifiers:
       '@nestjs/cli': ^9.1.9
       '@nestjs/common': ^9.2.1
+      '@nestjs/config': ^2.3.1
       '@nestjs/core': ^9.2.1
       '@nestjs/platform-express': ^9.2.1
       '@nestjs/schematics': ^9.0.4
@@ -77,6 +78,7 @@ importers:
       typescript: ^4.9.5
     dependencies:
       '@nestjs/common': 9.2.1_mnr6j2del53muneqly5h4y27ai
+      '@nestjs/config': 2.3.1_b4pxbpa7chblgbyake5iz5rdmu
       '@nestjs/core': 9.2.1_e6la6qvsclaae2becwjnmfvsuq
       '@nestjs/platform-express': 9.2.1_hjcqpoaebdr7gdo5hgc22hthbe
       '@nestjs/swagger': 6.2.1_dntc3uqqknzoduyjojusds5kla
@@ -2056,6 +2058,25 @@ packages:
       reflect-metadata: 0.1.13
       rxjs: 7.8.0
       tslib: 2.4.1
+      uuid: 9.0.0
+    dev: false
+
+  /@nestjs/config/2.3.1_b4pxbpa7chblgbyake5iz5rdmu:
+    resolution:
+      {
+        integrity: sha512-Ckzel0NZ9CWhNsLfE1hxfDuxJuEbhQvGxSlmZ1/X8awjRmAA/g3kT6M1+MO1SHj1wMtPyUfd9WpwkiqFbiwQgA==,
+      }
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0 || ^9.0.0
+      reflect-metadata: ^0.1.13
+      rxjs: ^6.0.0 || ^7.2.0
+    dependencies:
+      '@nestjs/common': 9.2.1_mnr6j2del53muneqly5h4y27ai
+      dotenv: 16.0.3
+      dotenv-expand: 10.0.0
+      lodash: 4.17.21
+      reflect-metadata: 0.1.13
+      rxjs: 7.8.0
       uuid: 9.0.0
     dev: false
 
@@ -6180,6 +6201,14 @@ packages:
     dependencies:
       type-fest: 2.19.0
     dev: true
+
+  /dotenv-expand/10.0.0:
+    resolution:
+      {
+        integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==,
+      }
+    engines: { node: '>=12' }
+    dev: false
 
   /dotenv/16.0.3:
     resolution:
