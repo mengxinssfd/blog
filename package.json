@@ -59,6 +59,6 @@
     "vue-tsc": "^1.0.24"
   },
   "dependencies": {
-    "@tool-pack/basic": "^0.0.10"
+    "@tool-pack/basic": "^0.0.11"
   }
 }
