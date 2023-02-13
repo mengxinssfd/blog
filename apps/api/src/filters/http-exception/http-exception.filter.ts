@@ -2,6 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/co
 import { Request, Response } from 'express';
 import { Logger } from '../../utils/log4js';
 import { formatResLog } from '../../utils/format-log';
+import { shadowObj } from '@tool-pack/basic';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -13,9 +14,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const msg = status === 429 ? '请求过于频繁' : exception.message;
     const newJson = { code: status, msg };
 
-    const req: Request = Object.create(ctx.getRequest());
-    req.statusCode = 200;
-    const logFormat = formatResLog(req, newJson);
+    const logFormat = formatResLog(
+      shadowObj(ctx.getRequest<Request>(), { statusCode: 200 }),
+      newJson,
+    );
+
     Logger.access(logFormat);
     Logger.info(logFormat);
 

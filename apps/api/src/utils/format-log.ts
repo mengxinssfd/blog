@@ -25,11 +25,11 @@ export function formatResLog(
       }),
   data: any,
 ): string {
-  return `   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  return ` <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     Request original url: ${req.originalUrl}
     Method: ${req.method}
     Status code: ${req.statusCode}
     User: ${JSON.stringify((req as any).user)}
     Response: ${JSON.stringify(data)}
-    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<`;
+  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<`;
 }
