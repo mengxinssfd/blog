@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TestModModule } from './modules/test-mod/test-mod.module';
-import { getMYSQLConfig } from '../config/db';
+import { getMYSQLConfig } from './utils/utils';
 
 const cm = ConfigModule.forRoot({
   isGlobal: true,
