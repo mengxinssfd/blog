@@ -10,6 +10,8 @@ import { isDev } from './utils/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api'); // /api 开头
+  app.enableCors(); // 跨域
   app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 
   app.use(logger);
@@ -34,6 +36,10 @@ async function bootstrap() {
     SwaggerModule.setup('api-doc', app, document);
   }
 
-  await app.listen(3000);
+  // 不加hostname的话，当前地址访问获取不到ip
+  // 参考 https://www.cnblogs.com/lpbottle/p/nodejs_get_ip.html
+  await app.listen(3000, '0.0.0.0');
+  // 不加hostname获取的ip => ::ffff:192.xxx.xxx.xxx
+  // await app.listen(3000);
 }
 bootstrap();
