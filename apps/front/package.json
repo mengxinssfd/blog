@@ -8,6 +8,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "nuxt": "^3.1.0"
+    "nuxt": "^3.1.0",
+    "blog-entities": "../../packages/entities"
   }
 }

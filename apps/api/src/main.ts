@@ -8,6 +8,8 @@ import { TransformInterceptor } from './interceptors/transform/transform.interce
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { isDev } from './utils/utils';
 
+declare const module: any;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api'); // /api 开头
@@ -41,5 +43,10 @@ async function bootstrap() {
   await app.listen(3000, '0.0.0.0');
   // 不加hostname获取的ip => ::ffff:192.xxx.xxx.xxx
   // await app.listen(3000);
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 bootstrap();

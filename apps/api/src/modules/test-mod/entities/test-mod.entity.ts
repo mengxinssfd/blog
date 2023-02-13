@@ -1,4 +1,7 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from '@blog/entities';
+
+console.log('UserEntity', UserEntity);
 
 @Entity({ name: 'test-mod' })
 export class TestModEntity extends BaseEntity {

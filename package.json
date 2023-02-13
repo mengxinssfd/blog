@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "blog v2",
   "main": "index.js",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "blog:env": "docker-compose -f docker-compose.env.yml up -d",
     "prepare": "husky install",
@@ -12,7 +16,8 @@
     "check:ts:vue": "vue-tsc --noEmit -p ./apps/front/tsconfig.json",
     "check:all": "run-p check:ts check:ts:vue check:lint",
     "start:dev": "pnpm -C ./apps/api start:dev & pnpm -C ./apps/front dev",
-    "build": "pnpm -C ./apps/api build & pnpm -C ./apps/front build"
+    "build": "pnpm -C ./apps/api build & pnpm -C ./apps/front build",
+    "prebuild": "pnpm --filter ./packages/* build"
   },
   "lint-staged": {
     "*.{json,html,md,yaml}": [
@@ -56,9 +61,13 @@
     "lint-staged": "^13.1.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.3",
+    "rimraf": "^4.1.2",
     "ts-jest": "^29.0.5",
     "typescript": "^4.9.5",
-    "vue-tsc": "^1.0.24"
+    "vue-tsc": "^1.0.24",
+    "webpack": "^5.75.0",
+    "webpack-node-externals": "^3.0.0",
+    "run-script-webpack-plugin": "^0.1.1"
   },
   "dependencies": {
     "@tool-pack/basic": "^0.0.11",

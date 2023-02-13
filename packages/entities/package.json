@@ -1,0 +1,13 @@
+{
+  "name": "@blog/entities",
+  "version": "1.0.0",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "scripts": {
+    "prebuild": "rimraf ./dist",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "typeorm": "^0.3.12"
+  }
+}

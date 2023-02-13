@@ -69,6 +69,13 @@ module.exports = {
         'vue/multi-word-component-names': 'off',
       },
     },
+    // node
+    {
+      files: ['apps/api/webpack-hmr.config.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
     {
       files: ['**/__tests__/**'],
       rules: {
