@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { TestModModule } from './modules/test-mod/test-mod.module';
 import { getMYSQLConfig } from './utils/utils';
 
 const cm = ConfigModule.forRoot({
@@ -19,7 +18,6 @@ const cm = ConfigModule.forRoot({
       entities: [__dirname + '/**/*.entity{.ts,.js}'], // 路径写错会找不到实体
       synchronize: true,
     }),
-    TestModModule,
   ],
 })
 export class AppModule {}
