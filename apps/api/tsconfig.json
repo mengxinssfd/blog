@@ -1,7 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "module": "CommonJS",
     "outDir": "./dist",
-    "baseUrl": "./"
-  }
+    "incremental": true
+  },
+  // https://www.typescriptlang.org/docs/handbook/configuring-watch.html
+  //  "watchOptions": {
+  //    "excludeDirectories": ["./node_modules", "./dist", "./scripts"],
+  //    "excludeFiles": ["tsconfig.build.json"]
+  //  },
+  "exclude": ["./webpack-hmr.config.js", "./dist"]
 }
