@@ -79,7 +79,7 @@ export class UserService {
         where: { registerIp: ip },
       });
       if (ipCount >= 5) {
-        throw new FailedException('创建账号太多');
+        throw new ForbiddenException('创建账号太多');
       }
     }
 

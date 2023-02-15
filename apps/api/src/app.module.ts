@@ -9,7 +9,7 @@ import { UserEntity } from '@blog/entities';
 
 const cm = ConfigModule.forRoot({
   isGlobal: true,
-  envFilePath: ['.env.local', '.env'], // 前面的会覆盖后面的
+  envFilePath: ['.env.local', '.env.test', '.env'], // 前面的会覆盖后面的
 });
 
 @Module({
