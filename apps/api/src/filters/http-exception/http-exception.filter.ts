@@ -13,6 +13,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const msg = status === 429 ? '请求过于频繁' : exception.message;
     const newJson = { code: status, msg };
+    const data = exception.getResponse();
+    if (data && data !== msg) Object.assign(newJson, { data });
 
     const logFormat = formatResLog(
       shadowObj(ctx.getRequest<Request>(), { statusCode: 200 }),

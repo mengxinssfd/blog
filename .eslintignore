@@ -20,3 +20,5 @@ docs-html
 pnpm-lock.yaml
 .nuxt
 .output
+
+*.d.ts

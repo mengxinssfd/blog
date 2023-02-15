@@ -4,5 +4,5 @@
     "declaration": false,
     "incremental": false
   },
-  "exclude": ["node_modules", "test", "**/*spec.ts"]
+  "exclude": ["node_modules", "test", "**/*spec.ts", "scripts"]
 }
