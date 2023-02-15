@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { Logger } from '../../utils/log4js';
-import { formatReqLog } from '../../utils/format-log';
+import { Logger } from '@/utils/log4js';
+import { formatReqLog } from '@/utils/format-log';
 
 // 函数式中间件
 /**

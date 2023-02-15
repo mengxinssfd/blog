@@ -3,7 +3,11 @@
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "./dist",
-    "incremental": true
+    "incremental": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@config/*": ["./config/*"]
+    }
   },
   // https://www.typescriptlang.org/docs/handbook/configuring-watch.html
   //  "watchOptions": {

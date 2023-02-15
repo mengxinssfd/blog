@@ -1,7 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Logger } from '../../utils/log4js';
-import { formatResLog } from '../../utils/format-log';
+import { Logger } from '@/utils/log4js';
+import { formatResLog } from '@/utils/format-log';
 import { shadowObj } from '@tool-pack/basic';
 
 @Catch()
