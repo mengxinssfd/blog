@@ -6,7 +6,7 @@ import { shadowObj } from '@tool-pack/basic';
 
 @Catch()
 export class AnyExceptionFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const statusCode =

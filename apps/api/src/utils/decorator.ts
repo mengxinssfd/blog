@@ -26,7 +26,8 @@ export const User = createParamDecorator((key: string, ctx: ExecutionContextHost
 export const ReqIp = createParamDecorator((_data: unknown, ctx: ExecutionContextHost) => {
   const im = ctx.switchToHttp().getRequest<IncomingMessage>();
   // req.ip 或 req.socket.remoteAddress
-  return getIp(im);
+  return getIp(im) // e2e测试时ip是'::ffff:127.0.0.1'，太长了
+    .replace('::ffff:', '');
 });
 
 export const isFromWX = createParamDecorator((_data: unknown, ctx: ExecutionContextHost) => {
