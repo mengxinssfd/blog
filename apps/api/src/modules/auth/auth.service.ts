@@ -52,7 +52,7 @@ export class AuthService {
     const user = await this.findUser(findUserCondition);
 
     // 用户不存在
-    if (!user) throw new UnauthorizedException('查无此人');
+    if (!user) throw new UnauthorizedException('账号不存在');
 
     const hashedPassword = user.password;
     const salt = user.salt;

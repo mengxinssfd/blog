@@ -3,7 +3,7 @@ import { UserEntity } from '@blog/entities';
 
 export default class ResetTokenException extends HttpException {
   constructor(private data: { token: string; user?: UserEntity }) {
-    super('success', 207);
+    super('Success', 207);
   }
 
   override getResponse(): string | object {
