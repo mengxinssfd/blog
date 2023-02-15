@@ -31,6 +31,7 @@ import { SetRoleDto } from './dto/set-role.dto';
 import { WxLoginDTO } from './dto/wx-login.dto';
 import ResetTokenException from '../../exceptions/ResetToken.exception';
 import { LocalAuthGuard } from '@/modules/auth/local-auth.guard';
+import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
 
 @ApiTags('user')
 @Controller('user')
@@ -99,7 +100,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('self')
   async self(@User() user: UserEntity) {
     const nUser = await this.userService.getSelf(user.id);
@@ -130,7 +131,7 @@ export class UserController {
 
   @ApiBearerAuth()
   @UsePipes(new DtoValidationPipe([UpdateUserDto]))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string | number,
@@ -148,7 +149,7 @@ export class UserController {
   // TODO 限制密码错误次数
   @ApiBearerAuth()
   @UsePipes(new DtoValidationPipe([UpdatePasswordDto]))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Patch('password/:id')
   async updatePassword(
     @Param('id') id: string | number,
@@ -167,7 +168,7 @@ export class UserController {
 
   @ApiBearerAuth()
   @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Delete('delete/:id')
   delete(@Param('id') id: string) {
     return this.userService.delete(+id);
@@ -175,7 +176,7 @@ export class UserController {
 
   @ApiBearerAuth()
   @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
@@ -184,28 +185,28 @@ export class UserController {
   @ApiBearerAuth()
   @UsePipes(new DtoValidationPipe([SetRoleDto]))
   @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Patch('role/:id')
   setRole(@Param('id') id: string, @Body() roleDto: SetRoleDto) {
     return this.userService.setRole(+id, roleDto);
   }
   @ApiBearerAuth()
   @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Patch('mute/:id')
   mute(@Param('id') id: string) {
     return this.userService.mute(+id);
   }
   @ApiBearerAuth()
   @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Patch('cancel-mute/:id')
   cancelMute(@Param('id') id: string) {
     return this.userService.cancelMute(+id);
   }
   @ApiBearerAuth()
   @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Patch('restore/:id')
   restore(@Param('id') id: string) {
     return this.userService.restore(+id);
