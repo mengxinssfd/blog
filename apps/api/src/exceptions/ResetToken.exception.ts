@@ -7,6 +7,6 @@ export default class ResetTokenException extends HttpException {
   }
 
   override getResponse(): string | object {
-    return this.data;
+    return { statusCode: this.getStatus(), message: this.message, data: this.data };
   }
 }

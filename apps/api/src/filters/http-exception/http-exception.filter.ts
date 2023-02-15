@@ -1,11 +1,14 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Logger } from '../../utils/log4js';
-import { formatResLog } from '../../utils/format-log';
+import { Logger } from '@/utils/log4js';
+import { formatResLog } from '@/utils/format-log';
 import { shadowObj } from '@tool-pack/basic';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+  /**
+   * 请求头响应全部改成200，body格式改为{code:number; msg:string; data?:string|object;}类型
+   */
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -14,7 +17,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const msg = status === 429 ? '请求过于频繁' : exception.message;
     const newJson = { code: status, msg };
     const data = exception.getResponse();
-    if (data && data !== msg) Object.assign(newJson, { data });
+
+    if (typeof data === 'string') {
+      if (data !== msg) Object.assign(newJson, { data });
+    } else {
+      if (data['data']) Object.assign(newJson, { data: data['data'] });
+    }
 
     const logFormat = formatResLog(
       shadowObj(ctx.getRequest<Request>(), { statusCode: 200 }),
