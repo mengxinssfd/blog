@@ -12,16 +12,12 @@ describe('UserController (e2e)', () => {
     return request(app.getHttpServer())
       .get(prefix)
       .expect(200)
-      .expect(
-        '{"code":401,"msg":"Unauthorized","data":{"statusCode":401,"message":"Unauthorized"}}',
-      );
+      .expect('{"code":401,"msg":"Unauthorized"}');
   });
   it(prefix + '/self (GET)', () => {
     return request(app.getHttpServer())
       .get(prefix + '/self')
       .expect(200)
-      .expect(
-        '{"code":401,"msg":"Unauthorized","data":{"statusCode":401,"message":"Unauthorized"}}',
-      );
+      .expect('{"code":401,"msg":"Unauthorized"}');
   });
 });
