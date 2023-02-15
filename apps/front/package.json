@@ -5,7 +5,8 @@
     "dev": "nuxt dev --port 8080",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "check:ts": "vue-tsc --noEmit -p ./tsconfig.json"
   },
   "devDependencies": {
     "nuxt": "^3.1.0",
