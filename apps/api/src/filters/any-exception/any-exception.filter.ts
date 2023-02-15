@@ -15,7 +15,7 @@ export class AnyExceptionFilter implements ExceptionFilter {
     const body = { code: statusCode, msg: `Service Error: ${exception}` };
 
     const req = shadowObj(ctx.getRequest<Request>(), { statusCode });
-    Logger.error(formatResLog(req, body));
+    Logger.error(formatResLog(req, response, body));
 
     response.status(statusCode).json(body);
   }

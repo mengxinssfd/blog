@@ -25,7 +25,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     const logFormat = formatResLog(
-      shadowObj(ctx.getRequest<Request>(), { statusCode: 200 }),
+      ctx.getRequest<Request>(),
+      shadowObj(response, { statusCode: 200 }),
       newJson,
     );
 

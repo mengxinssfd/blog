@@ -68,7 +68,7 @@ describe('UserController', () => {
       password: '123456',
     };
     it('login success!"', async () => {
-      const res = await controller.login(body, '127.0.0.0');
+      const res = await controller.login({ user: body as any }, '127.0.0.0');
       expect(res).toBe(undefined);
     });
   });

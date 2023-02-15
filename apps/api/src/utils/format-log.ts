@@ -1,5 +1,6 @@
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import type { IncomingMessage } from 'http';
+import { ServerResponse } from 'http';
 
 export function formatReqLog(req: Request): string {
   // 组装日志信息
@@ -23,12 +24,13 @@ export function formatResLog(
         originalUrl?: string;
         user?: any;
       }),
+  res: Response | ServerResponse,
   data: any,
 ): string {
   return ` <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     Request original url: ${req.originalUrl}
     Method: ${req.method}
-    Status code: ${req.statusCode}
+    Status code: ${res.statusCode}
     User: ${JSON.stringify((req as any).user)}
     Response: ${JSON.stringify(data)}
   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<`;
