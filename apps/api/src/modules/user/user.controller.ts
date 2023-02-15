@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Request,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -29,6 +30,7 @@ import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard
 import { SetRoleDto } from './dto/set-role.dto';
 import { WxLoginDTO } from './dto/wx-login.dto';
 import ResetTokenException from '../../exceptions/ResetToken.exception';
+import { LocalAuthGuard } from '@/modules/auth/local-auth.guard';
 
 @ApiTags('user')
 @Controller('user')
@@ -72,17 +74,20 @@ export class UserController {
   @UseGuards(ThrottlerBehindProxyGuard)
   // 可以在 1 分钟内向单个端点发出来自同一 IP 的 5 个请求
   @Throttle(5, 60)
+  @UseGuards(LocalAuthGuard) // 使用LocalAuthGuard登录
   @Post('login')
-  async login(@Body() loginParams: LoginInfoDTO, @ReqIp() ip: string) {
+  async login(@Request() req: { user: UserEntity }, @ReqIp() ip: string) {
+    // 使用LocalAuthGuard代替手动登录
+    /*
     console.log('JWT验证 - Step 1: 用户请求登录');
 
     const user = await this.authService.validateUser(
       { username: loginParams.username },
       loginParams.password,
     );
-
-    const token = this.authService.certificate(user);
-    this.userService.saveLoginInfo(user.id, ip);
+    */
+    const token = this.authService.certificate(req.user);
+    this.userService.saveLoginInfo(req.user.id, ip);
 
     throw new ResetTokenException({ token });
   }
