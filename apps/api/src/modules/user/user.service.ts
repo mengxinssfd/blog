@@ -102,6 +102,7 @@ export class UserService {
       entity.role = ROLE.superAdmin;
       await this.repository.save(entity);
     }
+    return { id: entity.id };
   }
 
   async findAll() {
@@ -172,10 +173,8 @@ export class UserService {
     if (!(id === loginUser.id || loginUser.role === ROLE.superAdmin)) {
       throw new ForbiddenException('无权更改');
     }
-    const find = await this.findOneById(id);
-    if (!(find as any).data) {
-      throw new NotFoundException('id不存在');
-    }
+    await this.findOneById(id);
+
     const user = new UserEntity();
     Object.assign(user, updateUserDto);
     user.id = id;
