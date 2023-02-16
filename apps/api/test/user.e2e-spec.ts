@@ -2,6 +2,14 @@ import { buildApp } from './utils';
 import { UserEntity } from '@blog/entities';
 import { idGen, pick } from '@tool-pack/basic';
 
+// 常用的返回类型
+const ResTypes = {
+  success: '{"code":200,"msg":"Success"}',
+  unauthorized: '{"code":401,"msg":"Unauthorized"}',
+  register: /^\{"code":200,"msg":"Success","data":\{"id":\d+}}$/,
+  login: /^\{"code":207,"msg":"Success","data":\{"token":"[^"]{149}"}}$/,
+  self: /^\{"code":200,"msg":"Success","data":\{"user":\{"id":\d+,"username":"hello_\d+","nickname":"hello_\d+","avatar":"https:\/\/my-blog-store.oss-cn-guangzhou\.aliyuncs\.com\/store\/20201103002944_c9ed4\.jpeg","role":\d+}}}$/,
+};
 describe('UserController (e2e): /api/user', () => {
   const request = buildApp(async () => {
     await UserEntity.clear();
@@ -9,7 +17,7 @@ describe('UserController (e2e): /api/user', () => {
 
   const prefix = '/api/user';
   it('/ (GET)', () => {
-    return request().get(prefix).expect(200).expect('{"code":401,"msg":"Unauthorized"}');
+    return request().get(prefix).expect(200).expect(ResTypes.unauthorized);
   });
 
   const id = idGen();
@@ -30,7 +38,7 @@ describe('UserController (e2e): /api/user', () => {
           .post(prefix + '/register')
           .send(buildRegisterData())
           .expect(201)
-          .expect('{"code":200,"msg":"Success"}');
+          .expect(ResTypes.register);
       });
     }
     it('创建账号太多', () => {
@@ -66,21 +74,14 @@ describe('UserController (e2e): /api/user', () => {
       const user = buildRegisterData();
       await request()
         .post(prefix + '/register')
-        .send(user);
+        .send(user)
+        .expect(ResTypes.register);
 
       return request()
         .post(prefix + '/login')
         .send(pick(user, ['password', 'username']))
         .expect(200)
-        .then((res) => {
-          const body = { ...res.body };
-          const data = body.data;
-          delete body.data;
-          // '{"code":207,"msg":"success","data":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6MywiaWF0IjoxNjc2NDc1OTc0LCJleHAiOjE2NzY1NjIzNzR9.hY6_2d2gAi4qT4V_R9zUWxREEQg6M7j_eY-NtffywQg"}}'
-          expect(body).toEqual({ code: 207, msg: 'Success' });
-          expect(typeof data.token).toBe('string');
-          expect(data.token.length).toBe(149);
-        });
+        .expect(ResTypes.login);
     });
   });
   describe('/self (GET)获取个人信息', () => {
@@ -88,14 +89,15 @@ describe('UserController (e2e): /api/user', () => {
       return request()
         .get(prefix + '/self')
         .expect(200)
-        .expect('{"code":401,"msg":"Unauthorized"}');
+        .expect(ResTypes.unauthorized);
     });
     it('获取成功', async function () {
       await UserEntity.clear();
       const user = buildRegisterData();
       await request()
         .post(prefix + '/register')
-        .send(user);
+        .send(user)
+        .expect(ResTypes.register);
 
       const {
         body: {
@@ -103,7 +105,8 @@ describe('UserController (e2e): /api/user', () => {
         },
       } = await request()
         .post(prefix + '/login')
-        .send(pick(user, ['password', 'username']));
+        .send(pick(user, ['password', 'username']))
+        .expect(ResTypes.login);
 
       expect(typeof token).toBe('string');
 
@@ -111,39 +114,69 @@ describe('UserController (e2e): /api/user', () => {
         .get(prefix + '/self')
         .set('authorization', 'Bearer ' + token)
         .expect(200)
-        .then((res) => {
-          // {
-          //   code: 200,
-          //   msg: 'Success',
-          //   data: {
-          //     user: {
-          //       id: 1,
-          //       username: 'hello_9',
-          //       nickname: 'hello_9',
-          //       avatar:
-          //         'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg',
-          //       role: 0,
-          //     },
-          //   },
-          // };
-          const body = { ...res.body };
-          const data = body.data;
-          delete body.data;
-          expect(body).toEqual({ code: 200, msg: 'Success' });
-          expect(data.user).not.toBeUndefined();
-          expect(data.user.username).toBe(user.username);
-          expect(data.user.nickname).toBe(user.nickname);
-          expect(data.user.avatar).toBe(
-            'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg',
-          );
-          expect(Object.keys(data.user).sort()).toEqual([
-            'avatar',
-            'id',
-            'nickname',
-            'role',
-            'username',
-          ]);
-        });
+        .expect(ResTypes.self);
+    });
+  });
+  function register(user: ReturnType<typeof buildRegisterData>) {
+    return request()
+      .post(prefix + '/register')
+      .send(user);
+  }
+  function login(user: Pick<ReturnType<typeof buildRegisterData>, 'username' | 'password'>) {
+    return request()
+      .post(prefix + '/login')
+      .send(pick(user, ['password', 'username']));
+  }
+  it('注册禁用词检验', () => {
+    const user = buildRegisterData();
+    user.username = 'admin';
+    return register(user)
+      .expect(200)
+      .expect('{"code":400,"msg":"Validation failed: username(admin)包含禁用词!请修改后再提交"}');
+  });
+  describe('/:id (PATCH) 更新用户信息', function () {
+    it('需要登录', async () => {
+      await UserEntity.clear();
+
+      const user1 = buildRegisterData();
+      await register(user1);
+
+      return request()
+        .patch(prefix + '/1')
+        .send({ nickname: 'abc123' })
+        .expect(200)
+        .expect(ResTypes.unauthorized);
+    });
+    it('禁止修改其他账号', async () => {
+      await UserEntity.clear();
+
+      const user1 = buildRegisterData();
+      const id1 = await register(user1)
+        .expect(ResTypes.register)
+        .then((res) => res.body.data.id);
+
+      const user2 = buildRegisterData();
+      await register(user2).expect(ResTypes.register);
+
+      const token = await login(user2)
+        .expect(200)
+        .expect(ResTypes.login)
+        .then((res) => res.body.data.token);
+
+      expect(typeof token).toBe('string');
+
+      const userInfo = await request()
+        .get(prefix + '/self')
+        .set('authorization', 'Bearer ' + token)
+        .expect(ResTypes.self)
+        .then<Record<string, string>>((res) => res.body.data.user);
+
+      return request()
+        .patch(prefix + '/' + id1)
+        .send({ nickname: 'abc123', avatar: userInfo['avatar'] })
+        .set('authorization', 'Bearer ' + token)
+        .expect(200)
+        .expect('{"code":403,"msg":"禁止修改其他账号信息"}');
     });
   });
 });
