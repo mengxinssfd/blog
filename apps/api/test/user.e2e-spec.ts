@@ -8,7 +8,9 @@ const ResTypes = {
   unauthorized: '{"code":401,"msg":"Unauthorized"}',
   register: /^\{"code":200,"msg":"Success","data":\{"id":\d+}}$/,
   login: /^\{"code":207,"msg":"Success","data":\{"token":"[^"]{149}"}}$/,
-  self: /^\{"code":200,"msg":"Success","data":\{"user":\{"id":\d+,"username":"hello_\d+","nickname":"hello_\d+","avatar":"https:\/\/my-blog-store.oss-cn-guangzhou\.aliyuncs\.com\/store\/20201103002944_c9ed4\.jpeg","role":\d+}}}$/,
+  self: new RegExp(
+    `^\\{"code":200,"msg":"Success","data":\\{"user":\\{"id":\\d+,"username":"hello_\\d+","nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}","role":\\d+}}}$`,
+  ),
 };
 describe('UserController (e2e): /api/user', () => {
   const request = buildApp(async () => {
@@ -177,6 +179,38 @@ describe('UserController (e2e): /api/user', () => {
         .set('authorization', 'Bearer ' + token)
         .expect(200)
         .expect('{"code":403,"msg":"禁止修改其他账号信息"}');
+    });
+    it('修改成功', async () => {
+      await UserEntity.clear();
+
+      const user = buildRegisterData();
+      const id = await register(user)
+        .expect(ResTypes.register)
+        .then((res) => res.body.data.id);
+
+      const token = await login(user)
+        .expect(200)
+        .expect(ResTypes.login)
+        .then((res) => res.body.data.token);
+
+      expect(typeof token).toBe('string');
+
+      const userInfo = await request()
+        .get(prefix + '/self')
+        .set('authorization', 'Bearer ' + token)
+        .expect(ResTypes.self)
+        .then<Record<string, string>>((res) => res.body.data.user);
+
+      return request()
+        .patch(prefix + '/' + id)
+        .send({ nickname: 'abc123', avatar: userInfo['avatar'] })
+        .set('authorization', 'Bearer ' + token)
+        .expect(200)
+        .expect(
+          new RegExp(
+            `\\{"code":200,"msg":"Success","data":\\{"nickname":"abc123","avatar":"${UserEntity.DEFAULT_AVATAR}","mobile":null,"id":${id},"updateBy":${id},"updateAt":"[^"]{24}","deletedAt":null,"loginAt":null,"loginIp":null,"registerIp":null,"openid":null}}`,
+          ),
+        );
     });
   });
 });
