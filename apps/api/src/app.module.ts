@@ -6,6 +6,7 @@ import { UserModule } from './modules/user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserEntity } from '@blog/entities';
+import { ChatAiModule } from './modules/chat-ai/chat-ai.module';
 
 const cm = ConfigModule.forRoot({
   isGlobal: true,
@@ -29,6 +30,7 @@ const cm = ConfigModule.forRoot({
     }),
     AuthModule,
     UserModule,
+    ChatAiModule,
   ],
 })
 export class AppModule {}

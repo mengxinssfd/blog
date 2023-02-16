@@ -83,6 +83,7 @@ importers:
       log4js: ^6.7.1
       mysql2: ^3.1.2
       npm-check-updates: ^16.6.3
+      openai: ^3.1.0
       passport: ^0.6.0
       passport-jwt: ^4.0.1
       passport-local: ^1.0.0
@@ -113,6 +114,7 @@ importers:
       class-validator: 0.14.0
       log4js: 6.7.1
       mysql2: 3.1.2
+      openai: 3.1.0
       passport: 0.6.0
       passport-jwt: 4.0.1
       passport-local: 1.0.0
@@ -4882,7 +4884,6 @@ packages:
       {
         integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==,
       }
-    dev: true
 
   /autoprefixer/10.4.13_postcss@8.4.21:
     resolution:
@@ -4910,6 +4911,17 @@ packages:
       }
     engines: { node: '>= 0.4' }
     dev: true
+
+  /axios/0.26.1:
+    resolution:
+      {
+        integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==,
+      }
+    dependencies:
+      follow-redirects: 1.15.2
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /babel-jest/29.4.1_@babel+core@7.20.12:
     resolution:
@@ -5800,7 +5812,6 @@ packages:
     engines: { node: '>= 0.8' }
     dependencies:
       delayed-stream: 1.0.0
-    dev: true
 
   /commander/2.20.3:
     resolution:
@@ -6494,7 +6505,6 @@ packages:
         integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==,
       }
     engines: { node: '>=0.4.0' }
-    dev: true
 
   /delegates/1.0.0:
     resolution:
@@ -7962,7 +7972,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: true
 
   /for-each/0.3.3:
     resolution:
@@ -8021,7 +8030,6 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
-    dev: true
 
   /formdata-polyfill/4.0.10:
     resolution:
@@ -12260,6 +12268,18 @@ packages:
       is-docker: 2.2.1
       is-wsl: 2.2.0
     dev: true
+
+  /openai/3.1.0:
+    resolution:
+      {
+        integrity: sha512-v5kKFH5o+8ld+t0arudj833Mgm3GcgBnbyN9946bj6u7bvel4Yg6YFz2A4HLIYDzmMjIo0s6vSG9x73kOwvdCg==,
+      }
+    dependencies:
+      axios: 0.26.1
+      form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /optionator/0.9.1:
     resolution:
