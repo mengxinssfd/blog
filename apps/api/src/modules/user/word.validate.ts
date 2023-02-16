@@ -16,7 +16,7 @@ export class WordValidate implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    console.log('1', args);
+    // console.log('1', args);
     // here you can provide default error message if validation failed
     return `${args.property}($value)包含禁用词!请修改后再提交`;
   }
