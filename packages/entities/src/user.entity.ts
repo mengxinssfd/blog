@@ -16,6 +16,10 @@ export enum USER_STATE {
 }
 
 export class PublicUser extends BlogBaseEntity {
+  static readonly DEFAULT_AVATAR = DefaultAvatar;
+  static readonly ROLE = ROLE;
+  static readonly USER_STATE = USER_STATE;
+
   @Column('varchar', {
     comment: '用户名',
     length: 12,
