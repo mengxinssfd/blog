@@ -30,8 +30,8 @@ import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard
 import { SetRoleDto } from './dto/set-role.dto';
 import { WxLoginDTO } from './dto/wx-login.dto';
 import ResetTokenException from '../../exceptions/ResetToken.exception';
-import { LocalAuthGuard } from '@/modules/auth/local-auth.guard';
-import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
+import { LocalAuthGuard } from '@/guards/auth/local-auth.guard';
+import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 
 @ApiTags('user')
 @Controller('user')
