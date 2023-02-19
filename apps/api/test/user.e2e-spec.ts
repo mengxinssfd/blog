@@ -252,19 +252,21 @@ describe('UserController (e2e): /api/user', () => {
         .expect(200)
         .expect('{"code":403,"msg":"Forbidden resource"}');
     });
-    it('superAdmin有权禁言', async () => {
+    it('superAdmin有权禁言普通用户', async () => {
       const { admin, commonUser } = await createUsers();
-
-      await request()
-        .patch(prefix + '/mute/' + admin.id)
-        .set('authorization', 'Bearer ' + admin.token)
-        .expect(200)
-        .expect(ResTypes.success);
       return request()
         .patch(prefix + '/mute/' + commonUser.id)
         .set('authorization', 'Bearer ' + admin.token)
         .expect(200)
         .expect(ResTypes.success);
+    });
+    it('superAdmin无权禁言superAdmin', async () => {
+      const { admin } = await createUsers();
+      await request()
+        .patch(prefix + '/mute/' + admin.id)
+        .set('authorization', 'Bearer ' + admin.token)
+        .expect(200)
+        .expect('{"code":200,"msg":"不能禁言superAdmin"}');
     });
   });
 });
