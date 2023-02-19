@@ -196,15 +196,15 @@ export class UserController {
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('mute/:id')
-  mute(@Param('id') id: string) {
-    return this.userService.mute(+id);
+  mute(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+    return this.userService.mute(+id, user);
   }
   @ApiBearerAuth()
   @UseGuards(new RbacGuard(ROLE.superAdmin))
   @UseGuards(JwtAuthGuard)
   @Patch('cancel-mute/:id')
-  cancelMute(@Param('id') id: string) {
-    return this.userService.cancelMute(+id);
+  cancelMute(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+    return this.userService.cancelMute(+id, user);
   }
   @ApiBearerAuth()
   @UseGuards(new RbacGuard(ROLE.superAdmin))

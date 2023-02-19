@@ -11,12 +11,15 @@ import { httpsGet } from '@/utils/utils';
 import { WxLoginDTO } from './dto/wx-login.dto';
 import { createUUID } from '@tool-pack/basic';
 import FailedException from '@/exceptions/Failed.exception';
+import { Action, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
+import { ForbiddenError } from '@casl/ability';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly repository: Repository<UserEntity>,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   saveLoginInfo(id: number, ip: string) {
@@ -243,23 +246,26 @@ export class UserService {
     return { role: user.role };
   }
 
-  private async setMute(id: number, mute: boolean) {
-    const find = await this.repository.findOne({ where: { id } });
-    if (!find) {
-      throw new NotFoundException(`id:${id}不存在`);
-    }
-    if (find.role === ROLE.superAdmin) {
-      throw new ForbiddenException(`不能更改超级管理员账号权限`);
-    }
+  private async setMute(id: number, mute: boolean, loginUser: UserEntity) {
+    const find = await this.repository
+      .createQueryBuilder('user')
+      .where({ id })
+      .addSelect(['user.role'])
+      .getOne();
+    if (!find) throw new NotFoundException(`id:${id}不存在`);
+
+    const ab = this.caslAbilityFactory.createForUser(loginUser);
+    ForbiddenError.from(ab).throwUnlessCan(Action.Update, find, 'muted');
+
     find.muted = mute;
     await this.repository.save(find);
   }
 
-  async mute(id: number) {
-    return this.setMute(id, true);
+  async mute(id: number, loginUser: UserEntity) {
+    return this.setMute(id, true, loginUser);
   }
-  async cancelMute(id: number) {
-    return this.setMute(id, false);
+  async cancelMute(id: number, loginUser: UserEntity) {
+    return this.setMute(id, false, loginUser);
   }
   async restore(id: number) {
     await this.repository.restore(id);

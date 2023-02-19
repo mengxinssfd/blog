@@ -36,6 +36,9 @@ export class CaslAbilityFactory {
     cannot(Action.Delete, UserEntity, { role: ROLE.superAdmin }).because(
       '不能删除superAdmin的账号',
     );
+    cannot(Action.Update, UserEntity, 'muted', { role: ROLE.superAdmin }).because(
+      '不能禁言superAdmin',
+    );
     if (user.role !== ROLE.superAdmin) {
       can(Action.Update, UserEntity, { id: user.id }).because(
         '只有该用户或管理员才可以更新自己的信息',
