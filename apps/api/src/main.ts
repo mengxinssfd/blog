@@ -7,6 +7,7 @@ import { AnyExceptionFilter } from './filters/any-exception/any-exception.filter
 import { TransformInterceptor } from './interceptors/transform/transform.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { isDev } from './utils/utils';
+import { CaslForbiddenErrorExceptionFilter } from '@/filters/casl-forbidden-error-exception.filter';
 
 declare const module: any;
 
@@ -22,6 +23,7 @@ async function bootstrap() {
   // 否则 HttpExceptionFilter 就不生效了，全被 AllExceptionsFilter 捕获了。
   app.useGlobalFilters(new AnyExceptionFilter());
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new CaslForbiddenErrorExceptionFilter());
 
   // 线上环境不显示文档
   if (isDev()) {

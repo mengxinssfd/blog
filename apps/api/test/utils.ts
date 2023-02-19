@@ -8,6 +8,7 @@ import { HttpExceptionFilter } from '@/filters/http-exception/http-exception.fil
 import * as request from 'supertest';
 import { SuperTest } from 'supertest';
 import { logger } from '@/middlewares/logger/logger.middleware';
+import { CaslForbiddenErrorExceptionFilter } from '@/filters/casl-forbidden-error-exception.filter';
 
 process.env['NODE_ENV'] = 'e2e';
 
@@ -21,6 +22,7 @@ export function iniApp(app: INestApplication) {
   // 否则 HttpExceptionFilter 就不生效了，全被 AllExceptionsFilter 捕获了。
   app.useGlobalFilters(new AnyExceptionFilter());
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new CaslForbiddenErrorExceptionFilter());
 }
 
 export function buildApp(cb?: (app: INestApplication) => void): () => SuperTest<request.Test> {
