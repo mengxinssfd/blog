@@ -213,4 +213,58 @@ describe('UserController (e2e): /api/user', () => {
         );
     });
   });
+  async function registerLogin(user: ReturnType<typeof buildRegisterData>) {
+    const id = await register(user)
+      .expect(ResTypes.register)
+      .then<number>((res) => res.body.data.id);
+
+    const token = await login(user)
+      .expect(200)
+      .expect(ResTypes.login)
+      .then<string>((res) => res.body.data.token);
+    return [id, token];
+  }
+  describe('/mute/:id (PATCH) 禁言', () => {
+    async function createUsers() {
+      await UserEntity.clear();
+
+      const admin = buildRegisterData();
+      const [adminId, adminToken] = await registerLogin(admin);
+
+      const commonUser = buildRegisterData();
+      const [commonUserId, commonUserToken] = await registerLogin(commonUser);
+      return {
+        admin: { id: adminId, token: adminToken },
+        commonUser: { id: commonUserId, token: commonUserToken },
+      };
+    }
+
+    it('普通用户无权禁言', async () => {
+      const { admin, commonUser } = await createUsers();
+      await request()
+        .patch(prefix + '/mute/' + admin.id)
+        .set('authorization', 'Bearer ' + commonUser.token)
+        .expect(200)
+        .expect('{"code":403,"msg":"Forbidden resource"}');
+      return request()
+        .patch(prefix + '/mute/' + commonUser.id)
+        .set('authorization', 'Bearer ' + commonUser.token)
+        .expect(200)
+        .expect('{"code":403,"msg":"Forbidden resource"}');
+    });
+    it('superAdmin有权禁言', async () => {
+      const { admin, commonUser } = await createUsers();
+
+      await request()
+        .patch(prefix + '/mute/' + admin.id)
+        .set('authorization', 'Bearer ' + admin.token)
+        .expect(200)
+        .expect(ResTypes.success);
+      return request()
+        .patch(prefix + '/mute/' + commonUser.id)
+        .set('authorization', 'Bearer ' + admin.token)
+        .expect(200)
+        .expect(ResTypes.success);
+    });
+  });
 });
