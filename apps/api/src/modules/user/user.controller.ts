@@ -32,6 +32,8 @@ import { WxLoginDTO } from './dto/wx-login.dto';
 import ResetTokenException from '../../exceptions/ResetToken.exception';
 import { LocalAuthGuard } from '@/guards/auth/local-auth.guard';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
+import { CheckPolicies, PoliciesGuard } from '@/guards/policies/policies.guard';
+import { Action } from '@/guards/policies/casl-ability.factory';
 
 @ApiTags('user')
 @Controller('user')
@@ -102,7 +104,7 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('self')
-  async self(@User() user: UserEntity) {
+  async self(@Request() { user }: { user: UserEntity }) {
     const nUser = await this.userService.getSelf(user.id);
     if (nUser.role !== user.role) {
       const token = this.authService.certificate(nUser);
@@ -191,8 +193,8 @@ export class UserController {
     return this.userService.setRole(+id, roleDto);
   }
   @ApiBearerAuth()
-  @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(JwtAuthGuard)
+  @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('mute/:id')
   mute(@Param('id') id: string) {
     return this.userService.mute(+id);
