@@ -245,12 +245,12 @@ describe('UserController (e2e): /api/user', () => {
         .patch(prefix + '/mute/' + admin.id)
         .set('authorization', 'Bearer ' + commonUser.token)
         .expect(200)
-        .expect('{"code":403,"msg":"Forbidden resource"}');
+        .expect('{"code":403,"msg":"无权操作"}');
       return request()
         .patch(prefix + '/mute/' + commonUser.id)
         .set('authorization', 'Bearer ' + commonUser.token)
         .expect(200)
-        .expect('{"code":403,"msg":"Forbidden resource"}');
+        .expect('{"code":403,"msg":"无权操作"}');
     });
     it('superAdmin有权禁言普通用户', async () => {
       const { admin, commonUser } = await createUsers();
