@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
   // JWT验证 - Step 4: 被守卫调用
   async validate(payload: PublicUser & { iat: number; exp: number }) {
-    console.log(`JWT验证 - Step 4: 被守卫调用`);
+    // console.log(`JWT验证 - Step 4: 被守卫调用`);
     return omit(payload, ['iat', 'exp']);
   }
 }
