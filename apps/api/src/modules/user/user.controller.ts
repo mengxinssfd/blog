@@ -2,29 +2,24 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   Param,
   Patch,
   Post,
   Request,
   UseGuards,
-  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { AuthGuard } from '@nestjs/passport';
 import { DtoValidationPipe } from '@/pipe/dto-validation/dto-validation.pipe';
 import { RegisterInfoDTO } from './dto/register.dto';
-import { RbacInterceptor } from '@/interceptors/rbac/rbac.interceptor';
-import { RbacGuard } from '@/guards/rbac/rbac.guard';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { LoginInfoDTO, LoginResponseDTO } from './dto/login.dto';
 import { ReqIp, User } from '@/utils/decorator';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { ROLE, UserEntity } from '@blog/entities';
+import { UserEntity } from '@blog/entities';
 import { Throttle } from '@nestjs/throttler';
 import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
 import { SetRoleDto } from './dto/set-role.dto';
@@ -34,7 +29,10 @@ import { LocalAuthGuard } from '@/guards/auth/local-auth.guard';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
-import { Action } from '@/guards/policies/casl-ability.factory';
+import { Action, AppAbility, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
+import { ForbiddenError } from '@casl/ability';
+
+type RequestWithUser = Request & { user: UserEntity };
 
 @ApiTags('user')
 @Controller('user')
@@ -42,6 +40,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   @UsePipes(new DtoValidationPipe([WxLoginDTO]))
@@ -75,10 +74,10 @@ export class UserController {
     description: '用户登录',
     type: LoginInfoDTO,
   })*/
-  @UseGuards(ThrottlerBehindProxyGuard)
-  // 可以在 1 分钟内向单个端点发出来自同一 IP 的 5 个请求
+  // 使用LocalAuthGuard登录
+  @UseGuards(ThrottlerBehindProxyGuard, LocalAuthGuard)
+  // 与ThrottlerBehindProxyGuard配套装饰器，可以在 1 分钟内向单个端点发出来自同一 IP 的 5 个请求
   @Throttle(5, 60)
-  @UseGuards(LocalAuthGuard) // 使用LocalAuthGuard登录
   @Post('login')
   async login(@Request() req: { user: UserEntity }, @ReqIp() ip: string) {
     // 使用LocalAuthGuard代替手动登录
@@ -119,9 +118,9 @@ export class UserController {
     return this.userService.findOneById(+id, userId);
   }
 
-  @UsePipes(new DtoValidationPipe([]))
-  @UseInterceptors(new RbacInterceptor(ROLE.admin))
-  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ab) => ab.can(Action.Manage, UserEntity.modelName))
   @Get()
   findAll() {
     return this.userService.findAll();
@@ -136,17 +135,15 @@ export class UserController {
   @UsePipes(new DtoValidationPipe([UpdateUserDto]))
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string | number,
     @Body() updateDto: UpdateUserDto,
     @User() user: UserEntity,
   ) {
-    id = +id;
-
-    if (user.role > ROLE.superAdmin && user.id !== id)
-      throw new ForbiddenException('禁止修改其他账号信息');
-
-    return this.userService.update(id, updateDto, user);
+    await this.findUserUnlessCan(id, user, (er, findUser) => {
+      er.throwUnlessCan(Action.Update, findUser);
+    });
+    return this.userService.update(+id, updateDto);
   }
 
   // TODO 限制密码错误次数
@@ -157,61 +154,113 @@ export class UserController {
   async updatePassword(
     @Param('id') id: string | number,
     @Body() updateDto: UpdatePasswordDto,
-    @User() user: UserEntity,
+    @Request() { user }: RequestWithUser,
   ) {
-    id = +id;
-
-    if (user.role > ROLE.superAdmin && user.id !== id)
-      throw new ForbiddenException('禁止修改其他账号的密码');
-
     const findUser = await this.authService.validateUser({ id }, updateDto.curPassword);
 
-    return await this.userService.updatePassword(id, updateDto, findUser, user);
+    ForbiddenError.from(this.caslAbilityFactory.createForUser(user)).throwUnlessCan(
+      Action.Update,
+      findUser,
+      'password',
+    );
+
+    return await this.userService.updatePassword(updateDto, findUser, user);
   }
 
+  /**
+   * 真删除
+   */
   @ApiBearerAuth()
-  @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ab) => ab.can(Action.Delete, UserEntity.modelName))
   @Delete('delete/:id')
-  delete(@Param('id') id: string) {
+  async delete(@Param('id') id: string | number, @Request() { user }: RequestWithUser) {
+    await this.findUserUnlessCan(id, user, (ab, findUser) =>
+      ab.throwUnlessCan(Action.Delete, findUser),
+    );
+
     return this.userService.delete(+id);
   }
 
+  /**
+   * 软删除
+   */
   @ApiBearerAuth()
-  @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ab) => ab.can(Action.Delete, UserEntity.modelName))
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string | number, @Request() { user }: RequestWithUser) {
+    // const findUser = await this.userService.findOneById(id);
+    //
+    // ForbiddenError.from(this.caslAbilityFactory.createForUser(user)).throwUnlessCan(
+    //   Action.Delete,
+    //   findUser,
+    // );
+
+    // 替换上面注释的代码
+    await this.findUserUnlessCan(id, user, (ab, findUser) =>
+      ab.throwUnlessCan(Action.Delete, findUser),
+    );
+
     return this.userService.remove(+id);
   }
 
   @ApiBearerAuth()
   @UsePipes(new DtoValidationPipe([SetRoleDto]))
-  @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ab) => ab.can(Action.Update, UserEntity.modelName, 'role'))
   @Patch('role/:id')
-  setRole(@Param('id') id: string, @Body() roleDto: SetRoleDto) {
-    return this.userService.setRole(+id, roleDto);
+  async setRole(
+    @Param('id') id: string | number,
+    @Body() roleDto: SetRoleDto,
+    @Request() { user }: RequestWithUser,
+  ) {
+    const findUser = await this.findUserUnlessCan(id, user, (ab, findUser) =>
+      ab.throwUnlessCan(Action.Update, findUser, 'role'),
+    );
+
+    findUser.role = await this.userService.setRole(id, roleDto.role);
+
+    const token = this.authService.certificate(findUser);
+    throw new ResetTokenException({ token, user: findUser });
   }
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('mute/:id')
-  mute(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+  async mute(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+    await this.findUserUnlessCan(id, user, (er, findUser) => {
+      er.throwUnlessCan(Action.Update, findUser, 'muted');
+    });
     return this.userService.mute(+id, user);
   }
   @ApiBearerAuth()
-  @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(JwtAuthGuard)
+  @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('cancel-mute/:id')
-  cancelMute(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+  async cancelMute(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+    await this.findUserUnlessCan(id, user, (er, findUser) => {
+      er.throwUnlessCan(Action.Update, findUser, 'muted');
+    });
     return this.userService.cancelMute(+id, user);
   }
   @ApiBearerAuth()
-  @UseGuards(new RbacGuard(ROLE.superAdmin))
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ab) => ab.can(Action.Manage, UserEntity.modelName))
   @Patch('restore/:id')
   restore(@Param('id') id: string) {
     return this.userService.restore(+id);
+  }
+
+  async findUserUnlessCan(
+    id: number | string,
+    loginUser: UserEntity,
+    cb: (fbErr: ForbiddenError<AppAbility>, findUser: UserEntity) => void,
+  ) {
+    const user = await this.userService.findOneById(+id);
+
+    cb(ForbiddenError.from(this.caslAbilityFactory.createForUser(loginUser)), user);
+
+    return user;
   }
 }

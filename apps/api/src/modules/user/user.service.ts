@@ -6,20 +6,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ROLE, USER_STATE, UserEntity } from '@blog/entities';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { SetRoleDto } from './dto/set-role.dto';
 import { httpsGet } from '@/utils/utils';
 import { WxLoginDTO } from './dto/wx-login.dto';
 import { createUUID } from '@tool-pack/basic';
 import FailedException from '@/exceptions/Failed.exception';
-import { Action, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
-import { ForbiddenError } from '@casl/ability';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly repository: Repository<UserEntity>,
-    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   saveLoginInfo(id: number, ip: string) {
@@ -124,7 +120,7 @@ export class UserService {
     return { list, count };
   }
 
-  async findOneById(id: number, userId?: number) {
+  async findOneById(id: number | string, userId?: number) {
     if (id !== id) throw new FailedException('id错误！');
     const select = ['user.id', 'user.nickname', 'user.role', 'user.avatar', 'user.loginAt'];
     if (userId === id) {
@@ -172,12 +168,7 @@ export class UserService {
     return rep.getOne();
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto, loginUser: UserEntity) {
-    if (!(id === loginUser.id || loginUser.role === ROLE.superAdmin)) {
-      throw new ForbiddenException('无权更改');
-    }
-    await this.findOneById(id);
-
+  async update(id: number, updateUserDto: UpdateUserDto) {
     const user = new UserEntity();
     Object.assign(user, updateUserDto);
     user.id = id;
@@ -185,18 +176,9 @@ export class UserService {
     return await this.repository.save(user);
   }
 
-  async updatePassword(
-    id: number,
-    updateDto: UpdatePasswordDto,
-    user: UserEntity,
-    loginUser: UserEntity,
-  ) {
-    if (!(id === loginUser.id || loginUser.role === ROLE.superAdmin)) {
-      throw new ForbiddenException('无权更改该用户密码');
-    }
-
-    const { password, rePassword } = updateDto;
-    if (password !== rePassword) throw new FailedException('两次密码输入不一样');
+  async updatePassword(updateDto: UpdatePasswordDto, user: UserEntity, loginUser: UserEntity) {
+    const { password } = updateDto;
+    // if (password !== rePassword) throw new FailedException('两次密码输入不一样');
 
     const salt = makeSalt(); // 制作新的密码盐
     const hashPwd = encryptPassword(password, salt);
@@ -207,58 +189,28 @@ export class UserService {
     await this.repository.save(user);
   }
 
-  async verifyDelete(id: number) {
-    const find = await this.repository.findOne({ where: { id } });
-
-    if (!find) throw new NotFoundException(`id:${id}不存在`);
-
-    if (find.role === ROLE.superAdmin) return new ForbiddenException(`不能删除超级管理员账号`);
-
-    return 200;
-  }
-
   async delete(id: number) {
-    const res = await this.verifyDelete(id);
-    if (res !== 200) {
-      return res;
-    }
     await this.repository.delete(id);
-    return;
   }
 
   async remove(id: number) {
-    const res = await this.verifyDelete(id);
-    if (res !== 200) {
-      return res;
-    }
     await this.repository.softDelete(id);
-    return;
   }
 
-  async setRole(id: number, roleDto: SetRoleDto) {
-    const find = await this.repository.findOne({ where: { id } });
-
-    if (!find) throw new NotFoundException(`id:${id}不存在`);
-    if (find.role === ROLE.superAdmin) throw new ForbiddenException(`不能更改超级管理员账号权限`);
-
-    find.role = roleDto.role;
-    const user = await this.repository.save(find);
-    return { role: user.role };
+  async setRole(id: number | string, role: ROLE) {
+    const user = new UserEntity();
+    user.id = +id;
+    user.role = role;
+    const updatedUser = await user.save();
+    return updatedUser.role;
   }
 
   private async setMute(id: number, mute: boolean, loginUser: UserEntity) {
-    const find = await this.repository
-      .createQueryBuilder('user')
-      .where({ id })
-      .addSelect(['user.role'])
-      .getOne();
-    if (!find) throw new NotFoundException(`id:${id}不存在`);
-
-    const ab = this.caslAbilityFactory.createForUser(loginUser);
-    ForbiddenError.from(ab).throwUnlessCan(Action.Update, find, 'muted');
-
-    find.muted = mute;
-    await this.repository.save(find);
+    const user = new UserEntity();
+    user.id = id;
+    user.muted = mute;
+    user.updateBy = loginUser.id;
+    await user.save();
   }
 
   async mute(id: number, loginUser: UserEntity) {
