@@ -4,14 +4,26 @@ import type { Buffer } from 'buffer';
 import * as https from 'https';
 
 export const getIp = function (http: IncomingMessage): string {
-  const ipStr = http.headers['X-Real-IP'] || http.headers['x-forwarded-for'];
-  if (ipStr) {
-    const ipArr: string[] = Array.isArray(ipStr) ? ipStr : ipStr.split(',');
-    if (ipArr && ipArr.length > 0) {
-      //如果获取到的为ip数组
-      return ipArr[0] as string;
-    }
-  }
+  const headers = http.headers;
+  // X-Forwarded-For
+  // 记录代理服务器的地址，每经过一个代理，该字段会加上一个记录，由于是记录来源地址，所以该字段不会保存最后一个代理 服务器的地址
+  // - 存储客户端 ip 和反向代理 IP 列表，以逗号+空格分隔
+  // - 记录最后直连实际服务器之前的整个代理过程
+  // - 可能会被伪造 ip，但是直连实际服务器这段不会被伪造
+
+  // X-Real-IP
+  // 也是用来记录服务器的地址，但是和上面的不同，它不把记录添加到结尾，而是直接替换
+  // - 请求实际服务器的 IP
+  // - 每过一层 代理 都会被覆盖掉，只需第一层设置 代理
+  // - IP可以被伪造，但如果存在一级以上的 代理，它就不会收到影响，因为每经过一次代理，它就会被覆盖
+
+  // 原字段http.rawHeaders：X-Forwarded-For X-Real-IP
+  const realIp = headers['x-real-ip'] as string;
+  if (realIp) return realIp;
+
+  const forwardedForIp = (headers['x-forwarded-for'] as string)?.split(',')?.at(-1);
+  if (forwardedForIp) return forwardedForIp;
+
   const ips = (http as any).ips as string[];
   const ip = (http as any).ip as string;
   //获取不到时
