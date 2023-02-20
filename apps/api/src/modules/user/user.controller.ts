@@ -32,7 +32,8 @@ import { WxLoginDTO } from './dto/wx-login.dto';
 import ResetTokenException from '../../exceptions/ResetToken.exception';
 import { LocalAuthGuard } from '@/guards/auth/local-auth.guard';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
-import { CheckPolicies, PoliciesGuard } from '@/guards/policies/policies.guard';
+import { CheckPolicies } from '@/guards/policies/policies.decorator';
+import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { Action } from '@/guards/policies/casl-ability.factory';
 
 @ApiTags('user')
