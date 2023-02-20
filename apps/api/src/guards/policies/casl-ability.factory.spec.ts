@@ -1,6 +1,6 @@
 import { ROLE, UserEntity } from '@blog/entities';
 import { Action, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
-import { subject } from '@casl/ability';
+import { ForbiddenError, subject } from '@casl/ability';
 import { permittedFieldsOf } from '@casl/ability/extra';
 
 describe('CaslAbilityFactory', function () {
@@ -49,10 +49,10 @@ describe('CaslAbilityFactory', function () {
         expect(ab.can(Action.Delete, commonUser2)).toBeTruthy();
         expect(ab.cannot(Action.Delete, superAdmin)).toBeTruthy();
       });
-      it('可禁言任何人', () => {
+      it('可禁言除superAdmin以外的任何人', () => {
         expect(ab.can(Action.Update, UserEntity.modelName, 'muted')).toBeTruthy();
         expect(ab.can(Action.Update, UserEntity, 'muted')).toBeTruthy();
-        expect(ab.can(Action.Update, superAdmin, 'muted')).toBeTruthy();
+        expect(ab.cannot(Action.Update, superAdmin, 'muted')).toBeTruthy();
         expect(ab.can(Action.Update, commonUser1, 'muted')).toBeTruthy();
         expect(ab.can(Action.Update, commonUser2, 'muted')).toBeTruthy();
       });
@@ -124,6 +124,13 @@ describe('CaslAbilityFactory', function () {
         expect(ab.cannot(Action.Update, superAdmin, 'muted')).toBeTruthy();
         expect(ab.cannot(Action.Update, commonUser1, 'muted')).toBeTruthy();
         expect(ab.cannot(Action.Update, commonUser2, 'muted')).toBeTruthy();
+        expect(() => {
+          // 注意⚠️： ForbiddenError.from().throwUnlessCan() 不能传string，需要传class
+          ForbiddenError.from(ab).throwUnlessCan(Action.Update, UserEntity.modelName, 'muted');
+        }).toThrowError('Cannot execute "update" on "UserEntity"');
+        expect(() => {
+          ForbiddenError.from(ab).throwUnlessCan(Action.Update, UserEntity, 'muted');
+        }).toThrowError('管理员才可以修改用户是否禁言');
       });
       it('不可删除任何人', () => {
         expect(ab.cannot(Action.Delete, UserEntity.modelName)).toBeTruthy();
