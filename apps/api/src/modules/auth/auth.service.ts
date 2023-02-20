@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { encryptPassword } from '@/utils/cryptogram';
 import { PublicUser, UserEntity } from '@blog/entities';
@@ -48,11 +48,11 @@ export class AuthService {
     },
     password: string,
   ): Promise<UserEntity> {
-    console.log('JWT验证 - Step 2: 校验用户信息');
+    // console.log('JWT验证 - Step 2: 校验用户信息');
     const user = await this.findUser(findUserCondition);
 
     // 用户不存在
-    if (!user) throw new UnauthorizedException('账号不存在');
+    if (!user) throw new NotFoundException('账号不存在');
 
     const hashedPassword = user.password;
     const salt = user.salt;
@@ -71,7 +71,7 @@ export class AuthService {
       id: user.id,
       role: user.role,
     };
-    console.log('JWT验证 - Step 3: 处理 jwt 签证');
+    // console.log('JWT验证 - Step 3: 处理 jwt 签证');
     return this.jwtService.sign(payload);
   }
 }
