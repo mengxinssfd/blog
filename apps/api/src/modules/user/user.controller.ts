@@ -29,7 +29,7 @@ import { LocalAuthGuard } from '@/guards/auth/local-auth.guard';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
-import { Action, AppAbility, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
+import { Action, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { ForbiddenError } from '@casl/ability';
 
 type RequestWithUser = Request & { user: UserEntity };
@@ -79,7 +79,7 @@ export class UserController {
   // 与ThrottlerBehindProxyGuard配套装饰器，可以在 1 分钟内向单个端点发出来自同一 IP 的 5 个请求
   @Throttle(5, 60)
   @Post('login')
-  async login(@Request() req: { user: UserEntity }, @ReqIp() ip: string) {
+  async login(@Request() { user }: RequestWithUser, @ReqIp() ip: string) {
     // 使用LocalAuthGuard代替手动登录
     /*
     console.log('JWT验证 - Step 1: 用户请求登录');
@@ -89,8 +89,8 @@ export class UserController {
       loginParams.password,
     );
     */
-    const token = this.authService.certificate(req.user);
-    this.userService.saveLoginInfo(req.user.id, ip);
+    const token = this.authService.certificate(user);
+    this.userService.saveLoginInfo(user.id, ip);
 
     throw new ResetTokenException({ token });
   }
@@ -104,7 +104,7 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('self')
-  async self(@Request() { user }: { user: UserEntity }) {
+  async self(@Request() { user }: RequestWithUser) {
     const nUser = await this.userService.getSelf(user.id);
     if (nUser.role !== user.role) {
       const token = this.authService.certificate(nUser);
@@ -140,9 +140,7 @@ export class UserController {
     @Body() updateDto: UpdateUserDto,
     @User() user: UserEntity,
   ) {
-    await this.findUserUnlessCan(id, user, (er, findUser) => {
-      er.throwUnlessCan(Action.Update, findUser);
-    });
+    await this.findUser(id).unless(user).can(Action.Update);
     return this.userService.update(+id, updateDto);
   }
 
@@ -157,13 +155,11 @@ export class UserController {
     @Request() { user }: RequestWithUser,
   ) {
     const findUser = await this.authService.validateUser({ id }, updateDto.curPassword);
-
     ForbiddenError.from(this.caslAbilityFactory.createForUser(user)).throwUnlessCan(
       Action.Update,
       findUser,
       'password',
     );
-
     return await this.userService.updatePassword(updateDto, findUser, user);
   }
 
@@ -175,10 +171,7 @@ export class UserController {
   @CheckPolicies((ab) => ab.can(Action.Delete, UserEntity.modelName))
   @Delete('delete/:id')
   async delete(@Param('id') id: string | number, @Request() { user }: RequestWithUser) {
-    await this.findUserUnlessCan(id, user, (ab, findUser) =>
-      ab.throwUnlessCan(Action.Delete, findUser),
-    );
-
+    await this.findUser(id).unless(user).can(Action.Delete);
     return this.userService.delete(+id);
   }
 
@@ -198,9 +191,7 @@ export class UserController {
     // );
 
     // 替换上面注释的代码
-    await this.findUserUnlessCan(id, user, (ab, findUser) =>
-      ab.throwUnlessCan(Action.Delete, findUser),
-    );
+    await this.findUser(id).unless(user).can(Action.Delete);
 
     return this.userService.remove(+id);
   }
@@ -215,35 +206,30 @@ export class UserController {
     @Body() roleDto: SetRoleDto,
     @Request() { user }: RequestWithUser,
   ) {
-    const findUser = await this.findUserUnlessCan(id, user, (ab, findUser) =>
-      ab.throwUnlessCan(Action.Update, findUser, 'role'),
-    );
-
+    const findUser = await this.findUser(id).unless(user).can(Action.Update, 'role');
     findUser.role = await this.userService.setRole(id, roleDto.role);
-
     const token = this.authService.certificate(findUser);
     throw new ResetTokenException({ token, user: findUser });
   }
+
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('mute/:id')
-  async mute(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
-    await this.findUserUnlessCan(id, user, (er, findUser) => {
-      er.throwUnlessCan(Action.Update, findUser, 'muted');
-    });
+  async mute(@Param('id') id: string, @Request() { user }: RequestWithUser) {
+    await this.findUser(id).unless(user).can(Action.Update, 'muted');
     return this.userService.mute(+id, user);
   }
+
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('cancel-mute/:id')
-  async cancelMute(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
-    await this.findUserUnlessCan(id, user, (er, findUser) => {
-      er.throwUnlessCan(Action.Update, findUser, 'muted');
-    });
+  async cancelMute(@Param('id') id: string, @Request() { user }: RequestWithUser) {
+    await this.findUser(id).unless(user).can(Action.Update, 'muted');
     return this.userService.cancelMute(+id, user);
   }
+
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Manage, UserEntity.modelName))
@@ -252,15 +238,23 @@ export class UserController {
     return this.userService.restore(+id);
   }
 
-  async findUserUnlessCan(
-    id: number | string,
-    loginUser: UserEntity,
-    cb: (fbErr: ForbiddenError<AppAbility>, findUser: UserEntity) => void,
-  ) {
-    const user = await this.userService.findOneById(+id);
+  findUser(id: number | string) {
+    let _loginUser: UserEntity;
 
-    cb(ForbiddenError.from(this.caslAbilityFactory.createForUser(loginUser)), user);
+    const can = async (action: Action, field?: keyof UserEntity) => {
+      const user = await this.userService.findOneById(+id);
 
-    return user;
+      const err = ForbiddenError.from(this.caslAbilityFactory.createForUser(_loginUser));
+      err.throwUnlessCan(action, user, field);
+
+      return user;
+    };
+
+    const unless = (loginUser: UserEntity) => {
+      _loginUser = loginUser;
+      return { can };
+    };
+
+    return { unless };
   }
 }
