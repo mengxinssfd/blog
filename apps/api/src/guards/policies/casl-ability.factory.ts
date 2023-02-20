@@ -43,7 +43,7 @@ export class CaslAbilityFactory {
       can(Action.Update, UserEntity, { id: user.id }).because(
         '只有该用户或管理员才可以更新自己的信息',
       );
-      cannot(Action.Update, UserEntity, 'muted').because('管理员可以修改用户是否禁言');
+      cannot(Action.Update, UserEntity, 'muted').because('管理员才可以修改用户是否禁言');
 
       cannot(Action.Read, UserEntity, [
         'mobile',
