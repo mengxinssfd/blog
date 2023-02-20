@@ -266,7 +266,7 @@ describe('UserController (e2e): /api/user', () => {
         .patch(prefix + '/mute/' + admin.id)
         .set('authorization', 'Bearer ' + admin.token)
         .expect(200)
-        .expect('{"code":200,"msg":"不能禁言superAdmin"}');
+        .expect('{"code":403,"msg":"不能禁言superAdmin"}');
     });
   });
 });
