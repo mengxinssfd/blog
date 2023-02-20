@@ -15,7 +15,7 @@ export class CaslForbiddenErrorExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     const msg = exception.message;
-    const newJson = { code: response.statusCode, msg };
+    const newJson = { code: 403, msg };
 
     const logFormat = formatResLog(
       ctx.getRequest<Request>(),
