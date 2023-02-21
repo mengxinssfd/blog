@@ -4,6 +4,7 @@ import { AppModule } from '@/app.module';
 import * as request from 'supertest';
 import { SuperTest } from 'supertest';
 import { iniApp } from '@/init-app';
+import { sleep } from '@tool-pack/basic';
 
 export function buildApp(cb?: (app: INestApplication) => void): () => SuperTest<request.Test> {
   let app: INestApplication;
@@ -21,9 +22,8 @@ export function buildApp(cb?: (app: INestApplication) => void): () => SuperTest<
     await cb?.(app);
   });
 
-  // afterEach(() => {
-  //   app.close();
-  // });
+  // 不加会报错
+  afterAll(() => sleep(5));
 
   return () => request(app.getHttpServer());
 }
