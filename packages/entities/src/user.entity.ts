@@ -20,7 +20,7 @@ export class PublicUser extends BlogBaseEntity {
   static readonly ROLE = ROLE;
   static readonly USER_STATE = USER_STATE;
 
-  static readonly modelName = 'UserEntity';
+  static readonly modelName = 'UserEntity' as const;
 
   @Column('varchar', {
     comment: '用户名',
