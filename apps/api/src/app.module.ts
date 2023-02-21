@@ -12,10 +12,10 @@ import {
   CommentEntity,
   CommentLikeEntity,
   UserEntity,
+  ArticleLikeEntity,
 } from '@blog/entities';
 import { ChatAiModule } from './modules/chat-ai/chat-ai.module';
 import { CategoryModule } from '@/modules/category/category.module';
-import { ArticleLikeEntity } from '@blog/entities/dist/article-like.entity';
 
 const cm = ConfigModule.forRoot({
   isGlobal: true,
