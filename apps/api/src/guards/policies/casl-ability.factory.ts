@@ -1,4 +1,4 @@
-import { ROLE, UserEntity } from '@blog/entities';
+import { ROLE, UserEntity, CategoryEntity } from '@blog/entities';
 import {
   AbilityBuilder,
   AbilityOptionsOf,
@@ -9,7 +9,7 @@ import {
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 
-type Subjects = InferSubjects<typeof UserEntity, true> | 'all';
+type Subjects = InferSubjects<typeof UserEntity | typeof CategoryEntity, true> | 'all';
 
 export enum Action {
   Manage = 'manage',
@@ -23,6 +23,7 @@ export type AppAbility = MongoAbility<[Action, Subjects]>;
 
 const classMap = {
   [UserEntity.modelName]: UserEntity,
+  [CategoryEntity.modelName]: CategoryEntity,
 };
 
 /**
@@ -63,6 +64,45 @@ export class CaslAbilityFactory {
       cannot(Action.Update, UserEntity, 'role').because('只有superAdmin才能设置role');
     }
   }
+  private createCategoryRule(user: UserEntity, { can, cannot }: AbilityBuilder<AppAbility>) {
+    const Category = [CategoryEntity, CategoryEntity.modelName];
+
+    // 所有人都可查看
+    can(Action.Read, Category);
+
+    // dev及以上权限可新增cate
+    if ([ROLE.admin, ROLE.dev].includes(user.role)) {
+      can(Action.Create, Category);
+    }
+
+    // dev权限只能删改自己的
+    if ([ROLE.dev].includes(user.role)) {
+      // modelName与class的区别：
+      // - modelName：有没有权限更新或删除分类？--有；
+      // - class：有没有权限更新或删除分类？--有，但前提是自己创建的
+      // 总之：modelName广泛，class细致
+
+      can(Action.Update, CategoryEntity.modelName);
+      can(Action.Delete, CategoryEntity.modelName);
+
+      cannot(Action.Update, CategoryEntity, {
+        createById: { $ne: user.id },
+      }).because('只能修改自己创建的分类');
+
+      cannot(Action.Delete, CategoryEntity, {
+        createById: { $ne: user.id },
+      }).because('只能删除自己创建的分类');
+    }
+
+    // admin及以上权限可删改所有
+    if ([ROLE.admin, ROLE.superAdmin].includes(user.role)) {
+      can([Action.Update, Action.Delete], Category);
+    }
+    // 当该分类下有文章时，所有人都不可删除该分类
+    cannot(Action.Delete, CategoryEntity, { articleCount: { $ne: 0 } }).because(
+      '该分类有被文章使用，可先把这些文章改为其他分类再执行删除操作',
+    );
+  }
   createForUser(user: UserEntity) {
     // 参考文档：https://casl.js.org/v6/en/guide/restricting-fields
     const options: AbilityOptionsOf<AppAbility> = {
@@ -87,6 +127,7 @@ export class CaslAbilityFactory {
     }
 
     this.createUserRule(user, builder);
+    this.createCategoryRule(user, builder);
 
     return createMongoAbility<AppAbility>(
       // json原始规则

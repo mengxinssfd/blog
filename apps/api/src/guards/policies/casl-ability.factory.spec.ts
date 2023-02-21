@@ -1,4 +1,4 @@
-import { ROLE, UserEntity } from '@blog/entities';
+import { ROLE, UserEntity, CategoryEntity } from '@blog/entities';
 import { Action, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { ForbiddenError, subject } from '@casl/ability';
 import { permittedFieldsOf } from '@casl/ability/extra';
@@ -7,17 +7,29 @@ describe('CaslAbilityFactory', function () {
   const superAdmin = new UserEntity();
   superAdmin.role = ROLE.superAdmin;
   superAdmin.id = 1;
+  superAdmin.nickname = 'super admin';
 
   const commonUser1 = new UserEntity();
   commonUser1.role = ROLE.commonUser;
   commonUser1.id = 2;
+  commonUser1.nickname = 'common user 1';
 
   const commonUser2 = new UserEntity();
   commonUser2.role = ROLE.commonUser;
   commonUser2.id = 3;
+  commonUser2.nickname = 'common user 2';
+
+  const dev = new UserEntity();
+  dev.role = ROLE.dev;
+  dev.id = 4;
+
+  const admin = new UserEntity();
+  admin.role = ROLE.admin;
+  admin.id = 5;
+
+  const factory = new CaslAbilityFactory();
 
   describe('UserEntity', function () {
-    const factory = new CaslAbilityFactory();
     describe('superAdmin', function () {
       const ab = factory.createForUser(superAdmin);
       it('可管理User', () => {
@@ -146,6 +158,109 @@ describe('CaslAbilityFactory', function () {
         expect(ab.cannot(Action.Update, superAdmin, 'role')).toBeTruthy();
         expect(ab.cannot(Action.Update, commonUser1, 'role')).toBeTruthy();
         expect(ab.cannot(Action.Update, commonUser2, 'role')).toBeTruthy();
+      });
+    });
+  });
+  describe('CategoryEntity', function () {
+    const commonAb = factory.createForUser(commonUser1);
+    const devAb = factory.createForUser(dev);
+    const adminAb = factory.createForUser(admin);
+    const superAb = factory.createForUser(superAdmin);
+
+    describe('dev-', function () {
+      it('不可增删改', function () {
+        expect(commonAb.cannot(Action.Create, CategoryEntity)).toBeTruthy();
+        expect(commonAb.cannot(Action.Create, new CategoryEntity())).toBeTruthy();
+        expect(commonAb.cannot(Action.Create, CategoryEntity.modelName)).toBeTruthy();
+
+        expect(commonAb.cannot(Action.Update, CategoryEntity)).toBeTruthy();
+        expect(commonAb.cannot(Action.Update, new CategoryEntity())).toBeTruthy();
+        expect(commonAb.cannot(Action.Update, CategoryEntity.modelName)).toBeTruthy();
+
+        expect(commonAb.cannot(Action.Delete, CategoryEntity)).toBeTruthy();
+        expect(commonAb.cannot(Action.Delete, new CategoryEntity())).toBeTruthy();
+        expect(commonAb.cannot(Action.Delete, CategoryEntity.modelName)).toBeTruthy();
+      });
+    });
+    describe('dev', function () {
+      it('可增删改', function () {
+        expect(devAb.can(Action.Create, CategoryEntity)).toBeTruthy();
+        expect(devAb.can(Action.Create, CategoryEntity.modelName)).toBeTruthy();
+        expect(devAb.can(Action.Create, new CategoryEntity())).toBeTruthy();
+
+        expect(devAb.can(Action.Update, CategoryEntity.modelName)).toBeTruthy();
+        // 传class或实例不行，是因为createById不等于dev.id
+        expect(devAb.cannot(Action.Update, CategoryEntity)).toBeTruthy();
+        expect(devAb.cannot(Action.Update, new CategoryEntity())).toBeTruthy();
+
+        expect(devAb.can(Action.Delete, CategoryEntity.modelName)).toBeTruthy();
+        // 传class或实例不行，是因为createById不等于dev.id
+        expect(devAb.cannot(Action.Delete, CategoryEntity)).toBeTruthy();
+        expect(devAb.cannot(Action.Delete, new CategoryEntity())).toBeTruthy();
+      });
+      it('不可删改其他账号创建的', function () {
+        const cate = new CategoryEntity();
+        cate.createById = admin.id;
+        expect(devAb.cannot(Action.Update, cate)).toBeTruthy();
+        expect(devAb.cannot(Action.Delete, cate)).toBeTruthy();
+      });
+    });
+    describe('admin+', function () {
+      it('可增删改', function () {
+        // admin
+        expect(adminAb.can(Action.Create, CategoryEntity)).toBeTruthy();
+        expect(adminAb.can(Action.Create, CategoryEntity.modelName)).toBeTruthy();
+        expect(adminAb.can(Action.Create, new CategoryEntity())).toBeTruthy();
+
+        expect(adminAb.can(Action.Update, CategoryEntity)).toBeTruthy();
+        expect(adminAb.can(Action.Update, CategoryEntity.modelName)).toBeTruthy();
+        expect(adminAb.can(Action.Update, new CategoryEntity())).toBeTruthy();
+
+        expect(adminAb.can(Action.Delete, CategoryEntity)).toBeTruthy();
+        expect(adminAb.can(Action.Delete, CategoryEntity.modelName)).toBeTruthy();
+        // expect(adminAb.can(Action.Delete, new CategoryEntity())).toBeTruthy();
+
+        // super admin
+        expect(superAb.can(Action.Create, CategoryEntity)).toBeTruthy();
+        expect(superAb.can(Action.Create, CategoryEntity.modelName)).toBeTruthy();
+        expect(superAb.can(Action.Create, new CategoryEntity())).toBeTruthy();
+
+        expect(superAb.can(Action.Update, CategoryEntity)).toBeTruthy();
+        expect(superAb.can(Action.Update, CategoryEntity.modelName)).toBeTruthy();
+        expect(superAb.can(Action.Update, new CategoryEntity())).toBeTruthy();
+
+        expect(superAb.can(Action.Delete, CategoryEntity)).toBeTruthy();
+        expect(superAb.can(Action.Delete, CategoryEntity.modelName)).toBeTruthy();
+        // expect(superAb.can(Action.Delete, new CategoryEntity())).toBeTruthy();
+      });
+      it('可删改其他账号创建的', function () {
+        const cate = new CategoryEntity();
+        cate.createById = commonUser1.id;
+        cate.articleCount = 0;
+
+        expect(adminAb.can(Action.Update, cate)).toBeTruthy();
+        expect(adminAb.can(Action.Delete, cate)).toBeTruthy();
+
+        expect(superAb.can(Action.Update, cate)).toBeTruthy();
+        expect(superAb.can(Action.Delete, cate)).toBeTruthy();
+      });
+    });
+    describe('all', function () {
+      it('都可查看', function () {
+        expect(commonAb.can(Action.Read, CategoryEntity.modelName)).toBeTruthy();
+        expect(devAb.can(Action.Read, CategoryEntity.modelName)).toBeTruthy();
+        expect(adminAb.can(Action.Read, CategoryEntity.modelName)).toBeTruthy();
+        expect(superAb.can(Action.Read, CategoryEntity.modelName)).toBeTruthy();
+      });
+      it('都不可删除有文章用了的分类', function () {
+        const cate = new CategoryEntity();
+        cate.createById = commonUser1.id;
+        cate.articleCount = 1;
+
+        expect(commonAb.cannot(Action.Delete, cate)).toBeTruthy();
+        expect(devAb.cannot(Action.Delete, cate)).toBeTruthy();
+        expect(adminAb.cannot(Action.Delete, cate)).toBeTruthy();
+        expect(superAb.cannot(Action.Delete, cate)).toBeTruthy();
       });
     });
   });
