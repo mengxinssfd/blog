@@ -1,42 +1,29 @@
-import { UserEntity } from '@blog/entities';
-import { pick } from '@tool-pack/basic';
-import { buildRegisterData, prefix, ResTypes } from './utils';
-import { buildApp } from '../utils';
+import { pick, pickByKeys } from '@tool-pack/basic';
+import { buildRegisterData, ResTypes } from './utils';
+import { buildApp, clearAllTables } from '../utils';
 import { userApi } from './api';
 
 describe('/login (POST)', () => {
   const request = buildApp();
   const { login, register } = userApi(request);
   it('账号不存在', async () => {
-    await UserEntity.clear();
-    return request()
-      .post(prefix + '/login')
-      .send(pick(buildRegisterData(), ['username', 'password']))
-      .expect(200)
-      .expect('{"code":404,"msg":"账号不存在"}');
+    await clearAllTables();
+    const up = pickByKeys(buildRegisterData(), ['username', 'password']);
+    return login(up).expect(200).expect('{"code":404,"msg":"账号不存在"}');
   });
   it('账号或密码不正确', async function () {
     const user = buildRegisterData();
-    await request()
-      .post(prefix + '/register')
-      .send(user);
+    await register(user);
 
-    return request()
-      .post(prefix + '/login')
-      .send({ username: user.username, password: '123' })
+    return login({ username: user.username, password: '123' })
       .expect(200)
       .expect('{"code":401,"msg":"账号或密码不正确"}');
   });
   it('登录成功', async function () {
     const user = buildRegisterData();
-    await request()
-      .post(prefix + '/register')
-      .send(user)
-      .expect(ResTypes.register);
+    await register(user).expect(ResTypes.register);
 
-    return request()
-      .post(prefix + '/login')
-      .send(pick(user, ['password', 'username']))
+    return login(pick(user, ['password', 'username']))
       .expect(200)
       .expect(ResTypes.login);
   });

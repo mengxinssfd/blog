@@ -1,12 +1,12 @@
-import { buildApp } from '../utils';
+import { buildApp, clearAllTables } from '../utils';
 import { ROLE, UserEntity } from '@blog/entities';
 import { sleep } from '@tool-pack/basic';
-import { buildRegisterData, ipGen, prefix, ResTypes } from './utils';
-import { userApi } from './api';
+import { buildRegisterData, ipGen, ResTypes } from './utils';
+import { userApi, prefix } from './api';
 
 describe('UserController (e2e): /api/user', () => {
   const request = buildApp(async () => {
-    await UserEntity.clear();
+    // await clearAllTables();
   });
 
   afterAll(() => (console.log('ip gen', ipGen.next().value), sleep(200)));
@@ -19,7 +19,7 @@ describe('UserController (e2e): /api/user', () => {
 
   describe('/:id (PATCH) 更新用户信息', function () {
     it('需要登录', async () => {
-      await UserEntity.clear();
+      await clearAllTables();
 
       const user1 = buildRegisterData();
       await register(user1);
@@ -31,7 +31,7 @@ describe('UserController (e2e): /api/user', () => {
         .expect(ResTypes.unauthorized);
     });
     it('禁止修改其他账号', async () => {
-      await UserEntity.clear();
+      await clearAllTables();
 
       const user1 = buildRegisterData();
       const id1 = await register(user1)
@@ -62,7 +62,7 @@ describe('UserController (e2e): /api/user', () => {
         .expect('{"code":403,"msg":"禁止修改其他账号信息"}');
     });
     it('修改成功', async () => {
-      await UserEntity.clear();
+      await clearAllTables();
 
       const user = buildRegisterData();
       const id = await register(user)

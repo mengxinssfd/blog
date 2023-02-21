@@ -4,7 +4,7 @@ import { AppModule } from '@/app.module';
 import * as request from 'supertest';
 import { SuperTest } from 'supertest';
 import { iniApp } from '@/init-app';
-import { sleep } from '@tool-pack/basic';
+import * as Entities from '@blog/entities';
 
 export function buildApp(cb?: (app: INestApplication) => void): () => SuperTest<request.Test> {
   let app: INestApplication;
@@ -23,7 +23,27 @@ export function buildApp(cb?: (app: INestApplication) => void): () => SuperTest<
   });
 
   // 不加会报错
-  afterAll(() => sleep(5));
+  afterAll(async () => {
+    await Entities.UserEntity.getRepository()
+      .manager.connection.createQueryRunner()
+      .clearDatabase();
+    await Entities.UserEntity.getRepository().manager.connection.destroy();
+  });
 
   return () => request(app.getHttpServer());
+}
+
+export async function clearAllTables() {
+  // 先暂时停掉外键约束检查，等清理完成才还原回来
+  await Entities.UserEntity.getRepository().query('SET FOREIGN_KEY_CHECKS=0;');
+
+  // await Entities.CommentDislikeEntity.clear();
+  // await Entities.CommentLikeEntity.clear();
+  // await Entities.CommentEntity.clear();
+  // await Entities.ArticleEntity.clear();
+  // await Entities.ArticleLikeEntity.clear();
+  await Entities.CategoryEntity.clear();
+  await Entities.UserEntity.clear();
+
+  await Entities.UserEntity.getRepository().query('SET FOREIGN_KEY_CHECKS=1;');
 }

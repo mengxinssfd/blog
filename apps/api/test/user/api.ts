@@ -1,8 +1,11 @@
 import { pick } from '@tool-pack/basic';
 import { UpdatePasswordDto } from '@/modules/user/dto/update-password.dto';
-import { ROLE, UserEntity } from '@blog/entities';
-import { buildRegisterData, ipGen, prefix, ResTypes } from './utils';
+import { ROLE } from '@blog/entities';
+import { buildRegisterData, ipGen, ResTypes } from './utils';
 import { SuperTest, Test } from 'supertest';
+import { clearAllTables } from '../utils';
+
+export const prefix = '/api/user';
 
 export function userApi(request: () => SuperTest<Test>) {
   function register(user: ReturnType<typeof buildRegisterData>) {
@@ -82,7 +85,7 @@ export function userApi(request: () => SuperTest<Test>) {
   }
 
   async function createUsers() {
-    await UserEntity.clear();
+    await clearAllTables();
 
     const admin = buildRegisterData();
     const [adminId, adminToken] = await registerLogin(admin);
@@ -93,6 +96,12 @@ export function userApi(request: () => SuperTest<Test>) {
       admin: { ...admin, id: adminId, token: adminToken },
       commonUser: { ...commonUser, id: commonUserId, token: commonUserToken },
     };
+  }
+
+  function mute(id: number, token: string) {
+    return request()
+      .patch(prefix + '/mute/' + id)
+      .set('authorization', 'Bearer ' + token);
   }
 
   return {
@@ -106,5 +115,6 @@ export function userApi(request: () => SuperTest<Test>) {
     register,
     registerLogin,
     createUsers,
+    mute,
   };
 }

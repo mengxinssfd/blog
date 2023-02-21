@@ -1,5 +1,4 @@
-import { UserEntity } from '@blog/entities';
-import { buildApp } from '../utils';
+import { buildApp, clearAllTables } from '../utils';
 import { userApi } from './api';
 import { buildRegisterData, ResTypes } from './utils';
 
@@ -32,7 +31,7 @@ describe('/password/:id (PATCH) 更换密码', () => {
       );
     });
     it('可以更换自己账号的密码，且原密码无法再使用', async () => {
-      await UserEntity.clear();
+      await clearAllTables();
 
       const admin = buildRegisterData();
       const [id, token] = await registerLogin(admin);
@@ -57,7 +56,7 @@ describe('/password/:id (PATCH) 更换密码', () => {
       );
     });
     it('账号不存在', async () => {
-      await UserEntity.clear();
+      await clearAllTables();
 
       const admin = buildRegisterData();
       const [, token] = await registerLogin(admin);

@@ -1,8 +1,6 @@
 import { createUUID, idGen } from '@tool-pack/basic';
 import { UserEntity } from '@blog/entities';
 
-export const prefix = '/api/user';
-
 const id = idGen();
 export function buildRegisterData() {
   const name = 'hello_' + id.next().value;
