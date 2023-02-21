@@ -13,7 +13,7 @@
     "husky-msg-init": "husky add .husky/pre-commit \"npx lint-staged --allow-empty \"$1\"\"&husky add .husky/commit-msg \"npx commitlint --edit \"$1\"\"",
     "check:lint": "eslint \"{src,apps,libs,test}/**/*.{ts,vue}\"",
     "check:ts": "pnpm -r check:ts && tsc --noEmit -p ./tsconfig.noEmit.json",
-    "check:all": "run-p check:ts check:ts:vue check:lint",
+    "check:all": "run-p check:ts check:lint",
     "start:dev": "pnpm -C ./apps/api start:dev & pnpm -C ./apps/front dev",
     "build": "pnpm -C ./apps/api build & pnpm -C ./apps/front build",
     "prebuild": "pnpm --filter ./packages/* build"
