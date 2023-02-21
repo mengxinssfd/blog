@@ -15,7 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { DtoValidationPipe } from '@/pipe/dto-validation/dto-validation.pipe';
 import { RegisterInfoDTO } from './dto/register.dto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { LoginInfoDTO, LoginResponseDTO } from './dto/login.dto';
 import { ReqIp, User } from '@/utils/decorator';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -70,10 +70,10 @@ export class UserController {
     type: LoginResponseDTO,
   })
   @UsePipes(new DtoValidationPipe([LoginInfoDTO]))
-  /*@ApiBody({
+  @ApiBody({
     description: '用户登录',
     type: LoginInfoDTO,
-  })*/
+  })
   // 使用LocalAuthGuard登录
   @UseGuards(ThrottlerBehindProxyGuard, LocalAuthGuard)
   // 与ThrottlerBehindProxyGuard配套装饰器，可以在 1 分钟内向单个端点发出来自同一 IP 的 5 个请求

@@ -43,7 +43,7 @@ export class RegisterInfoDTO {
     required: false,
     // description: '[用户角色]: 0-超级管理员 | 1-管理员 | 2-开发&测试&运营 | 3-普通用户（只能查看）',
   })*/
-  @ApiPropertyOptional({ example: '18718033902' })
+  @ApiPropertyOptional({ example: '18718033802' })
   @ValidateIf((o: RegisterInfoDTO) => !!o.mobile)
   @IsMobilePhone('zh-CN', { strictMode: false }, { message: '手机号码格式不正确' })
   // @IsNotEmpty({ message: '手机号码不能为空' })

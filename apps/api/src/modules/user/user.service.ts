@@ -46,7 +46,7 @@ export class UserService {
       select: ['id', 'username', 'nickname', 'role', 'avatar'],
     });
     if (!find) {
-      throw new NotFoundException('未找到该账号');
+      throw new NotFoundException('账号不存在');
     }
     return find;
   }
