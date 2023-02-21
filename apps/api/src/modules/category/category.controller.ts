@@ -14,7 +14,7 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { DtoValidationPipe } from '@/pipe/dto-validation/dto-validation.pipe';
+import { DtoValidationPipe } from '@/pipes/dto-validation/dto-validation.pipe';
 import { User } from '@/utils/decorator';
 import { CategoryEntity, UserEntity } from '@blog/entities';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';

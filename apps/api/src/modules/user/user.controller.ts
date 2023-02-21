@@ -13,7 +13,7 @@ import {
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { DtoValidationPipe } from '@/pipe/dto-validation/dto-validation.pipe';
+import { DtoValidationPipe } from '@/pipes/dto-validation/dto-validation.pipe';
 import { RegisterInfoDTO } from './dto/register.dto';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { LoginInfoDTO, LoginResponseDTO } from './dto/login.dto';
