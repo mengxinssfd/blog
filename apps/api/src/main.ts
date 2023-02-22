@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { isDev } from './utils/utils';
+import { ENV } from './utils/utils';
 import { iniApp } from '@/init-app';
 
 declare const module: any;
@@ -12,7 +12,7 @@ async function bootstrap() {
   iniApp(app);
 
   // 线上环境不显示文档
-  if (isDev()) {
+  if (ENV.isDev()) {
     // 配置 Swagger
     const options = new DocumentBuilder()
       .addBearerAuth() // 开启 BearerAuth 授权认证

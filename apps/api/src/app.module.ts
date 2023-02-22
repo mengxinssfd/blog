@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { getMYSQLConfig } from './utils/utils';
+import { ENV, getMYSQLConfig } from './utils/utils';
 import { UserModule } from './modules/user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
@@ -19,7 +19,7 @@ import { CategoryModule } from '@/modules/category/category.module';
 
 const cm = ConfigModule.forRoot({
   isGlobal: true,
-  envFilePath: ['.env.local', ...(process.env['NODE_ENV'] === 'test' ? ['.env.test'] : []), '.env'], // 前面的会覆盖后面的
+  envFilePath: ['.env.local', ...(ENV.isTest() ? ['.env.test'] : []), '.env'], // 前面的会覆盖后面的
 });
 
 @Module({

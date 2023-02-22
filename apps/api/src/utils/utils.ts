@@ -30,11 +30,20 @@ export const getIp = function (http: IncomingMessage): string {
   return ips?.[0] ?? ip;
 };
 
-export function isDev(): boolean {
-  // 本地运行是没有 process.env.NODE_ENV 的，借此来区分[开发环境]和[生产环境]
-  console.log('env', process.env['NODE_ENV']);
-  return !process.env['NODE_ENV'];
-}
+export const ENV = {
+  isDev(): boolean {
+    // 本地运行是没有 process.env.NODE_ENV 的，借此来区分[开发环境]和[生产环境]
+    // 生产环境下也是需要自己手动配置的，不会有自带该环境变量
+    const env = process.env['NODE_ENV'];
+    console.log('env', env);
+    return env === 'development';
+  },
+  isTest() {
+    // test是nest配置的，e2e测试时会变成test
+    const env = process.env['NODE_ENV'];
+    return env === 'test';
+  },
+};
 
 export function httpsGet<T>(url: string): Promise<T> {
   return new Promise<any>((resolve, reject) => {

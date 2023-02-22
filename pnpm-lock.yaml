@@ -83,6 +83,7 @@ importers:
       '@types/supertest': ^2.0.12
       class-transformer: ^0.5.1
       class-validator: ^0.14.0
+      cross-env: ^7.0.3
       express: ^4.18.2
       log4js: ^6.7.1
       mysql2: ^3.1.2
@@ -139,6 +140,7 @@ importers:
       '@types/passport-jwt': 3.0.8
       '@types/passport-local': 1.0.35
       '@types/supertest': 2.0.12
+      cross-env: 7.0.3
       npm-check-updates: 16.6.3
       source-map-support: 0.5.21
       supertest: 6.3.3
@@ -6178,6 +6180,17 @@ packages:
       {
         integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==,
       }
+    dev: true
+
+  /cross-env/7.0.3:
+    resolution:
+      {
+        integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==,
+      }
+    engines: { node: '>=10.14', npm: '>=6', yarn: '>=1' }
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
     dev: true
 
   /cross-spawn/6.0.5:
