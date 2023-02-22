@@ -56,7 +56,7 @@ function buildPkg() {
  */
 function cpEnvFile() {
   const list = fs.readdirSync(apiRoot());
-  const envs = list.filter((f) => f.startsWith('.env'));
+  const envs = list.filter((f) => f.startsWith('.env') && !f.includes('test'));
   envs.forEach((env) => fs.cpSync(apiRoot(env), apiRoot('dist/' + env)));
 }
 
