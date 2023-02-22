@@ -20,7 +20,7 @@ export const ipGen = idGen(1, 1, 255);
 export const ResTypes = {
   success: '{"code":200,"msg":"Success"}',
   unauthorized: '{"code":401,"msg":"Unauthorized"}',
-  register: /^\{"code":200,"msg":"Success","data":\{"id":\d+}}$/,
+  register: /^\{"code":201,"msg":"Success","data":\{"id":\d+}}$/,
   login: /^\{"code":207,"msg":"Success","data":\{"token":"[^"]{149}"}}$/,
   self: new RegExp(
     `^\\{"code":200,"msg":"Success","data":\\{"user":\\{"id":\\d+,"username":"hello_\\d+","nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}","role":\\d+}}}$`,
