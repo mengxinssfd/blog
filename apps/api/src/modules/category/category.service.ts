@@ -2,9 +2,10 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ARTICLE_STATE, CategoryEntity, ROLE, UserEntity } from '@blog/entities';
+import { ARTICLE_STATE, ArticleEntity, CategoryEntity, ROLE, UserEntity } from '@blog/entities';
 import { Repository } from 'typeorm';
 import { rawsToEntities } from '@/utils/assemblyEntity';
+import FailedException from '@/exceptions/Failed.exception';
 
 @Injectable()
 export class CategoryService {
@@ -38,7 +39,8 @@ export class CategoryService {
     c.createById = loginUser.id;
     Object.assign(c, createCategoryDto);
 
-    await this.categoryRepository.save(c);
+    const res = await this.categoryRepository.save(c);
+    return { id: res.id };
   }
 
   async findAll() {
@@ -75,6 +77,7 @@ export class CategoryService {
   async findOne(id: number) {
     const findCate = await this.categoryRepository.findOneBy({ id });
     if (!findCate) throw new NotFoundException('该分类不存在');
+    findCate.articleCount = await ArticleEntity.countBy({ categoryId: id });
     return findCate;
   }
   async findOneByName(name: string) {
@@ -90,7 +93,8 @@ export class CategoryService {
     return c.save();
   }
 
-  remove(id: number) {
-    return this.categoryRepository.softDelete(id);
+  async remove(id: number) {
+    const res = await this.categoryRepository.softDelete(id);
+    if (!res.affected) throw new FailedException('删除失败');
   }
 }

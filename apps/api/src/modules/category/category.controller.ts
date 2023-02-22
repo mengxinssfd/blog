@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
   UsePipes,
+  HttpCode,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -32,6 +33,7 @@ export class CategoryController {
   ) {}
 
   @ApiBearerAuth()
+  @HttpCode(201)
   @UsePipes(new DtoValidationPipe([CreateCategoryDto]))
   @CheckPolicies((ab) => ab.can(Action.Create, CategoryEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)

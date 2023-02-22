@@ -85,17 +85,22 @@ export function userApi(request: () => SuperTest<Test>) {
   }
 
   async function createUsers() {
-    await clearAllTables();
-
-    const admin = buildRegisterData();
-    const [adminId, adminToken] = await registerLogin(admin);
+    const admin = await createAdmin();
 
     const commonUser = buildRegisterData();
     const [commonUserId, commonUserToken] = await registerLogin(commonUser);
     return {
-      admin: { ...admin, id: adminId, token: adminToken },
+      admin,
       commonUser: { ...commonUser, id: commonUserId, token: commonUserToken },
     };
+  }
+
+  async function createAdmin() {
+    await clearAllTables();
+
+    const admin = buildRegisterData();
+    const [id, token] = await registerLogin(admin);
+    return { ...admin, id, token };
   }
 
   function mute(id: number, token: string) {
@@ -116,5 +121,6 @@ export function userApi(request: () => SuperTest<Test>) {
     registerLogin,
     createUsers,
     mute,
+    createAdmin,
   };
 }
