@@ -70,6 +70,7 @@
   },
   "dependencies": {
     "@tool-pack/basic": "^0.0.11",
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.12",
+    "@blog/entities": "./packages/entities"
   }
 }

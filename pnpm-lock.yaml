@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 importers:
   .:
     specifiers:
+      '@blog/entities': ./packages/entities
       '@commitlint/cli': ^17.4.2
       '@commitlint/config-conventional': ^17.4.2
       '@nuxtjs/eslint-config-typescript': ^12.0.0
@@ -30,6 +31,7 @@ importers:
       webpack: ^5.75.0
       webpack-node-externals: ^3.0.0
     dependencies:
+      '@blog/entities': link:packages/entities
       '@tool-pack/basic': 0.0.11
       typeorm: 0.3.12
     devDependencies:
@@ -60,7 +62,6 @@ importers:
 
   apps/api:
     specifiers:
-      '@blog/entities': ../../packages/entities
       '@casl/ability': ^6.3.3
       '@nestjs/cli': ^9.1.9
       '@nestjs/common': ^9.2.1
@@ -74,6 +75,7 @@ importers:
       '@nestjs/testing': ^9.2.1
       '@nestjs/throttler': ^4.0.0
       '@nestjs/typeorm': ^9.0.1
+      '@tool-pack/basic': ^0.0.11
       '@types/express': ^4.17.16
       '@types/node': 18.11.18
       '@types/passport-jwt': ^3.0.8
@@ -81,6 +83,7 @@ importers:
       '@types/supertest': ^2.0.12
       class-transformer: ^0.5.1
       class-validator: ^0.14.0
+      express: ^4.18.2
       log4js: ^6.7.1
       mysql2: ^3.1.2
       npm-check-updates: ^16.6.3
@@ -101,7 +104,6 @@ importers:
       typeorm: ^0.3.12
       typescript: ^4.9.5
     dependencies:
-      '@blog/entities': link:../../packages/entities
       '@casl/ability': 6.3.3
       '@nestjs/common': 9.2.1_welcnyot5bzd5wa2aovbkxpi4i
       '@nestjs/config': 2.3.1_b4pxbpa7chblgbyake5iz5rdmu
@@ -112,8 +114,10 @@ importers:
       '@nestjs/swagger': 6.2.1_4fhhxyztwhblafku3krlstrun4
       '@nestjs/throttler': 4.0.0_dntc3uqqknzoduyjojusds5kla
       '@nestjs/typeorm': 9.0.1_rq3e63xrdnihep2b3mxfcpnrny
+      '@tool-pack/basic': 0.0.11
       class-transformer: 0.5.1
       class-validator: 0.14.0
+      express: 4.18.2
       log4js: 6.7.1
       mysql2: 3.1.2
       openai: 3.1.0
@@ -123,7 +127,7 @@ importers:
       reflect-metadata: 0.1.13
       rxjs: 7.8.0
       stacktrace-js: 2.0.2
-      swagger-ui-express: 4.6.0
+      swagger-ui-express: 4.6.0_express@4.18.2
       text-censor: 1.0.2
       typeorm: 0.3.12_svueicy7jt4clq2rsbe7j7o2ii
     devDependencies:
@@ -14914,7 +14918,7 @@ packages:
       }
     dev: false
 
-  /swagger-ui-express/4.6.0:
+  /swagger-ui-express/4.6.0_express@4.18.2:
     resolution:
       {
         integrity: sha512-ZxpQFp1JR2RF8Ar++CyJzEDdvufa08ujNUJgMVTMWPi86CuQeVdBtvaeO/ysrz6dJAYXf9kbVNhWD7JWocwqsA==,
@@ -14923,6 +14927,7 @@ packages:
     peerDependencies:
       express: '>=4.0.0'
     dependencies:
+      express: 4.18.2
       swagger-ui-dist: 4.15.5
     dev: false
 
