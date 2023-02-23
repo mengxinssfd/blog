@@ -1,4 +1,4 @@
-import { ROLE, UserEntity, CategoryEntity } from '@blog/entities';
+import { ROLE, UserEntity, CategoryEntity, TagEntity } from '@blog/entities';
 import {
   AbilityBuilder,
   AbilityOptionsOf,
@@ -9,7 +9,9 @@ import {
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 
-type Subjects = InferSubjects<typeof UserEntity | typeof CategoryEntity, true> | 'all';
+type Subjects =
+  | InferSubjects<typeof UserEntity | typeof CategoryEntity | typeof TagEntity, true>
+  | 'all';
 
 export enum Action {
   Manage = 'manage',
@@ -24,6 +26,7 @@ export type AppAbility = MongoAbility<[Action, Subjects]>;
 const classMap = {
   [UserEntity.modelName]: UserEntity,
   [CategoryEntity.modelName]: CategoryEntity,
+  [TagEntity.modelName]: TagEntity,
 };
 
 /**
@@ -103,6 +106,40 @@ export class CaslAbilityFactory {
       '该分类有被文章使用，可先把这些文章改为其他分类再执行删除操作',
     );
   }
+  private createTagRule(user: UserEntity, { can, cannot }: AbilityBuilder<AppAbility>) {
+    const Tag = [TagEntity, TagEntity.modelName];
+
+    // 所有人都可查看
+    can(Action.Read, Tag);
+
+    // dev及以上权限可新增tag
+    if ([ROLE.admin, ROLE.dev].includes(user.role)) {
+      can(Action.Create, Tag);
+    }
+
+    // dev权限只能删改自己的
+    if ([ROLE.dev].includes(user.role)) {
+      can(Action.Update, TagEntity.modelName);
+      can(Action.Delete, TagEntity.modelName);
+
+      cannot(Action.Update, TagEntity, {
+        createById: { $ne: user.id },
+      }).because('只能修改自己创建的tag');
+
+      cannot(Action.Delete, TagEntity, {
+        createById: { $ne: user.id },
+      }).because('只能删除自己创建的tag');
+    }
+
+    // admin及以上权限可删改所有
+    if ([ROLE.admin, ROLE.superAdmin].includes(user.role)) {
+      can([Action.Update, Action.Delete], Tag);
+    }
+    // 当该tag下有文章时，不被可删除
+    cannot(Action.Delete, TagEntity, { articleCount: { $ne: 0 } }).because(
+      '该tag有被使用，禁止删除',
+    );
+  }
   createForUser(user: UserEntity) {
     // 参考文档：https://casl.js.org/v6/en/guide/restricting-fields
     const options: AbilityOptionsOf<AppAbility> = {
@@ -128,6 +165,7 @@ export class CaslAbilityFactory {
 
     this.createUserRule(user, builder);
     this.createCategoryRule(user, builder);
+    this.createTagRule(user, builder);
 
     return createMongoAbility<AppAbility>(
       // json原始规则

@@ -6,3 +6,4 @@ export * from './comment.entity';
 export * from './comment-like.entity';
 export * from './comment-dislike.entity';
 export * from './article-like.entity';
+export * from './tag.entity';
