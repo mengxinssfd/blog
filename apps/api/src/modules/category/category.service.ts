@@ -14,7 +14,7 @@ export class CategoryService {
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
 
-  async create(createCategoryDto: CreateCategoryDto, loginUser: UserEntity) {
+  async validCreate(createCategoryDto: CreateCategoryDto, loginUser: UserEntity) {
     // 检查分类是否已经存在
     const find = await this.categoryRepository.findOneBy({ name: createCategoryDto.name });
     if (find) throw new ForbiddenException(`分类'${createCategoryDto.name}'已存在`);
@@ -23,7 +23,7 @@ export class CategoryService {
     if (loginUser.role !== ROLE.superAdmin) {
       const [[latest], count] = await this.categoryRepository
         .createQueryBuilder('cate')
-        .where({ createBy: loginUser.id })
+        .where({ createById: loginUser.id })
         .orderBy('createAt', 'DESC')
         .limit(5)
         .getManyAndCount();
@@ -34,7 +34,9 @@ export class CategoryService {
         if (diff < 1000 * 60) throw new ForbiddenException('分类创建过于频繁');
       }
     }
+  }
 
+  async create(createCategoryDto: CreateCategoryDto, loginUser: UserEntity) {
     const c = new CategoryEntity();
     c.createById = loginUser.id;
     Object.assign(c, createCategoryDto);

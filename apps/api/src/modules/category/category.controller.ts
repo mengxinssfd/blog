@@ -38,7 +38,8 @@ export class CategoryController {
   @CheckPolicies((ab) => ab.can(Action.Create, CategoryEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto, @User() user: UserEntity) {
+  async create(@Body() createCategoryDto: CreateCategoryDto, @User() user: UserEntity) {
+    await this.categoryService.validCreate(createCategoryDto, user);
     return this.categoryService.create(createCategoryDto, user);
   }
 
