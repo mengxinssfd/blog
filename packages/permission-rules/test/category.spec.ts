@@ -1,10 +1,10 @@
 import { CategoryEntity } from '@blog/entities';
-import { CaslAbilityFactory, getRoles } from './utils';
-import { Action, createCategoryRule } from '../src';
+import { getRoles } from './utils';
+import { Action, CaslAbilityFactory } from '../src';
 
 describe('CategoryEntity', function () {
   const { superAdmin, admin, dev, commonUser1 } = getRoles();
-  const factory = new CaslAbilityFactory(createCategoryRule, CategoryEntity);
+  const factory = new CaslAbilityFactory();
 
   const commonAb = factory.createForUser(commonUser1);
   const devAb = factory.createForUser(dev);

@@ -1,12 +1,12 @@
 import { UserEntity } from '@blog/entities';
 import { permittedFieldsOf } from '@casl/ability/extra';
 import { ForbiddenError, subject } from '@casl/ability';
-import { CaslAbilityFactory, getRoles } from './utils';
-import { Action, createUserRule } from '../src';
+import { getRoles } from './utils';
+import { Action, CaslAbilityFactory } from '../src';
 
 describe('UserEntity', function () {
   const { superAdmin, commonUser2, commonUser1 } = getRoles();
-  const factory = new CaslAbilityFactory(createUserRule, UserEntity);
+  const factory = new CaslAbilityFactory();
   describe('superAdmin', function () {
     const ab = factory.createForUser(superAdmin);
     it('可管理User', () => {

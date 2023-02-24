@@ -1,10 +1,10 @@
 import { TagEntity } from '@blog/entities';
-import { CaslAbilityFactory, getRoles } from './utils';
-import { Action, createTagRule } from '../src';
+import { getRoles } from './utils';
+import { Action, CaslAbilityFactory } from '../src';
 
 describe('TagEntity', function () {
   const { superAdmin, admin, dev, commonUser1 } = getRoles();
-  const factory = new CaslAbilityFactory(createTagRule, TagEntity);
+  const factory = new CaslAbilityFactory();
 
   const commonAb = factory.createForUser(commonUser1);
   const devAb = factory.createForUser(dev);
