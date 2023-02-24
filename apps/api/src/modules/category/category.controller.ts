@@ -21,7 +21,8 @@ import { CategoryEntity, UserEntity } from '@blog/entities';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
-import { Action, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
+import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
+import { Action } from '@blog/permission-rules';
 import { ForbiddenError } from '@casl/ability';
 
 @ApiTags('category')

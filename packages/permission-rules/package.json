@@ -1,0 +1,38 @@
+{
+  "name": "@blog/permission-rules",
+  "version": "1.0.0",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "scripts": {
+    "rm:dist": "rimraf ./dist",
+    "build:this": "tsc -p ./tsconfig.build.json",
+    "build": "pnpm rm:dist && pnpm build:this",
+    "check:ts": "tsc --noEmit -p ./tsconfig.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
+  },
+  "dependencies": {
+    "@casl/ability": "^6.3.3"
+  },
+  "devDependencies": {
+    "typeorm": "^0.3.12"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "test",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
