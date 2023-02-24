@@ -18,8 +18,6 @@ import { User } from '@/utils/decorator';
 import { DtoValidationPipe } from '@/pipes/dto-validation/dto-validation.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { TagEntity, UserEntity } from '@blog/entities';
-import { Throttle } from '@nestjs/throttler';
-import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { Action, CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
@@ -36,9 +34,6 @@ export class TagController {
 
   @ApiBearerAuth()
   @UsePipes(new DtoValidationPipe([CreateTagDto]))
-  @UseGuards(ThrottlerBehindProxyGuard)
-  // 可以在 1 分钟内向单个端点发出来自同一 IP 的 10 个请求
-  @Throttle(5, 60)
   @CheckPolicies((ab) => ab.can(Action.Create, TagEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post()

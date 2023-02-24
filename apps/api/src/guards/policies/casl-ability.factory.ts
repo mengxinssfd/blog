@@ -124,11 +124,11 @@ export class CaslAbilityFactory {
 
       cannot(Action.Update, TagEntity, {
         createById: { $ne: user.id },
-      }).because('只能修改自己创建的tag');
+      }).because('只能修改自己创建的标签');
 
       cannot(Action.Delete, TagEntity, {
         createById: { $ne: user.id },
-      }).because('只能删除自己创建的tag');
+      }).because('只能删除自己创建的标签');
     }
 
     // admin及以上权限可删改所有
@@ -137,7 +137,7 @@ export class CaslAbilityFactory {
     }
     // 当该tag下有文章时，不被可删除
     cannot(Action.Delete, TagEntity, { articleCount: { $ne: 0 } }).because(
-      '该tag有被使用，禁止删除',
+      '该标签有被使用，不可删除！',
     );
   }
   createForUser(user: UserEntity) {

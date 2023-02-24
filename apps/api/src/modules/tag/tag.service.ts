@@ -14,7 +14,7 @@ export class TagService {
   async validCreate(createTagDto: CreateTagDto, loginUser: UserEntity) {
     // 检查分类是否已经存在
     const find = await this.tagRepository.findOneBy({ name: createTagDto.name });
-    if (find) throw new ForbiddenException(`tag'${createTagDto.name}'已存在`);
+    if (find) throw new ForbiddenException(`标签'${createTagDto.name}'已存在`);
 
     // 非superAdmin每分钟最多只能创建5个
     if (loginUser.role !== ROLE.superAdmin) {
@@ -28,7 +28,7 @@ export class TagService {
       // 如果创建数量超过5个，则必须大于1分钟间隔后才能再次创建
       if (latest && count === 5) {
         const diff = Date.now() - latest.createAt.getTime();
-        if (diff < 1000 * 60) throw new ForbiddenException('tag创建过于频繁');
+        if (diff < 1000 * 60) throw new ForbiddenException('标签创建过于频繁');
       }
     }
   }
@@ -41,17 +41,37 @@ export class TagService {
   }
 
   async findAll() {
-    return await this.tagRepository.createQueryBuilder().select().getMany();
+    const res = await this.tagRepository
+      .createQueryBuilder('tag')
+      .leftJoinAndSelect('tag.articleList', 'article')
+      .getMany();
+
+    res.forEach((item) => {
+      item.articleCount = item.articleList?.length || 0;
+      delete item.articleList;
+    });
+
+    return res;
   }
 
   async findOne(id: number) {
-    const tag = await this.tagRepository.createQueryBuilder().select().where({ id }).getOne();
-    if (!tag) throw new NotFoundException(`tag ${id} 不存在`);
+    const tag = await this.tagRepository
+      .createQueryBuilder('tag')
+      .where({ id })
+      .leftJoinAndSelect('tag.articleList', 'article')
+      .getOne();
+
+    if (!tag) throw new NotFoundException(`该标签不存在`);
+    tag.articleCount = tag.articleList?.length || 0;
+
     return tag;
   }
 
   update(id: number, updateTagDto: UpdateTagDto) {
-    return this.tagRepository.save({ id, ...updateTagDto });
+    const tag = new TagEntity();
+    tag.id = id;
+    Object.assign(tag, updateTagDto);
+    return tag.save();
   }
 
   async remove(id: number) {
