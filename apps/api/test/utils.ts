@@ -44,6 +44,7 @@ export async function clearAllTables() {
   // await Entities.ArticleLikeEntity.clear();
   await Entities.CategoryEntity.clear();
   await Entities.UserEntity.clear();
+  await Entities.TagEntity.clear();
 
   await Entities.UserEntity.getRepository().query('SET FOREIGN_KEY_CHECKS=1;');
 }
