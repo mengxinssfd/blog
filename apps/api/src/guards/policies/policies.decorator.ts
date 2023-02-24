@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { AppAbility } from '@/guards/policies/casl-ability.factory';
+import { AppAbility } from '@blog/permission-rules';
 import { ForbiddenError } from '@casl/ability';
 
 /**
