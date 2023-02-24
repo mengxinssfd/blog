@@ -1,9 +1,20 @@
-import { Column, Entity, VersionColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  VersionColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { UserEntity } from './user.entity';
 import { BlogBaseEntity } from './base.entity';
 import { CategoryEntity } from './category.entity';
 import { ArticleLikeEntity } from './article-like.entity';
 import { CommentEntity } from './comment.entity';
+import { TagEntity } from './tag.entity';
+
 export enum ARTICLE_STATE {
   private,
   public,
@@ -64,7 +75,7 @@ export class ArticleEntity extends BlogBaseEntity {
   commentCount!: number;
 
   // 可参考官网的多对多关系
-  /* @ManyToMany(() => TagEntity)
+  @ManyToMany(() => TagEntity, (tag) => tag.articleList, { cascade: true })
   @JoinTable({
     name: 'article_link_tag',
     joinColumn: {
@@ -76,7 +87,7 @@ export class ArticleEntity extends BlogBaseEntity {
       referencedColumnName: 'id',
     },
   })
-  tags: TagEntity[];*/
+  tags!: TagEntity[];
 
   @Column('varchar', {
     length: 500,

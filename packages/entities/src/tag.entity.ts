@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
 import { BlogBaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
 import { ArticleEntity } from './article.entity';
@@ -13,14 +13,14 @@ export class TagEntity extends BlogBaseEntity {
   description!: string;
 
   @ManyToOne(() => UserEntity)
-  @Column({ name: 'createById' })
+  @JoinColumn({ name: 'createById' })
   createBy!: number;
 
   @Column('int', { comment: '创建人id' })
   createById!: number;
 
-  @OneToMany(() => ArticleEntity, (article) => article.category)
-  articleList!: ArticleEntity[];
+  @ManyToMany(() => ArticleEntity, (a) => a.tags)
+  articleList?: ArticleEntity[];
 
-  articleCount!: number;
+  articleCount?: number;
 }
