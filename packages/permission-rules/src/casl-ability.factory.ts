@@ -1,4 +1,4 @@
-import { ROLE, UserEntity, CategoryEntity, TagEntity } from '@blog/entities';
+import { ROLE, UserEntity, CategoryEntity, TagEntity, ArticleEntity } from '@blog/entities';
 import {
   AbilityBuilder,
   AbilityOptionsOf,
@@ -12,9 +12,13 @@ import { Action } from './utils';
 import { createUserRule } from './rules/user';
 import { createCategoryRule } from './rules/category';
 import { createTagRule } from './rules/tag';
+import { createArticleRule } from './rules/article';
 
 type Subjects =
-  | InferSubjects<typeof UserEntity | typeof CategoryEntity | typeof TagEntity, true>
+  | InferSubjects<
+      typeof UserEntity | typeof CategoryEntity | typeof TagEntity | typeof ArticleEntity,
+      true
+    >
   | 'all';
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
@@ -29,6 +33,7 @@ function bootstrap(user: UserEntity, builder: AbilityBuilder<AnyMongoAbility>) {
   createUserRule(user, builder);
   createCategoryRule(user, builder);
   createTagRule(user, builder);
+  createArticleRule(user, builder);
 }
 
 export class CaslAbilityFactory {

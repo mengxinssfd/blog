@@ -16,7 +16,7 @@ export class TagEntity extends BlogBaseEntity {
   @JoinColumn({ name: 'createById' })
   createBy!: number;
 
-  @Column('int', { comment: '创建人id' })
+  @Column('int', { comment: '创建人id', select: false })
   createById!: number;
 
   @ManyToMany(() => ArticleEntity, (a) => a.tags)

@@ -1,9 +1,9 @@
 import { CategoryEntity, ROLE } from '@blog/entities';
 import { Action, RuleCreator } from '../utils';
 
-export const createCategoryRule: RuleCreator = (user, { can, cannot }) => {
-  const Category = [CategoryEntity, CategoryEntity.modelName];
+const Category = [CategoryEntity, CategoryEntity.modelName];
 
+export const createCategoryRule: RuleCreator = (user, { can, cannot }) => {
   // 所有人都可查看
   can(Action.Read, Category);
 

@@ -96,7 +96,7 @@ describe('TagEntity', function () {
       expect(adminAb.can(Action.Read, TagEntity.modelName)).toBeTruthy();
       expect(superAb.can(Action.Read, TagEntity.modelName)).toBeTruthy();
     });
-    it('都不可删除有文章用了的分类', function () {
+    it('都不可删除有文章用了的标签', function () {
       const cate = new TagEntity();
       cate.createById = commonUser1.id;
       cate.articleCount = 1;

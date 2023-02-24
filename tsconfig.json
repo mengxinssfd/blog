@@ -36,7 +36,10 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "allowUnusedLabels": false,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "paths": {
+      "@blog/*": ["./packages/*/src"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }

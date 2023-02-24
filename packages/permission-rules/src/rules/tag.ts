@@ -1,9 +1,9 @@
 import { ROLE, TagEntity } from '@blog/entities';
 import { Action, RuleCreator } from '../utils';
 
-export const createTagRule: RuleCreator = (user, { can, cannot }) => {
-  const Tag = [TagEntity, TagEntity.modelName];
+const Tag = [TagEntity, TagEntity.modelName];
 
+export const createTagRule: RuleCreator = (user, { can, cannot }) => {
   // 所有人都可查看
   can(Action.Read, Tag);
 

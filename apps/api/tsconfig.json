@@ -6,7 +6,8 @@
     "incremental": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@config/*": ["./config/*"]
+      "@config/*": ["./config/*"],
+      "@blog/*": ["../../packages/*/src"]
     }
   },
   // https://www.typescriptlang.org/docs/handbook/configuring-watch.html

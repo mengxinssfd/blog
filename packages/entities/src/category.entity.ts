@@ -17,7 +17,7 @@ export class CategoryEntity extends BlogBaseEntity {
   @JoinColumn({ name: 'createById' })
   createBy!: UserEntity;
 
-  @Column('int', { comment: '创建人id' })
+  @Column('int', { comment: '创建人id', select: false })
   createById!: number;
 
   @OneToMany(() => ArticleEntity, (article) => article.category)

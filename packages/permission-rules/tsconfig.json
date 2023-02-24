@@ -6,7 +6,10 @@
     "module": "CommonJS",
     "baseUrl": "./",
     "outDir": "./dist",
-    "declarationDir": "./dist"
+    "declarationDir": "./dist",
+    "paths": {
+      "@blog/*": ["../../packages/*/src"]
+    }
   },
   "exclude": ["dist"]
 }

@@ -21,6 +21,8 @@ export enum ARTICLE_STATE {
 }
 @Entity({ name: 'article' })
 export class ArticleEntity extends BlogBaseEntity {
+  static readonly modelName = 'ArticleEntity' as const;
+
   @Column('enum', {
     enum: ARTICLE_STATE,
     default: ARTICLE_STATE.public,
