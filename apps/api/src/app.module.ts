@@ -5,15 +5,7 @@ import { ENV, getMYSQLConfig } from './utils/utils';
 import { UserModule } from './modules/user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
-import {
-  ArticleEntity,
-  CategoryEntity,
-  CommentDislikeEntity,
-  CommentEntity,
-  CommentLikeEntity,
-  UserEntity,
-  ArticleLikeEntity,
-} from '@blog/entities';
+import * as Entities from '@blog/entities';
 import { ChatAiModule } from './modules/chat-ai/chat-ai.module';
 import { CategoryModule } from '@/modules/category/category.module';
 import { TagModule } from '@/modules/tag/tag.module';
@@ -36,13 +28,14 @@ const cm = ConfigModule.forRoot({
       type: 'mysql',
       // entities: [__dirname + '/**/*.entity{.ts,.js}'], // 路径写错会找不到实体
       entities: [
-        UserEntity,
-        CategoryEntity,
-        ArticleLikeEntity,
-        CommentEntity,
-        CommentLikeEntity,
-        CommentDislikeEntity,
-        ArticleEntity,
+        Entities.UserEntity,
+        Entities.CategoryEntity,
+        Entities.ArticleLikeEntity,
+        Entities.CommentEntity,
+        Entities.CommentLikeEntity,
+        Entities.CommentDislikeEntity,
+        Entities.ArticleEntity,
+        Entities.TagEntity,
       ],
       synchronize: true,
     }),
