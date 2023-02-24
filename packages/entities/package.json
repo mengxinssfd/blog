@@ -4,8 +4,9 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "scripts": {
-    "prebuild": "rimraf ./dist",
-    "build": "tsc",
+    "rm:dist": "rimraf ./dist",
+    "build:this": "tsc -p ./tsconfig.json",
+    "build": "pnpm rm:dist && pnpm build:this",
     "check:ts": "tsc --noEmit -p ./tsconfig.json"
   },
   "dependencies": {

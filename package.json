@@ -14,6 +14,7 @@
     "check:lint": "eslint \"{src,apps,libs,test}/**/*.{ts,vue}\"",
     "check:ts": "pnpm -r check:ts && tsc --noEmit -p ./tsconfig.noEmit.json",
     "check:all": "run-p check:ts check:lint",
+    "start:dev:api": "pnpm prebuild && pnpm -C ./apps/api start:dev",
     "start:dev": "pnpm -C ./apps/api start:dev & pnpm -C ./apps/front dev",
     "build": "pnpm -C ./apps/api build & pnpm -C ./apps/front build",
     "prebuild": "pnpm --filter ./packages/* build"

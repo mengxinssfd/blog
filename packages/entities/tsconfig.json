@@ -7,5 +7,6 @@
     "baseUrl": "./",
     "outDir": "./dist",
     "declarationDir": "./dist"
-  }
+  },
+  "exclude": ["dist"]
 }
