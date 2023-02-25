@@ -9,6 +9,7 @@ import * as Entities from '@blog/entities';
 import { ChatAiModule } from './modules/chat-ai/chat-ai.module';
 import { CategoryModule } from '@/modules/category/category.module';
 import { TagModule } from '@/modules/tag/tag.module';
+import { ArticleModule } from '@/modules/article/article.module';
 
 const cm = ConfigModule.forRoot({
   isGlobal: true,
@@ -44,6 +45,7 @@ const cm = ConfigModule.forRoot({
     ChatAiModule,
     CategoryModule,
     TagModule,
+    ArticleModule,
   ],
 })
 export class AppModule {}

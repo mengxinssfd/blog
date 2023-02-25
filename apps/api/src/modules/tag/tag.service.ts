@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ROLE, TagEntity, UserEntity } from '@blog/entities';
 
 @Injectable()
@@ -65,6 +65,10 @@ export class TagService {
     tag.articleCount = tag.articleList?.length || 0;
 
     return tag;
+  }
+
+  async findByIds(ids: number[]) {
+    return this.tagRepository.findBy({ id: In(ids) });
   }
 
   update(id: number, updateTagDto: UpdateTagDto) {

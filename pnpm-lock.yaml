@@ -79,6 +79,7 @@ importers:
       '@nestjs/typeorm': ^9.0.1
       '@tool-pack/basic': ^0.0.11
       '@types/express': ^4.17.16
+      '@types/marked': ^4.0.8
       '@types/node': 18.11.18
       '@types/passport-jwt': ^3.0.8
       '@types/passport-local': ^1.0.35
@@ -88,6 +89,7 @@ importers:
       cross-env: ^7.0.3
       express: ^4.18.2
       log4js: ^6.7.1
+      marked: ^4.2.12
       mysql2: ^3.1.2
       npm-check-updates: ^16.6.3
       openai: ^3.1.0
@@ -138,11 +140,13 @@ importers:
       '@nestjs/schematics': 9.0.4_typescript@4.9.5
       '@nestjs/testing': 9.2.1_wdbvfsxfdwzlwdfiyh2gynjl4m
       '@types/express': 4.17.16
+      '@types/marked': 4.0.8
       '@types/node': 18.11.18
       '@types/passport-jwt': 3.0.8
       '@types/passport-local': 1.0.35
       '@types/supertest': 2.0.12
       cross-env: 7.0.3
+      marked: 4.2.12
       npm-check-updates: 16.6.3
       source-map-support: 0.5.21
       supertest: 6.3.3
@@ -3624,6 +3628,13 @@ packages:
       }
     dependencies:
       '@types/node': 18.11.18
+
+  /@types/marked/4.0.8:
+    resolution:
+      {
+        integrity: sha512-HVNzMT5QlWCOdeuBsgXP8EZzKUf0+AXzN+sLmjvaB3ZlLqO+e4u0uXrdw9ub69wBKFs+c6/pA4r9sy6cCDvImw==,
+      }
+    dev: true
 
   /@types/mime/3.0.1:
     resolution:
@@ -11103,6 +11114,15 @@ packages:
         integrity: sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==,
       }
     engines: { node: '>=8' }
+    dev: true
+
+  /marked/4.2.12:
+    resolution:
+      {
+        integrity: sha512-yr8hSKa3Fv4D3jdZmtMMPghgVt6TWbk86WQaWhDloQjRSQhMMYCAro7jP7VDJrjjdV8pxVxMssXS8B8Y5DZ5aw==,
+      }
+    engines: { node: '>= 12' }
+    hasBin: true
     dev: true
 
   /md5/2.3.0:

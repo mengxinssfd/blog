@@ -30,7 +30,7 @@ export const ReqIp = createParamDecorator((_data: unknown, ctx: ExecutionContext
     .replace('::ffff:', '');
 });
 
-export const isFromWX = createParamDecorator((_data: unknown, ctx: ExecutionContextHost) => {
+export const IsFromWX = createParamDecorator((_data: unknown, ctx: ExecutionContextHost) => {
   const im = ctx.switchToHttp().getRequest<IncomingMessage>();
   const referer = im.headers.referer;
   return Boolean(referer?.startsWith('https://servicewechat.com'));
