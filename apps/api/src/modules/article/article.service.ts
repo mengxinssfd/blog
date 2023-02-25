@@ -13,13 +13,50 @@ import {
   UserEntity,
 } from '@blog/entities';
 import { getConnection, In, Repository, Like, Not } from 'typeorm';
-import { omit, unique } from '@tool-pack/basic';
+import { omit } from '@tool-pack/basic';
 import { rawsToEntities } from '@/utils/assemblyEntity';
 import { PageDto } from '@/common/dto/page.dto';
 import initMarked from './init-marked';
 import { marked } from 'marked';
 
 const renderer = initMarked(marked);
+
+enum SORT {
+  createAtUp,
+  createAtDown,
+  updateAtUp,
+  updateAtDown,
+  viewCountUp,
+  viewCountDown,
+  likeCountUp,
+  likeCountDown,
+  // commentCountUp,
+  // commentCountDown,
+}
+enum ORDER {
+  up = 'ASC',
+  down = 'DESC',
+}
+
+const SORT_MAP: Record<
+  SORT,
+  {
+    sort: `article.${keyof ArticleEntity}` | 'articleLike.likeCount';
+    order: ORDER;
+  }
+> = {
+  [SORT.createAtUp]: { sort: 'article.createAt', order: ORDER.up },
+  [SORT.createAtDown]: { sort: 'article.createAt', order: ORDER.down },
+  [SORT.updateAtUp]: { sort: 'article.updateAt', order: ORDER.up },
+  [SORT.updateAtDown]: { sort: 'article.updateAt', order: ORDER.down },
+  [SORT.viewCountUp]: { sort: 'article.viewCount', order: ORDER.up },
+  [SORT.viewCountDown]: { sort: 'article.viewCount', order: ORDER.down },
+  [SORT.likeCountUp]: { sort: 'articleLike.likeCount', order: ORDER.up },
+  [SORT.likeCountDown]: { sort: 'articleLike.likeCount', order: ORDER.down },
+  // [SORT.commentCountUp]: { sort: 'article.updateAt', order: ORDER.up },
+  // [SORT.commentCountDown]: { sort: 'article.updateAt', order: ORDER.down },
+};
+
 @Injectable()
 export class ArticleService {
   constructor(
@@ -55,7 +92,7 @@ export class ArticleService {
       [] as ArticleEntity[],
     );
 
-    return unique(articleList, (a, b) => a.id === b.id).map((a) => a.id);
+    return Array.from(new Set(articleList.map((a) => a.id)));
   }
 
   async findAll(
@@ -65,100 +102,53 @@ export class ArticleService {
   ): Promise<{ list: ArticleEntity[]; count: number }> {
     const { page = 1, pageSize = 10, keyword } = listDTO;
 
-    console.log(userId, fromWx);
+    const sort = SORT_MAP[listDTO.sort as SORT] || SORT_MAP[SORT.createAtUp];
 
-    enum Sort {
-      createAtUp,
-      createAtDown,
-      updateAtUp,
-      updateAtDown,
-      viewCountUp,
-      viewCountDown,
-      likeCountUp,
-      likeCountDown,
-      // commentCountUp,
-      // commentCountDown,
-    }
-    enum Order {
-      up = 'ASC',
-      down = 'DESC',
-    }
-
-    const SORT: Record<Sort, { sort: string; order: Order; outerSort?: string }> = {
-      [Sort.createAtUp]: { sort: 'article.createAt', order: Order.up },
-      [Sort.createAtDown]: { sort: 'article.createAt', order: Order.down },
-      [Sort.updateAtUp]: { sort: 'article.updateAt', order: Order.up },
-      [Sort.updateAtDown]: { sort: 'article.updateAt', order: Order.down },
-      [Sort.viewCountUp]: { sort: 'article.viewCount', order: Order.up },
-      [Sort.viewCountDown]: { sort: 'article.viewCount', order: Order.down },
-      [Sort.likeCountUp]: {
-        sort: '`articleLike`.likeCount',
-        outerSort: '`article`.likeCount',
-        order: Order.up,
-      },
-      [Sort.likeCountDown]: {
-        sort: '`articleLike`.likeCount',
-        outerSort: '`article`.likeCount',
-        order: Order.down,
-      },
-      // [Sort.commentCountUp]: { sort: 'article.updateAt', order: Order.up },
-      // [Sort.commentCountDown]: { sort: 'article.updateAt', order: Order.down },
-    };
-    const sort = SORT[listDTO.sort as Sort] || SORT[Sort.createAtUp];
-
-    const builder = this.articleRepository.createQueryBuilder('article');
-
-    builder
-      .leftJoinAndSelect('article.author', 'author')
+    const builder = this.articleRepository
+      .createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category');
-
-    if (listDTO.category) builder.where({ categoryId: listDTO.category });
 
     if (listDTO.tag && listDTO.tag.length) {
       const articleIds = await this.getArticleIdsFromTags(listDTO.tag);
       if (articleIds.length) builder.where({ id: In(articleIds) });
     }
-
+    if (listDTO.category) builder.where({ categoryId: listDTO.category });
     if (keyword) builder.where({ title: Like(`%${keyword}%`) });
     if (fromWx) builder.where({ categoryId: Not(fromWx.cateId) });
 
-    const countBuilder = builder.clone();
+    // 可以查总数了
+    const count = await builder.clone().getCount();
+    if (count === 0) return { list: [], count };
 
+    // 列表继续添加联查语句
     builder
+      // 联查用户表
+      .leftJoinAndSelect('article.author', 'author')
+      // 联查标签表
       .leftJoinAndSelect('article.tags', 'tags')
+      // 联查点赞表
       .leftJoin(
         (sqb) => {
-          return (
-            sqb
-              // .subQuery()
-              .select([
-                'ANY_VALUE(lk.id) AS likeId',
-                'ANY_VALUE(lk.userId) AS userId',
-                'ANY_VALUE(lk.articleId) AS articleId',
-                'COUNT(lk.id) AS likeCount',
-                `SUM(CASE WHEN lk.userId = ${userId} THEN 1 ELSE 0 END ) AS checked`,
-              ])
-              .from(ArticleLikeEntity, 'lk')
-              .groupBy('lk.articleId')
-          );
+          return sqb
+            .select([
+              'articleId',
+              'COUNT(id) AS likeCount',
+              `SUM(CASE WHEN userId = ${userId} THEN 1 ELSE 0 END ) AS checked`,
+            ])
+            .from(ArticleLikeEntity, 'lk')
+            .groupBy('articleId');
         },
-        'like',
-        'like.articleId = article.id',
+        'articleLike',
+        'articleLike.articleId = article.id',
       )
-      .addSelect(['like.likeCount AS `like_count`', 'like.checked AS `like_checked`'])
+      .addSelect(['articleLike.likeCount AS `like_count`', 'articleLike.checked AS `like_checked`'])
+      // 联查留言表
       .leftJoin(
         (sqb) => {
-          return (
-            sqb
-              // .subQuery()
-              .select([
-                'ANY_VALUE(cm.id) AS id',
-                'ANY_VALUE(cm.articleId) AS articleId',
-                'COUNT(cm.id) AS commentCount',
-              ])
-              .from(CommentEntity, 'cm')
-              .groupBy('cm.articleId')
-          );
+          return sqb
+            .select(['articleId', 'COUNT(id) AS commentCount'])
+            .from(CommentEntity, 'cm')
+            .groupBy('articleId');
         },
         'comments',
         'comments.articleId = article.id',
@@ -168,18 +158,13 @@ export class ArticleService {
       .offset((page - 1) * pageSize)
       .limit(pageSize);
 
-    console.log(builder.getQuery());
-
-    const [_list, count] = await Promise.all([builder.getRawMany(), countBuilder.getCount()]);
-    // const [list, count] = await Promise.all([builder.getRawMany(), builder.getCount()]);
-
+    const raws = await builder.getRawMany();
     const list = rawsToEntities<ArticleEntity>({
       entityName: 'article',
-      rawList: _list,
+      rawList: raws,
       valueToNumArr: ['like_count', 'like_checked', 'article_commentCount'],
       valueJoinToArr: ['tags'],
     });
-    console.log(list, count);
 
     return { list, count };
   }
