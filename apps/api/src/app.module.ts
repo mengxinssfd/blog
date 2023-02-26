@@ -10,6 +10,7 @@ import { ChatAiModule } from './modules/chat-ai/chat-ai.module';
 import { CategoryModule } from '@/modules/category/category.module';
 import { TagModule } from '@/modules/tag/tag.module';
 import { ArticleModule } from '@/modules/article/article.module';
+import { DailyImgModule } from '@/modules/daily-img/daily-img.module';
 
 const cm = ConfigModule.forRoot({
   isGlobal: true,
@@ -46,6 +47,7 @@ const cm = ConfigModule.forRoot({
     CategoryModule,
     TagModule,
     ArticleModule,
+    DailyImgModule,
   ],
 })
 export class AppModule {}
