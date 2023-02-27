@@ -2,7 +2,7 @@ import { buildApp, clearAllTables } from '../utils';
 import { cateApi, CateResTypes } from './api';
 import { ResTypes as UserResTypes } from '../user/utils';
 import { userApi } from '../user/api';
-import { ArticleEntity, CategoryEntity, TagEntity } from '@blog/entities';
+import { ArticleEntity, CategoryEntity, TagEntity, UserEntity } from '@blog/entities';
 
 describe('/tag 文章标签', () => {
   const request = buildApp();
@@ -42,10 +42,14 @@ describe('/tag 文章标签', () => {
       return api
         .get(1)
         .expect(
-          `{"code":200,"msg":"Success","data":{"id":1,${tsStr.slice(
-            1,
-            -1,
-          )},"createById":1,"articleList":[],"articleCount":0}}`,
+          new RegExp(
+            `\\{"code":200,"msg":"Success","data":\\{"id":1,${tsStr.slice(
+              1,
+              -1,
+            )},"articleList":\\[],"createBy":\\{"id":1,"nickname":"hello_\\d+","avatar":"${
+              UserEntity.DEFAULT_AVATAR
+            }"},"articleCount":0}}`,
+          ),
         );
     });
   });
@@ -55,10 +59,7 @@ describe('/tag 文章标签', () => {
       return api
         .list()
         .expect(
-          `{"code":200,"msg":"Success","data":[{"id":1,${tsStr.slice(
-            1,
-            -1,
-          )},"createById":1,"articleCount":0}]}`,
+          `{"code":200,"msg":"Success","data":[{"id":1,${tsStr.slice(1, -1)},"articleCount":0}]}`,
         );
     });
     it('空列表', async () => {
@@ -88,7 +89,9 @@ describe('/tag 文章标签', () => {
       await api
         .get(1)
         .expect(
-          /\{"code":200,"msg":"Success","data":\{"id":1,"name":"TS","description":"Javascript超集","createById":1,"articleList":\[],"articleCount":0}}/,
+          new RegExp(
+            `\\{"code":200,"msg":"Success","data":\\{"id":1,"name":"TS","description":"Javascript超集","articleList":\\[],"createBy":{"id":1,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"articleCount":0}}`,
+          ),
         );
     });
   });
