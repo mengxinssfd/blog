@@ -47,7 +47,7 @@ export class UserController {
 
   async registerRoot() {
     const { count } = await this.userService.findAll();
-    if (!count) return;
+    if (count) return;
 
     const username = process.env['ROOT_USERNAME'] as string;
     const password = process.env['ROOT_PASSWORD'] as string;
