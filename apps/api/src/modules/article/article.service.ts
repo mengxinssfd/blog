@@ -12,7 +12,7 @@ import {
   TagEntity,
   UserEntity,
 } from '@blog/entities';
-import { getConnection, In, Repository, Like, Not } from 'typeorm';
+import { In, Like, Not, Repository, SelectQueryBuilder } from 'typeorm';
 import { omit } from '@tool-pack/basic';
 import { rawsToEntities } from '@/utils/assemblyEntity';
 import { PageDto } from '@/common/dto/page.dto';
@@ -79,49 +79,48 @@ export class ArticleService {
       .getRawOne();
   }
 
-  private async getArticleIdsFromTags(tagIds: number[]): Promise<number[]> {
-    const tags = await TagEntity.createQueryBuilder('tag')
-      .leftJoinAndSelect('tag.articleList', 'article')
-      .where({ id: In(tagIds) })
-      .getMany();
-
-    if (!tags.length) return [];
-
-    const articleList = tags.reduce(
-      (res, tag) => (res.push(...(tag.articleList || [])), res),
-      [] as ArticleEntity[],
-    );
-
-    return Array.from(new Set(articleList.map((a) => a.id)));
-  }
-
-  async findAll(
-    listDTO: ListDTO,
+  private async createFindAllBuilders(
+    { page = 1, pageSize = 10, keyword, tag, category, sort }: ListDTO,
     userId = 0,
-    fromWx?: { cateId: number },
-  ): Promise<{ list: ArticleEntity[]; count: number }> {
-    const { page = 1, pageSize = 10, keyword } = listDTO;
-
-    const sort = SORT_MAP[listDTO.sort as SORT] || SORT_MAP[SORT.createAtUp];
+    beforeClone?: (builder: SelectQueryBuilder<ArticleEntity>) => void | Promise<void>,
+  ): Promise<[SelectQueryBuilder<ArticleEntity>, SelectQueryBuilder<ArticleEntity>]> {
+    const _sort = SORT_MAP[sort as SORT] || SORT_MAP[SORT.createAtUp];
 
     const builder = this.articleRepository
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category');
 
-    if (listDTO.tag && listDTO.tag.length) {
-      const articleIds = await this.getArticleIdsFromTags(listDTO.tag);
-      if (articleIds.length) builder.where({ id: In(articleIds) });
+    if (tag.length) {
+      // tag子查询
+      builder.andWhere((qb) => {
+        return (
+          '`article`.`id` IN ' +
+          qb
+            .subQuery()
+            .select('`atc`.`id`')
+            .from(TagEntity, 'tag')
+            .leftJoin('tag.articleList', 'atc')
+            .where({ id: In(tag) })
+            .groupBy('`atc`.`id`')
+            .getQuery()
+        );
+      });
     }
-    if (listDTO.category) builder.where({ categoryId: listDTO.category });
-    if (keyword) builder.where({ title: Like(`%${keyword}%`) });
-    if (fromWx) builder.where({ categoryId: Not(fromWx.cateId) });
+    if (category) builder.andWhere({ categoryId: category });
+    if (keyword) builder.andWhere({ title: Like(`%${keyword}%`) });
+
+    if (beforeClone) {
+      const bcRes = beforeClone(builder);
+      if (bcRes?.then) await bcRes;
+    }
 
     // 可以查总数了
-    const count = await builder.clone().getCount();
-    if (count === 0) return { list: [], count };
+    const countBuilder = builder.clone();
+    countBuilder.select('article.id');
 
     // 列表继续添加联查语句
     builder
+      .addSelect(['`article`.`createAt`', '`article`.`updateAt`'])
       // 联查用户表
       .leftJoinAndSelect('article.author', 'author')
       // 联查标签表
@@ -154,9 +153,20 @@ export class ArticleService {
         'comments.articleId = article.id',
       )
       .addSelect(['comments.commentCount AS article_commentCount'])
-      .orderBy(sort.sort, sort.order)
+      .orderBy(_sort.sort, _sort.order)
       .offset((page - 1) * pageSize)
       .limit(pageSize);
+
+    return [countBuilder, builder];
+  }
+
+  private async handleFindAllBuilders(
+    builders: ReturnType<typeof this.createFindAllBuilders>,
+  ): Promise<{ list: ArticleEntity[]; count: number }> {
+    const [countBuilder, builder] = await builders;
+
+    const count = await countBuilder.getCount();
+    if (count === 0) return { list: [], count };
 
     const raws = await builder.getRawMany();
     const list = rawsToEntities<ArticleEntity>({
@@ -169,124 +179,30 @@ export class ArticleService {
     return { list, count };
   }
 
-  async findAllByAuthor(pageDto: PageDto, authorId: number, userId: number) {
-    const { page = 1, pageSize = 10 } = pageDto;
-
-    const sort: { sort: string; order: 'DESC' } = {
-      sort: 'article.createAt',
-      order: 'DESC',
-    };
-
-    const getList = getConnection().createQueryBuilder();
-    const getCount = this.articleRepository
-      .createQueryBuilder('article')
-      .groupBy('article.id')
-      .where({ authorId });
-
-    if (!userId || userId !== authorId) {
-      getCount.andWhere('article.status = :status', {
-        status: String(ARTICLE_STATE.public),
-      });
-    }
-
-    getList
-      .from<ArticleEntity>((qb) => {
-        qb.select([
-          'article.*',
-          `ROW_NUMBER() OVER (ORDER BY ${sort.sort} ${sort.order}, article.id) AS \`rowid\``,
-        ])
-          .from(ArticleEntity, 'article')
-          .leftJoinAndSelect(
-            (qb2) => {
-              return qb2
-                .subQuery()
-                .select([
-                  'lk.id AS likeId',
-                  'lk.userId AS userId',
-                  'lk.articleId AS articleId',
-                  'COUNT(lk.id) AS likeCount',
-                  `SUM(CASE WHEN lk.userId = ${authorId} THEN 1 ELSE 0 END ) AS checked`,
-                ])
-                .from(ArticleLikeEntity, 'lk')
-                .groupBy('lk.articleId');
-            },
-            'articleLike',
-            'articleLike.articleId = article.id',
-          )
-          .where({ authorId });
-
-        if (!userId || userId !== authorId) {
-          qb.andWhere('article.status = :status', {
-            status: String(ARTICLE_STATE.public),
-          });
-        }
-        return qb;
-      }, 'article')
-      // limit在这里有bug 重复的也会算成一条数据导致不准确，使用over代替
-      .where('`article`.`rowid` between :start and :end', {
-        start: (page - 1) * pageSize + 1,
-        end: page * pageSize,
-      });
-    (getList.expressionMap.mainAlias as any).metadata =
-      getList.connection.getMetadata(ArticleEntity);
-    getList
-      .leftJoinAndSelect('article.author', 'author')
-      .leftJoinAndSelect('article.category', 'category')
-      // .leftJoinAndSelect(ArticleLinkTagEntity, 'link', 'link.articleId = article.id')
-      .leftJoinAndSelect(CommentEntity, 'comment', 'comment.articleId = article.id')
-      .leftJoinAndMapMany('article.tags', TagEntity, 'tags', 'tags.id = link.tagId')
-      .select([
-        'article.id',
-        'article.title',
-        'article.description',
-        'article.createAt',
-        'article.updateAt',
-        'article.viewCount',
-        'article.cover',
-      ])
-      .addSelect(['article.likeCount AS `like_count`', 'article.checked AS `like_checked`'])
-      .addSelect('COUNT(comment.id) AS `article_commentCount`')
-      .addSelect(['tags.id', 'tags.name'])
-      .addSelect(['id', 'nickname', 'role', 'username', 'avatar'].map((i) => 'author.' + i))
-      .addSelect(['id', 'name', 'description'].map((i) => 'category.' + i))
-      .groupBy('article.id, link.id')
-      .addGroupBy(sort.sort)
-      .orderBy(sort.sort, sort.order);
-    const [list, count] = await Promise.all([getList.getRawMany(), getCount.getCount()]);
-
-    // 手动组装实体
-    // like用COUNT的话，不能映射到实体，而且article再用getCount的话就没有raw数据，就不能拼接数据
-    // 使用了left join(select...)不能组装entity
-    const entityList = rawsToEntities<ArticleEntity>({
-      entityName: 'article',
-      rawList: list,
-      valueJoinToArr: ['tags'],
-      valueToNumArr: ['like_count', 'like_checked', 'article_commentCount'],
-      omitArr: ['list_count'],
+  async findAll(
+    listDTO: ListDTO,
+    userId = 0,
+    fromWx?: { cateId: number },
+  ): Promise<{ list: ArticleEntity[]; count: number }> {
+    const builders = this.createFindAllBuilders(listDTO, userId, (builder) => {
+      builder.andWhere({ status: String(ARTICLE_STATE.public) });
+      if (fromWx) builder.andWhere({ categoryId: Not(fromWx.cateId) });
     });
 
-    return {
-      list: entityList,
-      count,
-    };
+    return await this.handleFindAllBuilders(builders);
+  }
+
+  async findAllByAuthor(pageDto: PageDto, authorId: number, userId: number) {
+    const builders = this.createFindAllBuilders(pageDto as ListDTO, userId, (builder) => {
+      builder.andWhere({ authorId });
+    });
+
+    return await this.handleFindAllBuilders(builders);
   }
 
   async findAllByLikeUser(pageDto: PageDto, userId: number) {
-    const { page = 1, pageSize = 10 } = pageDto;
-
-    const sort: { sort: string; order: 'DESC' } = {
-      sort: 'article.createAt',
-      order: 'DESC',
-    };
-
-    const getList = getConnection().createQueryBuilder();
-    const getCount = this.articleRepository
-      .createQueryBuilder('article')
-      .groupBy('article.id')
-      .where('article.status = :status', {
-        status: String(ARTICLE_STATE.public),
-      })
-      .andWhere((qb) => {
+    const builders = this.createFindAllBuilders(pageDto as ListDTO, userId, (builder) => {
+      builder.andWhere({ status: String(ARTICLE_STATE.public) }).andWhere((qb) => {
         return (
           'article.id IN ' +
           qb
@@ -297,220 +213,27 @@ export class ArticleService {
             .getQuery()
         );
       });
-    getList
-      .from<ArticleEntity>((qb) => {
-        qb.select([
-          'article.*',
-          `ROW_NUMBER() OVER (ORDER BY ${sort.sort} ${sort.order}, article.id) AS \`rowid\``,
-        ])
-          .from(ArticleEntity, 'article')
-          .leftJoinAndSelect(
-            (qb2) => {
-              return qb2
-                .subQuery()
-                .select([
-                  'lk.id AS likeId',
-                  'lk.userId AS userId',
-                  'lk.articleId AS articleId',
-                  'COUNT(lk.id) AS likeCount',
-                  `SUM(CASE WHEN lk.userId = ${userId} THEN 1 ELSE 0 END ) AS checked`,
-                ])
-                .from(ArticleLikeEntity, 'lk')
-                .groupBy('lk.articleId');
-            },
-            'articleLike',
-            'articleLike.articleId = article.id',
-          )
-          .where('article.status = :status', {
-            status: String(ARTICLE_STATE.public),
-          })
-          .andWhere((qb) => {
-            return (
-              'article.id IN ' +
-              qb
-                .subQuery()
-                .select('like.articleId')
-                .from(ArticleLikeEntity, 'like')
-                .where({ userId })
-                .getQuery()
-            );
-          });
-        return qb;
-      }, 'article')
-      // limit在这里有bug 重复的也会算成一条数据导致不准确，使用over代替
-      .where('`article`.`rowid` between :start and :end', {
-        start: (page - 1) * pageSize + 1,
-        end: page * pageSize,
-      });
-    (getList.expressionMap.mainAlias as any).metadata =
-      getList.connection.getMetadata(ArticleEntity);
-    getList
-      .leftJoinAndSelect('article.author', 'author')
-      .leftJoinAndSelect('article.category', 'category')
-      // .leftJoinAndSelect(ArticleLinkTagEntity, 'link', 'link.articleId = article.id')
-      .leftJoinAndSelect(CommentEntity, 'comment', 'comment.articleId = article.id')
-      .leftJoinAndMapMany('article.tags', TagEntity, 'tags', 'tags.id = link.tagId')
-      .select([
-        'article.id',
-        'article.title',
-        'article.description',
-        'article.createAt',
-        'article.updateAt',
-        'article.viewCount',
-        'article.cover',
-      ])
-      .addSelect(['article.likeCount AS `like_count`', 'article.checked AS `like_checked`'])
-      .addSelect('COUNT(comment.id) AS `article_commentCount`')
-      .addSelect(['tags.id', 'tags.name'])
-      .addSelect(['id', 'nickname', 'role', 'username', 'avatar'].map((i) => 'author.' + i))
-      .addSelect(['id', 'name', 'description'].map((i) => 'category.' + i))
-      .groupBy('article.id, link.id')
-      .addGroupBy(sort.sort)
-      .orderBy(sort.sort, sort.order);
-    const [list, count] = await Promise.all([getList.getRawMany(), getCount.getCount()]);
-
-    // 手动组装实体
-    // like用COUNT的话，不能映射到实体，而且article再用getCount的话就没有raw数据，就不能拼接数据
-    // 使用了left join(select...)不能组装entity
-    const entityList = rawsToEntities<ArticleEntity>({
-      entityName: 'article',
-      rawList: list,
-      valueJoinToArr: ['tags'],
-      valueToNumArr: ['like_count', 'like_checked', 'article_commentCount'],
-      omitArr: ['list_count'],
     });
 
-    return {
-      list: entityList,
-      count,
-    };
+    return await this.handleFindAllBuilders(builders);
   }
 
   async findAllByCommentUser(pageDto: PageDto, userId: number) {
-    const { page, pageSize } = pageDto;
-
-    const sort: { sort: string; order: 'DESC' } = {
-      sort: 'article.createAt',
-      order: 'DESC',
-    };
-
-    const getList = getConnection().createQueryBuilder();
-    const getCount = this.articleRepository
-      .createQueryBuilder('article')
-      .groupBy('article.id')
-      .where('article.status = :status', {
-        status: String(ARTICLE_STATE.public),
-      })
-      .andWhere((qb) => {
+    const builders = this.createFindAllBuilders(pageDto as ListDTO, userId, (builder) => {
+      builder.andWhere({ status: String(ARTICLE_STATE.public) }).andWhere((qb) => {
         return (
           'article.id IN ' +
           qb
             .subQuery()
-            .select('comment.articleId')
+            .select('articleId')
             .from(CommentEntity, 'comment')
             .where({ userId })
-            .andWhere((qb) => {
-              return (
-                'article.id IN ' +
-                qb
-                  .subQuery()
-                  .select('comment.articleId')
-                  .from(CommentEntity, 'comment')
-                  .where({ userId })
-                  .getQuery()
-              );
-            })
             .getQuery()
         );
       });
-    getList
-      .from<ArticleEntity>((qb) => {
-        qb.select([
-          'article.*',
-          `ROW_NUMBER() OVER (ORDER BY ${sort.sort} ${sort.order}, article.id) AS \`rowid\``,
-        ])
-          .from(ArticleEntity, 'article')
-          .leftJoinAndSelect(
-            (qb2) => {
-              return qb2
-                .subQuery()
-                .select([
-                  'lk.id AS likeId',
-                  'lk.userId AS userId',
-                  'lk.articleId AS articleId',
-                  'COUNT(lk.id) AS likeCount',
-                  `SUM(CASE WHEN lk.userId = ${userId} THEN 1 ELSE 0 END ) AS checked`,
-                ])
-                .from(ArticleLikeEntity, 'lk')
-                .groupBy('lk.articleId');
-            },
-            'articleLike',
-            'articleLike.articleId = article.id',
-          )
-          .where('article.status = :status', {
-            status: String(ARTICLE_STATE.public),
-          })
-          .andWhere((qb) => {
-            return (
-              'article.id IN ' +
-              qb
-                .subQuery()
-                .select('comment.articleId')
-                .from(CommentEntity, 'comment')
-                .where({ userId })
-                .getQuery()
-            );
-          });
-        return qb;
-      }, 'article')
-      // limit在这里有bug 重复的也会算成一条数据导致不准确，使用over代替
-      .where('`article`.`rowid` between :start and :end', {
-        start: (page - 1) * pageSize + 1,
-        end: page * pageSize,
-      });
-    (getList.expressionMap.mainAlias as any).metadata =
-      getList.connection.getMetadata(ArticleEntity);
-    getList
-      .leftJoinAndSelect('article.author', 'author')
-      .leftJoinAndSelect('article.category', 'category')
-      // .leftJoinAndSelect(ArticleLinkTagEntity, 'link', 'link.articleId = article.id')
-      .leftJoinAndSelect(CommentEntity, 'comment', 'comment.articleId = article.id')
-      .leftJoinAndMapMany('article.tags', TagEntity, 'tags', 'tags.id = link.tagId')
-      .select([
-        'article.id',
-        'article.title',
-        'article.description',
-        'article.createAt',
-        'article.updateAt',
-        'article.viewCount',
-        'article.cover',
-      ])
-      .addSelect(['article.likeCount AS `like_count`', 'article.checked AS `like_checked`'])
-      .addSelect('COUNT(comment.id) AS `article_commentCount`')
-      .addSelect(['tags.id', 'tags.name'])
-      .addSelect(['id', 'nickname', 'role', 'username', 'avatar'].map((i) => 'author.' + i))
-      .addSelect(['id', 'name', 'description'].map((i) => 'category.' + i))
-      .groupBy('article.id, link.id')
-      .addGroupBy(sort.sort)
-      .orderBy(sort.sort, sort.order);
-    const [list, count] = await Promise.all([getList.getRawMany(), getCount.getCount()]);
-
-    // console.log('mmmmmmmmmm', getList.getQuery());
-    // 手动组装实体
-    // like用COUNT的话，不能映射到实体，而且article再用getCount的话就没有raw数据，就不能拼接数据
-    // 使用了left join(select...)不能组装entity
-    const entityList = rawsToEntities<ArticleEntity>({
-      entityName: 'article',
-      rawList: list,
-      valueJoinToArr: ['tags'],
-      valueToNumArr: ['like_count', 'like_checked', 'article_commentCount'],
-      omitArr: ['list_count'],
     });
 
-    return {
-      list: entityList,
-      count,
-    };
+    return await this.handleFindAllBuilders(builders);
   }
 
   updateViewCount(article: ArticleEntity) {
