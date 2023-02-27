@@ -31,7 +31,6 @@ import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
-import { ForbiddenError } from '@casl/ability';
 
 type RequestWithUser = Request & { user: UserEntity };
 
@@ -171,12 +170,10 @@ export class UserController {
     @Body() updateDto: UpdatePasswordDto,
     @Request() { user }: RequestWithUser,
   ) {
-    const findUser = await this.authService.validateUser({ id }, updateDto.curPassword);
-    ForbiddenError.from(this.caslAbilityFactory.createForUser(user)).throwUnlessCan(
-      Action.Update,
-      findUser,
-      'password',
-    );
+    const findUser = await this.caslAbilityFactory
+      .find(() => this.authService.validateUser({ id }, updateDto.curPassword))
+      .unless(user)
+      .can(Action.Update, 'password');
     return await this.userService.updatePassword(updateDto, findUser, user);
   }
 
@@ -256,22 +253,6 @@ export class UserController {
   }
 
   findUser(id: number | string) {
-    let _loginUser: UserEntity;
-
-    const can = async (action: Action, field?: keyof UserEntity) => {
-      const user = await this.userService.findOneById(+id);
-
-      const err = ForbiddenError.from(this.caslAbilityFactory.createForUser(_loginUser));
-      err.throwUnlessCan(action, user, field);
-
-      return user;
-    };
-
-    const unless = (loginUser: UserEntity) => {
-      _loginUser = loginUser;
-      return { can };
-    };
-
-    return { unless };
+    return this.caslAbilityFactory.find(() => this.userService.findOneById(+id));
   }
 }

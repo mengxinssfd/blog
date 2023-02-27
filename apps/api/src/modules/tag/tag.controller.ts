@@ -23,7 +23,6 @@ import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
-import { ForbiddenError } from '@casl/ability';
 
 @ApiTags('tag')
 @Controller('tag')
@@ -76,20 +75,6 @@ export class TagController {
   }
 
   findTag(id: string | number) {
-    let _user: UserEntity;
-    const can = async (action: Action, field?: keyof TagService) => {
-      const cate = await this.tagService.findOne(+id, false);
-
-      const ab = this.caslAbilityFactory.createForUser(_user);
-      ForbiddenError.from(ab).throwUnlessCan(action, cate, field);
-
-      return cate;
-    };
-    const unless = (loginUser: UserEntity) => {
-      _user = loginUser;
-      return { can };
-    };
-
-    return { unless };
+    return this.caslAbilityFactory.find(() => this.tagService.findOne(+id, false));
   }
 }

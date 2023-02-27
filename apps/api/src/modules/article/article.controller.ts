@@ -30,7 +30,6 @@ import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
-import { ForbiddenError } from '@casl/ability';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 
 @ApiTags('article')
@@ -179,20 +178,6 @@ export class ArticleController {
   }
 
   find(id: string | number) {
-    let _user: UserEntity;
-    const can = async (action: Action, field?: keyof ArticleEntity) => {
-      const cate = await this.articleService.findOne(+id);
-
-      const ab = this.caslAbilityFactory.createForUser(_user);
-      ForbiddenError.from(ab).throwUnlessCan(action, cate, field);
-
-      return cate;
-    };
-    const unless = (loginUser: UserEntity) => {
-      _user = loginUser;
-      return { can };
-    };
-
-    return { unless };
+    return this.caslAbilityFactory.find(() => this.articleService.findOne(+id));
   }
 }

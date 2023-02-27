@@ -23,7 +23,6 @@ import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
-import { ForbiddenError } from '@casl/ability';
 
 @ApiTags('category')
 @Controller('category')
@@ -75,21 +74,8 @@ export class CategoryController {
     await this.findCate(id).unless(user).can(Action.Delete);
     return this.categoryService.remove(+id);
   }
+
   findCate(id: string | number) {
-    let _user: UserEntity;
-    const can = async (action: Action, field?: keyof CategoryEntity) => {
-      const cate = await this.categoryService.findOne(+id, false);
-
-      const ab = this.caslAbilityFactory.createForUser(_user);
-      ForbiddenError.from(ab).throwUnlessCan(action, cate, field);
-
-      return cate;
-    };
-    const unless = (loginUser: UserEntity) => {
-      _user = loginUser;
-      return { can };
-    };
-
-    return { unless };
+    return this.caslAbilityFactory.find(() => this.categoryService.findOne(+id, false));
   }
 }
