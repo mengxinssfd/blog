@@ -21,6 +21,8 @@ export enum ARTICLE_STATE {
 }
 @Entity({ name: 'article' })
 export class ArticleEntity extends BlogBaseEntity {
+  static readonly STATE = ARTICLE_STATE;
+
   static readonly modelName = 'ArticleEntity' as const;
 
   @Column('enum', {
@@ -57,14 +59,14 @@ export class ArticleEntity extends BlogBaseEntity {
   @JoinColumn({ name: 'authorId' })
   author!: UserEntity;
 
-  @Column('int', { comment: '作者id' })
+  @Column('int', { comment: '作者id', select: false })
   authorId!: number;
 
   @ManyToOne(() => CategoryEntity)
   @JoinColumn({ name: 'categoryId' })
   category!: CategoryEntity;
 
-  @Column('int', { comment: '分类id' })
+  @Column('int', { comment: '分类id', select: false })
   categoryId!: number;
 
   @Column('int', { comment: '文章被查看数', default: 0 })
