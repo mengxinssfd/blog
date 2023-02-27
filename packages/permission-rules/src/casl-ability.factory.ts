@@ -5,6 +5,7 @@ import {
   AnyMongoAbility,
   createMongoAbility,
   ExtractSubjectType,
+  ForbiddenError,
   InferSubjects,
   MongoAbility,
 } from '@casl/ability';
@@ -86,4 +87,22 @@ export class CaslAbilityFactory {
   //     detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>,
   //   });
   // }
+
+  find<T extends Subjects>(something: () => Promise<T>) {
+    let _user: UserEntity;
+    const can = async (action: Action, field?: keyof T) => {
+      const st = await something();
+
+      const ab = this.createForUser(_user);
+      ForbiddenError.from(ab).throwUnlessCan(action, st, field as string);
+
+      return st;
+    };
+    const unless = (loginUser: UserEntity) => {
+      _user = loginUser;
+      return { can };
+    };
+
+    return { unless };
+  }
 }
