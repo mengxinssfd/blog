@@ -14,14 +14,14 @@ async function bootstrap() {
   // 线上环境不显示文档
   if (ENV.isDev()) {
     // 配置 Swagger
-    const options = new DocumentBuilder()
+    const config = new DocumentBuilder()
       .addBearerAuth() // 开启 BearerAuth 授权认证
       .setTitle('Blog')
       .setDescription('The Blog API description')
       .setVersion('2.0')
-      .addTag('api')
+      // .addTag('api')
       .build();
-    const document = SwaggerModule.createDocument(app, options);
+    const document = SwaggerModule.createDocument(app, config);
     // 地址 /api-doc
     SwaggerModule.setup('api-doc', app, document);
   }
