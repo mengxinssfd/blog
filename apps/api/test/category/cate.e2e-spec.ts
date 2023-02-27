@@ -2,7 +2,7 @@ import { buildApp, clearAllTables } from '../utils';
 import { cateApi, CateResTypes } from './api';
 import { ResTypes as UserResTypes } from '../user/utils';
 import { userApi } from '../user/api';
-import { ArticleEntity } from '@blog/entities';
+import { ArticleEntity, UserEntity } from '@blog/entities';
 
 describe('/category 文章分类', () => {
   const request = buildApp();
@@ -42,10 +42,14 @@ describe('/category 文章分类', () => {
       return api
         .get(1)
         .expect(
-          `{"code":200,"msg":"Success","data":{"id":1,${tsStr.slice(
-            1,
-            -1,
-          )},"createById":1,"articleCount":0}}`,
+          new RegExp(
+            `\\{"code":200,"msg":"Success","data":\\{"id":1,${tsStr.slice(
+              1,
+              -1,
+            )},"createBy":\\{"id":1,"nickname":"hello_\\d+","avatar":"${
+              UserEntity.DEFAULT_AVATAR
+            }"},"articleCount":0}}`,
+          ),
         );
     });
   });
@@ -55,10 +59,7 @@ describe('/category 文章分类', () => {
       return api
         .list()
         .expect(
-          `{"code":200,"msg":"Success","data":[{"id":1,${tsStr.slice(
-            1,
-            -1,
-          )},"createById":1,"articleCount":0}]}`,
+          `{"code":200,"msg":"Success","data":[{"id":1,${tsStr.slice(1, -1)},"articleCount":0}]}`,
         );
     });
     it('空列表', async () => {
@@ -87,8 +88,12 @@ describe('/category 文章分类', () => {
         );
       await api
         .get(1)
+        // '{"code":200,"msg":"Success","data":{"id":1,"name":"TS","description":"Javascript超集","createBy":{"id":1,"nickname":"hello_9","avatar":"https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg"},"articleCount":0}}'
+        ///\{"code":200,"msg":"Success","data":\{"id":1,"name":"Typescript","description":"Javascript超集","createBy":\{"id":1,"nickname":"hello_\d+","avatar":"https:\/\/my-blog-store.oss-cn-guangzhou.aliyuncs.com\/store\/20201103002944_c9ed4.jpeg"},"articleCount":0}}/
         .expect(
-          /\{"code":200,"msg":"Success","data":\{"id":1,"name":"TS","description":"Javascript超集","createById":1,"articleCount":0}}/,
+          new RegExp(
+            `\\{"code":200,"msg":"Success","data":\\{"id":1,"name":"TS","description":"Javascript超集","createBy":\\{"id":1,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"articleCount":0}}`,
+          ),
         );
     });
   });
