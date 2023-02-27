@@ -78,7 +78,7 @@ export class CategoryController {
   findCate(id: string | number) {
     let _user: UserEntity;
     const can = async (action: Action, field?: keyof CategoryEntity) => {
-      const cate = await this.categoryService.findOne(+id);
+      const cate = await this.categoryService.findOne(+id, false);
 
       const ab = this.caslAbilityFactory.createForUser(_user);
       ForbiddenError.from(ab).throwUnlessCan(action, cate, field);

@@ -76,9 +76,14 @@ export class CategoryService {
     };
   }
 
-  async findOne(id: number) {
-    const findCate = await this.categoryRepository.findOneBy({ id });
+  async findOne(id: number, withCreator = true) {
+    const builder = await this.categoryRepository.createQueryBuilder('cate').where({ id });
+
+    if (withCreator) builder.leftJoinAndSelect('cate.createBy', 'user');
+
+    const findCate = await builder.getOne();
     if (!findCate) throw new NotFoundException('该分类不存在');
+
     findCate.articleCount = await ArticleEntity.countBy({ categoryId: id });
     return findCate;
   }
