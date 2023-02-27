@@ -54,13 +54,15 @@ export class TagService {
     return res;
   }
 
-  async findOne(id: number) {
-    const tag = await this.tagRepository
+  async findOne(id: number, withCreator = true) {
+    const builder = this.tagRepository
       .createQueryBuilder('tag')
       .where({ id })
-      .leftJoinAndSelect('tag.articleList', 'article')
-      .getOne();
+      .leftJoinAndSelect('tag.articleList', 'article');
 
+    if (withCreator) builder.leftJoinAndSelect('tag.createBy', 'user');
+
+    const tag = await builder.getOne();
     if (!tag) throw new NotFoundException(`该标签不存在`);
     tag.articleCount = tag.articleList?.length || 0;
 

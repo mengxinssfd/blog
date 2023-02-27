@@ -74,10 +74,11 @@ export class TagController {
     await this.findTag(id).unless(user).can(Action.Delete);
     return this.tagService.remove(+id);
   }
+
   findTag(id: string | number) {
     let _user: UserEntity;
     const can = async (action: Action, field?: keyof TagService) => {
-      const cate = await this.tagService.findOne(+id);
+      const cate = await this.tagService.findOne(+id, false);
 
       const ab = this.caslAbilityFactory.createForUser(_user);
       ForbiddenError.from(ab).throwUnlessCan(action, cate, field);
