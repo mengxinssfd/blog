@@ -89,18 +89,17 @@ export class CaslAbilityFactory {
   // }
 
   find<T extends Subjects>(something: () => Promise<T>) {
-    let _user: UserEntity;
+    let ability: AppAbility;
     const can = async (action: Action, field?: keyof T) => {
       const st = await something();
 
-      const ab = this.createForUser(_user);
-      ForbiddenError.from(ab).throwUnlessCan(action, st, field as string);
+      ForbiddenError.from(ability).throwUnlessCan(action, st, field as string);
 
       return st;
     };
     const unless = (loginUser: UserEntity) => {
-      _user = loginUser;
-      return { can };
+      ability = this.createForUser(loginUser);
+      return { can, raw: ability };
     };
 
     return { unless };
