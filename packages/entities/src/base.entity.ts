@@ -42,7 +42,7 @@ export class BlogBaseEntity extends BaseEntity {
     comment: '删除时间',
     select: false,
   })
-  deletedAt!: Date;
+  deletedAt!: Date | null;
 
   @BeforeUpdate()
   updateTimestamp() {
