@@ -1,4 +1,4 @@
-import { ROLE, ArticleEntity } from '@blog/entities';
+import { ArticleEntity, ROLE } from '@blog/entities';
 import { Action, RuleCreator } from '../utils';
 
 const Article = [ArticleEntity, ArticleEntity.modelName];
@@ -12,10 +12,22 @@ export const createArticleRule: RuleCreator = (user, { can, cannot }) => {
     can(Action.Create, Article);
   }
 
+  if ([ROLE.dev, ROLE.commonUser, undefined].includes(user.role)) {
+    // 普通和dev权限的，非自己写的且未公开的文章直接不显示
+    cannot(Action.Read, ArticleEntity, {
+      status: ArticleEntity.STATE.private,
+      authorId: { $ne: user.id },
+    }).because('文章不存在');
+    // 非自己写的且已删除的文章直接不显示
+    cannot(Action.Read, ArticleEntity, {
+      deletedAt: { $ne: null },
+      authorId: { $ne: user.id },
+    }).because('文章不存在');
+  }
+
   // dev权限只能删改自己的
   if ([ROLE.dev].includes(user.role)) {
-    can(Action.Update, ArticleEntity.modelName);
-    can(Action.Delete, ArticleEntity.modelName);
+    can([Action.Update, Action.Delete], Article);
 
     cannot(Action.Update, ArticleEntity, {
       authorId: { $ne: user.id },
