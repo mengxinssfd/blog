@@ -42,7 +42,23 @@ export class UserController {
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly caslAbilityFactory: CaslAbilityFactory,
-  ) {}
+  ) {
+    this.registerRoot();
+  }
+
+  async registerRoot() {
+    const { count } = await this.userService.findAll();
+    if (!count) return;
+
+    const username = process.env['ROOT_USERNAME'] as string;
+    const password = process.env['ROOT_PASSWORD'] as string;
+
+    await this.userService.register(
+      { nickname: username, username, password, rePassword: password },
+      '127.0.0.1',
+    );
+    console.log('初始账号注册成功');
+  }
 
   @UsePipes(new DtoValidationPipe([WxLoginDTO]))
   @Post('miniprogram-login')
