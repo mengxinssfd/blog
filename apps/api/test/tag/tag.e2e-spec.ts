@@ -1,12 +1,12 @@
 import { buildApp, clearAllTables } from '../utils';
-import { cateApi, CateResTypes } from './api';
+import { tagApi, TagResTypes } from './api';
 import { ResTypes as UserResTypes } from '../user/utils';
 import { userApi } from '../user/api';
 import { ArticleEntity, CategoryEntity, TagEntity, UserEntity } from '@blog/entities';
 
 describe('/tag 文章标签', () => {
   const request = buildApp();
-  const api = cateApi(request);
+  const api = tagApi(request);
   const { createUsers, createAdmin } = userApi(request);
 
   const ts = { name: 'Typescript', description: 'Javascript超集' };
@@ -22,23 +22,23 @@ describe('/tag 文章标签', () => {
     });
     it('创建成功', async () => {
       const admin = await createAdmin();
-      await api.create(ts, admin.token).expect(CateResTypes.created);
+      await api.create(ts, admin.token).expect(TagResTypes.created);
     });
     it('不得重复创建', async () => {
       const admin = await createAdmin();
-      await api.create(ts, admin.token).expect(CateResTypes.created);
-      await api.create(ts, admin.token).expect(CateResTypes.isExists);
+      await api.create(ts, admin.token).expect(TagResTypes.created);
+      await api.create(ts, admin.token).expect(TagResTypes.isExists);
     });
   });
 
   describe('根据id获取', function () {
     it('不存在该标签', async () => {
       await clearAllTables();
-      return api.get(1).expect(CateResTypes.notFound);
+      return api.get(1).expect(TagResTypes.notFound);
     });
     it('成功获取标签', async () => {
       const { admin } = await createUsers();
-      await api.create(ts, admin.token).expect(CateResTypes.created);
+      await api.create(ts, admin.token).expect(TagResTypes.created);
       return api
         .get(1)
         .expect(
@@ -76,11 +76,11 @@ describe('/tag 文章标签', () => {
     });
     it('分类不存在', async () => {
       const admin = await createAdmin();
-      await api.update(1, ts, admin.token).expect(CateResTypes.notFound);
+      await api.update(1, ts, admin.token).expect(TagResTypes.notFound);
     });
     it('更新成功', async () => {
       const admin = await createAdmin();
-      await api.create(ts, admin.token).expect(CateResTypes.created);
+      await api.create(ts, admin.token).expect(TagResTypes.created);
       await api
         .update(1, { ...ts, name: 'TS' }, admin.token)
         .expect(
@@ -103,13 +103,13 @@ describe('/tag 文章标签', () => {
     });
     it('分类不存在', async () => {
       const admin = await createAdmin();
-      await api.delete(1, admin.token).expect(CateResTypes.notFound);
+      await api.delete(1, admin.token).expect(TagResTypes.notFound);
     });
     it('删除成功', async () => {
       const admin = await createAdmin();
-      await api.create(ts, admin.token).expect(CateResTypes.created);
+      await api.create(ts, admin.token).expect(TagResTypes.created);
       await api.delete(1, admin.token).expect(UserResTypes.success);
-      await api.get(1).expect(CateResTypes.notFound);
+      await api.get(1).expect(TagResTypes.notFound);
     });
     it('不可删除有文章的标签', async () => {
       const admin = await createAdmin();
@@ -117,7 +117,7 @@ describe('/tag 文章标签', () => {
         body: {
           data: { id },
         },
-      } = await api.create(ts, admin.token).expect(CateResTypes.created);
+      } = await api.create(ts, admin.token).expect(TagResTypes.created);
       expect(id).toBe(1);
 
       let category = new CategoryEntity();

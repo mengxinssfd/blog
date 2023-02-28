@@ -40,7 +40,7 @@ export async function clearAllTables() {
   // await Entities.CommentDislikeEntity.clear();
   // await Entities.CommentLikeEntity.clear();
   // await Entities.CommentEntity.clear();
-  // await Entities.ArticleEntity.clear();
+  await Entities.ArticleEntity.clear();
   // await Entities.ArticleLikeEntity.clear();
   await Entities.CategoryEntity.clear();
   await Entities.UserEntity.clear();

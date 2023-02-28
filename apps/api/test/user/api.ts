@@ -95,6 +95,28 @@ export function userApi(request: () => SuperTest<Test>) {
     };
   }
 
+  async function registerAndSetRole(token: string, role: ROLE) {
+    const user = buildRegisterData();
+    const [id /* devToken */ /* 该token的role仍然是commonUser */] = await registerLogin(user);
+    const _token = await setRole(id, token, role)
+      .expect(ResTypes.setRole)
+      .then<string>((res) => res.body.data.token);
+
+    return { ...user, id: id, token: _token };
+  }
+
+  async function createAllRoleUsers() {
+    const { admin: superAdmin, commonUser: common } = await createUsers();
+
+    const dev = await registerAndSetRole(superAdmin.token, ROLE.dev);
+
+    const dev2 = await registerAndSetRole(superAdmin.token, ROLE.dev);
+
+    const admin = await registerAndSetRole(superAdmin.token, ROLE.admin);
+
+    return { superAdmin, common, dev, dev2, admin };
+  }
+
   async function createAdmin() {
     await clearAllTables();
 
@@ -122,5 +144,6 @@ export function userApi(request: () => SuperTest<Test>) {
     createUsers,
     mute,
     createAdmin,
+    createAllRoleUsers,
   };
 }

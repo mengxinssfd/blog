@@ -31,6 +31,7 @@ import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
+import { ForbiddenError } from '@casl/ability';
 
 @ApiTags('article')
 @Controller('article')
@@ -114,11 +115,23 @@ export class ArticleController {
 
   @Get(':id')
   async findOne(@Param('id') id: string, @User() user: UserEntity) {
-    const article = await this.articleService.findOne(id, user);
+    let article: ArticleEntity;
+
+    try {
+      article = await this.find(id).unless(user).can(Action.Read);
+    } catch (e) {
+      if (e instanceof ForbiddenError && e.message === '文章不存在') {
+        throw new NotFoundException(e.message);
+      }
+      throw e;
+    }
+
     article.content = this.articleService.markedRender(article.content);
-    if (this.caslAbilityFactory.createForUser(user).can(Action.Update, article, 'viewCount')) {
+    if (user?.id !== article.authorId && article.status === ArticleEntity.STATE.public) {
+      article.viewCount++;
       await this.articleService.updateViewCount(article);
     }
+
     return article;
   }
 
@@ -136,17 +149,16 @@ export class ArticleController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch(':id')
   async update(
-    @Param('id') id: string | number,
+    @Param('id') id: string,
     @Body() updateArticleDto: UpdateArticleDto,
     @User() user: UserEntity,
   ) {
-    id = Number(id);
     await this.validateUserAndTags(updateArticleDto as CreateArticleDto, user);
 
     await this.find(id).unless(user).can(Action.Update);
 
     // 保存文章
-    return this.articleService.update(id, updateArticleDto, user.id);
+    return this.articleService.update(id, updateArticleDto);
   }
 
   @ApiBearerAuth()

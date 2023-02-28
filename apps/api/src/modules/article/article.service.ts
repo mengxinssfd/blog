@@ -8,7 +8,6 @@ import {
   ArticleEntity,
   ArticleLikeEntity,
   CommentEntity,
-  ROLE,
   TagEntity,
   UserEntity,
 } from '@blog/entities';
@@ -240,7 +239,7 @@ export class ArticleService {
     this.articleRepository
       .createQueryBuilder()
       .update()
-      .set({ viewCount: ++article.viewCount })
+      .set({ viewCount: article.viewCount, version: article.version })
       .where({ id: article.id })
       .execute();
   }
@@ -249,53 +248,26 @@ export class ArticleService {
     return this.articleRepository.findOneBy({ id });
   }
 
-  async findOne(id: number | string, user?: UserEntity) {
+  async findOne(id: number | string) {
     const getArticle = this.articleRepository
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.author', 'user')
-      .leftJoinAndMapMany('article.tags', TagEntity, 'tag', 'tag.id = link.tagId')
+      .leftJoinAndSelect('article.tags', 'tag')
       .leftJoinAndSelect('article.category', 'category')
       .where({ id })
-      .select([
-        'article.id',
-        'article.title',
-        'article.description',
+      .addSelect([
         'article.content',
         'article.createAt',
         'article.updateAt',
-        'article.cover',
-        'article.bgm',
-        'article.status',
-        // DATE_FORMAT(article.createAt,'%Y-%m-%d %H:%i:%s')
-        // 'UNIX_AtSTAMP(article.createAt) createAt',
-        // 'UNIX_AtSTAMP(article.updateAt) updateAt',
-        'article.viewCount',
-        'article.commentLock',
+        'article.authorId',
         'article.deletedAt',
       ])
-      .addSelect(['id', 'nickname', 'role', 'avatar'].map((i) => 'user.' + i))
       .addSelect(['tag.id', 'tag.name'])
       .addSelect(['category.id', 'category.name'])
       .withDeleted();
 
     const article = await getArticle.getOne();
     if (!article) throw new NotFoundException('文章不存在');
-
-    /* (article as any).tags = raw.map((item) => ({
-      id: item.tag_id,
-      name: item.tag_name,
-    }));*/
-    // (article as any).createAt = article.createAt.getAt();
-    // (article as any).updateAt = article.updateAt.getAt();
-
-    if (user?.id === ROLE.superAdmin) return article;
-
-    if (article.deletedAt) throw new NotFoundException('文章不存在');
-
-    if (article.status === ARTICLE_STATE.private) {
-      if (user?.id === article.author.id) return article;
-      throw new NotFoundException('文章不存在');
-    }
 
     return article;
   }
@@ -319,19 +291,20 @@ export class ArticleService {
     return { articleId: articleEntity.id };
   }
 
-  async update(id: number, updateArticleDto: UpdateArticleDto, userId: number) {
-    const articleIns = new ArticleEntity();
-    Object.assign(articleIns, {
-      ...omit(updateArticleDto, ['isPublic']),
-      status: Number(updateArticleDto.isPublic),
-    });
-    articleIns.updateAt = new Date();
-    articleIns.id = id;
-    articleIns.authorId = userId;
-    articleIns.tags =
-      updateArticleDto.tags?.map((tag) => Object.assign(new TagEntity(), { id: tag })) || [];
+  async update(id: string, updateArticleDto: UpdateArticleDto) {
+    const article = new ArticleEntity();
+    Object.assign(article, omit(updateArticleDto, ['isPublic']));
+    article.id = +id;
+    article.updateAt = new Date();
+    if (updateArticleDto.tags && updateArticleDto.tags.length)
+      article.tags = updateArticleDto.tags.map((tag) =>
+        Object.assign(new TagEntity(), { id: tag }),
+      );
+    if (updateArticleDto.isPublic !== undefined) {
+      article.status = Number(updateArticleDto.isPublic);
+    }
 
-    return await this.articleRepository.save(articleIns);
+    return await this.articleRepository.save(article);
   }
 
   async remove(id: number) {

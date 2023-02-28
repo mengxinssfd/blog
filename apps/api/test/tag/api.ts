@@ -4,7 +4,7 @@ import { UpdateTagDto } from '@/modules/tag/dto/update-tag.dto';
 
 export const prefix = '/api/tag';
 
-export function cateApi(request: () => SuperTest<Test>) {
+export function tagApi(request: () => SuperTest<Test>) {
   return {
     create(data: CreateTagDto, token: string) {
       return request()
@@ -32,7 +32,7 @@ export function cateApi(request: () => SuperTest<Test>) {
   };
 }
 
-export const CateResTypes = {
+export const TagResTypes = {
   notFound: '{"code":404,"msg":"该标签不存在"}',
   isExists: /\{"code":403,"msg":"标签'[^']+'已存在"}/,
   created: /\{"code":201,"msg":"Success","data":\{"id":\d+}}/,
