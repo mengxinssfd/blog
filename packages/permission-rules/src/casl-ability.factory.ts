@@ -104,4 +104,24 @@ export class CaslAbilityFactory {
 
     return { unless };
   }
+
+  // /**
+  //  * 检查字段用
+  //  * ---
+  //  * casl原来的不太准确，见article rule
+  //  * 当单个规则和整体规则冲突的时候就得用这个方法
+  //  *
+  //  * @param ability
+  //  */
+  // use(ability: AppAbility) {
+  //   return {
+  //     can: <T extends Subjects>(action: Action, subject: T, fields: (keyof T)[]): boolean => {
+  //       const fieldList = permittedFieldsOf(ability, action, subject, {
+  //         fieldsFrom: (rule) => rule.fields || (fields as string[]),
+  //       });
+  //       if (!fields.length) return Boolean(fieldList.length);
+  //       return fieldList.some((field) => fields.includes(field as any));
+  //     },
+  //   };
+  // }
 }
