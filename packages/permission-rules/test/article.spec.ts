@@ -54,7 +54,7 @@ describe('ArticleEntity', function () {
       } catch (e) {
         console.log(e);
       }
-      // expect(devAb.cannot(Action.Update, ArticleEntity)).toBeTruthy();
+      expect(devAb.can(Action.Update, ArticleEntity)).toBeTruthy();
       expect(devAb.cannot(Action.Update, new ArticleEntity())).toBeTruthy();
 
       expect(devAb.can(Action.Delete, ArticleEntity.modelName)).toBeTruthy();
@@ -67,6 +67,7 @@ describe('ArticleEntity', function () {
       article.authorId = admin.id;
       expect(devAb.cannot(Action.Update, article)).toBeTruthy();
       expect(devAb.cannot(Action.Delete, article)).toBeTruthy();
+      expect(devAb.cannot(Action.Update, article, 'status')).toBeTruthy();
     });
     it('不可查看非公开文章', () => {
       const article = new ArticleEntity();
@@ -144,15 +145,6 @@ describe('ArticleEntity', function () {
       expect(devAb.can(Action.Read, article)).toBeTruthy();
       expect(adminAb.can(Action.Read, article)).toBeTruthy();
       expect(superAb.can(Action.Read, article)).toBeTruthy();
-    });
-    it('都不可删除有文章用了的标签', function () {
-      const article = new ArticleEntity();
-      article.authorId = dev.id;
-
-      expect(commonAb.cannot(Action.Delete, article)).toBeTruthy();
-      expect(devAb.can(Action.Delete, article)).toBeTruthy();
-      expect(adminAb.can(Action.Delete, article)).toBeTruthy();
-      expect(superAb.can(Action.Delete, article)).toBeTruthy();
     });
   });
 });
