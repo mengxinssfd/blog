@@ -1,7 +1,8 @@
 import * as path from 'path';
 import { Configuration } from 'log4js';
+import { ENV } from '@/utils/utils';
 
-const baseLogPath = path.resolve(__dirname, '../logs');
+const baseLogPath = path.resolve(__dirname, ENV.isTest() ? '../../logs' : './logs');
 
 const log4jsConfig: Configuration = {
   disableClustering: false,

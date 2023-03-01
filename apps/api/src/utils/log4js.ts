@@ -2,7 +2,7 @@ import * as Log4js from 'log4js';
 import * as Util from 'util';
 // import * as Moment from 'moment';
 import Chalk from 'chalk';
-import config from '@config/log4js';
+import config from '@/config/log4js';
 import * as StackTrace from 'stacktrace-js';
 import { formatDate } from '@tool-pack/basic';
 import * as Path from 'path';
