@@ -35,7 +35,7 @@ function buildPkg() {
   // @ts-ignore
   delete originPkg.devDependencies;
 
-  originPkg.scripts['start:prod'] = 'node src/main.js';
+  originPkg.scripts['start:prod'] = 'node main.js';
 
   // 复制 packages/*
   Object.entries(originPkg.dependencies)
@@ -54,15 +54,15 @@ function buildPkg() {
 /**
  * 复制.env文件
  */
-function cpEnvFile() {
-  const list = fs.readdirSync(apiRoot());
-  const envs = list.filter((f) => f.startsWith('.env') && !f.includes('test'));
-  envs.forEach((env) => fs.cpSync(apiRoot(env), apiRoot('dist/' + env)));
-}
+// function cpEnvFile() {
+//   const list = fs.readdirSync(apiRoot());
+//   const envs = list.filter((f) => f.startsWith('.env') && !f.includes('test'));
+//   envs.forEach((env) => fs.cpSync(apiRoot(env), apiRoot('dist/' + env)));
+// }
 
 async function run() {
   buildPkg();
-  cpEnvFile();
+  // cpEnvFile();
 }
 
 run();
