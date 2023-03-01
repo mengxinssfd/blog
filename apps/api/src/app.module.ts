@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { ENV, getMYSQLConfig } from './utils/utils';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ENV } from './utils/utils';
 import { UserModule } from './modules/user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
@@ -11,35 +11,32 @@ import { CategoryModule } from '@/modules/category/category.module';
 import { TagModule } from '@/modules/tag/tag.module';
 import { ArticleModule } from '@/modules/article/article.module';
 import { DailyImgModule } from '@/modules/daily-img/daily-img.module';
-
-const cm = ConfigModule.forRoot({
-  isGlobal: true,
-  envFilePath: ['.env.local', ...(ENV.isTest() ? ['.env.test'] : []), '.env'], // 前面的会覆盖后面的
-});
+import { configLoader, Configuration } from '@/config/configuration';
+import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
 @Module({
   imports: [
-    cm,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      load: [configLoader],
+      envFilePath: ['.env.local', ...(ENV.isTest() ? ['.env.test'] : []), '.env'], // 前面的会覆盖后面的
+    }),
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 10,
     }),
     // 使用 TypeORM 配置数据库
-    TypeOrmModule.forRoot({
-      ...getMYSQLConfig(),
-      type: 'mysql',
-      // entities: [__dirname + '/**/*.entity{.ts,.js}'], // 路径写错会找不到实体
-      entities: [
-        Entities.UserEntity,
-        Entities.CategoryEntity,
-        Entities.ArticleLikeEntity,
-        Entities.CommentEntity,
-        Entities.CommentLikeEntity,
-        Entities.CommentDislikeEntity,
-        Entities.ArticleEntity,
-        Entities.TagEntity,
-      ],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<Configuration>) => {
+        return {
+          ...configService.get<Configuration['database']>('database'),
+          type: 'mysql',
+          entities: Object.values(Entities),
+          synchronize: true,
+        } as MysqlConnectionOptions;
+      },
     }),
     AuthModule,
     UserModule,
