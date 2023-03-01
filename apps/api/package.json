@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf ./dist",
+    "-prebuild": "rimraf ./dist",
     "build": "nest build -p tsconfig.build.json --webpack",
     "postbuild": "esno scripts/build.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
