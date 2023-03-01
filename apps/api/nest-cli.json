@@ -5,5 +5,25 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "assets": ["**/*.env*"]
+  },
+  "projects": {
+    "entities": {
+      "type": "library",
+      "root": "../../packages/entities",
+      "entryFile": "index",
+      "sourceRoot": "../../packages/entities/src",
+      "compilerOptions": {
+        "tsConfigPath": "../../packages/entities/tsconfig.json"
+      }
+    },
+    "permission-rules": {
+      "type": "permission-rules",
+      "root": "../../packages/permission-rules",
+      "entryFile": "index",
+      "sourceRoot": "../../packages/permission-rules/src",
+      "compilerOptions": {
+        "tsConfigPath": "../../packages/permission-rules/tsconfig.json"
+      }
+    }
   }
 }
