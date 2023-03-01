@@ -13,14 +13,19 @@ import { ArticleModule } from '@/modules/article/article.module';
 import { DailyImgModule } from '@/modules/daily-img/daily-img.module';
 import { configLoader, Configuration } from '@/config/configuration';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
+import { envValidate } from '@/env/env.validate';
+import * as Path from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
+      validate: envValidate,
       load: [configLoader],
-      envFilePath: ['.env.local', ...(ENV.isTest() ? ['.env.test'] : []), '.env'], // 前面的会覆盖后面的
+      envFilePath: ['.env.local', ...(ENV.isTest() ? ['.env.test'] : []), '.env'].map((file) =>
+        Path.resolve(__dirname, './env/' + file),
+      ), // 前面的会覆盖后面的
     }),
     ThrottlerModule.forRoot({
       ttl: 60,
