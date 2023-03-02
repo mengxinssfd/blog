@@ -39,7 +39,7 @@ import * as Path from 'path';
           ...configService.get<Configuration['database']>('database'),
           type: 'mysql',
           entities: Object.values(Entities),
-          synchronize: true,
+          synchronize: ENV.isDev() || ENV.isTest(),
         } as MysqlConnectionOptions;
       },
     }),

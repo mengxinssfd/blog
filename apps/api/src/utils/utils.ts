@@ -38,7 +38,7 @@ export const ENV = {
     console.log('env', env);
     return env === 'development';
   },
-  isTest() {
+  isTest(): boolean {
     // test是nest配置的，e2e测试时会变成test
     const env = process.env['NODE_ENV'];
     return env === 'test';
