@@ -23,7 +23,7 @@ export class ChatAiService {
       frequency_penalty: 0.0,
       presence_penalty: 0.0,
     });
-    console.log('openai response:', res);
+    console.log('openai response:', res.data);
     return res.data.choices.reduce((prev, cur) => prev + cur.text, '');
   }
 }
