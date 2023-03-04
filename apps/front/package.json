@@ -9,7 +9,6 @@
     "check:ts": "vue-tsc --noEmit -p ./tsconfig.json"
   },
   "devDependencies": {
-    "nuxt": "^3.1.0",
-    "blog-entities": "../../packages/entities"
+    "nuxt": "^3.1.0"
   }
 }
