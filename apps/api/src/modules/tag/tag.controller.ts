@@ -6,16 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
   UseGuards,
   Request,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@/utils/decorator';
-import { DtoValidationPipe } from '@/pipes/dto-validation/dto-validation.pipe';
 import { AuthGuard } from '@nestjs/passport';
 import { TagEntity, UserEntity } from '@blog/entities';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
@@ -33,7 +32,6 @@ export class TagController {
   ) {}
 
   @ApiBearerAuth()
-  @UsePipes(new DtoValidationPipe([CreateTagDto]))
   @CheckPolicies((ab) => ab.can(Action.Create, TagEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post()
@@ -48,8 +46,8 @@ export class TagController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tagService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.tagService.findOne(id);
   }
 
   @ApiBearerAuth()
@@ -57,7 +55,7 @@ export class TagController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateTagDto: UpdateTagDto,
     @Request() { user }: { user: UserEntity },
   ) {
@@ -69,12 +67,12 @@ export class TagController {
   @CheckPolicies((ab) => ab.can(Action.Delete, TagEntity.modelName))
   @UseGuards(AuthGuard('jwt'), PoliciesGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Request() { user }: { user: UserEntity }) {
     await this.findTag(id).unless(user).can(Action.Delete);
     return this.tagService.remove(+id);
   }
 
-  findTag(id: string | number) {
+  findTag(id: number) {
     return this.caslAbilityFactory.find(() => this.tagService.findOne(+id, false));
   }
 }
