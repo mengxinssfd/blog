@@ -3,7 +3,7 @@ import * as ArticleApi from './api';
 import { ResTypes as UserResTypes } from '../user/utils';
 import { userApi } from '../user/api';
 import { ArticleEntity, UserEntity } from '@blog/entities';
-import { CreateArticleDto } from '@/modules/article/dto/create-article.dto';
+import { CreateArticleDto } from '@blog/dtos';
 import * as CateApi from '../category/api';
 import * as TagApi from '../tag/api';
 

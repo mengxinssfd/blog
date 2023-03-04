@@ -1,6 +1,5 @@
 import { SuperTest, Test } from 'supertest';
-import { CreateTagDto } from '@/modules/tag/dto/create-tag.dto';
-import { UpdateTagDto } from '@/modules/tag/dto/update-tag.dto';
+import { CreateTagDto, UpdateTagDto } from '@blog/dtos';
 
 export const prefix = '/api/tag';
 

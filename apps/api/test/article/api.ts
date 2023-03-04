@@ -1,6 +1,5 @@
 import { SuperTest, Test } from 'supertest';
-import { CreateArticleDto } from '@/modules/article/dto/create-article.dto';
-import { UpdateArticleDto } from '@/modules/article/dto/update-article.dto';
+import { CreateArticleDto, UpdateArticleDto } from '@blog/dtos';
 // import { buildRegisterData } from '../user/utils';
 // import * as CateApi from '../category/api';
 // import * as TagApi from '../tag/api';

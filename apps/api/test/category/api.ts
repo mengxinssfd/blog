@@ -1,6 +1,5 @@
 import { SuperTest, Test } from 'supertest';
-import type { CreateCategoryDto } from '@/modules/category/dto/create-category.dto';
-import { UpdateCategoryDto } from '@/modules/category/dto/update-category.dto';
+import type { CreateCategoryDto, UpdateCategoryDto } from '@blog/dtos';
 
 export const prefix = '/api/category';
 

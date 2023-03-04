@@ -1,5 +1,5 @@
 import { pick } from '@tool-pack/basic';
-import { UpdatePasswordDto } from '@/modules/user/dto/update-password.dto';
+import { UpdatePasswordDto } from '@blog/dtos';
 import { ROLE } from '@blog/entities';
 import { buildRegisterData, ipGen, ResTypes } from './utils';
 import { SuperTest, Test } from 'supertest';
