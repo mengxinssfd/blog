@@ -163,6 +163,12 @@ importers:
       blog-entities: link:../../packages/entities
       nuxt: 3.1.1
 
+  packages/dtos:
+    specifiers:
+      text-censor: ^1.0.2
+    dependencies:
+      text-censor: 1.0.2
+
   packages/entities:
     specifiers:
       typeorm: ^0.3.12

@@ -14,9 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
-import { ListDTO } from './dto/list.dto';
+import { CreateArticleDto, UpdateArticleDto, ArticleListDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
 import { CategoryService } from '../category/category.service';
@@ -77,7 +75,7 @@ export class ArticleController {
 
   @Get()
   async findAll(
-    @Query() listDTO: ListDTO,
+    @Query() listDTO: ArticleListDto,
     @User('id') userId: number,
     @IsFromWX() isFromWX: boolean,
   ) {

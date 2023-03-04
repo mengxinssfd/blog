@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChatAiDto } from './dto/create-chat-ai.dto';
+import { CreateChatAiDto } from '@blog/dtos';
 import { Configuration, OpenAIApi } from 'openai';
 
 @Injectable()

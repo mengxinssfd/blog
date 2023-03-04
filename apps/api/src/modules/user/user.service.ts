@@ -1,13 +1,13 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from '../../../../../packages/dtos/src/user/update-user.dto';
 import { encryptPassword, makeSalt } from '@/utils/cryptogram';
-import { RegisterDTO } from './dto/register.dto';
+import { RegisterDTO } from '../../../../../packages/dtos/src/user/register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ROLE, USER_STATE, UserEntity } from '@blog/entities';
-import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdatePasswordDto } from '../../../../../packages/dtos/src/user/update-password.dto';
 import { httpsGet } from '@/utils/utils';
-import { WxLoginDTO } from './dto/wx-login.dto';
+import { WxLoginDTO } from '../../../../../packages/dtos/src/user/wx-login.dto';
 import { createUUID } from '@tool-pack/basic';
 import FailedException from '@/exceptions/Failed.exception';
 

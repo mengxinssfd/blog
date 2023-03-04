@@ -12,8 +12,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@/utils/decorator';
 import { CategoryEntity, UserEntity } from '@blog/entities';

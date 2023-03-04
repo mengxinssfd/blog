@@ -1,7 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
-import { ListDTO } from './dto/list.dto';
+import { CreateArticleDto, UpdateArticleDto, ArticleListDto } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ARTICLE_STATE,
@@ -79,7 +77,7 @@ export class ArticleService {
   }
 
   private async createFindAllBuilders(
-    { page = 1, pageSize = 10, keyword, tags = [], category, sort }: ListDTO,
+    { page = 1, pageSize = 10, keyword, tags = [], category, sort }: ArticleListDto,
     userId = 0,
     beforeClone?: (builder: SelectQueryBuilder<ArticleEntity>) => void | Promise<void>,
   ): Promise<[SelectQueryBuilder<ArticleEntity>, SelectQueryBuilder<ArticleEntity>]> {
@@ -179,7 +177,7 @@ export class ArticleService {
   }
 
   async findAll(
-    listDTO: ListDTO,
+    listDTO: ArticleListDto,
     userId = 0,
     fromWx?: { cateId: number },
   ): Promise<{ list: ArticleEntity[]; count: number }> {
@@ -192,7 +190,7 @@ export class ArticleService {
   }
 
   async findAllByAuthor(pageDto: PageDto, authorId: number, userId: number) {
-    const builders = this.createFindAllBuilders(pageDto as ListDTO, userId, (builder) => {
+    const builders = this.createFindAllBuilders(pageDto as ArticleListDto, userId, (builder) => {
       builder.andWhere({ authorId });
     });
 
@@ -200,7 +198,7 @@ export class ArticleService {
   }
 
   async findAllByLikeUser(pageDto: PageDto, userId: number) {
-    const builders = this.createFindAllBuilders(pageDto as ListDTO, userId, (builder) => {
+    const builders = this.createFindAllBuilders(pageDto as ArticleListDto, userId, (builder) => {
       builder.andWhere({ status: String(ARTICLE_STATE.public) }).andWhere((qb) => {
         return (
           'article.id IN ' +
@@ -218,7 +216,7 @@ export class ArticleService {
   }
 
   async findAllByCommentUser(pageDto: PageDto, userId: number) {
-    const builders = this.createFindAllBuilders(pageDto as ListDTO, userId, (builder) => {
+    const builders = this.createFindAllBuilders(pageDto as ArticleListDto, userId, (builder) => {
       builder.andWhere({ status: String(ARTICLE_STATE.public) }).andWhere((qb) => {
         return (
           'article.id IN ' +

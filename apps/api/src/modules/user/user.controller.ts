@@ -11,18 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { RegisterDTO } from './dto/register.dto';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { LoginDTO, LoginVO } from './dto/login.dto';
 import { ReqIp, User } from '@/utils/decorator';
-import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserEntity } from '@blog/entities';
 import { Throttle } from '@nestjs/throttler';
 import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
-import { SetRoleDto } from './dto/set-role.dto';
-import { WxLoginDTO } from './dto/wx-login.dto';
 import ResetTokenException from '../../exceptions/ResetToken.exception';
 import { LocalAuthGuard } from '@/guards/auth/local-auth.guard';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
@@ -30,6 +24,15 @@ import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
+import {
+  LoginDTO,
+  LoginVO,
+  RegisterDTO,
+  SetRoleDto,
+  UpdatePasswordDto,
+  UpdateUserDto,
+  WxLoginDTO,
+} from '@blog/dtos';
 
 type RequestWithUser = Request & { user: UserEntity };
 

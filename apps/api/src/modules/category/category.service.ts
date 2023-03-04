@@ -1,6 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ARTICLE_STATE, ArticleEntity, CategoryEntity, ROLE, UserEntity } from '@blog/entities';
 import { Repository } from 'typeorm';

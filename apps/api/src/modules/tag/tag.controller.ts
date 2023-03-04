@@ -11,8 +11,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { TagService } from './tag.service';
-import { CreateTagDto } from './dto/create-tag.dto';
-import { UpdateTagDto } from './dto/update-tag.dto';
+import { CreateTagDto, UpdateTagDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@/utils/decorator';
 import { AuthGuard } from '@nestjs/passport';
