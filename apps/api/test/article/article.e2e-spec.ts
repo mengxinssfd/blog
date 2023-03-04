@@ -2,7 +2,7 @@ import { buildApp, clearAllTables } from '../utils';
 import * as ArticleApi from './api';
 import { ResTypes as UserResTypes } from '../user/utils';
 import { userApi } from '../user/api';
-import { UserEntity } from '@blog/entities';
+import { ArticleEntity, UserEntity } from '@blog/entities';
 import { CreateArticleDto } from '@/modules/article/dto/create-article.dto';
 import * as CateApi from '../category/api';
 import * as TagApi from '../tag/api';
@@ -20,9 +20,7 @@ describe('/article 文章', () => {
     content: '#测试一下',
     categoryId: 0,
     tags: [],
-    bgm: '',
     isPublic: false,
-    cover: '',
   };
   let privateArticleId = 0;
   let publicArticleId = 0;
@@ -38,6 +36,11 @@ describe('/article 文章', () => {
     });
   });
   describe('创建', function () {
+    it('封面不是一个链接', async () => {
+      await api
+        .create({ ...articleInfo, cover: '2111' }, RoleUsers.superAdmin.token)
+        .expect('{"code":400,"msg":"封面不是一个链接"}');
+    });
     it('分类不存在', async () => {
       await api
         .create(articleInfo, RoleUsers.superAdmin.token)
@@ -91,7 +94,7 @@ describe('/article 文章', () => {
     it('成功获取public文章', async () => {
       expect(publicArticleId).toBe(2);
       const resType = new RegExp(
-        `\\{"code":200,"msg":"Success","data":\\{"id":2,"createAt":"[^"]{24}","updateAt":"[^"]{24}","deletedAt":null,"status":1,"version":1,"title":"测试一些","description":"测试一下","content":"<p>#测试一下</p>\\\\n","authorId":4,"viewCount":1,"cover":"","bgm":"","commentLock":false,"author":\\{"id":4,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"category":\\{"id":1,"name":"Front Dev","description":"前端开发"}}}`,
+        `\\{"code":200,"msg":"Success","data":\\{"id":2,"createAt":"[^"]{24}","updateAt":"[^"]{24}","deletedAt":null,"status":1,"version":1,"title":"测试一些","description":"测试一下","content":"<p>#测试一下</p>\\\\n","authorId":4,"viewCount":1,"cover":"${ArticleEntity.DEFAULT_COVER}","bgm":"","commentLock":false,"author":\\{"id":4,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"category":\\{"id":1,"name":"Front Dev","description":"前端开发"}}}`,
       );
       return api.get(publicArticleId).expect(resType);
     });
@@ -104,17 +107,15 @@ describe('/article 文章', () => {
     });
 
     it('admin可查看private文章', async () => {
-      console.log('22222222');
       const resType = new RegExp(
-        `\\{"code":200,"msg":"Success","data":\\{"id":1,"createAt":"[^"]{24}","updateAt":"[^"]{24}","deletedAt":null,"status":0,"version":1,"title":"测试一些","description":"测试一下","content":"<p>#测试一下</p>\\\\n","authorId":3,"viewCount":0,"cover":"","bgm":"","commentLock":false,"author":\\{"id":3,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"category":\\{"id":1,"name":"Front Dev","description":"前端开发"}}}`,
+        `\\{"code":200,"msg":"Success","data":\\{"id":1,"createAt":"[^"]{24}","updateAt":"[^"]{24}","deletedAt":null,"status":0,"version":1,"title":"测试一些","description":"测试一下","content":"<p>#测试一下</p>\\\\n","authorId":3,"viewCount":0,"cover":"${ArticleEntity.DEFAULT_COVER}","bgm":"","commentLock":false,"author":\\{"id":3,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"category":\\{"id":1,"name":"Front Dev","description":"前端开发"}}}`,
       );
       console.log('id', RoleUsers.admin.id);
       await api.get(privateArticleId, RoleUsers.admin.token).expect(resType);
-      console.log('3333333');
     });
     it('superAdmin可查看private文章', () => {
       const resType = new RegExp(
-        `\\{"code":200,"msg":"Success","data":\\{"id":1,"createAt":"[^"]{24}","updateAt":"[^"]{24}","deletedAt":null,"status":0,"version":1,"title":"测试一些","description":"测试一下","content":"<p>#测试一下</p>\\\\n","authorId":3,"viewCount":0,"cover":"","bgm":"","commentLock":false,"author":\\{"id":3,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"category":\\{"id":1,"name":"Front Dev","description":"前端开发"}}}`,
+        `\\{"code":200,"msg":"Success","data":\\{"id":1,"createAt":"[^"]{24}","updateAt":"[^"]{24}","deletedAt":null,"status":0,"version":1,"title":"测试一些","description":"测试一下","content":"<p>#测试一下</p>\\\\n","authorId":3,"viewCount":0,"cover":"${ArticleEntity.DEFAULT_COVER}","bgm":"","commentLock":false,"author":\\{"id":3,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"category":\\{"id":1,"name":"Front Dev","description":"前端开发"}}}`,
       );
       return api.get(privateArticleId, RoleUsers.superAdmin.token).expect(resType);
     });
@@ -147,7 +148,7 @@ describe('/article 文章', () => {
         .get(privateArticleId, RoleUsers.dev.token)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"id":1,"createAt":"[^"]{24}","updateAt":"[^"]{24}","deletedAt":null,"status":0,"version":2,"title":"TS","description":"测试一下","content":"<p>#测试一下</p>\\\\n","authorId":3,"viewCount":0,"cover":"","bgm":"","commentLock":false,"author":\\{"id":3,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"category":\\{"id":1,"name":"Front Dev","description":"前端开发"}}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"id":1,"createAt":"[^"]{24}","updateAt":"[^"]{24}","deletedAt":null,"status":0,"version":2,"title":"TS","description":"测试一下","content":"<p>#测试一下</p>\\\\n","authorId":3,"viewCount":0,"cover":"${ArticleEntity.DEFAULT_COVER}","bgm":"","commentLock":false,"author":\\{"id":3,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"category":\\{"id":1,"name":"Front Dev","description":"前端开发"}}}`,
           ),
         );
     });

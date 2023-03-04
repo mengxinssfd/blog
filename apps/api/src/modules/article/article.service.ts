@@ -79,7 +79,7 @@ export class ArticleService {
   }
 
   private async createFindAllBuilders(
-    { page = 1, pageSize = 10, keyword, tag, category, sort }: ListDTO,
+    { page = 1, pageSize = 10, keyword, tags = [], category, sort }: ListDTO,
     userId = 0,
     beforeClone?: (builder: SelectQueryBuilder<ArticleEntity>) => void | Promise<void>,
   ): Promise<[SelectQueryBuilder<ArticleEntity>, SelectQueryBuilder<ArticleEntity>]> {
@@ -89,7 +89,7 @@ export class ArticleService {
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category');
 
-    if (tag.length) {
+    if (tags.length) {
       // tag子查询
       builder.andWhere((qb) => {
         return (
@@ -99,7 +99,7 @@ export class ArticleService {
             .select('`atc`.`id`')
             .from(TagEntity, 'tag')
             .leftJoin('tag.articleList', 'atc')
-            .where({ id: In(tag) })
+            .where({ id: In(tags) })
             .groupBy('`atc`.`id`')
             .getQuery()
         );
@@ -291,10 +291,10 @@ export class ArticleService {
     return { articleId: articleEntity.id };
   }
 
-  async update(id: string, updateArticleDto: UpdateArticleDto) {
+  async update(id: number, updateArticleDto: UpdateArticleDto) {
     const article = new ArticleEntity();
     Object.assign(article, omit(updateArticleDto, ['isPublic']));
-    article.id = +id;
+    article.id = id;
     article.updateAt = new Date();
     if (updateArticleDto.tags && updateArticleDto.tags.length)
       article.tags = updateArticleDto.tags.map((tag) =>

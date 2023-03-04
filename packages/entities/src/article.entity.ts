@@ -21,6 +21,9 @@ export enum ARTICLE_STATE {
 }
 @Entity({ name: 'article' })
 export class ArticleEntity extends BlogBaseEntity {
+  static readonly DEFAULT_COVER =
+    'http://img.desktx.com/d/file/wallpaper/scenery/20170107/7cd0dae5f6adf31e51626333b9614bff.jpg';
+
   static readonly STATE = ARTICLE_STATE;
 
   static readonly modelName = 'ArticleEntity' as const;
@@ -96,8 +99,7 @@ export class ArticleEntity extends BlogBaseEntity {
   @Column('varchar', {
     length: 500,
     comment: '封面',
-    default:
-      'http://img.desktx.com/d/file/wallpaper/scenery/20170107/7cd0dae5f6adf31e51626333b9614bff.jpg',
+    default: ArticleEntity.DEFAULT_COVER,
   })
   cover!: string;
 

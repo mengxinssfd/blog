@@ -6,19 +6,18 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
   Request,
   UseGuards,
-  UsePipes,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ListDTO } from './dto/list.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { DtoValidationPipe } from '@/pipes/dto-validation/dto-validation.pipe';
 import { UserService } from '../user/user.service';
 import { CategoryService } from '../category/category.service';
 import { IsFromWX, User } from '@/utils/decorator';
@@ -67,7 +66,6 @@ export class ArticleController {
   }
 
   @ApiBearerAuth()
-  @UsePipes(new DtoValidationPipe([CreateArticleDto]))
   @CheckPolicies((ab) => ab.can(Action.Create, ArticleEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post()
@@ -77,7 +75,6 @@ export class ArticleController {
     return await this.articleService.create(createArticleDto, user);
   }
 
-  @UsePipes(new DtoValidationPipe([ListDTO]))
   @Get()
   async findAll(
     @Query() listDTO: ListDTO,
@@ -90,10 +87,11 @@ export class ArticleController {
     }
     return this.articleService.findAll(listDTO, userId);
   }
+
   @Get('author/:authorId')
   findAllByAuthor(
     @Query() pageDto: PageDto,
-    @Param('authorId') authorId: string,
+    @Param('authorId', ParseIntPipe) authorId: number,
     @User('id') userId: number,
   ) {
     return this.articleService.findAllByAuthor(pageDto, +authorId, userId);
@@ -102,11 +100,12 @@ export class ArticleController {
   findAllByLikeUser(@Query() pageDto: PageDto, @Param('id') userId: number) {
     return this.articleService.findAllByLikeUser(pageDto, userId);
   }
-  @UsePipes(new DtoValidationPipe([PageDto]))
+
   @Get('comment-user/:id')
-  findAllByCommentUser(@Query() pageDto: PageDto, @Param('id') userId: number) {
+  findAllByCommentUser(@Query() pageDto: PageDto, @Param('id', ParseIntPipe) userId: number) {
     return this.articleService.findAllByCommentUser(pageDto, userId);
   }
+
   // about
   @Get('about')
   about() {
@@ -114,7 +113,7 @@ export class ArticleController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @User() user: UserEntity) {
+  async findOne(@Param('id', ParseIntPipe) id: number, @User() user: UserEntity) {
     let article: ArticleEntity;
 
     try {
@@ -139,17 +138,16 @@ export class ArticleController {
   @CheckPolicies((ab) => ab.can(Action.Update, ArticleEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Get('raw/:id')
-  findOneRaw(@Param('id') id: string, @User() user: UserEntity) {
+  findOneRaw(@Param('id', ParseIntPipe) id: number, @User() user: UserEntity) {
     return this.find(id).unless(user).can(Action.Update);
   }
 
   @ApiBearerAuth()
-  @UsePipes(new DtoValidationPipe([UpdateArticleDto]))
   @CheckPolicies((ab) => ab.can(Action.Update, ArticleEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateArticleDto: UpdateArticleDto,
     @User() user: UserEntity,
   ) {
@@ -165,18 +163,18 @@ export class ArticleController {
   @CheckPolicies((ab) => ab.can(Action.Delete, ArticleEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Request() { user }: { user: UserEntity }) {
     await this.find(id).unless(user).can(Action.Delete);
-    return this.articleService.remove(+id);
+    return this.articleService.remove(id);
   }
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Delete, ArticleEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('restore/:id')
-  async restore(@Param('id') id: string, @Request() { user }: { user: UserEntity }) {
+  async restore(@Param('id', ParseIntPipe) id: number, @Request() { user }: { user: UserEntity }) {
     await this.find(id).unless(user).can(Action.Update);
-    return this.articleService.restore(+id);
+    return this.articleService.restore(id);
   }
 
   // 文章评论锁
@@ -184,12 +182,12 @@ export class ArticleController {
   @CheckPolicies((ab) => ab.can(Action.Update, ArticleEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post('mute/:articleId')
-  async mute(@Param('articleId') id: string, @User() user: UserEntity) {
+  async mute(@Param('articleId', ParseIntPipe) id: number, @User() user: UserEntity) {
     const article = await this.find(id).unless(user).can(Action.Update, 'commentLock');
     return this.articleService.mute(article);
   }
 
-  find(id: string | number) {
-    return this.caslAbilityFactory.find(() => this.articleService.findOne(+id));
+  find(id: number) {
+    return this.caslAbilityFactory.find(() => this.articleService.findOne(id));
   }
 }
