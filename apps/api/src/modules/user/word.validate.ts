@@ -7,7 +7,7 @@ import * as TextCensor from 'text-censor';
 
 @ValidatorConstraint({ name: 'wordValidate', async: false })
 export class WordValidate implements ValidatorConstraintInterface {
-  validate(value: string /* args: ValidationArguments */) {
+  validate(value = '' /* args: ValidationArguments */) {
     let filtered = '';
     TextCensor.filter(value, (_err: null, censored: string) => {
       filtered = censored;

@@ -4,19 +4,18 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Request,
   UseGuards,
-  UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { DtoValidationPipe } from '@/pipes/dto-validation/dto-validation.pipe';
-import { RegisterInfoDTO } from './dto/register.dto';
+import { RegisterDTO } from './dto/register.dto';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { LoginInfoDTO, LoginResponseDTO } from './dto/login.dto';
+import { LoginDTO, LoginVO } from './dto/login.dto';
 import { ReqIp, User } from '@/utils/decorator';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserEntity } from '@blog/entities';
@@ -52,14 +51,10 @@ export class UserController {
     const username = process.env['ROOT_USERNAME'] as string;
     const password = process.env['ROOT_PASSWORD'] as string;
 
-    await this.userService.register(
-      { nickname: username, username, password, rePassword: password },
-      '127.0.0.1',
-    );
+    await this.userService.register({ nickname: username, username, password }, '127.0.0.1');
     console.log('初始账号注册成功');
   }
 
-  @UsePipes(new DtoValidationPipe([WxLoginDTO]))
   @Post('miniprogram-login')
   async miniProgramLogin(@Body() data: WxLoginDTO) {
     const userInfo = await this.userService.getMiniProgramUserinfo(data);
@@ -83,12 +78,11 @@ export class UserController {
 
   @ApiCreatedResponse({
     status: 200,
-    type: LoginResponseDTO,
+    type: LoginVO,
   })
-  @UsePipes(new DtoValidationPipe([LoginInfoDTO]))
   @ApiBody({
     description: '用户登录',
-    type: LoginInfoDTO,
+    type: LoginDTO,
   })
   // 使用LocalAuthGuard登录
   @UseGuards(ThrottlerBehindProxyGuard, LocalAuthGuard)
@@ -111,9 +105,8 @@ export class UserController {
     throw new ResetTokenException({ token });
   }
 
-  @UsePipes(new DtoValidationPipe([RegisterInfoDTO]))
   @Post('register')
-  register(@Body() body: RegisterInfoDTO, @ReqIp() ip: string, @User() loginUser: UserEntity) {
+  register(@Body() body: RegisterDTO, @ReqIp() ip: string, @User() loginUser: UserEntity) {
     return this.userService.register(body, ip, loginUser);
   }
 
@@ -130,7 +123,7 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @User('id') userId: number) {
+  findOne(@Param('id', ParseIntPipe) id: string, @User('id') userId: number) {
     return this.userService.findOneById(+id, userId);
   }
 
@@ -148,11 +141,10 @@ export class UserController {
   }*/
 
   @ApiBearerAuth()
-  @UsePipes(new DtoValidationPipe([UpdateUserDto]))
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
-    @Param('id') id: string | number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateDto: UpdateUserDto,
     @User() user: UserEntity,
   ) {
@@ -162,11 +154,10 @@ export class UserController {
 
   // TODO 限制密码错误次数
   @ApiBearerAuth()
-  @UsePipes(new DtoValidationPipe([UpdatePasswordDto]))
   @UseGuards(JwtAuthGuard)
   @Patch('password/:id')
   async updatePassword(
-    @Param('id') id: string | number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateDto: UpdatePasswordDto,
     @Request() { user }: RequestWithUser,
   ) {
@@ -184,7 +175,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Delete, UserEntity.modelName))
   @Delete('delete/:id')
-  async delete(@Param('id') id: string | number, @Request() { user }: RequestWithUser) {
+  async delete(@Param('id', ParseIntPipe) id: number, @Request() { user }: RequestWithUser) {
     await this.findUser(id).unless(user).can(Action.Delete);
     return this.userService.delete(+id);
   }
@@ -196,7 +187,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Delete, UserEntity.modelName))
   @Delete(':id')
-  async remove(@Param('id') id: string | number, @Request() { user }: RequestWithUser) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Request() { user }: RequestWithUser) {
     // const findUser = await this.userService.findOneById(id);
     //
     // ForbiddenError.from(this.caslAbilityFactory.createForUser(user)).throwUnlessCan(
@@ -207,16 +198,15 @@ export class UserController {
     // 替换上面注释的代码
     await this.findUser(id).unless(user).can(Action.Delete);
 
-    return this.userService.remove(+id);
+    return this.userService.remove(id);
   }
 
   @ApiBearerAuth()
-  @UsePipes(new DtoValidationPipe([SetRoleDto]))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity.modelName, 'role'))
   @Patch('role/:id')
   async setRole(
-    @Param('id') id: string | number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() roleDto: SetRoleDto,
     @Request() { user }: RequestWithUser,
   ) {
@@ -230,29 +220,29 @@ export class UserController {
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('mute/:id')
-  async mute(@Param('id') id: string, @Request() { user }: RequestWithUser) {
+  async mute(@Param('id', ParseIntPipe) id: number, @Request() { user }: RequestWithUser) {
     await this.findUser(id).unless(user).can(Action.Update, 'muted');
-    return this.userService.mute(+id, user);
+    return this.userService.mute(id, user);
   }
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('cancel-mute/:id')
-  async cancelMute(@Param('id') id: string, @Request() { user }: RequestWithUser) {
+  async cancelMute(@Param('id', ParseIntPipe) id: number, @Request() { user }: RequestWithUser) {
     await this.findUser(id).unless(user).can(Action.Update, 'muted');
-    return this.userService.cancelMute(+id, user);
+    return this.userService.cancelMute(id, user);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Manage, UserEntity.modelName))
   @Patch('restore/:id')
-  restore(@Param('id') id: string) {
-    return this.userService.restore(+id);
+  restore(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.restore(id);
   }
 
-  findUser(id: number | string) {
+  findUser(id: number) {
     return this.caslAbilityFactory.find(() => this.userService.findOneById(+id));
   }
 }

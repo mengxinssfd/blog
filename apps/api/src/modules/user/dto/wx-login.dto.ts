@@ -1,8 +1,8 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { BaseDto } from '@/common/dto/base.dto';
 
-export class WxLoginDTO {
+export class WxLoginDTO extends BaseDto<WxLoginDTO> {
   // @ApiProperty({
   //   description: '微信小程序用户加密信息，从wx.getUserProfile()处获取',
   //   example: '',
@@ -16,7 +16,7 @@ export class WxLoginDTO {
     example: '',
   })
   @IsNotEmpty({ message: 'nickName不能为空' })
-  @Expose()
+  @IsString({ message: 'nickName必须是字符串' })
   readonly nickName!: string;
 
   @ApiProperty({
@@ -24,7 +24,8 @@ export class WxLoginDTO {
     example: '',
   })
   @IsNotEmpty({ message: 'avatarUrl不能为空' })
-  @Expose()
+  @IsUrl(undefined, { message: 'avatarUrl必须是链接' })
+  @IsString({ message: 'avatarUrl必须是字符串' })
   readonly avatarUrl!: string;
 
   // @ApiProperty({
@@ -40,6 +41,6 @@ export class WxLoginDTO {
     example: '',
   })
   @IsNotEmpty({ message: 'code不能为空' })
-  @Expose()
+  @IsString({ message: 'code必须是字符串' })
   readonly code!: string;
 }

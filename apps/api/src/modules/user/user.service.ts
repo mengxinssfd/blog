@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { encryptPassword, makeSalt } from '@/utils/cryptogram';
-import { RegisterInfoDTO } from './dto/register.dto';
+import { RegisterDTO } from './dto/register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ROLE, USER_STATE, UserEntity } from '@blog/entities';
@@ -51,11 +51,8 @@ export class UserService {
     return find;
   }
 
-  async register(requestBody: RegisterInfoDTO, ip: string, loginUser?: UserEntity) {
-    const { username, nickname, password, rePassword, mobile } = requestBody;
-    if (password !== rePassword) {
-      throw new FailedException('两次密码输入不一样');
-    }
+  async register(requestBody: RegisterDTO, ip: string, loginUser?: UserEntity) {
+    const { username, nickname, password, mobile } = requestBody;
     const user = await this.findOne({
       username,
       nickname,

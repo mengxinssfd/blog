@@ -1,22 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MinLength, Equals, ValidateIf } from 'class-validator';
-import { Expose } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { PickType } from '@nestjs/mapped-types';
+import { LoginDTO } from '@/modules/user/dto/login.dto';
 
-export class UpdatePasswordDto {
+export class UpdatePasswordDto extends PickType(LoginDTO, ['password'] as const) {
   @ApiProperty({ example: '123456' })
-  @IsNotEmpty({ message: '密码不能为空' })
-  @Expose()
+  @IsNotEmpty({ message: '当前密码不能为空' })
+  @IsString({ message: '当前密码必须是字符串类型' })
   readonly curPassword!: string;
-
-  @ApiProperty({ example: '123456' })
-  @MinLength(6, { message: '密码不能少于6位' })
-  @IsNotEmpty({ message: '密码不能为空' })
-  @Expose()
-  readonly password!: string;
-
-  @ApiProperty({ example: '123456' })
-  @Expose()
-  @ValidateIf((o: UpdatePasswordDto) => o.password !== o.rePassword)
-  @Equals(() => false, { message: '两次输入密码不一致' })
-  readonly rePassword!: string;
 }

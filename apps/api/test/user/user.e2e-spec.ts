@@ -11,7 +11,8 @@ describe('UserController (e2e): /api/user', () => {
 
   afterAll(() => (console.log('ip gen', ipGen.next().value), sleep(200)));
 
-  const { createUsers, register, login, setRole, removeUser, restore } = userApi(request);
+  const { createUsers, register, login, setRole, removeUser, restore, createAdmin } =
+    userApi(request);
 
   it('/ (GET)', () => {
     return request().get(prefix).expect(200).expect(ResTypes.unauthorized);
@@ -91,13 +92,19 @@ describe('UserController (e2e): /api/user', () => {
         .expect(200)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"nickname":"abc123","avatar":"${UserEntity.DEFAULT_AVATAR}","mobile":null,"id":${id},"updateBy":${id},"updateAt":"[^"]{24}","deletedAt":null,"loginAt":null,"loginIp":null,"registerIp":null,"openid":null}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"nickname":"abc123","avatar":"${UserEntity.DEFAULT_AVATAR}","id":${id},"updateBy":${id},"updateAt":"[^"]{24}","deletedAt":null,"mobile":null,"loginAt":null,"loginIp":null,"registerIp":null,"openid":null}}`,
           ),
         );
     });
   });
 
   describe('/role/:id (Patch) 设置role', () => {
+    it('numeric string is expected', async () => {
+      const admin = await createAdmin();
+      return setRole('test' as any, admin.token, ROLE.admin).expect(
+        '{"code":400,"msg":"Validation failed (numeric string is expected)"}',
+      );
+    });
     it('superAdmin有权限操作', async () => {
       const { admin, commonUser } = await createUsers();
       const {

@@ -10,7 +10,7 @@ export function buildRegisterData() {
     password,
     rePassword: password,
     nickname: name,
-    mobile: '',
+    // mobile: '',
   };
 }
 

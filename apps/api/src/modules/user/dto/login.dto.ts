@@ -1,20 +1,25 @@
-import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { BaseDto } from '@/common/dto/base.dto';
+import { IsNotEmpty, IsString, Length, Matches, Validate } from 'class-validator';
+import { WordValidate } from '@/modules/user/word.validate';
 
-export class LoginInfoDTO {
-  @ApiProperty({ description: '用户名', example: 'javascript' })
+export class LoginDTO extends BaseDto<LoginDTO> {
+  @ApiProperty({ example: 'javascript' })
+  @Validate(WordValidate)
+  @Matches(/^\S+$/, { message: '用户名不能包含空格' }) // 要为false的时候才能触发message
+  @Length(2, 12, { message: '用户名长度必须在2-12之间' })
   @IsNotEmpty({ message: '用户名不能为空' })
-  @Expose()
-  readonly username!: string;
+  @IsString({ message: '用户名必须是字符串' })
+  username!: string;
 
-  @ApiProperty({ description: '密码', example: '123456' })
+  @ApiProperty({ example: '123456' })
   @IsNotEmpty({ message: '密码不能为空' })
-  @Expose()
-  readonly password!: string;
+  @Length(6, 18, { message: '密码长度必须在6-18之间' })
+  @IsString({ message: '密码必须是字符串' })
+  password!: string;
 }
 
-export class LoginResponseDTO {
+export class LoginVO {
   @ApiProperty({ description: 'code', example: 200 })
   code!: number;
   @ApiProperty({ description: 'data', example: { token: '' } })
