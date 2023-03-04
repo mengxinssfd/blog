@@ -8,14 +8,13 @@ import {
   Post,
   Request,
   UseGuards,
-  UsePipes,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { DtoValidationPipe } from '@/pipes/dto-validation/dto-validation.pipe';
 import { User } from '@/utils/decorator';
 import { CategoryEntity, UserEntity } from '@blog/entities';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
@@ -34,7 +33,6 @@ export class CategoryController {
 
   @ApiBearerAuth()
   @HttpCode(201)
-  @UsePipes(new DtoValidationPipe([CreateCategoryDto]))
   @CheckPolicies((ab) => ab.can(Action.Create, CategoryEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post()
@@ -49,8 +47,8 @@ export class CategoryController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.categoryService.findOne(id);
   }
 
   @ApiBearerAuth()
@@ -58,7 +56,7 @@ export class CategoryController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
     @Request() { user }: { user: UserEntity },
   ) {
@@ -70,12 +68,12 @@ export class CategoryController {
   @CheckPolicies((ab) => ab.can(Action.Delete, CategoryEntity.modelName))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string | number, @Request() { user }: { user: UserEntity }) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Request() { user }: { user: UserEntity }) {
     await this.findCate(id).unless(user).can(Action.Delete);
     return this.categoryService.remove(+id);
   }
 
-  findCate(id: string | number) {
+  findCate(id: number) {
     return this.caslAbilityFactory.find(() => this.categoryService.findOne(+id, false));
   }
 }
