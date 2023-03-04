@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 import { logger } from '@/middlewares/logger/logger.middleware';
 import { TransformInterceptor } from '@/interceptors/transform/transform.interceptor';
@@ -16,6 +16,13 @@ export function iniApp(app: INestApplication) {
   app.setGlobalPrefix('api'); // /api 开头
   app.enableCors(); // 跨域
   app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // param转换类型
+      whitelist: true, // 删除dto中未声明的变量
+    }),
+  );
 
   app.use(logger);
   app.useGlobalInterceptors(new TransformInterceptor());
