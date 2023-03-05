@@ -12,7 +12,7 @@ import {
 import { In, Like, Not, Repository, SelectQueryBuilder } from 'typeorm';
 import { omit } from '@tool-pack/basic';
 import { rawsToEntities } from '@/utils/assemblyEntity';
-import { PageDto } from '@/common/dto/page.dto';
+import { PageDto } from '@blog/dtos/page.dto';
 import initMarked from './init-marked';
 import { marked } from 'marked';
 
@@ -243,7 +243,9 @@ export class ArticleService {
   }
 
   async findOneBase(id: number) {
-    return this.articleRepository.findOneBy({ id });
+    const article = await this.articleRepository.findOneBy({ id });
+    if (!article) throw new NotFoundException('文章不存在');
+    return article;
   }
 
   async findOne(id: number | string) {

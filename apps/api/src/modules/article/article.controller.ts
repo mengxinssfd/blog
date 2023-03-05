@@ -21,7 +21,7 @@ import { CategoryService } from '../category/category.service';
 import { IsFromWX, User } from '@/utils/decorator';
 import { TagService } from '../tag/tag.service';
 import { castArray } from '@tool-pack/basic';
-import { PageDto } from '@/common/dto/page.dto';
+import { PageDto } from '@blog/dtos/page.dto';
 import { ArticleEntity, UserEntity } from '@blog/entities';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';

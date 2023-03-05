@@ -7,7 +7,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@config/*": ["./config/*"],
-      "@blog/*": ["../../packages/*/src"]
+      "@blog/*": ["../../packages/*/src"],
+      "@blog/dtos/*": ["../../packages/dtos/src/*"]
     }
   },
   // https://www.typescriptlang.org/docs/handbook/configuring-watch.html

@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 importers:
   .:
     specifiers:
+      '@blog/dtos': ./packages/dtos
       '@blog/entities': ./packages/entities
       '@blog/permission-rules': ./packages/permission-rules
       '@commitlint/cli': ^17.4.4
@@ -32,6 +33,7 @@ importers:
       webpack: ^5.75.0
       webpack-node-externals: ^3.0.0
     dependencies:
+      '@blog/dtos': link:packages/dtos
       '@blog/entities': link:packages/entities
       '@blog/permission-rules': link:packages/permission-rules
       '@tool-pack/basic': 0.0.12
@@ -157,10 +159,8 @@ importers:
 
   apps/front:
     specifiers:
-      blog-entities: ../../packages/entities
       nuxt: ^3.1.0
     devDependencies:
-      blog-entities: link:../../packages/entities
       nuxt: 3.1.1
 
   packages/dtos:

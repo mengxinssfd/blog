@@ -17,12 +17,21 @@
       }
     },
     "permission-rules": {
-      "type": "permission-rules",
+      "type": "library",
       "root": "../../packages/permission-rules",
       "entryFile": "index",
       "sourceRoot": "../../packages/permission-rules/src",
       "compilerOptions": {
         "tsConfigPath": "../../packages/permission-rules/tsconfig.json"
+      }
+    },
+    "dtos": {
+      "type": "library",
+      "root": "../../packages/dtos",
+      "entryFile": "index",
+      "sourceRoot": "../../packages/dtos/src",
+      "compilerOptions": {
+        "tsConfigPath": "../../packages/dtos/tsconfig.json"
       }
     }
   }
