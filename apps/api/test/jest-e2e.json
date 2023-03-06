@@ -9,6 +9,6 @@
   "moduleNameMapper": {
     "^@/(.*?)$": "<rootDir>/../src/$1",
     "^@config/(.*?)$": "<rootDir>/../config/$1",
-    "^@blog/(.*?)$": "<rootDir>/../../../packages/$1/src"
+    "^@blog/([^/]*?)((/.*)?)$": "<rootDir>/../../../packages/$1/src$2"
   }
 }
