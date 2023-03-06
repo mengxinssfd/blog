@@ -15,6 +15,7 @@ import { configLoader, Configuration } from '@/config/configuration';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { envValidate } from '@/env/env.validate';
 import * as Path from 'path';
+import { ArticleLikeModule } from '@/modules/article-like/article-like.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import * as Path from 'path';
     TagModule,
     ArticleModule,
     DailyImgModule,
+    ArticleLikeModule,
   ],
 })
 export class AppModule {}
