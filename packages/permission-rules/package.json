@@ -35,7 +35,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@blog/(.*?)$": "<rootDir>/../../../packages/$1/src"
+      "^@blog/([^/]*?)((/.*)?)$": "<rootDir>/../../../packages/$1/src$2"
     }
   }
 }
