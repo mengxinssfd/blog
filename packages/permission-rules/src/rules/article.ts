@@ -1,5 +1,5 @@
 import { ArticleEntity, ROLE } from '@blog/entities';
-import { Action, RuleCreator } from '../utils';
+import { Action, RuleCreator } from '../types';
 
 const Article = [ArticleEntity, ArticleEntity.modelName];
 

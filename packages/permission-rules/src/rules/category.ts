@@ -1,5 +1,5 @@
 import { CategoryEntity, ROLE } from '@blog/entities';
-import { Action, RuleCreator } from '../utils';
+import { Action, RuleCreator } from '../types';
 
 const Category = [CategoryEntity, CategoryEntity.modelName];
 

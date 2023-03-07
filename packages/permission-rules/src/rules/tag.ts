@@ -1,5 +1,5 @@
 import { ROLE, TagEntity } from '@blog/entities';
-import { Action, RuleCreator } from '../utils';
+import { Action, RuleCreator } from '../types';
 
 const Tag = [TagEntity, TagEntity.modelName];
 

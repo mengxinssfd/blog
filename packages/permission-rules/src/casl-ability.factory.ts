@@ -2,40 +2,25 @@ import { ROLE, UserEntity, CategoryEntity, TagEntity, ArticleEntity } from '@blo
 import {
   AbilityBuilder,
   AbilityOptionsOf,
-  AnyMongoAbility,
   createMongoAbility,
   ExtractSubjectType,
   ForbiddenError,
-  InferSubjects,
   MongoAbility,
 } from '@casl/ability';
-import { Action } from './utils';
+import { bootstrap } from './utils';
+import { Action } from './types';
 import { createUserRule } from './rules/user';
 import { createCategoryRule } from './rules/category';
 import { createTagRule } from './rules/tag';
 import { createArticleRule } from './rules/article';
 
-type Subjects =
-  | InferSubjects<
-      typeof UserEntity | typeof CategoryEntity | typeof TagEntity | typeof ArticleEntity,
-      true
-    >
-  | 'all';
+const { subjects, classMap, ruleRegister } = bootstrap(
+  [UserEntity, CategoryEntity, TagEntity, ArticleEntity],
+  [createUserRule, createCategoryRule, createTagRule, createArticleRule],
+);
 
+export type Subjects = typeof subjects;
 export type AppAbility = MongoAbility<[Action, Subjects]>;
-
-const classMap = {
-  [UserEntity.modelName]: UserEntity,
-  [CategoryEntity.modelName]: CategoryEntity,
-  [TagEntity.modelName]: TagEntity,
-};
-
-function bootstrap(user: UserEntity, builder: AbilityBuilder<AnyMongoAbility>) {
-  createUserRule(user, builder);
-  createCategoryRule(user, builder);
-  createTagRule(user, builder);
-  createArticleRule(user, builder);
-}
 
 export class CaslAbilityFactory {
   createForUser(user: UserEntity) {
@@ -61,7 +46,7 @@ export class CaslAbilityFactory {
       can(Action.Manage, 'all'); // read-write access to everything
     }
 
-    bootstrap(user, builder);
+    ruleRegister(user, builder);
 
     return createMongoAbility<AppAbility>(
       // json原始规则
