@@ -4,6 +4,8 @@ import { BaseLikeEntity } from './base-like.entity';
 // 点赞
 @Entity('article_like')
 export class ArticleLikeEntity extends BaseLikeEntity {
+  static readonly modelName = 'ArticleLikeEntity' as const;
+
   @ManyToOne(() => ArticleEntity)
   @JoinColumn({ name: 'articleId' })
   article!: ArticleEntity;

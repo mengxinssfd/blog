@@ -1,4 +1,11 @@
-import { ROLE, UserEntity, CategoryEntity, TagEntity, ArticleEntity } from '@blog/entities';
+import {
+  ROLE,
+  UserEntity,
+  CategoryEntity,
+  TagEntity,
+  ArticleEntity,
+  ArticleLikeEntity,
+} from '@blog/entities';
 import {
   AbilityBuilder,
   AbilityOptionsOf,
@@ -13,10 +20,11 @@ import { createUserRule } from './rules/user';
 import { createCategoryRule } from './rules/category';
 import { createTagRule } from './rules/tag';
 import { createArticleRule } from './rules/article';
+import { createArticleLikeRule } from './rules/article-like';
 
 const { subjects, classMap, ruleRegister } = bootstrap(
-  [UserEntity, CategoryEntity, TagEntity, ArticleEntity],
-  [createUserRule, createCategoryRule, createTagRule, createArticleRule],
+  [UserEntity, CategoryEntity, TagEntity, ArticleEntity, ArticleLikeEntity],
+  [createUserRule, createCategoryRule, createTagRule, createArticleRule, createArticleLikeRule],
 );
 
 export type Subjects = typeof subjects;
