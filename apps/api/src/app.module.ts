@@ -16,9 +16,11 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
 import { envValidate } from '@/env/env.validate';
 import * as Path from 'path';
 import { ArticleLikeModule } from '@/modules/article-like/article-like.module';
+import { SharedModule } from './modules/shared/shared.module';
 
 @Module({
   imports: [
+    SharedModule,
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
