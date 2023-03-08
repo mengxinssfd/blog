@@ -7,7 +7,6 @@ import { UserService } from '../user/user.service';
 import { CategoryService } from '../category/category.service';
 import { TagService } from '../tag/tag.service';
 import { TagModule } from '../tag/tag.module';
-import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 
 @Module({
   imports: [
@@ -15,6 +14,6 @@ import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
     TypeOrmModule.forFeature([ArticleEntity, CategoryEntity, UserEntity, TagEntity]),
   ],
   controllers: [ArticleController],
-  providers: [ArticleService, UserService, CategoryService, TagService, CaslAbilityFactory],
+  providers: [ArticleService, UserService, CategoryService, TagService],
 })
 export class ArticleModule {}
