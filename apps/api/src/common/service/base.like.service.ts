@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { forEachObj } from '@tool-pack/basic';
+import { replaceValues } from '@tool-pack/basic';
 import { BaseLikeEntity } from '@blog/entities/src/base-like.entity';
 
 export class BaseLikeService<T extends BaseLikeEntity> {
@@ -26,25 +26,19 @@ export class BaseLikeService<T extends BaseLikeEntity> {
     });
   }
 
-  async setLike(like: T, ip: string, userId?: number) {
-    if (userId) {
-      like.userId = userId;
+  async setLike(like: T) {
+    if (like.id) {
+      if (like.deletedAt) await this.likeRepository.restore(like.id);
+      else await this.likeRepository.softRemove(like);
     } else {
-      like.touristIp = ip;
-    }
-    const liked = await this.findOneByEntity(like);
-    if (liked) {
-      if (liked.deletedAt) {
-        await this.likeRepository.restore(liked.id);
-      } else {
-        await this.likeRepository.softRemove(liked);
-      }
-    } else {
-      await this.update(like);
+      await this.likeRepository.save(like);
     }
   }
 
-  async countByWhere(like: Partial<T>, where: any) {
+  async countByWhere(
+    like: Partial<T>,
+    where: Partial<T>,
+  ): Promise<{ count: number; checked: 0 | 1 }> {
     const { userId, touristIp: ip } = like;
     const alias = 'like';
     const checkedSelect = userId
@@ -55,13 +49,15 @@ export class BaseLikeService<T extends BaseLikeEntity> {
       .select([`COUNT(${alias}.id) as count`, checkedSelect])
       .where(where);
     const countAndHasLike = await query.getRawOne();
-    forEachObj(countAndHasLike, (v, k, obj) => {
-      obj[k] = Number(v);
-    });
-    return countAndHasLike;
+    return replaceValues(countAndHasLike, Number);
   }
 
   update(like: T) {
     return this.likeRepository.save(like);
+  }
+
+  async delete(id: number) {
+    const { affected } = await this.likeRepository.delete(id);
+    return { affected };
   }
 }

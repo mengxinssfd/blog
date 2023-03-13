@@ -10,6 +10,6 @@ export class ArticleLikeEntity extends BaseLikeEntity {
   @JoinColumn({ name: 'articleId' })
   article!: ArticleEntity;
 
-  @Column({ select: false })
+  @Column('int', { select: false })
   articleId!: number;
 }

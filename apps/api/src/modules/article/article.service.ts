@@ -288,7 +288,7 @@ export class ArticleService {
     article.tags = createArticleDto.tags.map((tag) => Object.assign(new TagEntity(), { id: tag }));
 
     const articleEntity = await this.articleRepository.save(article);
-    return { articleId: articleEntity.id };
+    return { id: articleEntity.id };
   }
 
   async update(id: number, updateArticleDto: UpdateArticleDto) {
