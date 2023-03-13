@@ -8,6 +8,7 @@
       "@/*": ["./src/*"],
       "@config/*": ["./config/*"],
       "@blog/*": ["../../packages/*/src"],
+      "@blog/entities/*": ["../../packages/entities/src/*"],
       "@blog/dtos/*": ["../../packages/dtos/src/*"]
     }
   },
