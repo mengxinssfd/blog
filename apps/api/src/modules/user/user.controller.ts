@@ -33,6 +33,7 @@ import {
   UpdateUserDto,
   WxLoginDTO,
 } from '@blog/dtos';
+import { AppConfigService } from '@/app.config.service';
 
 type RequestWithUser = Request & { user: UserEntity };
 
@@ -43,6 +44,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly caslAbilityFactory: CaslAbilityFactory,
+    private readonly configService: AppConfigService,
   ) {
     this.registerRoot();
   }
@@ -51,10 +53,9 @@ export class UserController {
     const { count } = await this.userService.findAll();
     if (count) return;
 
-    const username = process.env['ROOT_USERNAME'] as string;
-    const password = process.env['ROOT_PASSWORD'] as string;
+    const admin = this.configService.val('admin');
 
-    await this.userService.register({ nickname: username, username, password }, '127.0.0.1');
+    await this.userService.register({ nickname: admin.username, ...admin }, '127.0.0.1');
     console.log('初始账号注册成功');
   }
 
