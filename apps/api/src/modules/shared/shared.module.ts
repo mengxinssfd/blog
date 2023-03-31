@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
+import { AppConfigService } from '@/app.config.service';
 
 /**
  * 全局分享模块
@@ -9,7 +10,7 @@ import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 
 @Global()
 @Module({
-  providers: [CaslAbilityFactory],
-  exports: [CaslAbilityFactory],
+  providers: [CaslAbilityFactory, AppConfigService],
+  exports: [CaslAbilityFactory, AppConfigService],
 })
 export class SharedModule {}

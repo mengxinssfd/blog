@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { ENV } from './utils/utils';
 import { UserModule } from './modules/user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -11,12 +11,13 @@ import { CategoryModule } from '@/modules/category/category.module';
 import { TagModule } from '@/modules/tag/tag.module';
 import { ArticleModule } from '@/modules/article/article.module';
 import { DailyImgModule } from '@/modules/daily-img/daily-img.module';
-import { configLoader, Configuration } from '@/config/configuration';
+import { configLoader } from '@/config/configuration';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { envValidate } from '@/env/env.validate';
 import * as Path from 'path';
 import { ArticleLikeModule } from '@/modules/article-like/article-like.module';
 import { SharedModule } from './modules/shared/shared.module';
+import { AppConfigService } from './app.config.service';
 
 @Module({
   imports: [
@@ -36,10 +37,10 @@ import { SharedModule } from './modules/shared/shared.module';
     }),
     // 使用 TypeORM 配置数据库
     TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService<Configuration>) => {
+      inject: [AppConfigService],
+      useFactory: (configService: AppConfigService) => {
         return {
-          ...configService.get<Configuration['database']>('database'),
+          ...configService.val('database'),
           type: 'mysql',
           entities: Object.values(Entities),
           synchronize: ENV.isDev() || ENV.isTest(),
