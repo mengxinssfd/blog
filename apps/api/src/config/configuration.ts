@@ -1,13 +1,20 @@
+import { EnvironmentVariables } from '@/env/env.variables';
+
 export const configLoader = () => {
+  const env: EnvironmentVariables = process.env as any;
   return {
-    database: {
-      port: Number(process.env['MYSQL_PORT']),
-      host: process.env['MYSQL_HOST'] as string,
-      username: process.env['MYSQL_USERNAME'] as string,
-      password: process.env['MYSQL_PASSWORD'] as string,
-      database: process.env['MYSQL_DATABASE'] as string,
+    admin: {
+      username: env.ROOT_USERNAME,
+      password: env.ROOT_PASSWORD,
     },
-  };
+    database: {
+      port: Number(env.MYSQL_PORT),
+      host: env.MYSQL_HOST,
+      username: env.MYSQL_USERNAME,
+      password: env.MYSQL_PASSWORD,
+      database: env.MYSQL_DATABASE,
+    },
+  } as const;
 };
 
 export type Configuration = ReturnType<typeof configLoader>;
