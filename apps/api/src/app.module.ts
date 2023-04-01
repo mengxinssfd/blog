@@ -6,7 +6,7 @@ import { UserModule } from '@/routers/user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from '@/modules/auth/auth.module';
 import * as Entities from '@blog/entities';
-import { ChatAiModule } from '@/routers/chat-ai/chat-ai.module';
+import { OpenaiModule } from '@/routers/openai/openai.module';
 import { CategoryModule } from '@/routers/category/category.module';
 import { TagModule } from '@/routers/tag/tag.module';
 import { ArticleModule } from '@/routers/article/article.module';
@@ -49,7 +49,7 @@ import { AppConfigService } from '@/app.config.service';
     }),
     AuthModule,
     UserModule,
-    ChatAiModule,
+    OpenaiModule,
     CategoryModule,
     TagModule,
     ArticleModule,

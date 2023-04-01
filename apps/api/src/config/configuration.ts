@@ -3,6 +3,9 @@ import { EnvironmentVariables } from '@/env/env.variables';
 export const configLoader = () => {
   const env: EnvironmentVariables = process.env as any;
   return {
+    openai: {
+      apiKey: env.OPENAI_API_KEY,
+    },
     admin: {
       username: env.ROOT_USERNAME,
       password: env.ROOT_PASSWORD,
