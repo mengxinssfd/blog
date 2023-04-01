@@ -20,7 +20,7 @@ import { Action } from '@blog/permission-rules';
 import { ArticleLikeEntity, UserEntity } from '@blog/entities';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
-import { ArticleService } from '@/modules/article/article.service';
+import { ArticleService } from '@/routers/article/article.service';
 
 @ApiTags('article-like')
 @Controller('article-like')

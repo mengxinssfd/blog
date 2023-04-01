@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '@/modules/auth/auth.service';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { ReqIp, User } from '@/utils/decorator';
 import { UserEntity } from '@blog/entities';
