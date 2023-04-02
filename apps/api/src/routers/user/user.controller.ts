@@ -34,8 +34,7 @@ import {
   WxLoginDTO,
 } from '@blog/dtos';
 import { AppConfigService } from '@/app.config.service';
-
-type RequestWithUser = Request & { user: UserEntity };
+import { RequestWithUser } from '@/types';
 
 @ApiTags('user')
 @Controller('user')
