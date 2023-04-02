@@ -6,6 +6,7 @@ import { UserEntity } from '@blog/entities';
 
 @Injectable()
 export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
+  override errorMessage = '请求过于频繁';
   protected override getTracker(
     req: IncomingMessage & { ips: string[]; ip: string; user?: UserEntity },
   ): string {

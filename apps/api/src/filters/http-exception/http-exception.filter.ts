@@ -16,12 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const body = exception.getResponse();
 
-    const msg =
-      status === 429
-        ? '请求过于频繁'
-        : typeof body === 'string'
-        ? body
-        : castArray(body['message']).join(';');
+    const msg = typeof body === 'string' ? body : castArray(body['message']).join(';');
     const newJson = { code: status, msg };
     const data = exception.getResponse();
 
