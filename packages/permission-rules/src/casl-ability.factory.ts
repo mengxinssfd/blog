@@ -15,13 +15,13 @@ import {
   ForbiddenError,
   MongoAbility,
 } from '@casl/ability';
-import { bootstrap } from './utils';
+import { bootstrap } from './bootstrap';
 import { Action } from './types';
-import { createUserRule } from './rules/user';
-import { createCategoryRule } from './rules/category';
-import { createTagRule } from './rules/tag';
-import { createArticleRule } from './rules/article';
-import { createArticleLikeRule } from './rules/article-like';
+import { createUserRule } from './rules/user.rule';
+import { createCategoryRule } from './rules/category.rule';
+import { createTagRule } from './rules/tag.rule';
+import { createArticleRule } from './rules/article.rule';
+import { createArticleLikeRule } from './rules/article-like.rule';
 import { createCommentRule } from './rules/comment.rule';
 
 const { subjects, classMap, ruleRegister } = bootstrap(

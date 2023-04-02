@@ -1,7 +1,8 @@
-export * from './rules/user';
-export * from './rules/category';
-export * from './rules/tag';
-export * from './rules/article';
-export * from './rules/article-like';
+export * from './rules/user.rule';
+export * from './rules/category.rule';
+export * from './rules/tag.rule';
+export * from './rules/article.rule';
+export * from './rules/article-like.rule';
+export * from './rules/comment.rule';
 export { Action } from './types';
 export * from './casl-ability.factory';
