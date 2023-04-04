@@ -4,10 +4,12 @@ import { BaseLikeEntity } from './base-like.entity';
 // 评论点赞
 @Entity('comment_like')
 export class CommentLikeEntity extends BaseLikeEntity {
-  @ManyToOne(() => CommentEntity)
-  @JoinColumn({ name: 'articleId' })
+  static readonly modelName = 'CommentLikeEntity' as const;
+
+  @ManyToOne(() => CommentEntity, (comment) => comment.like)
+  @JoinColumn({ name: 'commentId' })
   comment!: CommentEntity;
 
-  @Column({ select: false })
+  @Column({ select: true })
   commentId!: number;
 }

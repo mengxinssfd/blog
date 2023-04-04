@@ -7,6 +7,8 @@ import { CommentDislikeEntity } from './comment-dislike.entity';
 
 @Entity({ name: 'comment' })
 export class CommentEntity extends BlogBaseEntity {
+  static readonly modelName = 'CommentEntity' as const;
+
   @Column({
     type: 'text',
     comment: '评论内容',
@@ -16,7 +18,7 @@ export class CommentEntity extends BlogBaseEntity {
 
   @ManyToOne(() => ArticleEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'articleId' })
-  article!: number;
+  article!: ArticleEntity;
   @Column({ comment: '文章id' })
   articleId!: number;
 
@@ -26,21 +28,21 @@ export class CommentEntity extends BlogBaseEntity {
   // ---------------- 二级评论 ----------------
   @ManyToOne(() => CommentEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parentId' })
-  parent!: CommentEntity;
+  parent?: CommentEntity;
   // 不能被replyId代替,如果reply被删掉的话就找不到父级了
   @Column({ comment: '父级评论id 有parentId的为二级评论', nullable: true })
-  parentId!: number;
+  parentId?: number;
 
   @ManyToOne(() => CommentEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'replyId' })
-  reply!: CommentEntity;
+  reply?: CommentEntity;
   @Column({ comment: '回复的评论id', nullable: true })
-  replyId!: number;
+  replyId?: number;
   @Column({ comment: '回复的评论之人', nullable: true })
-  replyUserId!: number;
+  replyUserId?: number;
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'replyUserId' })
-  replyUser!: UserEntity;
+  replyUser?: UserEntity;
   // ---------------- 二级评论 ----------------
 
   // ---------------- 注册用户 ----------------
@@ -48,9 +50,9 @@ export class CommentEntity extends BlogBaseEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
-  user!: UserEntity;
+  user?: UserEntity;
   @Column({ nullable: true, comment: '评论人id' })
-  userId!: number;
+  userId?: number;
   // ---------------- 注册用户 ----------------
 
   // ---------------- 游客 ----------------
@@ -59,18 +61,18 @@ export class CommentEntity extends BlogBaseEntity {
     comment: '游客ip',
     nullable: true,
   })
-  touristIp!: string;
+  touristIp?: string;
 
   @Column('varchar', { length: 24, comment: '游客名', nullable: true })
-  touristName!: string;
+  touristName?: string;
   // ---------------- 游客 ----------------
 
-  @OneToMany(() => CommentLikeEntity, (like) => like.commentId, {
+  @OneToMany(() => CommentLikeEntity, (like) => like.comment, {
     onDelete: 'CASCADE',
   })
   like!: { checked: number; count: number };
 
-  @OneToMany(() => CommentDislikeEntity, (like) => like.commentId, {
+  @OneToMany(() => CommentDislikeEntity, (like) => like.comment, {
     onDelete: 'CASCADE',
   })
   dislike!: { checked: number; count: number };
