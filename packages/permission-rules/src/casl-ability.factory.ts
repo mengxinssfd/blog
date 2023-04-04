@@ -6,6 +6,8 @@ import {
   ArticleEntity,
   ArticleLikeEntity,
   CommentEntity,
+  CommentLikeEntity,
+  CommentDislikeEntity,
 } from '@blog/entities';
 import {
   AbilityBuilder,
@@ -23,9 +25,20 @@ import { createTagRule } from './rules/tag.rule';
 import { createArticleRule } from './rules/article.rule';
 import { createArticleLikeRule } from './rules/article-like.rule';
 import { createCommentRule } from './rules/comment.rule';
+import { createCommentLikeRule } from './rules/comment-like.rule';
+import { createCommentDislikeRule } from './rules/comment-dislike.rule';
 
 const { subjects, classMap, ruleRegister } = bootstrap(
-  [UserEntity, CategoryEntity, TagEntity, ArticleEntity, ArticleLikeEntity, CommentEntity],
+  [
+    UserEntity,
+    CategoryEntity,
+    TagEntity,
+    ArticleEntity,
+    ArticleLikeEntity,
+    CommentEntity,
+    CommentLikeEntity,
+    CommentDislikeEntity,
+  ],
   [
     createUserRule,
     createCategoryRule,
@@ -33,6 +46,8 @@ const { subjects, classMap, ruleRegister } = bootstrap(
     createArticleRule,
     createArticleLikeRule,
     createCommentRule,
+    createCommentLikeRule,
+    createCommentDislikeRule,
   ],
 );
 

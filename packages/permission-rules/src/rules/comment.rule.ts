@@ -24,9 +24,16 @@ export const createCommentRule: RuleCreator = (user, { can, cannot }) => {
     replyId: { $nin: [null, undefined] as any },
   }).because('回复的评论不存在');
 
+  if (user.id) {
+    can([Action.Update, Action.Delete], Comment);
+  }
+
   if ([UserEntity.ROLE.commonUser, UserEntity.ROLE.dev].includes(user.role) || !user.id) {
-    cannot([Action.Update, Action.Delete], CommentEntity, { userId: { $ne: user.id } }).because(
+    cannot(Action.Update, CommentEntity, { userId: { $ne: user.id } }).because(
       '不可更改其他账号的评论',
+    );
+    cannot(Action.Delete, CommentEntity, { userId: { $ne: user.id } }).because(
+      '不可删除其他账号的评论',
     );
 
     cannot<FlatCE>([Action.Update, Action.Create], CommentEntity, {
