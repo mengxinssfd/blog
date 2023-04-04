@@ -27,6 +27,7 @@ import { Action } from '@blog/permission-rules';
 import {
   LoginDTO,
   LoginVO,
+  MuteDto,
   RegisterDTO,
   SetRoleDto,
   UpdatePasswordDto,
@@ -223,18 +224,13 @@ export class UserController {
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Patch('mute/:id')
-  async mute(@Param('id', ParseIntPipe) id: number, @Request() { user }: RequestWithUser) {
+  async mute(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: MuteDto,
+    @Request() { user }: RequestWithUser,
+  ) {
     await this.findUser(id).unless(user).can(Action.Update, 'muted');
-    return this.userService.mute(id, user);
-  }
-
-  @ApiBearerAuth()
-  @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @Patch('cancel-mute/:id')
-  async cancelMute(@Param('id', ParseIntPipe) id: number, @Request() { user }: RequestWithUser) {
-    await this.findUser(id).unless(user).can(Action.Update, 'muted');
-    return this.userService.cancelMute(id, user);
+    return this.userService.setMute(id, dto.mute, user);
   }
 
   @ApiBearerAuth()

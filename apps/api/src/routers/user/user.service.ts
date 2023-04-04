@@ -139,11 +139,13 @@ export class UserService {
     username,
     mobile,
     nickname,
+    addSelect = [],
   }: {
     id?: number | string;
     nickname?: string;
     username?: string;
     mobile?: string | undefined;
+    addSelect?: `user.${keyof UserEntity} AS \`user_${keyof UserEntity}\``[];
   }): Promise<UserEntity | null> {
     let rep = this.repository
       .createQueryBuilder('user')
@@ -154,6 +156,7 @@ export class UserService {
         'user.mobile AS `user_mobile`',
         'user.deletedAt AS `user_deletedAt`',
         'user.role AS `user_role`',
+        ...addSelect,
       ])
       .where({ username })
       .orWhere({ nickname })
@@ -202,19 +205,12 @@ export class UserService {
     return updatedUser.role;
   }
 
-  private async setMute(id: number, mute: boolean, loginUser: UserEntity) {
+  async setMute(id: number, mute: boolean, loginUser: UserEntity) {
     const user = new UserEntity();
     user.id = id;
     user.muted = mute;
     user.updateBy = loginUser.id;
     await user.save();
-  }
-
-  async mute(id: number, loginUser: UserEntity) {
-    return this.setMute(id, true, loginUser);
-  }
-  async cancelMute(id: number, loginUser: UserEntity) {
-    return this.setMute(id, false, loginUser);
   }
   async restore(id: number) {
     await this.repository.restore(id);
