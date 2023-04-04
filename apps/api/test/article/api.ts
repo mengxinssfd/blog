@@ -27,7 +27,7 @@ export function useApi(request: () => SuperTest<Test>) {
         .set('authorization', 'Bearer ' + token);
     },
     list() {
-      return request().get(prefix);
+      return request().get(prefix).query({ sort: 3 });
     },
     delete(id: number, token: string) {
       return request()
