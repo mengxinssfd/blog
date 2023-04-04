@@ -1,5 +1,5 @@
 import { pick } from '@tool-pack/basic';
-import { UpdatePasswordDto } from '@blog/dtos';
+import { MuteDto, UpdatePasswordDto } from '@blog/dtos';
 import { ROLE } from '@blog/entities';
 import { buildRegisterData, ipGen, ResTypes } from './utils';
 import { SuperTest, Test } from 'supertest';
@@ -125,10 +125,11 @@ export function userApi(request: () => SuperTest<Test>) {
     return { ...admin, id, token };
   }
 
-  function mute(id: number, token: string) {
+  function mute(id: number, token: string, mute: boolean) {
     return request()
       .patch(prefix + '/mute/' + id)
-      .set('authorization', 'Bearer ' + token);
+      .set('authorization', 'Bearer ' + token)
+      .send({ mute } satisfies MuteDto);
   }
 
   return {

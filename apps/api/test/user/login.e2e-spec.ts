@@ -38,6 +38,6 @@ describe('/login (POST)', () => {
     await login(user).set('X-Forwarded-For', '128.0.0.1').expect(ResTypes.login);
     await login(user)
       .set('X-Forwarded-For', '128.0.0.1')
-      .expect('{"code":429,"msg":"请求过于频繁","data":"ThrottlerException: Too Many Requests"}');
+      .expect('{"code":429,"msg":"请求过于频繁"}');
   });
 });
