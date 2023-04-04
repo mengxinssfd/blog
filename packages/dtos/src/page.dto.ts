@@ -7,9 +7,8 @@ export class PageDto extends BaseDto<PageDto> {
   @ApiProperty({ description: '页码', example: 1 })
   @IsOptional()
   @Min(1, { message: 'page最小值为1' })
-  @IsNumber()
+  @IsNumber(undefined, { message: 'page必须是一个数字' })
   @Transform((params) => {
-    console.log('tttttt', params);
     return params.value === undefined ? 1 : Number(params.value);
   })
   page = 1;
@@ -18,9 +17,8 @@ export class PageDto extends BaseDto<PageDto> {
   @IsOptional()
   @Max(20, { message: 'pageSize最大值为20' })
   @Min(1, { message: 'pageSize最小值为1' })
-  @IsNumber()
+  @IsNumber(undefined, { message: 'pageSize必须是一个数字' })
   @Transform((params) => {
-    console.log('tttttttt', params);
     return params.value === undefined ? 10 : Number(params.value);
   })
   pageSize = 10;

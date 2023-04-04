@@ -4,6 +4,7 @@ import { Transform } from 'class-transformer';
 import { castArray } from '@tool-pack/basic';
 import { PartialType } from '@nestjs/mapped-types';
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { strToNum } from '../utils';
 
 export class ArticleListDto extends PartialType(PageDto) {
   constructor(options?: Partial<ArticleListDto>) {
@@ -16,6 +17,7 @@ export class ArticleListDto extends PartialType(PageDto) {
   readonly keyword?: string;
 
   @ApiProperty({ description: '排序方式', example: '', required: false })
+  @Transform(strToNum)
   @IsOptional()
   @IsNumber(undefined, { message: '排序方式必须是数字' })
   readonly sort?: number;
@@ -33,5 +35,6 @@ export class ArticleListDto extends PartialType(PageDto) {
   @ApiProperty({ description: '分类', example: '', required: false })
   @IsOptional()
   @IsNumber(undefined, { message: '分类必须是数字' })
+  @Transform(strToNum)
   readonly category?: number;
 }

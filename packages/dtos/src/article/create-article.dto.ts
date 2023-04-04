@@ -10,6 +10,8 @@ import {
   MaxLength,
 } from 'class-validator';
 import { BaseDto } from '../base.dto';
+import { Transform } from 'class-transformer';
+import { toBool } from '../utils';
 
 export class CreateArticleDto extends BaseDto<CreateArticleDto> {
   @ApiProperty({ description: '标题', example: 'title hello world' })
@@ -40,7 +42,7 @@ export class CreateArticleDto extends BaseDto<CreateArticleDto> {
 
   @IsOptional()
   @MaxLength(500, { message: '背景音乐链接最大长度为500' })
-  @IsUrl(undefined, { message: '背景音乐不是一个链接' })
+  @IsUrl({}, { message: '背景音乐不是一个链接' })
   @IsString({ message: '背景音乐链接必须是字符串' })
   bgm?: string;
 
@@ -51,5 +53,6 @@ export class CreateArticleDto extends BaseDto<CreateArticleDto> {
 
   @IsOptional()
   @IsBoolean({ message: 'isPublic必须为boolean类型' })
+  @Transform(toBool)
   isPublic?: boolean;
 }
