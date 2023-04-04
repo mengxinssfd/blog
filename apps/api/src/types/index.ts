@@ -1,4 +1,4 @@
 import type { UserEntity } from '@blog/entities';
-import type { Request } from '@nestjs/common';
+import type { Request as Req } from '@nestjs/common';
 
-export type RequestWithUser = Request & { user: UserEntity };
+export type RequestWithUser = typeof Req & { user: UserEntity };
