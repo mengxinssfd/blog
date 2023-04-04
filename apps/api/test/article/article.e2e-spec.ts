@@ -71,14 +71,14 @@ describe('/article 文章', () => {
       privateArticleId = await api
         .create(articleInfo, RoleUsers.dev.token)
         .expect(ArticleApi.ResType.created)
-        .then((res) => res.body.data.articleId);
+        .then((res) => res.body.data.id);
     });
     it('dev用户有权创建，可重复创建，创建public文章', async () => {
       articleInfo.isPublic = true;
       publicArticleId = await api
         .create(articleInfo, RoleUsers.dev2.token)
         .expect(ArticleApi.ResType.created)
-        .then((res) => res.body.data.articleId);
+        .then((res) => res.body.data.id);
     });
     it('admin用户有权创建', async () => {
       return api.create(articleInfo, RoleUsers.admin.token).expect(ArticleApi.ResType.created);
