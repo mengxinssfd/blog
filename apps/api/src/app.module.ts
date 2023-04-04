@@ -18,6 +18,9 @@ import * as Path from 'path';
 import { ArticleLikeModule } from '@/routers/article-like/article-like.module';
 import { SharedModule } from '@/modules/shared/shared.module';
 import { AppConfigService } from '@/app.config.service';
+import { CommentModule } from '@/routers/comment/comment.module';
+import { CommentLikeModule } from '@/routers/comment-like/comment-like.module';
+import { CommentDislikeModule } from '@/routers/comment-dislike/comment-dislike.module';
 
 @Module({
   imports: [
@@ -55,6 +58,9 @@ import { AppConfigService } from '@/app.config.service';
     ArticleModule,
     DailyImgModule,
     ArticleLikeModule,
+    CommentModule,
+    CommentLikeModule,
+    CommentDislikeModule,
   ],
 })
 export class AppModule {}
