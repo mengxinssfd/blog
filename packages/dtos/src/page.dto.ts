@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional, Max, Min } from 'class-validator';
+import { IsNumber, Max, Min } from 'class-validator';
 import { BaseDto } from './base.dto';
+import { IsOptional } from './utils';
 
 export class PageDto extends BaseDto<PageDto> {
   @ApiProperty({ description: '页码', example: 1 })

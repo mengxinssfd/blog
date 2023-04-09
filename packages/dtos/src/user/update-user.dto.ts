@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsUrl, MaxLength } from 'class-validator';
 import { RegisterDTO } from './register.dto';
 import { PickType } from '@nestjs/mapped-types';
+import { IsOptional } from '../utils';
 
 export class UpdateUserDto extends PickType(RegisterDTO, ['nickname', 'mobile'] as const) {
   constructor(options?: Partial<UpdateUserDto>) {

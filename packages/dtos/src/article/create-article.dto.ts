@@ -4,14 +4,13 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   IsUrl,
   MaxLength,
 } from 'class-validator';
 import { BaseDto } from '../base.dto';
 import { Transform } from 'class-transformer';
-import { toBool } from '../utils';
+import { IsOptional, toBool } from '../utils';
 
 export class CreateArticleDto extends BaseDto<CreateArticleDto> {
   @ApiProperty({ description: '标题', example: 'title hello world' })
