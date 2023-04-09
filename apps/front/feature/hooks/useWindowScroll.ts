@@ -3,7 +3,7 @@ import type { Ref } from 'vue';
 export function useWindowScroll(): {
   scrollTop: Ref<number>;
   removeHandler: () => void;
-  backTop: (...options: Parameters<typeof document.body.scrollIntoView>) => void;
+  backTop: (options?: ScrollIntoViewOptions) => void;
 } {
   const scrollTop = ref(0);
   const getScrollTop = () => document.documentElement.scrollTop || document.body.scrollTop;
@@ -21,8 +21,8 @@ export function useWindowScroll(): {
   return {
     scrollTop,
     removeHandler,
-    backTop(options = { block: 'start', behavior: 'smooth' }) {
-      document.body.scrollIntoView(options);
+    backTop(options) {
+      document.body.scrollIntoView({ block: 'start', behavior: 'smooth', ...options });
     },
   };
 }

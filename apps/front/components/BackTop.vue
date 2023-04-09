@@ -17,7 +17,7 @@ const { scrollTop, backTop } = useWindowScroll();
   z-index: 50;
   bottom: 60px;
   .btn.back-top {
-    margin-right: -30px;
+    //margin-right: -30px;
     background: var(--board-bg-color);
     color: var(--text-color);
     border-radius: 6px;
