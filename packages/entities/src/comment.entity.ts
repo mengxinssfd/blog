@@ -19,10 +19,10 @@ export class CommentEntity extends BlogBaseEntity {
   @ManyToOne(() => ArticleEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'articleId' })
   article!: ArticleEntity;
-  @Column({ comment: '文章id' })
+  @Column('int', { comment: '文章id' })
   articleId!: number;
 
-  @Column({ comment: '是否置顶', nullable: true })
+  @Column('boolean', { comment: '是否置顶', nullable: true })
   isTop!: boolean;
 
   // ---------------- 二级评论 ----------------
@@ -30,15 +30,15 @@ export class CommentEntity extends BlogBaseEntity {
   @JoinColumn({ name: 'parentId' })
   parent?: CommentEntity;
   // 不能被replyId代替,如果reply被删掉的话就找不到父级了
-  @Column({ comment: '父级评论id 有parentId的为二级评论', nullable: true })
+  @Column('int', { comment: '父级评论id 有parentId的为二级评论', nullable: true })
   parentId?: number;
 
   @ManyToOne(() => CommentEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'replyId' })
   reply?: CommentEntity;
-  @Column({ comment: '回复的评论id', nullable: true })
+  @Column('int', { comment: '回复的评论id', nullable: true })
   replyId?: number;
-  @Column({ comment: '回复的评论之人', nullable: true })
+  @Column('int', { comment: '回复的评论之人', nullable: true })
   replyUserId?: number;
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'replyUserId' })
@@ -51,7 +51,7 @@ export class CommentEntity extends BlogBaseEntity {
   })
   @JoinColumn({ name: 'userId' })
   user?: UserEntity;
-  @Column({ nullable: true, comment: '评论人id' })
+  @Column('int', { nullable: true, comment: '评论人id' })
   userId?: number;
   // ---------------- 注册用户 ----------------
 

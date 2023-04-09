@@ -10,6 +10,6 @@ export class CommentLikeEntity extends BaseLikeEntity {
   @JoinColumn({ name: 'commentId' })
   comment!: CommentEntity;
 
-  @Column({ select: true })
+  @Column('int', { select: true })
   commentId!: number;
 }

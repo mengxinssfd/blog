@@ -110,7 +110,7 @@ export class ArticleEntity extends BlogBaseEntity {
   })
   bgm!: string;
 
-  @Column({
+  @Column('boolean', {
     comment: '评论锁',
     default: false,
   })
