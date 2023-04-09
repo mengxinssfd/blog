@@ -1,0 +1,30 @@
+.main-width {
+  margin: auto;
+  width: 1200px;
+}
+
+.page-enter-active:not(.no-page-ani) {
+  transition: all 0.3s ease-out;
+}
+.page-leave-active:not(.no-page-ani) {
+  //transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.page-enter-from,
+.page-leave-to {
+  &:not(.no-page-ani) {
+    //opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.layout-enter-active {
+  transition: all 0.1s ease-out;
+}
+.layout-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.layout-enter-from,
+.layout-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
+}

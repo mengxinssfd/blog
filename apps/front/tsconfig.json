@@ -3,8 +3,6 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "experimentalDecorators": true,
-    "paths": {
-      "@blog/*": ["../../packages/*/src"]
-    }
+    "types": ["vite/client"]
   }
 }
