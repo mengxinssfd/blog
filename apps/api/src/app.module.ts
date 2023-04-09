@@ -21,6 +21,7 @@ import { AppConfigService } from '@/app.config.service';
 import { CommentModule } from '@/routers/comment/comment.module';
 import { CommentLikeModule } from '@/routers/comment-like/comment-like.module';
 import { CommentDislikeModule } from '@/routers/comment-dislike/comment-dislike.module';
+import { FriendLinkModule } from '@/routers/friend-link/friend-link.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { CommentDislikeModule } from '@/routers/comment-dislike/comment-dislike.
     CommentModule,
     CommentLikeModule,
     CommentDislikeModule,
+    FriendLinkModule,
   ],
 })
 export class AppModule {}
