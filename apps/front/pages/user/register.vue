@@ -35,8 +35,7 @@ import { register } from '@blog/apis';
 import type { RegisterDTO } from '@blog/dtos';
 import { useRouter } from '#app';
 import { useToggleState } from '~/feature/hooks';
-
-type Validator = (_: unknown, value: string, callback: Function) => void;
+import { Validator } from '~/types';
 
 export default defineComponent({
   setup() {
