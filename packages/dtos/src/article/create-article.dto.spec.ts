@@ -9,6 +9,7 @@ describe('CreateCategoryDto', () => {
 
   it('should validate correctly', async () => {
     const dto = new CreateArticleDto();
+    dto.cover = '';
     const ins = plainToInstance(CreateArticleDto, dto);
     const errors = await validate(ins);
     expect(errors).toEqual([
@@ -20,7 +21,7 @@ describe('CreateCategoryDto', () => {
           maxLength: '标题最大长度为254',
         },
         property: 'title',
-        target: {},
+        target: { cover: '' },
       },
       {
         children: [],
@@ -30,7 +31,7 @@ describe('CreateCategoryDto', () => {
           maxLength: '描述最大长度为254',
         },
         property: 'description',
-        target: {},
+        target: { cover: '' },
       },
       {
         children: [],
@@ -39,7 +40,7 @@ describe('CreateCategoryDto', () => {
           isString: '内容必须是字符串',
         },
         property: 'content',
-        target: {},
+        target: { cover: '' },
       },
       {
         children: [],
@@ -48,7 +49,7 @@ describe('CreateCategoryDto', () => {
           isNumber: 'categoryId必须是数字',
         },
         property: 'categoryId',
-        target: {},
+        target: { cover: '' },
       },
       {
         children: [],
@@ -57,16 +58,7 @@ describe('CreateCategoryDto', () => {
           isNotEmpty: '标签不能为空',
         },
         property: 'tags',
-        target: {},
-      },
-      {
-        children: [],
-        constraints: {
-          isNotEmpty: '封面不能为空',
-          maxLength: '封面链接最大长度为500',
-        },
-        property: 'cover',
-        target: {},
+        target: { cover: '' },
       },
     ]);
   });

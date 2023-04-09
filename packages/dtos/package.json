@@ -7,9 +7,30 @@
     "rm:dist": "rimraf ./dist",
     "build:this": "tsc -p tsconfig.json",
     "build": "pnpm rm:dist && pnpm build:this",
-    "check:ts": "tsc --noEmit -p tsconfig.json"
+    "check:ts": "tsc --noEmit -p tsconfig.json",
+    "test": "jest"
   },
   "dependencies": {
     "text-censor": "^1.0.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@blog/([^/]*?)((/.*)?)$": "<rootDir>/../../../packages/$1/src$2"
+    }
   }
 }
