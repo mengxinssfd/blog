@@ -3,6 +3,7 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "types": ["vite/client"]
   }
 }
