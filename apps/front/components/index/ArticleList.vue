@@ -79,7 +79,7 @@ export default defineComponent({
       async getArticleListData() {
         const { data, refresh } = await useAsyncData(() => {
           const data = _Methods.getDataByRoute();
-          return getArticleList(data);
+          return getArticleList(data, !process.server);
         });
         Methods.refreshData = refresh;
         Data.article.list = data.value?.data.list || [];
