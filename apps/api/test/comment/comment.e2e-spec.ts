@@ -149,7 +149,9 @@ describe('/comment 评论', () => {
           },
           RoleUsers.dev.token,
         )
-        .expect(CommentApi.ResType.createdByUser);
+        .expect(
+          /\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"user":{"id":\d},"userId":\d,"content":"[^"]+","parentId":\d+,"replyId":\d+,"deletedAt":null,"isTop":null,"replyUserId":null,"touristIp":null,"touristName":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/,
+        );
     });
     it('获取回复', () => {
       const articleReg = '\\{"id":1,"title":"测试一些","authorId":3}';
