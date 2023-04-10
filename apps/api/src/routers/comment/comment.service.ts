@@ -149,7 +149,7 @@ export class CommentService {
   }
 
   async remove(id: number) {
-    const res = await this.commentRepository.delete(id);
+    const res = await this.commentRepository.softDelete(id);
     return { affected: res.affected };
   }
 
