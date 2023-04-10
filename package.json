@@ -9,7 +9,6 @@
     "packages/*"
   ],
   "scripts": {
-    "blog:env": "docker-compose -f docker-compose.env.yml up -d",
     "prepare": "husky install",
     "husky-msg-init": "husky add .husky/pre-commit \"npx lint-staged --allow-empty \"$1\"\"&husky add .husky/commit-msg \"npx commitlint --edit \"$1\"\"",
     "check:lint": "eslint \"{src,apps,libs,test}/**/*.{ts,vue}\"",

@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "-prebuild": "rimraf ./dist",
+    "api:env": "docker-compose -f docker-compose.env.yml up -d",
     "build": "nest build -p tsconfig.build.json --webpack",
     "postbuild": "esno scripts/build.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
