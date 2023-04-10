@@ -47,6 +47,8 @@ export class CommentService {
 
   create(dto: CreateCommentDto, comment: CommentEntity) {
     comment.content = dto.content;
+    dto.parentId && (comment.parentId = dto.parentId);
+    dto.replyId && (comment.replyId = dto.replyId);
     comment.article = Object.assign(new ArticleEntity(), { id: comment.articleId });
     if (comment.user) {
       comment.user = Object.assign(new UserEntity(), { id: comment.userId });
