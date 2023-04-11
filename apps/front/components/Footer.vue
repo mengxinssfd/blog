@@ -2,14 +2,17 @@
   <footer class="c-footer">
     <div class="f-content main-width _ flex-col-c-c">
       <div class="record">
-        Copyright © 2022 <a href="https://www.miitbeian.gov.cn/">粤ICP备19023447号-1</a>
+        Copyright © {{ year }} <a href="https://www.miitbeian.gov.cn/">{{ CASE_NUMBER }}</a>
       </div>
       <!--      <div class="power-by">powered by Typescript & Vue3 & Element-plus & Node.js & NestJS</div>-->
     </div>
   </footer>
 </template>
 
-<script lang="ts"></script>
+<script setup lang="ts">
+const CASE_NUMBER = import.meta.env.VITE_CASE_NUMBER;
+const year = new Date().getFullYear();
+</script>
 <style lang="scss">
 .c-footer {
   position: absolute;

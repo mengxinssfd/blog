@@ -23,6 +23,8 @@ declare global {
     // 是否使用proxy
     readonly VITE_USE_PROXY: 'true' | void;
     readonly VITE_PROXY_TARGET: string;
+    // 备案号
+    readonly VITE_CASE_NUMBER: string;
   }
 
   interface ImportMeta {
