@@ -5,13 +5,26 @@
         Copyright © {{ year }} <a href="https://www.miitbeian.gov.cn/">{{ CASE_NUMBER }}</a>
       </div>
       <!--      <div class="power-by">powered by Typescript & Vue3 & Element-plus & Node.js & NestJS</div>-->
+      <div ref="statisticsRef" class="statistics-earth"></div>
     </div>
   </footer>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from '#imports';
+
 const CASE_NUMBER = import.meta.env.VITE_CASE_NUMBER;
 const year = new Date().getFullYear();
+const statisticsRef = ref<HTMLDivElement>();
+
+onMounted(() => {
+  const script = document.createElement('script');
+  script.async = true;
+  script.src =
+    'https:////rf.revolvermaps.com/0/0/6.js?i=5te3u6n7t1j&amp;m=7&amp;c=e63100&amp;cr1=ffffff&amp;f=arial&amp;l=0&amp;bv=90&amp;lx=-420&amp;ly=420&amp;hi=20&amp;he=7&amp;hc=a8ddff&amp;rs=80';
+  script.type = 'text/javascript';
+  statisticsRef.value?.appendChild(script);
+});
 </script>
 <style lang="scss">
 .c-footer {
@@ -19,7 +32,7 @@ const year = new Date().getFullYear();
   left: 0;
   right: 0;
   bottom: 0;
-  height: 100px;
+  height: 120px;
   color: var(--sec-text-color);
   .f-content {
     height: 100%;
@@ -28,6 +41,20 @@ const year = new Date().getFullYear();
     }
     .record a:not(:hover) {
       color: var(--sec-text-color);
+    }
+  }
+  .statistics-earth {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    $w: 120px;
+    width: $w;
+    height: $w;
+    margin-top: -$w;
+    margin-left: 30px;
+    @media (max-width: 600px) {
+      display: none;
     }
   }
 }
