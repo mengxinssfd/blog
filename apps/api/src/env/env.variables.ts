@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class EnvironmentVariables {
   @IsNumber()
@@ -31,4 +31,18 @@ export class EnvironmentVariables {
   // openai配置
   @IsString()
   OPENAI_API_KEY!: string;
+
+  //
+  @IsString()
+  OSS_REGION!: string;
+  @IsString()
+  OSS_ACCESS_KEY_ID!: string;
+  @IsString()
+  OSS_ACCESS_KEY_SECRET!: string;
+  @IsString()
+  OSS_BUCKET!: string;
+  @IsBoolean()
+  OSS_CNAME!: boolean;
+  @IsString()
+  OSS_ENDPOINT!: string;
 }
