@@ -14,13 +14,12 @@ import { TagService } from './tag.service';
 import { CreateTagDto, UpdateTagDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@/utils/decorator';
-import { AuthGuard } from '@nestjs/passport';
 import { TagEntity, UserEntity } from '@blog/entities';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('tag')
 @Controller('tag')
@@ -31,8 +30,9 @@ export class TagController {
   ) {}
 
   @ApiBearerAuth()
+  @JwtAuth()
   @CheckPolicies((ab) => ab.can(Action.Create, TagEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(PoliciesGuard)
   @Post()
   async create(@Body() createTagDto: CreateTagDto, @User() user: UserEntity) {
     await this.tagService.validCreate(createTagDto, user);
@@ -50,8 +50,9 @@ export class TagController {
   }
 
   @ApiBearerAuth()
+  @JwtAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, TagEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(PoliciesGuard)
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -64,7 +65,8 @@ export class TagController {
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Delete, TagEntity.modelName))
-  @UseGuards(AuthGuard('jwt'), PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number, @Request() { user }: { user: UserEntity }) {
     await this.findTag(id).unless(user).can(Action.Delete);

@@ -20,10 +20,9 @@ import { CommentEntity, UserEntity } from '@blog/entities';
 import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
 import { Throttle } from '@nestjs/throttler';
 import { PageDto } from '@blog/dtos/page.dto';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
-import { FreeAuthGuard } from '@/guards/auth/free-auth.guard';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('comment')
 @Controller('comment')
@@ -35,7 +34,7 @@ export class CommentController {
     private readonly casl: CaslAbilityFactory,
   ) {}
 
-  @UseGuards(FreeAuthGuard, ThrottlerBehindProxyGuard)
+  @UseGuards(ThrottlerBehindProxyGuard)
   // 可以在 60s 内向单个端点发出来自同一 IP 的 5 个请求
   @Throttle(5, 60)
   @Post()
@@ -64,7 +63,7 @@ export class CommentController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @JwtAuth()
   @Get('reply')
   getReplyMeAll(@User('id') userId: number, @Query() pageDto: PageDto) {
     return this.commentService.findReplyMeAll(userId, pageDto);
@@ -81,7 +80,7 @@ export class CommentController {
   }*/
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @JwtAuth()
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number, @User() user: UserEntity) {
     await this._valid(id).unless(user).can(Action.Delete);

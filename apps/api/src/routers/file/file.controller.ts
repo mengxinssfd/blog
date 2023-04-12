@@ -11,21 +11,23 @@ import {
 } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateFileDto } from '@blog/dtos/file/create-file.dto';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
 import { FileEntity } from '@blog/entities';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('file')
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
+  @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Create, FileEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file')) // FormData中的key
   create(
@@ -47,15 +49,19 @@ export class FileController {
     );
   }
 
+  @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Manage, FileEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Get()
   findAll() {
     return this.fileService.findAll();
   }
 
+  @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Delete, FileEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Delete(':name')
   remove(@Param('name') name: string) {
     return this.fileService.remove(name);

@@ -19,7 +19,6 @@ import { Throttle } from '@nestjs/throttler';
 import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
 import ResetTokenException from '../../exceptions/ResetToken.exception';
 import { LocalAuthGuard } from '@/guards/auth/local-auth.guard';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
@@ -36,6 +35,7 @@ import {
 } from '@blog/dtos';
 import { AppConfigService } from '@/app.config.service';
 import { RequestWithUser } from '@/types';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('user')
 @Controller('user')
@@ -115,7 +115,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @JwtAuth()
   @Get('self')
   async self(@Request() { user }: RequestWithUser) {
     const nUser = await this.userService.getSelf(user.id);
@@ -132,7 +132,8 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Manage, UserEntity.modelName))
   @Get()
   findAll() {
@@ -145,7 +146,7 @@ export class UserController {
   }*/
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @JwtAuth()
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -158,7 +159,7 @@ export class UserController {
 
   // TODO 限制密码错误次数
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @JwtAuth()
   @Patch('password/:id')
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
@@ -176,7 +177,8 @@ export class UserController {
    * 真删除
    */
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Delete, UserEntity.modelName))
   @Delete('delete/:id')
   async delete(@Param('id', ParseIntPipe) id: number, @Request() { user }: RequestWithUser) {
@@ -188,7 +190,8 @@ export class UserController {
    * 软删除
    */
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Delete, UserEntity.modelName))
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number, @Request() { user }: RequestWithUser) {
@@ -206,7 +209,8 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity.modelName, 'role'))
   @Patch('role/:id')
   async setRole(
@@ -222,8 +226,9 @@ export class UserController {
   }
 
   @ApiBearerAuth()
+  @JwtAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, UserEntity, 'muted'))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(PoliciesGuard)
   @Patch('mute/:id')
   async mute(
     @Param('id', ParseIntPipe) id: number,
@@ -235,7 +240,8 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Manage, UserEntity.modelName))
   @Patch('restore/:id')
   restore(@Param('id', ParseIntPipe) id: number) {

@@ -6,7 +6,7 @@ import { ArticleLikeService } from '@/routers/article-like/article-like.service'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RbacGuard } from '@/guards/rbac/rbac.guard';
 import { ROLE } from '@blog/entities';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('statistics')
 @Controller('statistics')
@@ -19,7 +19,8 @@ export class StatisticsController {
   ) {}
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, new RbacGuard(ROLE.superAdmin))
+  @JwtAuth()
+  @UseGuards(new RbacGuard(ROLE.superAdmin))
   @Get()
   async getStatistics() {
     const article = await this.articleService.getTotal();

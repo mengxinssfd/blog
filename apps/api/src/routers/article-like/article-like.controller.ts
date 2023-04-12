@@ -14,13 +14,13 @@ import { ReqIp, User } from '@/utils/decorator';
 import { PageDto } from '@blog/dtos/page.dto';
 import { Throttle } from '@nestjs/throttler';
 import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
 import { ArticleLikeEntity, UserEntity } from '@blog/entities';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { ArticleService } from '@/routers/article/article.service';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('article-like')
 @Controller('article-like')
@@ -44,7 +44,7 @@ export class ArticleLikeController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @JwtAuth()
   @Get('my')
   findMyAll(@Query() pageDto: PageDto, @User('id') userId: number) {
     return this.likeService.findAllByUserId(userId, pageDto);
@@ -52,7 +52,8 @@ export class ArticleLikeController {
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Manage, ArticleLikeEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Get()
   findAll(@Query() pageDto: PageDto) {
     return this.likeService.findAll(pageDto);
@@ -74,7 +75,8 @@ export class ArticleLikeController {
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Manage, ArticleLikeEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.likeService.delete(id);

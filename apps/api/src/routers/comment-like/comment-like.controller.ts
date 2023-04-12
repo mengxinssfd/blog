@@ -1,7 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { CommentLikeService } from './comment-like.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { ReqIp, User } from '@/utils/decorator';
 import { PageDto } from '@blog/dtos/page.dto';
 import { CommentService } from '../comment/comment.service';
@@ -10,6 +9,7 @@ import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard
 import { CommentDislikeEntity, UserEntity } from '@blog/entities';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('comment-like')
 @Controller('comment-like')
@@ -34,14 +34,14 @@ export class CommentLikeController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  @JwtAuth()
   @Get('my')
   findMyAll(@Query() pageDto: PageDto, @User('id') userId: number) {
     return this.likeService.findMyAll(userId, pageDto);
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  @JwtAuth()
   @Get()
   findAll(@Query() pageDto: PageDto) {
     return this.likeService.findAll(pageDto);

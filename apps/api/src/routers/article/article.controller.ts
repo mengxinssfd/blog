@@ -23,12 +23,12 @@ import { TagService } from '../tag/tag.service';
 import { castArray } from '@tool-pack/basic';
 import { PageDto } from '@blog/dtos/page.dto';
 import { ArticleEntity, UserEntity } from '@blog/entities';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { ForbiddenError } from '@casl/ability';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('article')
 @Controller('article')
@@ -64,8 +64,9 @@ export class ArticleController {
   }
 
   @ApiBearerAuth()
+  @JwtAuth()
   @CheckPolicies((ab) => ab.can(Action.Create, ArticleEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(PoliciesGuard)
   @Post()
   async create(@Body() createArticleDto: CreateArticleDto, @User() user: any) {
     await this.validateUserAndTags(createArticleDto, user);
@@ -133,16 +134,18 @@ export class ArticleController {
   }
 
   @ApiBearerAuth()
+  @JwtAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, ArticleEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(PoliciesGuard)
   @Get('raw/:id')
   findOneRaw(@Param('id', ParseIntPipe) id: number, @User() user: UserEntity) {
     return this.find(id).unless(user).can(Action.Update);
   }
 
   @ApiBearerAuth()
+  @JwtAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, ArticleEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(PoliciesGuard)
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -159,7 +162,8 @@ export class ArticleController {
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Delete, ArticleEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number, @Request() { user }: { user: UserEntity }) {
     await this.find(id).unless(user).can(Action.Delete);
@@ -168,7 +172,8 @@ export class ArticleController {
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Delete, ArticleEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Patch('restore/:id')
   async restore(@Param('id', ParseIntPipe) id: number, @Request() { user }: { user: UserEntity }) {
     await this.find(id).unless(user).can(Action.Update);
@@ -178,7 +183,8 @@ export class ArticleController {
   // 文章评论锁
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, ArticleEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Post('mute/:articleId')
   async mute(@Param('articleId', ParseIntPipe) id: number, @User() user: UserEntity) {
     const article = await this.find(id).unless(user).can(Action.Update, 'commentLock');

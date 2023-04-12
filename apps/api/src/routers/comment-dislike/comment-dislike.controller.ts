@@ -6,10 +6,10 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CommentService } from '../comment/comment.service';
 import { CommentDislikeService } from './comment-dislike.service';
 import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { CommentDislikeEntity, UserEntity } from '@blog/entities';
 import { Action } from '@blog/permission-rules';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('comment-dislike')
 @Controller('comment-dislike')
@@ -34,14 +34,14 @@ export class CommentDislikeController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @JwtAuth()
   @Get('my')
   findMyAll(@Query() pageDto: PageDto, @User('id') userId: number) {
     return this.likeService.findMyAll(userId, pageDto);
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @JwtAuth()
   @Get()
   findAll(@Query() pageDto: PageDto) {
     return this.likeService.findAll(pageDto);

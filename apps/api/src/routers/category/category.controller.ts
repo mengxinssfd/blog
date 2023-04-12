@@ -16,11 +16,11 @@ import { CreateCategoryDto, UpdateCategoryDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@/utils/decorator';
 import { CategoryEntity, UserEntity } from '@blog/entities';
-import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
+import { JwtAuth } from '@/guards/auth/public.decorator';
 
 @ApiTags('category')
 @Controller('category')
@@ -33,7 +33,8 @@ export class CategoryController {
   @ApiBearerAuth()
   @HttpCode(201)
   @CheckPolicies((ab) => ab.can(Action.Create, CategoryEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto, @User() user: UserEntity) {
     await this.categoryService.validCreate(createCategoryDto, user);
@@ -52,7 +53,8 @@ export class CategoryController {
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Update, CategoryEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -65,7 +67,8 @@ export class CategoryController {
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Delete, CategoryEntity.modelName))
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number, @Request() { user }: { user: UserEntity }) {
     await this.findCate(id).unless(user).can(Action.Delete);
