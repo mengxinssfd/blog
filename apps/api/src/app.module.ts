@@ -23,6 +23,7 @@ import { CommentLikeModule } from '@/routers/comment-like/comment-like.module';
 import { CommentDislikeModule } from '@/routers/comment-dislike/comment-dislike.module';
 import { FriendLinkModule } from '@/routers/friend-link/friend-link.module';
 import { FileModule } from '@/routers/file/file.module';
+import { StatisticsModule } from '@/routers/statistics/statistics.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { FileModule } from '@/routers/file/file.module';
     CommentDislikeModule,
     FriendLinkModule,
     FileModule,
+    StatisticsModule,
   ],
 })
 export class AppModule {}
