@@ -1,6 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { AppConfigService } from '@/app.config.service';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 
 /**
  * 全局分享模块
@@ -10,7 +12,14 @@ import { AppConfigService } from '@/app.config.service';
 
 @Global()
 @Module({
-  providers: [CaslAbilityFactory, AppConfigService],
+  providers: [
+    CaslAbilityFactory,
+    AppConfigService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
   exports: [CaslAbilityFactory, AppConfigService],
 })
 export class SharedModule {}
