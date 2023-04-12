@@ -126,7 +126,7 @@ export default defineComponent({
   emits: ['update', 'likeUpdated'],
   setup(props: any, ctx) {
     const [reply, toggleReply] = useToggleState(false);
-    const user = ref(useUserStore().$state);
+    const user = ref(useUserStore().user);
     const Data = {
       user,
       reply,

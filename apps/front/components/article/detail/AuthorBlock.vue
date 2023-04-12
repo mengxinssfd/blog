@@ -16,7 +16,7 @@ const props = defineProps({
 });
 const emits = defineEmits(['commentLockUpdated']);
 
-const user = ref(useUserStore().$state);
+const user = ref(useUserStore().user);
 const author = computed<UserEntity>(() => props.article.author);
 const router = useRouter();
 

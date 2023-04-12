@@ -116,7 +116,7 @@ export default defineComponent({
     const Data = {
       TabTypes,
       tabs: ref<{ label: string; value: TabTypes; total: number | string }[]>([]),
-      loginUser: ref(useUserStore().$state),
+      loginUser: ref(useUserStore().user),
       user: ref({} as UserEntity),
       activeTag: ref<TabTypes>(TabTypes.article),
       articleList: ref<ArticleEntity[]>([]),

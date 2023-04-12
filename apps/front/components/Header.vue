@@ -152,7 +152,7 @@ export default defineComponent({
         };
         return obj[Data.theme.value];
       }),
-      user: computed(() => store.$state),
+      user: computed(() => store.user),
       loginPageUrl: computed(() => '/user/login?fromUrl=' + encodeURIComponent(route.fullPath)),
     };
     let timer: number;

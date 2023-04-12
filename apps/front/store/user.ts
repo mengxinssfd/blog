@@ -5,7 +5,7 @@ import { getSelfInfo as getSelfInfoApi, login as loginApi } from '@blog/apis';
 import { Token } from '~/feature/request/primary/token';
 
 const useUserStore = defineStore('user', () => {
-  const $state = ref<UserEntity>({} as UserEntity);
+  const user = ref<UserEntity>({} as UserEntity);
 
   async function login(username: string, password: string) {
     const res = await loginApi({ username, password });
@@ -17,14 +17,14 @@ const useUserStore = defineStore('user', () => {
       const { data } = await useAsyncData(() => getSelfInfoApi(), {
         default: () => ({ data: { user: {} } } as any),
       });
-      $state.value = data.value.data.user;
+      user.value = data.value.data.user;
     } catch (e) {
       console.log(e);
     }
   }
 
   return {
-    $state,
+    user,
     login,
     getSelfInfo,
   };

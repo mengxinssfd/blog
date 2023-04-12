@@ -49,7 +49,7 @@ export default defineComponent({
   setup(props: any) {
     const Data = {
       ROLE,
-      user: ref(useUserStore().$state),
+      user: ref(useUserStore().user),
       comment: reactive({
         list: [] as CommentEntity[],
         count: 0,

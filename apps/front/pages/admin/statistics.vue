@@ -94,7 +94,7 @@ const router = useRouter();
 
 const total = ref<StatisticsTotal>({} as any);
 
-const loginUser = computed(() => useUserStore().$state);
+const loginUser = computed(() => useUserStore().user);
 
 async function getStatisticsTotal() {
   const res = await getStatisticsTotalApi();
