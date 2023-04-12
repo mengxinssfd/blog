@@ -2,6 +2,7 @@ import { methodsWithUrl } from '../request';
 import type { ROLE, UserEntity } from '@blog/entities';
 import type { PageVo } from '@blog/dtos/src/page.vo';
 import type { LoginDTO, RegisterDTO, UpdatePasswordDto, UpdateUserDto } from '@blog/dtos';
+import type { CustomCacheConfig } from 'request-template';
 
 const urlPrefix = '/api/user';
 const [Get, Post, Patch, Delete] = methodsWithUrl(
@@ -9,8 +10,8 @@ const [Get, Post, Patch, Delete] = methodsWithUrl(
   urlPrefix,
 );
 
-export function getSelfInfo() {
-  return Get<{ user: UserEntity }>('/self', {}, { silent: true });
+export function getSelfInfo(cache: CustomCacheConfig = {}) {
+  return Get<{ user: UserEntity }>('/self', {}, { silent: true, cache });
 }
 export function deleteUser(id: string | number) {
   return Delete('/' + id);

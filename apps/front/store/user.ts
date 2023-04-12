@@ -3,6 +3,7 @@ import { useAsyncData } from '#app';
 import type { UserEntity } from '@blog/entities';
 import { getSelfInfo as getSelfInfoApi, login as loginApi } from '@blog/apis';
 import { Token } from '~/feature/request/primary/token';
+import type { CustomCacheConfig } from 'request-template';
 
 const useUserStore = defineStore('user', () => {
   const user = ref<UserEntity>({} as UserEntity);
@@ -10,14 +11,14 @@ const useUserStore = defineStore('user', () => {
   async function login(username: string, password: string) {
     const res = await loginApi({ username, password });
     Token.set(res.data.token);
-    getSelfInfo();
+    getSelfInfo({ refresh: true });
   }
-  async function getSelfInfo() {
+  async function getSelfInfo(
+    cache: CustomCacheConfig = { enable: true, timeout: 60 * 1000, failedReq: true },
+  ) {
     try {
-      const { data } = await useAsyncData(() => getSelfInfoApi(), {
-        default: () => ({ data: { user: {} } } as any),
-      });
-      user.value = data.value.data.user;
+      const { data } = await useAsyncData(() => getSelfInfoApi(cache));
+      user.value = data.value?.data.user || ({} as UserEntity);
     } catch (e) {
       console.log(e);
     }

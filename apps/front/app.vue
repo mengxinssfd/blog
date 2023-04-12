@@ -24,5 +24,5 @@ onBeforeUnmount(() => {
   window.removeEventListener('visibilitychange', handler);
 });
 
-await useUserStore().getSelfInfo();
+await useUserStore().getSelfInfo({ enable: !process.server });
 </script>
