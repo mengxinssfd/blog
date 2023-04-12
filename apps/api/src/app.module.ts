@@ -24,6 +24,7 @@ import { CommentDislikeModule } from '@/routers/comment-dislike/comment-dislike.
 import { FriendLinkModule } from '@/routers/friend-link/friend-link.module';
 import { FileModule } from '@/routers/file/file.module';
 import { StatisticsModule } from '@/routers/statistics/statistics.module';
+import { RedisModule, type RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [
@@ -51,6 +52,12 @@ import { StatisticsModule } from '@/routers/statistics/statistics.module';
           entities: Object.values(Entities),
           synchronize: ENV.isDev() || ENV.isTest(),
         } as MysqlConnectionOptions;
+      },
+    }),
+    RedisModule.forRootAsync({
+      inject: [AppConfigService],
+      useFactory: async (configService: AppConfigService): Promise<RedisModuleOptions> => {
+        return { config: { ...configService.val('redis') } };
       },
     }),
     AuthModule,

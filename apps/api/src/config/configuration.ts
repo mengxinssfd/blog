@@ -1,8 +1,17 @@
 import { EnvironmentVariables } from '@/env/env.variables';
+import { plainToInstance } from 'class-transformer';
 
 export const configLoader = () => {
-  const env: EnvironmentVariables = process.env as any;
+  const env = plainToInstance(EnvironmentVariables, process.env, {
+    enableImplicitConversion: true,
+  });
+
   return {
+    redis: {
+      host: env.REDIS_HOST || 'localhost',
+      port: env.REDIS_PORT || 6379,
+      password: env.REDIS_PASSWORD,
+    },
     oss: {
       region: env.OSS_REGION,
       // 阿里云账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM用户进行API访问或日常运维，请登录RAM控制台创建RAM用户。

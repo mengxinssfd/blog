@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class EnvironmentVariables {
   @IsNumber()
@@ -32,7 +32,7 @@ export class EnvironmentVariables {
   @IsString()
   OPENAI_API_KEY!: string;
 
-  //
+  // oss 配置
   @IsString()
   OSS_REGION!: string;
   @IsString()
@@ -45,4 +45,15 @@ export class EnvironmentVariables {
   OSS_CNAME!: boolean;
   @IsString()
   OSS_ENDPOINT!: string;
+
+  // redis 配置
+  @IsOptional()
+  @IsString()
+  REDIS_HOST!: string;
+  @IsOptional()
+  @IsNumber()
+  REDIS_PORT!: number;
+  @IsOptional()
+  @IsString()
+  REDIS_PASSWORD!: string;
 }

@@ -12,5 +12,5 @@ export function envValidate(config: Record<string, unknown>) {
     throw new Error(errors.toString());
   }
 
-  return validatedConfig;
+  return config;
 }
