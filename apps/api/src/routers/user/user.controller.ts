@@ -216,8 +216,9 @@ export class UserController {
   ) {
     const findUser = await this.findUser(id).unless(user).can(Action.Update, 'role');
     findUser.role = await this.userService.setRole(id, roleDto.role);
-    const token = this.authService.certificate(findUser);
-    throw new ResetTokenException({ token, user: findUser });
+    // const token = this.authService.certificate(findUser);
+    // throw new ResetTokenException({ token, user: findUser });
+    return { role: findUser.role };
   }
 
   @ApiBearerAuth()
