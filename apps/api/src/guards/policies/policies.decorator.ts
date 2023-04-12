@@ -19,7 +19,7 @@ export type PolicyHandler = IPolicyHandler | PolicyHandlerCallback;
 /**
  * key
  */
-export const CHECK_POLICIES_KEY = 'check_policies';
+export const CHECK_POLICIES_KEY = Symbol('check policies');
 
 /**
  * PoliciesGuard配套装饰器
