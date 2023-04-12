@@ -28,7 +28,7 @@ import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { ForbiddenError } from '@casl/ability';
-import { JwtAuth } from '@/guards/auth/public.decorator';
+import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('article')
 @Controller('article')

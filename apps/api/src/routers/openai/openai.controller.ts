@@ -2,7 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { OpenaiService } from './openai.service';
 import { CreateOpenaiChatDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuth } from '@/guards/auth/public.decorator';
+import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('openai')
 @Controller('openai')

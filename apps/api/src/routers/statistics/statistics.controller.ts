@@ -6,7 +6,7 @@ import { ArticleLikeService } from '@/routers/article-like/article-like.service'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RbacGuard } from '@/guards/rbac/rbac.guard';
 import { ROLE } from '@blog/entities';
-import { JwtAuth } from '@/guards/auth/public.decorator';
+import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('statistics')
 @Controller('statistics')

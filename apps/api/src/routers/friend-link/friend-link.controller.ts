@@ -21,7 +21,7 @@ import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
-import { JwtAuth } from '@/guards/auth/public.decorator';
+import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('friend-link')
 @Controller('friend-link')

@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { AuthGuard } from '@nestjs/passport';
 // import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { IS_PUBLIC_KEY } from '@/guards/auth/public.decorator';
+import { IS_PUBLIC_AUTH_KEY } from '@/guards/auth/auth.decorator';
 import { Reflector } from '@nestjs/core';
 import { isPromiseLike } from '@tool-pack/basic';
 
@@ -28,7 +28,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const res = super.canActivate(context);
 
-    const isPublic = this.reflector.get<boolean>(IS_PUBLIC_KEY, context.getHandler()) ?? true;
+    const isPublic = this.reflector.get<boolean>(IS_PUBLIC_AUTH_KEY, context.getHandler()) ?? true;
     // console.log('is public', isPublic);
     if (isPublic && isPromiseLike(res)) {
       return res.catch((e: unknown) => {

@@ -9,7 +9,7 @@ import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard
 import { CommentDislikeEntity, UserEntity } from '@blog/entities';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
-import { JwtAuth } from '@/guards/auth/public.decorator';
+import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('comment-like')
 @Controller('comment-like')

@@ -35,7 +35,7 @@ import {
 } from '@blog/dtos';
 import { AppConfigService } from '@/app.config.service';
 import { RequestWithUser } from '@/types';
-import { JwtAuth } from '@/guards/auth/public.decorator';
+import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('user')
 @Controller('user')

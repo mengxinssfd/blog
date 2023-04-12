@@ -22,7 +22,7 @@ import { Throttle } from '@nestjs/throttler';
 import { PageDto } from '@blog/dtos/page.dto';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
-import { JwtAuth } from '@/guards/auth/public.decorator';
+import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('comment')
 @Controller('comment')

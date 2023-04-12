@@ -20,7 +20,7 @@ import { ArticleLikeEntity, UserEntity } from '@blog/entities';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { ArticleService } from '@/routers/article/article.service';
-import { JwtAuth } from '@/guards/auth/public.decorator';
+import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('article-like')
 @Controller('article-like')
