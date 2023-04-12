@@ -1,7 +1,7 @@
 import { methodsWithUrl } from '../request';
 import type { FriendLinkEntity } from '@blog/entities';
 import type { PageVo } from '@blog/dtos/src/page.vo';
-import {
+import type {
   AdjudgeFriendLinkDto,
   CreateFriendLinkDto,
   FindAllFriendLinkDto,

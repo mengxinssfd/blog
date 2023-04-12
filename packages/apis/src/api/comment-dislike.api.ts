@@ -2,7 +2,7 @@ import { Get, Post } from '../request';
 
 const urlPrefix = '/api/comment-dislike';
 
-export function getCommentLikeCount(articleId: number) {
+export function getCommentDislikeCount(articleId: number) {
   return Get<number>(`${urlPrefix}/count/${articleId}`);
 }
 export function setCommentDislike(commentId: number) {

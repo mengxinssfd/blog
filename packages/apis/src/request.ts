@@ -1,5 +1,5 @@
 import type { Method } from 'axios';
-import type { CustomConfig, RequestTemplate } from 'request-template';
+import type { CustomConfig, DynamicCustomConfig, RequestTemplate } from 'request-template';
 import { Tuple } from '@tool-pack/types';
 
 export interface PrimaryCustomConfig extends CustomConfig {
@@ -17,11 +17,21 @@ export function getRequestIns() {
   return _ins;
 }
 
+const factoryWrapper = (...args: Parameters<typeof _ins.simplifyMethodFactory>) => {
+  return <T = never, RC extends boolean = false>(
+    url: string,
+    data = {},
+    customConfig = {} as DynamicCustomConfig<PrimaryCustomConfig, RC>,
+  ) => {
+    return _ins.simplifyMethodFactory(...args)<T, RC>(url, data, customConfig);
+  };
+};
+
 export function methodsWithUrl<T extends readonly Method[]>(
   methods: T,
   urlPrefix = '',
-): Tuple<ReturnType<typeof _ins.simplifyMethodFactory>, T['length']> {
-  return methods.map((method) => _ins.simplifyMethodFactory(method, urlPrefix)) as any;
+): Tuple<ReturnType<typeof factoryWrapper>, T['length']> {
+  return methods.map((method) => factoryWrapper(method, urlPrefix)) as any;
 }
 
 export const [Get, Post, Patch, Delete] = methodsWithUrl([

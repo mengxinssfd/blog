@@ -1,10 +1,12 @@
-import { Get, Post } from '@blog/apis';
+import { methodsWithUrl } from '@blog/apis';
 
 const urlPrefix = '/api/article-like';
 
+const [Get, Patch] = methodsWithUrl(['GET', 'PATCH'] as const, urlPrefix);
+
 export function getArticleLikeCount(articleId: number) {
-  return Get(`${urlPrefix}/count/${articleId}`);
+  return Get(`/count/${articleId}`);
 }
 export function setArticleLike(articleId: number) {
-  return Post(urlPrefix, { articleId });
+  return Patch(`/${articleId}`, { articleId });
 }

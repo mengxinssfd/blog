@@ -26,8 +26,8 @@ export function updateArticle(articleId: number | string, data: UpdateArticleDto
   return Patch(`/${articleId}`, data, { showSuccessMsg: true, successMsg: '更新成功' });
 }
 
-export function getArticleList(data: ArticleListDto) {
-  return Get<GetArticleListRes>('', data, { cache: true });
+export function getArticleList(data: ArticleListDto, cache = true) {
+  return Get<GetArticleListRes>('', data, { cache });
 }
 export function getArticleListByAuthor(authorId: number, data: {}) {
   return Get<GetArticleListRes>(`/author/${authorId}`, data, {
