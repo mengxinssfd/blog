@@ -5,6 +5,12 @@ import { Observable } from 'rxjs';
 import { IS_PUBLIC_AUTH_KEY } from '@/guards/auth/auth.decorator';
 import { Reflector } from '@nestjs/core';
 import { isPromiseLike } from '@tool-pack/basic';
+import { Request } from 'express';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import Redis from 'ioredis';
+import type { UserEntity } from '@blog/entities';
+
+type JwtUser = Pick<UserEntity, 'id' | 'role'>;
 
 /**
  * 全局解析token
@@ -19,21 +25,29 @@ import { isPromiseLike } from '@tool-pack/basic';
  */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
-  constructor(private reflector: Reflector) {
+  constructor(private reflector: Reflector, @InjectRedis() private readonly redis: Redis) {
     super();
+    console.log(this.redis.get('1'));
   }
 
   override canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest<Request>();
     const res = super.canActivate(context);
 
-    const isPublic = this.reflector.get<boolean>(IS_PUBLIC_AUTH_KEY, context.getHandler()) ?? true;
-    // console.log('is public', isPublic);
-    if (isPublic && isPromiseLike(res)) {
-      return res.catch((e: unknown) => {
-        if (e instanceof UnauthorizedException) return true;
-        return Promise.reject(e);
+    const isPublic = this.isPublic(context);
+
+    if (isPromiseLike(res) && !isPublic) {
+      return res.then(async (res) => {
+        const user = request['user'] as JwtUser;
+        if (!user) return res;
+
+        const token = await this.redis.get('UserToken_' + user.id);
+        if (token && token === this.extractTokenFromHeader(request)) return true;
+
+        request['user'] = undefined;
+        return false;
       });
     }
 
@@ -43,14 +57,23 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
     return res;
   }
 
-  override handleRequest(err: any, user: any /*, info: any, context: ExecutionContext*/) {
-    // const req = context.switchToHttp().getRequest<Request>();
-    // eslint-disable-next-line prefer-rest-params
-    // console.log('JwtAuthGuard handleRequest', req.path, err, info?.message);
-    // You can throw an exception based on either "info" or "err" arguments
-    if (err || !user) {
-      throw err || new UnauthorizedException();
-    }
+  override handleRequest<T = JwtUser>(
+    err: any,
+    user: T | false,
+    _info: any,
+    context: ExecutionContext,
+  ): T | void {
+    if (this.isPublic(context)) return;
+    if (err || !user) throw err || new UnauthorizedException();
     return user;
+  }
+
+  private isPublic(context: ExecutionContext) {
+    return this.reflector.get<boolean>(IS_PUBLIC_AUTH_KEY, context.getHandler()) ?? true;
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
