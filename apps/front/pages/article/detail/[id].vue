@@ -41,15 +41,15 @@
           </div>
           <div class="time _ flex-c-c">
             <div class="create-at">
-              <i class="iconfont icon-create-at"></i>{{ formatDate(article.createAt) }}
+              <i class="iconfont icon-create-at"></i>{{ formatDate(article.createAt.toString()) }}
             </div>
             <div class="update-at">
-              <i class="iconfont icon-update-at"></i>{{ formatDate(article.updateAt) }}
+              <i class="iconfont icon-update-at"></i>{{ formatDate(article.updateAt.toString()) }}
             </div>
           </div>
           <div class="view-like _ flex-c-c">
             <div class="view-count _ flex-c">
-              <el-icon size="1em"><View /></el-icon><span>{{ article.viewCount }}</span>
+              <el-icon size="1em"><IconView /></el-icon><span>{{ article.viewCount }}</span>
             </div>
             <div class="like btn" @click="setLike">
               <i class="iconfont" :class="like.checked ? 'icon-like2' : 'icon-like1'"></i>
@@ -70,7 +70,7 @@
       <ArticleDetailAuthorBlock
         v-if="article.author"
         :article="article"
-        @commentLockUpdated="onCommentLockUpdate"></ArticleDetailAuthorBlock>
+        @comment-lock-updated="onCommentLockUpdate"></ArticleDetailAuthorBlock>
       <section class="article">
         <article v-if="!article.id">
           <el-skeleton :rows="10" animated />
@@ -81,7 +81,7 @@
           class="vuepress-markdown-body"
           v-html="article.content"></article>
         <aside>
-          <ArticleDetailAnchor ref="anchorRef" @anchorChange="onClickAnchor"></ArticleDetailAnchor>
+          <ArticleDetailAnchor ref="anchorRef" @anchor-change="onClickAnchor"></ArticleDetailAnchor>
         </aside>
       </section>
       <ArticleDetailCommentBlock
@@ -104,7 +104,7 @@ import { useArticle } from '~/feature/hooks';
 import { TODAY_COVER_URL } from '~/config/constants';
 
 export default defineComponent({
-  components: { View },
+  components: { IconView: View },
   async setup() {
     const route = useRoute();
     const articleId: number = route.params.id as any;
