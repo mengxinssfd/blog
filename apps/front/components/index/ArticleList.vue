@@ -113,7 +113,7 @@ export default defineComponent({
   display: block;
   margin: 0 !important;
   font-size: 0;
-  @media screen and (max-width: 750px) {
+  @media screen and (max-width: 600px) {
     padding-top: 68px;
     .c-banner {
       display: none;
