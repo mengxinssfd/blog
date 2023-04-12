@@ -25,7 +25,8 @@
     "request-template": "^2.2.0",
     "sass": "^1.61.0",
     "vue": "^3.2.47",
-    "xss": "^1.0.13"
+    "xss": "^1.0.13",
+    "md-editor-v3": "^2.2.1"
   },
   "devDependencies": {
     "@tool-pack/types": "^0.0.2",
