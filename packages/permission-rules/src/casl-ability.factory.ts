@@ -9,6 +9,7 @@ import {
   CommentLikeEntity,
   CommentDislikeEntity,
   FriendLinkEntity,
+  FileEntity,
 } from '@blog/entities';
 import {
   AbilityBuilder,
@@ -29,6 +30,7 @@ import { createCommentRule } from './rules/comment.rule';
 import { createCommentLikeRule } from './rules/comment-like.rule';
 import { createCommentDislikeRule } from './rules/comment-dislike.rule';
 import { createFriendLinkRule } from './rules/friend-link.rule';
+import { createFileRule } from './rules/file.rule';
 
 const { subjects, classMap, ruleRegister } = bootstrap(
   [
@@ -41,6 +43,7 @@ const { subjects, classMap, ruleRegister } = bootstrap(
     CommentLikeEntity,
     CommentDislikeEntity,
     FriendLinkEntity,
+    FileEntity,
   ],
   [
     createUserRule,
@@ -52,6 +55,7 @@ const { subjects, classMap, ruleRegister } = bootstrap(
     createCommentLikeRule,
     createCommentDislikeRule,
     createFriendLinkRule,
+    createFileRule,
   ],
 );
 
