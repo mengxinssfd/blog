@@ -5,3 +5,4 @@ export * from './article';
 export * from './openai';
 export * from './comment';
 export * from './friend-link';
+export * from './file';
