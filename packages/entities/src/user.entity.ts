@@ -89,7 +89,7 @@ export class PublicUser extends BlogBaseEntity {
     nullable: true,
     select: false,
   })
-  loginAt?: Date;
+  loginAt?: Date | string;
 }
 
 @Entity({ name: 'user' })
