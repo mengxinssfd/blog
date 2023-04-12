@@ -37,12 +37,13 @@ module.exports = {
       extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/recommended',
-        'prettier',
-        'plugin:prettier/recommended',
         // vue nuxt
         '@nuxtjs/eslint-config-typescript',
         'plugin:nuxt/recommended',
         'plugin:vue/vue3-recommended',
+
+        'plugin:prettier/recommended',
+        'prettier',
       ],
       rules: {
         // 使用结尾分号
