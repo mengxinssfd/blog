@@ -37,17 +37,21 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
     const res = super.canActivate(context);
 
     const isPublic = this.isPublic(context);
-
+    // 执行顺序 canActivate 1，handleRequest，canActivate 2
+    // console.log('canActivate 1');
     if (isPromiseLike(res) && !isPublic) {
       return res.then(async (res) => {
         const user = request['user'] as JwtUser;
+        // console.log('canActivate 2', user);
         if (!user) return res;
 
-        const token = await this.redis.get('UserToken_' + user.id);
-        if (token && token === this.extractTokenFromHeader(request)) return true;
+        const redisToken = await this.redis.get('UserToken_' + user.id);
 
-        request['user'] = undefined;
-        return false;
+        if (!redisToken) throw new UnauthorizedException();
+        const requestToken = this.extractTokenFromHeader(request);
+        if (redisToken !== requestToken) throw new UnauthorizedException('已在其他地方登录');
+
+        return true;
       });
     }
 
@@ -63,6 +67,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
     _info: any,
     context: ExecutionContext,
   ): T | void {
+    // console.log('handleRequest', err, user);
     if (this.isPublic(context)) return;
     if (err || !user) throw err || new UnauthorizedException();
     return user;
