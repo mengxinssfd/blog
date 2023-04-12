@@ -8,3 +8,4 @@ export * from './comment-dislike.entity';
 export * from './article-like.entity';
 export * from './tag.entity';
 export * from './friend-link.entity';
+export * from './file.entity';
