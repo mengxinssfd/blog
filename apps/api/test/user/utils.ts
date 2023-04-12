@@ -25,9 +25,7 @@ export const ResTypes = {
   self: new RegExp(
     `^\\{"code":200,"msg":"Success","data":\\{"user":\\{"id":\\d+,"username":"hello_\\d+","nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}","role":\\d+}}}$`,
   ),
-  setRole: new RegExp(
-    `\\{"code":207,"msg":"Success","data":\\{"token":"[^"]{149}","user":\\{"id":\\d,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}","role":\\d,"loginAt":(null|("[^"]{24}"))}}}`,
-  ),
+  setRole: new RegExp(`\\{"code":200,"msg":"Success","data":\\{"role":\\d+}}`),
   403: '{"code":403,"msg":"无权操作"}',
   notFoundUser: '{"code":404,"msg":"账号不存在"}',
 };

@@ -109,16 +109,17 @@ describe('UserController (e2e): /api/user', () => {
       const { admin, commonUser } = await createUsers();
       const {
         body: {
-          data: { user },
+          data: { role },
         },
       } = await setRole(commonUser.id, admin.token, ROLE.admin).expect(ResTypes.setRole);
-      expect(user.role).toBe(ROLE.admin);
+      expect(role).toBe(ROLE.admin);
       // superAdmin => commonUser
+      await setRole(admin.id, admin.token, ROLE.commonUser).expect(ResTypes.setRole);
       const {
         body: {
           data: { token },
         },
-      } = await setRole(admin.id, admin.token, ROLE.commonUser).expect(ResTypes.setRole);
+      } = await login(admin);
       // 新token无权操作
       await setRole(commonUser.id, token, ROLE.commonUser).expect(ResTypes['403']);
       // 原token还是能用的 todo 需要使用redis把旧的token踢下线

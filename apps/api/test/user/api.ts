@@ -98,9 +98,9 @@ export function userApi(request: () => SuperTest<Test>) {
   async function registerAndSetRole(token: string, role: ROLE) {
     const user = buildRegisterData();
     const [id /* devToken */ /* 该token的role仍然是commonUser */] = await registerLogin(user);
-    const _token = await setRole(id, token, role)
-      .expect(ResTypes.setRole)
-      .then<string>((res) => res.body.data.token);
+    await setRole(id, token, role).expect(ResTypes.setRole);
+
+    const _token = await login(user).then((res) => res.body.data.token);
 
     return { ...user, id: id, token: _token };
   }
