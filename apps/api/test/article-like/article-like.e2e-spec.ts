@@ -153,6 +153,46 @@ describe('/article-like 文章👍', () => {
         .expect(`{"code":200,"msg":"Success","data":{"list":[],"count":2}}`);
     });
   });
+  it('从article列表中获取', async () => {
+    const reg = JSON.stringify({
+      code: 200,
+      msg: 'Success',
+      data: {
+        list: [
+          {
+            id: 1,
+            status: '1',
+            version: 1,
+            title: '测试一些',
+            description: '测试一下',
+            viewCount: 0,
+            cover:
+              'http://img.desktx.com/d/file/wallpaper/scenery/20170107/7cd0dae5f6adf31e51626333b9614bff.jpg',
+            bgm: '',
+            commentLock: 0,
+            category: { id: 1, name: 'Front Dev', description: '前端开发' },
+            author: {
+              id: 3,
+              nickname: 'hello_2',
+              avatar:
+                'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg',
+            },
+            tags: [{ id: 1, name: 'Typescript', description: 'Javascript超类' }],
+            createAt: '(date)',
+            updateAt: '(date)',
+            like: { count: 2, checked: 1111 },
+            commentCount: 0,
+          },
+        ],
+        count: 1,
+      },
+    })
+      .replace(/([{[])/g, '\\$1')
+      .replace(/\(date\)/g, '[^"]{24}');
+
+    await articleApi.list().expect(new RegExp(reg.replace('1111', '0')));
+    return articleApi.list(RoleUsers.common.token).expect(new RegExp(reg.replace('1111', '1')));
+  });
   describe('删除', function () {
     it('需要登录', () => {
       return api.delete(1, '').expect(200).expect(UserResTypes.unauthorized);
