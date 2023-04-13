@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "text-censor": "^1.0.2"
+    "mint-filter": "^4.0.2"
   },
   "jest": {
     "moduleFileExtensions": [

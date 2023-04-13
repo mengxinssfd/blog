@@ -8,7 +8,7 @@ import {
   Validate,
   ValidateIf,
 } from 'class-validator';
-import { WordValidate } from '../user/word.validate';
+import { WordValidate } from '../word.validate';
 
 export class CreateCommentDto {
   @ApiProperty({ description: '评论内容', example: '' })

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsMobilePhone, Matches, Length, Validate, IsString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { WordValidate } from './word.validate';
+import { WordValidate } from '../word.validate';
 import { LoginDTO } from './login.dto';
 import { IsOptional } from '../utils';
 

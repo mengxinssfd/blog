@@ -226,9 +226,9 @@ importers:
 
   packages/dtos:
     specifiers:
-      text-censor: ^1.0.2
+      mint-filter: ^4.0.2
     dependencies:
-      text-censor: 1.0.2
+      mint-filter: 4.0.2
 
   packages/entities:
     specifiers:
@@ -12529,6 +12529,13 @@ packages:
     dependencies:
       minipass: 3.3.6
       yallist: 4.0.0
+
+  /mint-filter/4.0.2:
+    resolution:
+      {
+        integrity: sha512-/j9mJkj+GHUkkpgQ9spobnPXrGEx5bKnwDQo5dLlWE2h0n5cWKuUaS7X5lG/CXsypcPU0AZu6RgRk4IESHAfPg==,
+      }
+    dev: false
 
   /mitt/3.0.0:
     resolution:

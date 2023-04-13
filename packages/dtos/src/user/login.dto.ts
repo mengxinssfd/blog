@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseDto } from '../base.dto';
 import { IsNotEmpty, IsString, Length, Matches, Validate } from 'class-validator';
-import { WordValidate } from './word.validate';
+import { WordValidate } from '../word.validate';
 
 export class LoginDTO extends BaseDto<LoginDTO> {
   @ApiProperty({ example: 'javascript' })
