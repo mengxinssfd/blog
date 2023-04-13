@@ -1,19 +1,14 @@
 import { createUUID } from '@tool-pack/basic';
-import type { Context, CustomConfig } from 'request-template';
+import type { Context } from 'request-template';
 import { AxiosRequestTemplate } from '@request-template/axios';
 import { ElLoading } from 'element-plus';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { statusHandlers } from './statusHandlers';
 import { Token } from './token';
-import { setRequestIns } from '@blog/apis';
+import { PrimaryCustomConfig, setRequestIns } from '@blog/apis';
 
 AxiosRequestTemplate.useAxios(axios);
 let uuid = '';
-
-export interface PrimaryCustomConfig extends CustomConfig {
-  showSuccessMsg?: boolean;
-  successMsg?: string;
-}
 
 export class PrimaryRequest<
   CC extends PrimaryCustomConfig = PrimaryCustomConfig,
@@ -107,7 +102,7 @@ export class PrimaryRequest<
   }
 
   // 处理config，添加uuid和token到headers
-  protected handleRequestConfig(requestConfig: AxiosRequestConfig) {
+  protected override handleRequestConfig(requestConfig: any) {
     if (!requestConfig.headers) requestConfig.headers = {};
     Token.exists() && (requestConfig.headers.authorization = `Bearer ${Token.get()}`);
     requestConfig.headers.uuid = PrimaryRequest.getUUID();

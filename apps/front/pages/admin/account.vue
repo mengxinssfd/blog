@@ -158,7 +158,6 @@ export default defineComponent({
             Methods.setMute(user.muted, user);
             break;
           case 'restore':
-            // eslint-disable-next-line no-case-declarations
             await restoreUser(user.id);
             Methods.getData();
             break;

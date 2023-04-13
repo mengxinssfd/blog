@@ -91,8 +91,6 @@ async function login() {
       }
     }
   }
-  .el-form {
-  }
   .form-box {
     overflow: hidden;
     padding: 40px 30px 30px 30px;

@@ -16,7 +16,7 @@ export default defineComponent({
     const state = reactive({
       theme: 'light' as Themes,
     });
-    const onUploadImg = async (images, callback) => {
+    const onUploadImg = async (images: File[], callback: Function) => {
       const res = await Promise.all(
         images.map(async (image) => {
           const { data: src } = await uploadFile(image);

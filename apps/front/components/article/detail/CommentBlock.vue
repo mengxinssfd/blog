@@ -35,7 +35,8 @@ import * as Vue from 'vue';
 import { ElMessage } from 'element-plus';
 import { forEachRight } from '@tool-pack/basic';
 import { createComment, getCommentByArticle } from '@blog/apis';
-import { type ArticleEntity, CommentEntity, ROLE } from '@blog/entities';
+import { type ArticleEntity, ROLE } from '@blog/entities';
+import type { CommentTree } from './tree';
 import useUserStore from '~/store/user';
 
 export default defineComponent({
@@ -51,7 +52,7 @@ export default defineComponent({
       ROLE,
       user: ref(useUserStore().user),
       comment: reactive({
-        list: [] as CommentEntity[],
+        list: [] as CommentTree[],
         count: 0,
         form: {
           content: '',

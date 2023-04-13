@@ -1,7 +1,7 @@
 <template>
   <router-link class="c-reply" :to="`/article/detail/${item.article.id}`">
     <div class="comm-left">
-      <router-link v-if="item.userId" :to="`/user/info/${item.user.id}`">
+      <router-link v-if="item.user?.id" :to="`/user/info/${item.user.id}`">
         <el-avatar :size="32" :src="item.user?.avatar || defaultAvatar"></el-avatar>
       </router-link>
       <el-avatar v-else :size="32" :src="defaultAvatar"></el-avatar>

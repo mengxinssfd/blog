@@ -1,6 +1,6 @@
 <template>
   <div class="c-back-top _ pos-trans-c main-width">
-    <div class="_ btn abs-br back-top" :class="{ hide: scrollTop < 600 }" @click="backTop">
+    <div class="_ btn abs-br back-top" :class="{ hide: scrollTop < 600 }" @click="backTop()">
       <i class="iconfont icon-back-top shake-slow"></i>
     </div>
   </div>

@@ -13,7 +13,7 @@
       <ArticleDetailAuthorBlock
         v-if="user.role === ROLE.superAdmin && article.author"
         :article="article"
-        @commentLockUpdated="onCommentLockUpdate"></ArticleDetailAuthorBlock>
+        @comment-lock-updated="onCommentLockUpdate"></ArticleDetailAuthorBlock>
       <section class="article">
         <article ref="articleRef" class="vuepress-markdown-body" v-html="article.content"></article>
       </section>
@@ -71,8 +71,6 @@ export default defineComponent({
 <style lang="scss">
 .pg.about {
   margin: 0 !important;
-  .c-banner {
-  }
   .pg-content {
     flex: 1;
     position: relative;

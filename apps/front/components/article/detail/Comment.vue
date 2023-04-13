@@ -97,16 +97,17 @@ import * as Vue from 'vue';
 import { onceEvent } from '@tool-pack/dom';
 import { ElMessage } from 'element-plus';
 import { createComment, deleteCommentOne, setCommentLike, setCommentDislike } from '@blog/apis';
-import { type CommentEntity, ROLE } from '@blog/entities';
+import { ROLE } from '@blog/entities';
 import { useToggleState } from '~/feature/hooks';
 import useUserStore from '~/store/user';
 import { howLongAgo } from '~/feature/utils';
+import { CommentTree } from '~/components/article/detail/tree';
 
 export default defineComponent({
   name: 'Comment',
   props: {
     item: {
-      type: Object as Vue.PropType<CommentEntity>,
+      type: Object as Vue.PropType<CommentTree>,
       default() {
         return {
           createAt: '',

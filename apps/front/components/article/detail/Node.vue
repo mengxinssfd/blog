@@ -1,14 +1,14 @@
 <template>
   <div
     class="c-anchor-node"
-    :style="{ padding: `10px 0 10px ${tree.data.indent * 20}px` }"
+    :style="{ padding: `10px 0 10px ${(tree.data?.indent || 0) * 20}px` }"
     @click="handleAnchorClick(tree)">
-    <a style="cursor: pointer">{{ tree.data.title }}</a>
+    <a style="cursor: pointer">{{ tree.data?.title }}</a>
     <ArticleDetailNode
       v-for="t in tree.children"
-      :key="t.data.id"
+      :key="t.data?.id"
       :tree="t"
-      @anchorChange="handleAnchorClick(t)"></ArticleDetailNode>
+      @anchor-change="handleAnchorClick(t)"></ArticleDetailNode>
   </div>
 </template>
 

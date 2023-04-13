@@ -12,7 +12,6 @@
 
 <script lang="ts">
 import * as Vue from 'vue';
-import { TagEntity } from '@blog/entities';
 
 export default defineComponent({
   props: {
@@ -21,7 +20,7 @@ export default defineComponent({
       default: '',
     },
     list: {
-      type: Array as Vue.PropType<TagEntity[]>,
+      type: Array as Vue.PropType<Record<string, any>[]>,
       default() {
         return [];
       },
@@ -59,21 +58,22 @@ export default defineComponent({
 
     return {
       innerValue,
-      isActive(item: TagEntity) {
+      isActive(item: Record<string, any>) {
         const curVal = item[props.valueKey];
         if (props.multiple) {
-          return innerValue.value.includes(curVal);
+          return (innerValue.value as unknown[]).includes(curVal);
         }
         return innerValue.value === curVal;
       },
       clickTag(item: any, index: number) {
         const curVal = item[props.valueKey];
         if (props.multiple) {
-          const i = innerValue.value.indexOf(curVal);
+          const list = innerValue.value as unknown[];
+          const i = list.indexOf(curVal);
           if (i > -1) {
-            innerValue.value.splice(i, 1);
+            list.splice(i, 1);
           } else {
-            innerValue.value.push(curVal);
+            list.push(curVal);
           }
         } else {
           innerValue.value = curVal;

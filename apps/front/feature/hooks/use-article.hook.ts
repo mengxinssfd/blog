@@ -21,7 +21,7 @@ export function useArticle() {
     articleRef: ref<HTMLElement>(),
     previewRef,
     audioVisible: ref(true),
-    user: computed(() => store.$state),
+    user: computed(() => store.user),
     article: ref<ArticleEntity>({} as any),
     like: ref({
       count: 0,
