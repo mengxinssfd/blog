@@ -4,41 +4,33 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  CreateFriendLinkDto,
-  UpdateFriendLinkDto,
-  AdjudgeFriendLinkDto,
-  FindAllFriendLinkDto,
-} from '@blog/dtos';
+import { UpdateFriendLinkDto, AdjudgeFriendLinkDto, FindAllFriendLinkDto } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ROLE, UserEntity, FriendLinkEntity, FriendLinkState } from '@blog/entities';
 import { rawsToEntities } from '@/utils/assemblyEntity';
+import type { BrowserContext } from 'puppeteer';
+import { InjectContext } from '@mxssfd/nest-puppeteer';
 
 @Injectable()
 export class FriendLinkService {
   constructor(
     @InjectRepository(FriendLinkEntity)
     private readonly repository: Repository<FriendLinkEntity>,
+    @InjectContext() private readonly browserContext: BrowserContext,
   ) {}
 
-  async create(createFriendLinkDto: CreateFriendLinkDto, userId: number) {
-    const find = await this.repository
-      .createQueryBuilder('link')
-      .where({ name: createFriendLinkDto.name })
-      .orWhere({ link: createFriendLinkDto.link })
-      .getOne();
+  async findByLink(link: string) {
+    return await this.repository.findOne({ where: { link } });
+  }
+
+  async create(friendLink: FriendLinkEntity) {
+    const find = await this.findByLink(friendLink.link);
+    console.log('fffff', find, friendLink);
     if (find) {
-      if (find.link === createFriendLinkDto.link) {
-        throw new BadRequestException('网站链接已存在');
-      } else {
-        throw new BadRequestException('名称已存在');
-      }
+      throw new BadRequestException('网站链接已存在');
     }
-    const e = new FriendLinkEntity();
-    Object.assign(e, createFriendLinkDto);
-    e.createBy = userId;
-    return await this.repository.save(e);
+    return await this.repository.save(friendLink);
   }
 
   async findAll(query: FindAllFriendLinkDto) {
@@ -48,6 +40,7 @@ export class FriendLinkService {
         '`fl`.`createAt` AS `fl_createAt`',
         '`fl`.`status` AS `fl_status`',
         '`fl`.`rejectReason` AS `fl_rejectReason`',
+        '`fl`.`updateAt` AS `fl_updateAt`',
       ]);
     if (query.status) {
       sql.where({ status: query.status });
@@ -103,5 +96,35 @@ export class FriendLinkService {
     }
     Object.assign(entity, data);
     return await this.repository.save(entity);
+  }
+
+  async fetchSiteInfo(link: string) {
+    const page = await this.browserContext.newPage();
+    try {
+      await page.setViewport({ width: 1600, height: 900 });
+      await page.goto(link, { waitUntil: 'networkidle2' });
+      await page.content();
+      const info = await page.evaluate(() => {
+        return {
+          name: document.title,
+          desc:
+            (document.querySelector('meta[name=description]') as HTMLMetaElement)?.content || '',
+          avatar:
+            (
+              document.querySelector(
+                'link[rel="icon"],link[rel^="icon "],link[rel$=" icon"]',
+              ) as HTMLLinkElement
+            )?.href || '',
+        } satisfies Pick<FriendLinkEntity, 'name' | 'desc' | 'avatar'>;
+      });
+
+      const screenshot = await page.screenshot({ encoding: 'binary' });
+      return { ...info, screenshot };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    } finally {
+      await page.close();
+    }
   }
 }

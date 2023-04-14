@@ -13,12 +13,15 @@ export class FriendLinkEntity extends BlogBaseEntity {
   static readonly STATE = FriendLinkState;
   static readonly modelName = 'FriendLinkEntity' as const;
 
-  @Column('varchar', { length: 20, comment: '站名', unique: true })
+  @Column('varchar', { length: 100, comment: '站名' })
   name!: string;
   @Column('varchar', { length: 254, comment: '描述', nullable: true })
   desc?: string;
   @Column('varchar', { length: 254, comment: '链接', unique: true })
   link!: string;
+
+  @Column('varchar', { length: 500, comment: '屏幕截图', nullable: true })
+  screenshot!: string;
 
   @Column('varchar', {
     length: 500,
