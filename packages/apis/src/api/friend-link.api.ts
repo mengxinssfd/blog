@@ -25,6 +25,9 @@ export function createFriendLink(data: CreateFriendLinkDto) {
 export function updateFriendLink(id: number, data: UpdateFriendLinkDto) {
   return Patch(`/${id}`, data);
 }
+export function refreshSiteInfo(id: number) {
+  return Patch<FriendLinkEntity>(`/refresh/${id}`, undefined, { successMsg: '更新成功' });
+}
 
 export function adjudgeFriendLink(id: number, data: AdjudgeFriendLinkDto) {
   return Patch('/adjudge/' + id, data);

@@ -19,7 +19,7 @@
     </svg>
     <div class="form-box">
       <h1 class="title">Login</h1>
-      <el-form v-model="form">
+      <el-form v-model="form" @keydown.enter="login">
         <el-form-item>
           <el-input v-model="form.username" name="username" placeholder="用户名"></el-input>
         </el-form-item>

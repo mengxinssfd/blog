@@ -88,8 +88,10 @@
       <ArticleCreateCategory
         :visible="cateVisible"
         @update:content="cateVisible = $event"
-        @createSuccess="getCategoryListData"></ArticleCreateCategory>
-      <ArticleCreateTag v-model:visible="tagVisible" @createSuccess="getTagList"></ArticleCreateTag>
+        @create-success="getCategoryListData"></ArticleCreateCategory>
+      <ArticleCreateTag
+        v-model:visible="tagVisible"
+        @create-success="getTagList"></ArticleCreateTag>
     </ClientOnly>
   </div>
 </template>

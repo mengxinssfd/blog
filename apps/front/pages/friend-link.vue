@@ -7,24 +7,29 @@
       bg-img="https://s.cn.bing.net/th?id=OHR.FraueninselChiemsee_ZH-CN3541482552_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp">
       <template #content>
         <div class="title">友链</div>
-        <div class="tips">不定期检查友链，如友链方无本站友链将撤回本站对方友链。</div>
       </template>
     </Banner>
     <section class="board main-width">
-      <div class="_ btn apply abs-r" @click="showLinkApplyDialog">
-        <ClientOnly>
-          <el-tooltip content="添加我的网站到友链" placement="top">
-            <i class="_ pos-trans-c-c iconfont icon-apply"></i>
-          </el-tooltip>
-        </ClientOnly>
+      <div class="sort-desc _ pos-rel">
+        按友链申请时间排序
+        <div class="_ btn apply abs-r" @click="showLinkApplyDialog">
+          <ClientOnly>
+            <el-tooltip content="添加我的网站到友链" placement="top">
+              <i class="_ pos-trans-c-c iconfont icon-apply"></i>
+            </el-tooltip>
+          </ClientOnly>
+        </div>
       </div>
-
-      <ul v-if="linkList.length">
+      <ul v-if="linkList.length" class="link-list">
         <li v-for="link in linkList" :key="link.id">
           <FriendLinkCard :item="link"></FriendLinkCard>
         </li>
       </ul>
       <el-empty v-else description="暂无友链"></el-empty>
+
+      <div class="tips">
+        tips: 不定期检查友链，根据对等原则，如友链方无本站友链将撤回本站对方友链。
+      </div>
     </section>
     <ClientOnly>
       <FriendLinkDialog v-model:show="dialogVisible" @success="onSuccess"></FriendLinkDialog>
@@ -77,24 +82,31 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .pg.friend-link {
+  .link-list {
+    margin: -6px;
+    @media (max-width: 750px) {
+      margin: 0;
+    }
+  }
   .board {
     li {
       display: inline-block;
       vertical-align: top;
       width: 220px;
+      margin: 6px;
       @media (max-width: 750px) {
         display: block;
         width: auto;
+        margin: 0;
       }
     }
     .btn.apply {
-      bottom: 100%;
-      margin-bottom: 38px;
+      bottom: -10px;
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      background: var(--board-bg-color);
-      color: var(--text-color);
+      background: var(--text-color);
+      color: var(--board-bg-color);
       i {
         font-size: 30px;
       }
@@ -105,11 +117,13 @@ export default defineComponent({
       }
     }
   }
+  .sort-desc {
+    margin-bottom: 30px;
+  }
   .tips {
-    margin-top: 12px;
+    margin-top: 60px;
     font-size: 12px;
     text-align: center;
-    color: rgba(255, 255, 255, 0.7);
   }
   .title {
     font-size: 36px;

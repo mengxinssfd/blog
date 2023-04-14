@@ -60,7 +60,4 @@ async function handleClick() {
   navigateTo({ path: '/admin/' + tabs.activeName, replace: true });
 }
 </script>
-<style lang="scss">
-.pg.admin {
-}
-</style>
+<style lang="scss"></style>

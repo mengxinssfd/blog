@@ -9,7 +9,7 @@
           v-for="item in article.list"
           :key="item.id"
           :item="item"
-          @updateLike="updateLike(item, $event)"></IndexCard>
+          @update-like="updateLike(item, $event)"></IndexCard>
       </template>
       <el-empty v-else description="暂无数据" />
     </section>
@@ -54,7 +54,6 @@ export default defineComponent({
         q.cate && (data.category = Number(q.cate));
         data.tag = ((q.tag as string) || '').split(',').filter(Boolean).map(Number);
         Data.page.current = data.page = q.page ? Number(q.page) : 1;
-        console.log('bbbbbb', data.page);
         return data;
       },
     };

@@ -19,6 +19,14 @@
           </a>
         </template>
       </el-table-column>
+      <el-table-column label="截图" prop="screenshot">
+        <template #default="scope">
+          <el-image
+            :src="scope.row.screenshot"
+            :preview-src-list="[scope.row.screenshot]"
+            preview-teleported />
+        </template>
+      </el-table-column>
       <el-table-column label="拒绝原因" prop="rejectReason" />
       <el-table-column label="创建日期" prop="createAt">
         <template #default="scope">
@@ -46,28 +54,37 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
+          <el-button
+            v-loading="scope.row.loading"
+            type="primary"
+            size="small"
+            @click="updateSiteInfo(scope.row)">
+            更新信息
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <FriendLinkDialog
+    <FriendLinkFullDialog
       v-model:show="dialogVisible"
       :data="editLink"
-      @success="onSuccess"></FriendLinkDialog>
+      @success="onSuccess"></FriendLinkFullDialog>
   </div>
 </template>
 
 <script lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { formatDate } from '@tool-pack/basic';
-import { adjudgeFriendLink, getFriendLinkList } from '@blog/apis';
+import { formatDate, updateObj } from '@tool-pack/basic';
+import { adjudgeFriendLink, getFriendLinkList, refreshSiteInfo } from '@blog/apis';
 import { type FriendLinkEntity, FriendLinkState } from '@blog/entities';
+
+type FriendLinkItem = FriendLinkEntity & { loading?: boolean };
 
 export default defineComponent({
   setup() {
     const Data = {
       FriendLinkState,
       dialogVisible: ref(false),
-      linkList: ref<FriendLinkEntity[]>([]),
+      linkList: ref<FriendLinkItem[]>([]),
       filter: reactive({
         list: [
           {
@@ -127,6 +144,12 @@ export default defineComponent({
           item.createAt = new Date(item.createAt);
         });
         Data.linkList.value = list;
+      },
+      async updateSiteInfo(item: FriendLinkItem) {
+        item.loading = true;
+        const res = await refreshSiteInfo(item.id);
+        updateObj(item, res.data);
+        item.loading = false;
       },
     };
     const init = () => {

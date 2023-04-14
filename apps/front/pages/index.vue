@@ -1,5 +1,6 @@
 <template>
   <div class="pg index">
+    <Title>Nice's Blog</Title>
     <IndexBanner :bg-img="TODAY_COVER_URL" :blur="false">
       <template v-if="false" #bg>
         <img
