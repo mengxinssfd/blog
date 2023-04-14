@@ -4,18 +4,13 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import Mint from 'mint-filter';
-import * as Fs from 'fs';
-import * as Path from 'path';
+import { keywords } from './keywords.json';
 
-let mint: Mint;
+const mint = new Mint(keywords);
 
 @ValidatorConstraint({ name: 'wordValidate', async: false })
 export class WordValidate implements ValidatorConstraintInterface {
   validate(value = '' /* args: ValidationArguments */): boolean {
-    if (!mint) {
-      const keywords = Fs.readFileSync(Path.resolve(__dirname, 'keywords')).toString().split('\n');
-      mint = new Mint(keywords);
-    }
     return mint.verify(value);
   }
 

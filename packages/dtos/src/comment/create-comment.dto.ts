@@ -53,5 +53,6 @@ export class CreateCommentDto {
   @ValidateIf((o: CreateCommentDto) => !o.userId)
   @IsNotEmpty({ message: '游客名不能为空' })
   @MaxLength(24, { message: '游客名长度不能超过24' })
+  @Validate(WordValidate)
   touristName?: string;
 }
