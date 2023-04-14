@@ -55,7 +55,7 @@ describe('/comment 评论', () => {
         .create({
           content: 'hello world',
           articleId: ArticleIds.publicArticleId,
-          touristName: 'tourist',
+          touristName: '你好啊',
         })
         .expect(CommentApi.ResType.createdByTourist);
     });
@@ -65,7 +65,7 @@ describe('/comment 评论', () => {
         .expect(200)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":\\d+,"createAt":"${dateReg}","content":"hello world","articleId":${ArticleIds.publicArticleId},"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"userId":null,"touristName":"tourist","user":null,"replyUser":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}},\\{"id":1,"createAt":"${dateReg}","content":"你好呀","articleId":1,"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"userId":${RoleUsers.common.id},"touristName":null,"user":\\{"id":${RoleUsers.common.id},"nickname":"${RoleUsers.common.nickname}","avatar":"${UserEntity.DEFAULT_AVATAR}"},"replyUser":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}}],"count":2}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":\\d+,"createAt":"${dateReg}","content":"hello world","articleId":${ArticleIds.publicArticleId},"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"userId":null,"touristName":"你好啊","user":null,"replyUser":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}},\\{"id":1,"createAt":"${dateReg}","content":"你好呀","articleId":1,"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"userId":${RoleUsers.common.id},"touristName":null,"user":\\{"id":${RoleUsers.common.id},"nickname":"${RoleUsers.common.nickname}","avatar":"${UserEntity.DEFAULT_AVATAR}"},"replyUser":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}}],"count":2}}`,
           ),
         );
     });
@@ -159,7 +159,7 @@ describe('/comment 评论', () => {
         .getReplyMeAll(RoleUsers.dev.token)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"count":4,"list":\\[\\{"user":\\{"id":2,"nickname":"hello_1","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":1,"userId":2},\\{"user":\\{"id":null,"nickname":null,"avatar":null},"createAt":"${dateReg}","deletedAt":null,"content":"hello world","replyUserId":null,"touristName":"tourist","article":${articleReg},"id":2,"userId":null},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":3,"userId":3},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":4,"userId":3}]}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"count":4,"list":\\[\\{"user":\\{"id":2,"nickname":"hello_1","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":1,"userId":2},\\{"user":\\{"id":null,"nickname":null,"avatar":null},"createAt":"${dateReg}","deletedAt":null,"content":"hello world","replyUserId":null,"touristName":"你好啊","article":${articleReg},"id":2,"userId":null},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":3,"userId":3},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":4,"userId":3}]}}`,
           ),
         );
     });
