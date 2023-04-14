@@ -33,7 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     );
 
     Logger.access(logFormat);
-    Logger.info(logFormat);
+    // Logger.info(logFormat);
 
     response.status(200).json(newJson);
   }
