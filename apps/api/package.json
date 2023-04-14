@@ -28,6 +28,7 @@
   "dependencies": {
     "@casl/ability": "^6.3.3",
     "@liaoliaots/nestjs-redis": "^9.0.5",
+    "@mxssfd/nest-puppeteer": "^1.0.0",
     "@nestjs/common": "^9.2.1",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.2.1",
@@ -46,7 +47,6 @@
     "log4js": "^6.7.1",
     "marked": "^4.2.12",
     "mysql2": "^3.1.2",
-    "nest-puppeteer": "^1.1.1",
     "openai": "^3.2.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",

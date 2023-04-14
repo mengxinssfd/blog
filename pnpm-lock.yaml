@@ -70,6 +70,7 @@ importers:
     specifiers:
       '@casl/ability': ^6.3.3
       '@liaoliaots/nestjs-redis': ^9.0.5
+      '@mxssfd/nest-puppeteer': ^1.0.0
       '@nestjs/cli': ^9.1.9
       '@nestjs/common': ^9.2.1
       '@nestjs/config': ^2.3.1
@@ -100,7 +101,6 @@ importers:
       log4js: ^6.7.1
       marked: ^4.2.12
       mysql2: ^3.1.2
-      nest-puppeteer: ^1.1.1
       npm-check-updates: ^16.6.3
       openai: ^3.2.1
       passport: ^0.6.0
@@ -122,6 +122,7 @@ importers:
     dependencies:
       '@casl/ability': 6.3.3
       '@liaoliaots/nestjs-redis': 9.0.5_lj7xh7wby6zrdd4ynrpb2nlmtu
+      '@mxssfd/nest-puppeteer': 1.0.0_z4qr5pektl6zuohhbupjtwo2yu
       '@nestjs/common': 9.2.1_welcnyot5bzd5wa2aovbkxpi4i
       '@nestjs/config': 2.3.1_b4pxbpa7chblgbyake5iz5rdmu
       '@nestjs/core': 9.2.1_e6la6qvsclaae2becwjnmfvsuq
@@ -140,7 +141,6 @@ importers:
       log4js: 6.7.1
       marked: 4.2.12
       mysql2: 3.1.2
-      nest-puppeteer: 1.1.1_z4qr5pektl6zuohhbupjtwo2yu
       openai: 3.2.1
       passport: 0.6.0
       passport-jwt: 4.0.1
@@ -2658,6 +2658,22 @@ packages:
       }
     dependencies:
       '@mxssfd/ts-utils': 3.0.16
+    dev: false
+
+  /@mxssfd/nest-puppeteer/1.0.0_z4qr5pektl6zuohhbupjtwo2yu:
+    resolution:
+      {
+        integrity: sha512-D72Er1UQV04yy19m75576Hb8WkXLLOOxezgsTkfRIz/uHi+Rgrl9Db+1wSojdHXkYoJKeA5S7WPws3AldqxhOA==,
+      }
+    engines: { node: '>=10.21', yarn: '>=1.19' }
+    peerDependencies:
+      '@nestjs/common': '>=6'
+      '@nestjs/core': '>=6'
+      puppeteer: '>=3'
+    dependencies:
+      '@nestjs/common': 9.2.1_welcnyot5bzd5wa2aovbkxpi4i
+      '@nestjs/core': 9.2.1_e6la6qvsclaae2becwjnmfvsuq
+      puppeteer: 19.8.5_typescript@4.9.5
     dev: false
 
   /@mxssfd/ts-utils/3.0.16:
@@ -12742,22 +12758,6 @@ packages:
         integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==,
       }
     dev: true
-
-  /nest-puppeteer/1.1.1_z4qr5pektl6zuohhbupjtwo2yu:
-    resolution:
-      {
-        integrity: sha512-kyYn4SuI9nVInEXrnf2ZMxrzRiQO6wJ5lkriaf5cODAflB/UQCNko3Cc4aqULlSW32Jfo6lErlfeU0JtCARpXg==,
-      }
-    engines: { node: '>=10.21', yarn: '>=1.19' }
-    peerDependencies:
-      '@nestjs/common': '>=6'
-      '@nestjs/core': '>=6'
-      puppeteer: '>=3'
-    dependencies:
-      '@nestjs/common': 9.2.1_welcnyot5bzd5wa2aovbkxpi4i
-      '@nestjs/core': 9.2.1_e6la6qvsclaae2becwjnmfvsuq
-      puppeteer: 19.8.5_typescript@4.9.5
-    dev: false
 
   /netmask/2.0.2:
     resolution:
