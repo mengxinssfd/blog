@@ -111,7 +111,8 @@ export class UserService {
         'user.role',
         'user.loginAt',
         'user.createAt',
-      ])
+        'user.muted',
+      ] satisfies `user.${keyof UserEntity}`[])
       .withDeleted()
       .getManyAndCount();
     return { list, count };
