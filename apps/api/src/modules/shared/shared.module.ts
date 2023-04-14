@@ -3,6 +3,8 @@ import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { AppConfigService } from '@/app.config.service';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
+import { AppRedisModule } from '@/modules/redis/redis.module';
+import { AppRedisService } from '@/modules/redis/redis.service';
 
 /**
  * 全局分享模块
@@ -12,14 +14,16 @@ import { JwtAuthGuard } from '@/guards/auth/jwt-auth.guard';
 
 @Global()
 @Module({
+  imports: [AppRedisModule],
   providers: [
     CaslAbilityFactory,
     AppConfigService,
+    AppRedisService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
   ],
-  exports: [CaslAbilityFactory, AppConfigService],
+  exports: [CaslAbilityFactory, AppConfigService, AppRedisService],
 })
 export class SharedModule {}

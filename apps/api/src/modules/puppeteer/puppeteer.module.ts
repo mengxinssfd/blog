@@ -1,9 +1,8 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PuppeteerModule } from '@mxssfd/nest-puppeteer';
 import { AppPuppeteerService } from './puppeteer.service';
 import { FileService } from '@/routers/file/file.service';
 
-@Global()
 @Module({
   imports: [
     PuppeteerModule.forRoot({
