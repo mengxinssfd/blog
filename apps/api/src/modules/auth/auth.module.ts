@@ -5,10 +5,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constats';
 import { LocalStrategy } from '@/modules/auth/local.strategy';
 import { JwtStrategy } from '@/modules/auth/jwt.strategy';
+import { AppRedisModule } from '@/modules/redis/redis.module';
 
 @Module({
   imports: [
     PassportModule,
+    AppRedisModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '24h' }, // // token 过期时效

@@ -2,15 +2,13 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { JwtService } from '@nestjs/jwt';
 import { encryptPassword } from '@/utils/cryptogram';
 import { PublicUser, UserEntity } from '@blog/entities';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import Redis from 'ioredis';
-import { getTimePeriodConst } from '@tool-pack/basic';
+import { AppRedisService } from '@/modules/redis/redis.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    @InjectRedis() private readonly redis: Redis,
+    private readonly redisService: AppRedisService,
   ) {}
 
   findUser({
@@ -79,7 +77,7 @@ export class AuthService {
     };
     // console.log('JWT验证 - Step 3: 处理 jwt 签证');
     const token = this.jwtService.sign(payload);
-    this.redis.set('UserToken_' + user.id, token, 'EX', getTimePeriodConst().day / 1000);
+    this.redisService.setToken(token, user);
     return token;
   }
 }

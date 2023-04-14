@@ -1,14 +1,12 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-// import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { IS_PUBLIC_AUTH_KEY } from '@/guards/auth/auth.decorator';
 import { Reflector } from '@nestjs/core';
 import { isPromiseLike } from '@tool-pack/basic';
 import { Request } from 'express';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import Redis from 'ioredis';
 import type { UserEntity } from '@blog/entities';
+import { AppRedisService } from '@/modules/redis/redis.service';
 
 type JwtUser = Pick<UserEntity, 'id' | 'role'>;
 
@@ -25,7 +23,7 @@ type JwtUser = Pick<UserEntity, 'id' | 'role'>;
  */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
-  constructor(private reflector: Reflector, @InjectRedis() private readonly redis: Redis) {
+  constructor(private reflector: Reflector, private readonly redisService: AppRedisService) {
     super();
   }
 
@@ -44,7 +42,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
         // console.log('canActivate 2', user);
         if (!user) return res;
 
-        const redisToken = await this.redis.get('UserToken_' + user.id);
+        const redisToken = await this.redisService.getToken(user);
 
         if (!redisToken) throw new UnauthorizedException();
         const requestToken = this.extractTokenFromHeader(request);
