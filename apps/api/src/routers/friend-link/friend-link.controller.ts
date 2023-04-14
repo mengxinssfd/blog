@@ -22,7 +22,7 @@ import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
-import { FileService } from '@/routers/file/file.service';
+import { AppPuppeteerService } from '@/modules/puppeteer/puppeteer.service';
 
 @ApiTags('friend-link')
 @Controller('friend-link')
@@ -30,7 +30,7 @@ export class FriendLinkController {
   constructor(
     private readonly friendLinkService: FriendLinkService,
     private readonly casl: CaslAbilityFactory,
-    private readonly fileService: FileService,
+    private readonly puppeteerService: AppPuppeteerService,
   ) {}
 
   @ApiBearerAuth()
@@ -44,21 +44,14 @@ export class FriendLinkController {
     return this.friendLinkService.create(fl);
   }
 
-  private async _fetchAndUploadImg(link: string) {
-    const { screenshot, ...rest } = await this.friendLinkService.fetchSiteInfo(link);
-    const file = await this.fileService.create(rest.name, screenshot, false);
-    const fl = new FriendLinkEntity();
-    Object.assign(fl, rest, { link, screenshot: file });
-    return fl;
-  }
-
   @ApiBearerAuth()
   @JwtAuth()
   @Patch('refresh/:id')
   async refresh(@Param('id', ParseIntPipe) id: number) {
     const link = await this.friendLinkService.findOne(id);
-    const fl = await this._fetchAndUploadImg(link.link);
-    fl.id = link.id;
+    const siteInfo = await this.puppeteerService.getSiteInfoWithScreenshotUrl(link.link);
+    const fl = new FriendLinkEntity();
+    Object.assign(fl, siteInfo, { id });
     return fl.save();
   }
 

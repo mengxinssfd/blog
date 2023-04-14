@@ -9,15 +9,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ROLE, UserEntity, FriendLinkEntity, FriendLinkState } from '@blog/entities';
 import { rawsToEntities } from '@/utils/assemblyEntity';
-import type { BrowserContext } from 'puppeteer';
-import { InjectContext } from '@mxssfd/nest-puppeteer';
 
 @Injectable()
 export class FriendLinkService {
   constructor(
     @InjectRepository(FriendLinkEntity)
     private readonly repository: Repository<FriendLinkEntity>,
-    @InjectContext() private readonly browserContext: BrowserContext,
   ) {}
 
   async findByLink(link: string) {
@@ -96,35 +93,5 @@ export class FriendLinkService {
     }
     Object.assign(entity, data);
     return await this.repository.save(entity);
-  }
-
-  async fetchSiteInfo(link: string) {
-    const page = await this.browserContext.newPage();
-    try {
-      await page.setViewport({ width: 1600, height: 900 });
-      await page.goto(link, { waitUntil: 'networkidle2' });
-      await page.content();
-      const info = await page.evaluate(() => {
-        return {
-          name: document.title,
-          desc:
-            (document.querySelector('meta[name=description]') as HTMLMetaElement)?.content || '',
-          avatar:
-            (
-              document.querySelector(
-                'link[rel="icon"],link[rel^="icon "],link[rel$=" icon"]',
-              ) as HTMLLinkElement
-            )?.href || '',
-        } satisfies Pick<FriendLinkEntity, 'name' | 'desc' | 'avatar'>;
-      });
-
-      const screenshot = await page.screenshot({ encoding: 'binary' });
-      return { ...info, screenshot };
-    } catch (e) {
-      console.log(e);
-      throw e;
-    } finally {
-      await page.close();
-    }
   }
 }
