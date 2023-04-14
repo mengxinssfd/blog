@@ -3,6 +3,7 @@ import type { ROLE, UserEntity } from '@blog/entities';
 import type { PageVo } from '@blog/dtos/src/page.vo';
 import type { LoginDTO, RegisterDTO, UpdatePasswordDto, UpdateUserDto } from '@blog/dtos';
 import type { CustomCacheConfig } from 'request-template';
+import type { ID } from '../types';
 
 const urlPrefix = '/api/user';
 const [Get, Post, Patch, Delete] = methodsWithUrl(
@@ -13,16 +14,16 @@ const [Get, Post, Patch, Delete] = methodsWithUrl(
 export function getSelfInfo(cache: CustomCacheConfig = {}) {
   return Get<{ user: UserEntity }>('/self', {}, { silent: true, cache });
 }
-export function deleteUser(id: string | number) {
+export function deleteUser(id: ID) {
   return Delete('/' + id);
 }
-export function restoreUser(id: string | number) {
+export function restoreUser(id: ID) {
   return Patch('/restore/' + id);
 }
 export function getUserAll() {
   return Get<PageVo<UserEntity>>('');
 }
-export function getUserById(id: number | string) {
+export function getUserById(id: ID) {
   return Get<UserEntity>('/' + id);
 }
 export function login(data: LoginDTO) {
@@ -31,18 +32,15 @@ export function login(data: LoginDTO) {
 export function register(data: RegisterDTO) {
   return Post('/register', data);
 }
-export function updateUserInfo(userId: number | string, data: UpdateUserDto) {
+export function updateUserInfo(userId: ID, data: UpdateUserDto) {
   return Patch('/' + userId, data, { successMsg: '修改成功' });
 }
-export function updatePassword(userId: number | string, data: UpdatePasswordDto) {
+export function updatePassword(userId: ID, data: UpdatePasswordDto) {
   return Patch('/password/' + userId, data, { successMsg: '修改成功' });
 }
-export function muteUser(userId: number | string) {
-  return Patch('/mute/' + userId);
+export function setMute(userId: ID, mute: boolean) {
+  return Patch('/mute/' + userId, { mute });
 }
-export function cancelMuteUser(userId: number | string) {
-  return Patch('/cancel-mute/' + userId);
-}
-export function setRole(userId: number | string, role: ROLE) {
+export function setRole(userId: ID, role: ROLE) {
   return Patch<{ role: ROLE }>('/role/' + userId, { role });
 }

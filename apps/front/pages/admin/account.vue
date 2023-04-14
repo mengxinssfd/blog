@@ -82,7 +82,7 @@
 
 <script lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { cancelMuteUser, deleteUser, getUserAll, muteUser, restoreUser, setRole } from '@blog/apis';
+import { deleteUser, getUserAll, restoreUser, setMute, setRole } from '@blog/apis';
 import { ROLE, type UserEntity } from '@blog/entities';
 import { howLongAgo } from '~/feature/utils';
 
@@ -122,7 +122,7 @@ export default defineComponent({
       async setMute(mute: boolean, user: InnerUser) {
         user.muteLoading = true;
         try {
-          await (mute ? muteUser : cancelMuteUser)(user.id);
+          await setMute(user.id, mute);
           ElMessage({ type: 'success', message: '设置成功' });
         } catch (e) {
           user.muted = !mute;
