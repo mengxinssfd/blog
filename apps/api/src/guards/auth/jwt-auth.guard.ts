@@ -27,7 +27,6 @@ type JwtUser = Pick<UserEntity, 'id' | 'role'>;
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
   constructor(private reflector: Reflector, @InjectRedis() private readonly redis: Redis) {
     super();
-    console.log(this.redis.get('1'));
   }
 
   override canActivate(
@@ -68,7 +67,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
     context: ExecutionContext,
   ): T | void {
     // console.log('handleRequest', err, user);
-    if (this.isPublic(context)) return;
+    if (this.isPublic(context)) return user || undefined;
     if (err || !user) throw err || new UnauthorizedException();
     return user;
   }
