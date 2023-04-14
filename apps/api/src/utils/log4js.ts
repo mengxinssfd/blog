@@ -5,7 +5,7 @@ import Chalk from 'chalk';
 import config from '@/config/log4js';
 import * as StackTrace from 'stacktrace-js';
 import { formatDate } from '@tool-pack/basic';
-import * as Path from 'path';
+import { ENV } from '@/utils/utils';
 
 export enum LoggerLevel {
   ALL = 'ALL',
@@ -28,7 +28,7 @@ export class ContextTrace {
   ) {}
 }
 
-Log4js.addLayout('Awesone-nest', (logConfig) => {
+Log4js.addLayout('blog', (logConfig) => {
   return (logEvent): string => {
     let moduleName = '';
     let position = '';
@@ -107,7 +107,10 @@ export class Logger {
   }
 
   static info(...args: any[]) {
-    logger.info(Logger.getStackTrace(), ...args);
+    // 没什么用，打包后全都是一个main.js
+    // const trace = Logger.getStackTrace();
+    logger.info('\n', ...args);
+    ENV.isDev() && console.log(...args);
   }
 
   static warn(...args: any[]) {
@@ -132,7 +135,7 @@ export class Logger {
   }
 
   // 日志追踪，可以追溯到哪个文件、第几行第几列
-  static getStackTrace(deep = 2): string {
+  private static getStackTrace(deep = 2): string {
     const stackList: StackTrace.StackFrame[] = StackTrace.getSync();
     const stackInfo: StackTrace.StackFrame | undefined = stackList[deep];
 
@@ -142,7 +145,7 @@ export class Logger {
 
     const filename = /node_modules/.test(fileName)
       ? fileName.replace(/^.+\/node_modules/, 'node_modules')
-      : Path.basename(fileName);
+      : fileName;
 
     return `${filename}(line: ${lineNumber}, column: ${columnNumber}): \n`;
   }

@@ -21,7 +21,7 @@ export class TransformInterceptor implements NestInterceptor {
         if (data) Object.assign(result, { data });
         const logFormat = formatResLog(req, arg1, result);
         Logger.access(logFormat);
-        Logger.info(logFormat);
+        // Logger.info(logFormat);
         return result;
       }),
     );

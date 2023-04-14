@@ -9,6 +9,6 @@ import { formatReqLog } from '@/utils/format-log';
 export function logger(req: Request, _res: Response, next: NextFunction) {
   const logFormat = formatReqLog(req);
   Logger.access(logFormat);
-  Logger.info(logFormat);
+  // Logger.info(logFormat);
   next();
 }
