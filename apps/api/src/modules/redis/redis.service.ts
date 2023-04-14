@@ -21,4 +21,8 @@ export class AppRedisService {
   setToken(token: string, user: BaseUser): Promise<'OK'> {
     return this.redis.set(this.getTokenKeyName(user), token, 'EX', getTimePeriodConst().day / 1000);
   }
+
+  delToken(user: BaseUser): Promise<number> {
+    return this.redis.del(this.getTokenKeyName(user));
+  }
 }

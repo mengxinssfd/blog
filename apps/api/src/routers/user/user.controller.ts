@@ -36,6 +36,7 @@ import {
 import { AppConfigService } from '@/app.config.service';
 import { RequestWithUser } from '@/types';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
+import { AppRedisService } from '@/modules/redis/redis.service';
 
 @ApiTags('user')
 @Controller('user')
@@ -45,6 +46,7 @@ export class UserController {
     private readonly authService: AuthService,
     private readonly caslAbilityFactory: CaslAbilityFactory,
     private readonly configService: AppConfigService,
+    private readonly redisService: AppRedisService,
   ) {
     this.registerRoot();
   }
@@ -220,6 +222,8 @@ export class UserController {
   ) {
     const findUser = await this.findUser(id).unless(user).can(Action.Update, 'role');
     findUser.role = await this.userService.setRole(id, roleDto.role);
+    // 把改了角色的账号踢下线
+    this.redisService.delToken(findUser);
     // const token = this.authService.certificate(findUser);
     // throw new ResetTokenException({ token, user: findUser });
     return { role: findUser.role };
