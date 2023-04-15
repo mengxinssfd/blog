@@ -14,10 +14,11 @@
     "check:lint": "eslint \"{src,apps,libs,test}/**/*.{ts,vue}\"",
     "check:ts": "pnpm -r check:ts && tsc --noEmit -p ./tsconfig.noEmit.json",
     "check:all": "run-p check:ts check:lint",
-    "start:dev:api": "pnpm prebuild && pnpm -C ./apps/api start:dev",
-    "start:dev": "pnpm -C ./apps/api api:env && pnpm -C ./apps/api start:dev:hmr & pnpm -C ./apps/front dev",
-    "build": "pnpm -C ./apps/api build & pnpm -C ./apps/front build",
-    "prebuild": "pnpm --filter ./packages/* build"
+    "start:dev:api:env": "pnpm -C ./apps/api api:env",
+    "start:dev:api": "pnpm -C ./apps/api start:dev:hmr",
+    "start:dev:front": "pnpm -C ./apps/front dev",
+    "start:dev": "pnpm start:dev:front & pnpm start:dev:api:env && pnpm start:dev:api",
+    "build": "pnpm -F \"./apps/**\" build"
   },
   "lint-staged": {
     "*.{json,html,md,yaml}": [
