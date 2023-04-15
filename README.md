@@ -33,6 +33,44 @@ pnpm start:dev:api:env
 解决办法：把 [apps/api/tmp/mysql/conf/my.cnf](./apps/api/tmp/mysql/conf/my.cnf) 和 [apps/api/tmp/redis/redis.conf](./apps/api/tmp/redis/redis.conf)
 这两个目录改为文件（复制名字，然后新建文件把目录名字复制过去）。
 
+## 配置
+
+需要设置好配置，否则不可启动。  
+新建
+[apps/api/src/env/.env.local](./apps/api/src/env/.env.local)文件，然后按以下配置填入数据
+
+```dotenv
+# root账户配置
+ROOT_USERNAME=
+ROOT_PASSWORD=
+
+# 微信小程序登录配置 需要在.env.local上配置覆盖
+MINI_PROGRAM_APPID=
+MINI_PROGRAM_SECRET=
+
+# openai配置 需要在.env.local上配置覆盖
+OPENAI_API_KEY=
+
+# 阿里云oss配置
+OSS_REGION=
+OSS_ACCESS_KEY_ID=
+OSS_ACCESS_KEY_SECRET=
+OSS_BUCKET=
+OSS_CNAME=
+OSS_ENDPOINT=
+
+# redis配置
+REDIS_HOST=
+REDIS_PORT=
+REDIS_PASSWORD=
+```
+
+> - root 账号是必填的；
+> - redis 如果未设置（默认设置为空）可不填；
+> - 如果小程序不需要登录可随意填写；
+
+其他的暂时没有也可随意填写一些数据先启动，不可留空（除了 redis），但后期部署一定要有，否则部分功能会受限
+
 ## 启动
 
 一个命令启动前后端项目
