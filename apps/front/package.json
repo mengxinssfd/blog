@@ -1,5 +1,5 @@
 {
-  "private": true,
+  "name": "@apps/front",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port 8080 --dotenv .env.local",
