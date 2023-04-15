@@ -1,5 +1,6 @@
 import * as OSS from 'ali-oss';
 import type { Configuration } from '@/config/configuration';
+import { Logger } from '@/utils/log4js';
 
 const prefix = 'store/';
 export class OssHelper {
@@ -33,7 +34,7 @@ export class OssHelper {
       await this.oss.putACL(p, 'public-read');
       return res.url;
     } catch (e) {
-      console.log('eee', e);
+      Logger.error('oss上传出错', e);
     }
   }
   /**

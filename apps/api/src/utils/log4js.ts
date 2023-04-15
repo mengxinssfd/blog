@@ -123,6 +123,7 @@ export class Logger {
 
   static error(...args: any[]) {
     logger.error(Logger.getStackTrace(), ...args);
+    ENV.isDev() && console.error(...args);
   }
 
   static fatal(...args: any[]) {
