@@ -29,6 +29,7 @@ export class AppPuppeteerService {
       Logger.info('访问站点', link);
       await page.setViewport({ width: 1600, height: 900 });
       await page.goto(link, { waitUntil: 'networkidle2' });
+      await page.content();
       Logger.info('获取站点信息', link);
       const info = await page.evaluate(() => {
         return {
@@ -44,7 +45,7 @@ export class AppPuppeteerService {
         } satisfies Pick<FriendLinkEntity, 'name' | 'desc' | 'avatar'>;
       });
       Logger.info('生成站点截图', link);
-      const screenshot = await page.screenshot({ encoding: 'binary' });
+      const screenshot = await page.screenshot({ encoding: 'binary', type: 'jpeg' });
       return { ...info, screenshot };
     } catch (e) {
       Logger.error(e);

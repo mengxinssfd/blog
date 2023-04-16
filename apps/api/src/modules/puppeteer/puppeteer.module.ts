@@ -8,7 +8,14 @@ import { FileService } from '@/routers/file/file.service';
     PuppeteerModule.forRoot({
       pipe: true,
       headless: true,
+      // 在浏览器输入url：`chrome://flags/`可以看到所有args
       args: [
+        '--disable-notifications',
+        // '--single-process',
+        '--no-first-run',
+        '--no-zygote',
+        // 禁止插件
+        '--disable-extensions',
         // 禁用沙箱模式，以在Linux服务器上运行Puppeteer时避免一些权限问题。
         '--no-sandbox',
         // 禁用setuid沙箱模式，在某些环境下可以提高性能。
