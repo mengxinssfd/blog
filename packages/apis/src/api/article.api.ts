@@ -4,6 +4,7 @@ import type { ArticleListDto, CreateArticleDto, UpdateArticleDto } from '@blog/d
 import { ID } from '../types';
 import { PageDto } from '@blog/dtos/src/page.dto';
 import { PageVo } from '@blog/dtos/src/page.vo';
+import { type CustomCacheConfig } from 'request-template';
 
 export type GetArticleListRes = PageVo<ArticleEntity>;
 
@@ -26,7 +27,7 @@ export function updateArticle(articleId: number | string, data: UpdateArticleDto
   return Patch(`/${articleId}`, data, { showSuccessMsg: true, successMsg: '更新成功' });
 }
 
-export function getArticleList(data: ArticleListDto, cache = true) {
+export function getArticleList(data: ArticleListDto, cache: CustomCacheConfig | boolean = true) {
   return Get<GetArticleListRes>('', data, { cache });
 }
 export function getArticleListByAuthor(authorId: number, data: {}) {
