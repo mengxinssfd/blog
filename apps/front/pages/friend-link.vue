@@ -94,10 +94,12 @@ export default defineComponent({
       vertical-align: top;
       width: 220px;
       margin: 6px;
+      @media (max-width: 1000px) {
+        width: 332px;
+      }
       @media (max-width: 750px) {
         display: block;
         width: auto;
-        margin: 0;
       }
     }
     .btn.apply {
