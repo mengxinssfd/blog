@@ -31,7 +31,7 @@ export class AppPuppeteerService {
       await page.goto(link, { waitUntil: 'networkidle2' });
       await page.content();
       Logger.info('获取站点信息', link);
-      const info = await page.evaluate(() => {
+      const info = await page.evaluate((link) => {
         return {
           name: document.title,
           desc:
@@ -41,9 +41,9 @@ export class AppPuppeteerService {
               document.querySelector(
                 'link[rel="icon"],link[rel^="icon "],link[rel$=" icon"]',
               ) as HTMLLinkElement
-            )?.href || '',
+            )?.href || `${link}/favicon.ico`,
         } satisfies Pick<FriendLinkEntity, 'name' | 'desc' | 'avatar'>;
-      });
+      }, link);
       Logger.info('生成站点截图', link);
       const screenshot = await page.screenshot({ encoding: 'binary', type: 'jpeg' });
       return { ...info, screenshot };
