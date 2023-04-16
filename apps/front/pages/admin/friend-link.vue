@@ -147,9 +147,17 @@ export default defineComponent({
       },
       async updateSiteInfo(item: FriendLinkItem) {
         item.loading = true;
-        const res = await refreshSiteInfo(item.id);
-        updateObj(item, res.data);
-        item.loading = false;
+        try {
+          const res = await refreshSiteInfo(item.id);
+          if (res.data.screenshot) {
+            const url = new URL(res.data.screenshot);
+            url.searchParams.set('t', String(Date.now()));
+            res.data.screenshot = url.toString();
+          }
+          updateObj(item, res.data);
+        } finally {
+          item.loading = false;
+        }
       },
     };
     const init = () => {
