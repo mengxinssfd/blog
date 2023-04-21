@@ -1,10 +1,10 @@
 <template>
-  <nav class="c-head-nav" :class="{ 'on-top': scrollTop === 0 }">
+  <header class="c-header" :class="{ 'on-top': scrollTop === 0, [mode]: true }">
     <div class="effective-area _ flex-c-between main-width">
       <div class="left _ flex-c">
         <div v-for="nav in HeadNavRoutes" :key="nav.path">
           <NuxtLink :to="nav.path">
-            <el-button size="small" :disabled="isActive(nav.path)">{{ getTitle(nav) }}</el-button>
+            <el-button size="small" :disabled="isActive(nav.path)">{{ nav.title }}</el-button>
           </NuxtLink>
         </div>
         <!--    后台    -->
@@ -18,19 +18,6 @@
         </div>
       </div>
       <div class="right">
-        <client-only>
-          <el-popover placement="bottom" :width="200" trigger="hover">
-            <template #reference>
-              <i class="_ btn iconfont theme-switcher" :class="'icon-' + themeIcon"></i>
-            </template>
-            <el-radio-group v-model="theme" size="small" @change="onThemeChange">
-              <el-radio-button :label="ThemeTypes.light"></el-radio-button>
-              <el-radio-button :label="ThemeTypes.dark"></el-radio-button>
-              <el-radio-button :label="ThemeTypes.auto"></el-radio-button>
-            </el-radio-group>
-          </el-popover>
-        </client-only>
-
         <div class="search">
           <el-input
             v-model="searchValue"
@@ -46,62 +33,44 @@
             </template>
           </el-input>
         </div>
-        <div v-if="currentPath !== '/article/create'" class="write">
-          <NuxtLink to="/article/create">
-            <el-button size="small"><i class="iconfont icon-edit"></i></el-button>
-          </NuxtLink>
-        </div>
-        <template v-if="user.id">
-          <client-only>
-            <el-dropdown>
-              <div class="avatar img-box"><img :src="user.avatar" :alt="user.nickname" /></div>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="toUserInfoPage">个人中心</el-dropdown-item>
-                  <el-dropdown-item @click="logout">登出</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </client-only>
-          <!--          <div class="nickname">{{ user.nickname }}</div>-->
+        <template v-if="false">
+          <div v-if="currentPath !== '/article/create'" class="write">
+            <NuxtLink to="/article/create">
+              <el-button size="small"><i class="iconfont icon-edit"></i></el-button>
+            </NuxtLink>
+          </div>
+          <template v-if="user.id">
+            <client-only>
+              <el-dropdown>
+                <div class="avatar img-box"><img :src="user.avatar" :alt="user.nickname" /></div>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="toUserInfoPage">个人中心</el-dropdown-item>
+                    <el-dropdown-item @click="logout">登出</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </client-only>
+            <!--          <div class="nickname">{{ user.nickname }}</div>-->
+          </template>
+          <div v-else-if="currentPath !== '/user/login'" class="login">
+            <NuxtLink :to="loginPageUrl">
+              <el-button size="small">登录</el-button>
+            </NuxtLink>
+          </div>
         </template>
-        <div v-else-if="currentPath !== '/user/login'" class="login">
-          <NuxtLink :to="loginPageUrl">
-            <el-button size="small">登录</el-button>
-          </NuxtLink>
-        </div>
       </div>
     </div>
-  </nav>
+  </header>
 </template>
 
 <script lang="ts">
-import { getMilliseconds, inRange } from '@tool-pack/basic';
 import { Search } from '@element-plus/icons-vue';
 import { useRoute, useRouter } from '#app';
 import { Token } from '~/feature/request/primary/token';
-import useUserStore from '~/store/user';
+import useUserStore from '~/store/user.store';
+import useHeaderStore from '~/store/header.store';
 
-const PROJECT_NAME = '我的博客';
-
-interface NavItem {
-  path: string;
-  title: string;
-}
-export const HeadNavRoutes: Array<NavItem> = [
-  {
-    path: '/',
-    title: `${PROJECT_NAME} - 首页`,
-  },
-  {
-    path: '/friend-link',
-    title: `${PROJECT_NAME} - 友链`,
-  },
-  {
-    path: '/about',
-    title: `${PROJECT_NAME} - 关于`,
-  },
-];
 export default defineComponent({
   compatConfig: {
     INSTANCE_ATTRS_CLASS_STYLE: true,
@@ -109,7 +78,7 @@ export default defineComponent({
   components: { Search },
   setup() {
     const route = useRoute();
-
+    const headerStore = useHeaderStore();
     const router = useRouter();
     const store = useUserStore();
     // 未通过router-view的组件在刷新页面时route获取不到query值，必须watch等它刷新过后才能拿到
@@ -118,87 +87,26 @@ export default defineComponent({
       const query = route.query.query as string;
       query && (searchValue.value = query);
     }); */
-    enum ThemeTypes {
-      light = 'light',
-      dark = 'dark',
-      auto = 'auto',
-    }
 
     const _Methods = {
       getScrollTop() {
         Data.scrollTop.value = document.documentElement.scrollTop || document.body.scrollTop;
       },
-      loadTheme() {
-        const theme = (localStorage.getItem('theme') as ThemeTypes) || ThemeTypes.auto;
-        if (theme === Data.theme.value) return;
-        Data.theme.value = theme;
-        Methods.setThemeClass();
-      },
     };
     const Data = {
-      HeadNavRoutes,
-      ThemeTypes,
       searchValue: ref((route.query.query as string) || ''),
       scrollTop: ref(0),
-      theme: ref<ThemeTypes>(ThemeTypes.auto),
     };
     const Computed = {
+      mode: computed(() => headerStore.mode),
       currentPath: computed(() => route.path),
-      themeIcon: computed(() => {
-        const obj: Record<ThemeTypes, string> = {
-          [ThemeTypes.light]: 'sun',
-          [ThemeTypes.dark]: 'moon',
-          [ThemeTypes.auto]: 'auto',
-        };
-        return obj[Data.theme.value];
-      }),
       user: computed(() => store.user),
       loginPageUrl: computed(() => '/user/login?fromUrl=' + encodeURIComponent(route.fullPath)),
     };
-    let timer: number;
     const Methods = {
       isActive(path: string) {
-        if (path === '/') {
-          return path === route.path;
-        }
+        if (path === '/') return path === route.path;
         return new RegExp(`^${path}`).test(route.path);
-      },
-      getTitle(nav: NavItem) {
-        return nav.title.split(' - ')[1];
-      },
-      onThemeChange() {
-        Methods.setTheme();
-      },
-      setThemeClass() {
-        const classList = document.documentElement.classList;
-
-        const obj: Record<ThemeTypes, Function> = {
-          [ThemeTypes.light]() {
-            classList.remove('theme-dark');
-            classList.add('theme-light');
-          },
-          [ThemeTypes.dark]() {
-            classList.remove('theme-light');
-            classList.add('theme-dark');
-          },
-          [ThemeTypes.auto]() {
-            const hour = new Date().getHours();
-            // timer = window.setTimeout(obj[Data.theme.value], 1000 * 60 * 30);
-            timer = window.setTimeout(obj[Data.theme.value], getMilliseconds({ hours: 0.5 }));
-            if (inRange(hour, [6, 17])) {
-              obj[ThemeTypes.light]();
-              return;
-            }
-            obj[ThemeTypes.dark]();
-          },
-        };
-
-        clearTimeout(timer);
-        obj[Data.theme.value]();
-      },
-      setTheme() {
-        localStorage.setItem('theme', Data.theme.value);
-        Methods.setThemeClass();
       },
       toSearch() {
         const query = { ...route.query, query: Data.searchValue.value };
@@ -214,9 +122,9 @@ export default defineComponent({
     };
 
     function init() {
-      Methods.setThemeClass();
+      // Methods.setThemeClass();
       _Methods.getScrollTop();
-      _Methods.loadTheme();
+      // _Methods.loadTheme();
       addEventListener('scroll', () => {
         _Methods.getScrollTop();
       });
@@ -224,6 +132,7 @@ export default defineComponent({
 
     onMounted(init);
     return {
+      ...headerStore.$state,
       ...Data,
       ...Computed,
       ...Methods,
@@ -232,29 +141,33 @@ export default defineComponent({
 });
 </script>
 <style lang="scss">
-.c-head-nav {
+.c-header {
   height: 60px;
+  + * {
+    margin-top: 60px;
+  }
   background: var(--navbar-bg-color);
+  backdrop-filter: saturate(5) blur(20px);
   font-size: 14px;
-  color: var(--navbar-text-color);
+  color: var(--text-color);
   transition: background 0.5s ease-in-out, height 0.5s ease-in-out;
   .el-button {
     background: none !important;
     border: 0 !important;
-    color: var(--navbar-text-color);
+    color: var(--text-color);
     box-shadow: none;
     &.is-disabled {
-      color: var(--link-hover-color);
+      color: var(--theme-color);
       pointer-events: none;
     }
     &:hover {
-      color: var(--link-hover-color);
+      color: var(--theme-color);
     }
   }
   &.on-top {
-    height: 68px;
-    background: rgba(0, 0, 0, 0.05);
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    //height: 68px;
+    //background: rgba(0, 0, 0, 0.05);
+    //box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   }
   .effective-area {
     padding: 0 10px;
@@ -289,13 +202,12 @@ export default defineComponent({
     .search {
       .el-input {
         background: none;
-        --el-input-text-color: var(--navbar-text-color);
-        border: 0;
+        backdrop-filter: unset;
         .el-input__wrapper {
           color: inherit;
           background: none;
           border: 0;
-          box-shadow: none;
+          backdrop-filter: none;
         }
       }
       .el-input-group__append {
