@@ -46,6 +46,7 @@ export default defineNuxtConfig({
           type: 'application/atom+xml',
         },
       ],
+      script: [{ src: '/theme-helper.js' }],
       title: env.VITE_SITE_NAME,
       titleTemplate: (title) => `${env.VITE_SITE_NAME} - ${title}`,
     },
