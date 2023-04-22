@@ -53,6 +53,15 @@ export class CommentController {
     return this.commentService.findAll();
   }
 
+  @Get('recent/:count')
+  findRecent(
+    @User('id') userId: number,
+    @ReqIp() ip: string,
+    @Param('count', ParseIntPipe) count: number,
+  ) {
+    return this.commentService.findRecent(ip, userId, count);
+  }
+
   @Get('article/:articleId')
   findAllByArticle(
     @Param('articleId', ParseIntPipe) articleId: number,
