@@ -17,6 +17,7 @@ enum EntityAlias {
   comment = 'comment',
   article = 'article',
   user = 'user',
+  reply = 'reply',
 }
 type AliasProp = `${EntityAlias.comment}.${keyof CommentEntity}`;
 
@@ -29,7 +30,7 @@ export class CommentService {
 
   async getTotal() {
     const alias = 'like';
-    const total = await this.commentRepository
+    return await this.commentRepository
       .createQueryBuilder(alias)
       .select([
         `COUNT(${alias}.id) AS total`,
@@ -38,7 +39,6 @@ export class CommentService {
       ])
       .withDeleted()
       .getRawOne();
-    return total;
   }
 
   count(where: Partial<CommentEntity>) {
@@ -60,54 +60,58 @@ export class CommentService {
     return `This action returns all comment`;
   }
 
-  async findAllByArticle(
-    articleId: number,
-    ip: string,
-    userId = 0,
-  ): Promise<PageVo<CommentEntity>> {
-    console.log(ip, userId);
-
+  async findRecent(ip: string, userId = 0, limit = 10): Promise<CommentEntity[]> {
     const alias = 'comment';
-
-    const getComment = this.commentRepository
-      .createQueryBuilder(alias)
-      .leftJoinAndSelect(`${alias}.user` satisfies AliasProp, 'user')
-      .leftJoinAndSelect(`${alias}.replyUser` satisfies AliasProp, 'replyUser')
-      .leftJoin(
-        (sqb) => {
-          return sqb
-            .select([
-              'commentId',
-              'COUNT(like.id) AS like_count',
-              `SUM(CASE WHEN like.userId = ${userId} OR like.touristIp = '${ip}' THEN 1 ELSE 0 END ) AS like_checked`,
-            ])
-            .from(CommentLikeEntity, 'like')
-            .groupBy('commentId');
-        },
-        'like',
-        `like.commentId = ${alias}.id`,
-      )
-      .addSelect(['like_count', `like_checked`])
-      .leftJoin(
-        (sqb) => {
-          return sqb
-            .select([
-              'commentId',
-              'COUNT(dislike.id) AS dislike_count',
-              `SUM(CASE WHEN dislike.userId = ${userId} OR dislike.touristIp = '${ip}' THEN 1 ELSE 0 END ) AS dislike_checked`,
-            ])
-            .from(CommentDislikeEntity, 'dislike')
-            .groupBy('commentId');
-        },
-        'dislike',
-        `dislike.commentId = ${alias}.id`,
-      )
-      .addSelect(['dislike_count', `dislike_checked`])
-      .addSelect(['comment.createAt'])
-      .where({ articleId })
-      .orderBy(`${alias}.id`, 'DESC');
-
+    const getComment = this.createFindAllBuilder(ip, userId)
+      .orderBy(`${alias}.createAt`, 'DESC')
+      .limit(limit);
     const list = await getComment.getRawAndEntities();
+
+    return this.handlerFindAllResult(list).list;
+  }
+
+  createFindAllBuilder(ip: string, userId: number) {
+    const alias = 'comment';
+    return (
+      this.commentRepository
+        .createQueryBuilder(alias)
+        .leftJoinAndSelect(`${alias}.user` satisfies AliasProp, 'user')
+        // .leftJoinAndSelect(`${alias}.replyUser` satisfies AliasProp, 'replyUser')
+        .leftJoin(
+          (sqb) => {
+            return sqb
+              .select([
+                'commentId',
+                'COUNT(like.id) AS like_count',
+                `SUM(CASE WHEN like.userId = ${userId} OR like.touristIp = '${ip}' THEN 1 ELSE 0 END ) AS like_checked`,
+              ])
+              .from(CommentLikeEntity, 'like')
+              .groupBy('commentId');
+          },
+          'like',
+          `like.commentId = ${alias}.id`,
+        )
+        .addSelect(['like_count', `like_checked`])
+        .leftJoin(
+          (sqb) => {
+            return sqb
+              .select([
+                'commentId',
+                'COUNT(dislike.id) AS dislike_count',
+                `SUM(CASE WHEN dislike.userId = ${userId} OR dislike.touristIp = '${ip}' THEN 1 ELSE 0 END ) AS dislike_checked`,
+              ])
+              .from(CommentDislikeEntity, 'dislike')
+              .groupBy('commentId');
+          },
+          'dislike',
+          `dislike.commentId = ${alias}.id`,
+        )
+        .addSelect(['dislike_count', `dislike_checked`])
+        .addSelect(['comment.createAt'])
+    );
+  }
+
+  handlerFindAllResult(list: { entities: CommentEntity[]; raw: any[] }) {
     list.entities.forEach((item: Partial<CommentEntity>, index) => {
       const rawItem = list.raw[index];
       delete item.touristIp;
@@ -123,7 +127,22 @@ export class CommentService {
     return {
       list: list.entities,
       count: list.entities.length,
-    };
+    } satisfies PageVo<CommentEntity>;
+  }
+
+  async findAllByArticle(
+    articleId: number,
+    ip: string,
+    userId = 0,
+  ): Promise<PageVo<CommentEntity>> {
+    const alias = 'comment';
+
+    const getComment = this.createFindAllBuilder(ip, userId)
+      .where({ articleId })
+      .orderBy(`${alias}.id`, 'DESC');
+
+    const list = await getComment.getRawAndEntities();
+    return this.handlerFindAllResult(list);
   }
 
   async findOne(id: number): Promise<CommentEntity> {
@@ -168,7 +187,6 @@ export class CommentService {
             `${EntityAlias.comment}.content`,
             `${EntityAlias.comment}.createAt`,
             `${EntityAlias.comment}.deletedAt`,
-            `${EntityAlias.comment}.replyUserId`,
             `${EntityAlias.comment}.touristName`,
           ])
           .addSelect(
@@ -179,9 +197,10 @@ export class CommentService {
             `${EntityAlias.article}.id`,
             `${EntityAlias.article}.title`,
             `${EntityAlias.article}.authorId`,
-          ])
+          ] satisfies `${EntityAlias.article}.${keyof ArticleEntity}`[])
+          .leftJoin(`${EntityAlias.comment}.reply`, EntityAlias.reply)
           .where(
-            `(${EntityAlias.article}.authorId = :userId OR ${EntityAlias.comment}.replyUserId = :userId)`,
+            `(${EntityAlias.article}.authorId = :userId OR ${EntityAlias.reply}.userId = :userId)`,
             { userId },
           );
       }, EntityAlias.comment)
@@ -191,6 +210,8 @@ export class CommentService {
 
     // 解决报错(没有alias)问题
     rep.expressionMap.mainAlias!.metadata = rep.connection.getMetadata(CommentEntity);
+
+    console.log(rep.getQuery(), rep.getQueryAndParameters());
 
     const count = await rep.clone().getCount();
 
