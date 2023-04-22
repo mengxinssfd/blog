@@ -38,10 +38,12 @@ export class CommentEntity extends BlogBaseEntity {
   reply?: CommentEntity;
   @Column('int', { comment: '回复的评论id', nullable: true })
   replyId?: number;
-  @Column('int', { comment: '回复的评论之人', nullable: true })
-  replyUserId?: number;
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'replyUserId' })
+
+  // 不需要单独弄个列
+  // @Column('int', { comment: '回复的评论之人', nullable: true })
+  // replyUserId?: number;
+  // @ManyToOne(() => UserEntity)
+  // @JoinColumn({ name: 'replyUserId' })
   replyUser?: UserEntity;
   // ---------------- 二级评论 ----------------
 
