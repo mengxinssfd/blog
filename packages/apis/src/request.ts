@@ -31,7 +31,10 @@ export function methodsWithUrl<T extends readonly Method[]>(
   methods: T,
   urlPrefix = '',
 ): Tuple<ReturnType<typeof factoryWrapper>, T['length']> {
-  return methods.map((method) => factoryWrapper(method, urlPrefix)) as any;
+  return methods.map((method) => {
+    method = method.toLowerCase() as Method;
+    return factoryWrapper(method, urlPrefix);
+  }) as any;
 }
 
 export const [Get, Post, Patch, Delete] = methodsWithUrl([
