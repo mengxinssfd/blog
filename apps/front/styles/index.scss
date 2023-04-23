@@ -6,17 +6,19 @@
 //@import 'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/locss.min.css';
 
 @import './common.scss';
+@import './css.variable.scss';
+@import './element-ui';
 
-html,
-body,
-#app {
-  margin: 0;
-  padding: 0;
+@font-face {
+  font-family: 'zz';
+  src: url('https://npm.elemecdn.com/ethan4116-blog/lib/font/ZhuZiAWan.ttf');
+  font-display: swap;
 }
 
-html.dark {
-  background: #222;
-  color: white;
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
 a {
@@ -24,7 +26,7 @@ a {
   color: var(--el-color-primary);
 }
 
-#app {
+#__nuxt {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   &:after {
@@ -49,7 +51,7 @@ a {
     width: 100vw;
     height: 100vh;
   }
-  .c-head-nav {
+  .c-header {
     position: fixed;
     z-index: 10;
     top: 0;
@@ -59,7 +61,7 @@ a {
   .page-wrapper {
     position: relative;
     min-height: 100vh;
-    padding-bottom: 100px;
+    padding-bottom: 136px;
     box-sizing: border-box;
     //content-visibility: auto;
     .pg {
@@ -75,48 +77,16 @@ a {
     color: #87bffa;
   }
 }
+
 :root {
-  --color-mode: 'light';
-  --body-bg-color: white;
-  --board-bg-color: white;
-  --radius: 10px;
-  --board-radius: 10px;
-  --board-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
-  --mask-bg-color: rgba(255, 255, 255, 0.8);
-  --input-bg-color: #f3f3f3;
-  --text-color: #3c4858;
-  --sec-text-color: #718096;
-  --post-text-color: #2c3e50;
-  --post-heading-color: #1a202c;
-  --post-link-color: #0366d6;
-  --link-hover-color: #30a9de;
-  --link-hover-bg-color: #f8f9fa;
-  --navbar-bg-color: #2f4154;
-  --navbar-text-color: #fff;
-  --border-color: #dadada;
-  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
   background: var(--body-bg-color);
   color: var(--text-color);
   font-family: var(--font-family-sans-serif);
+  @media (max-width: 750px) {
+    background: var(--board-bg-color);
+  }
   &.theme-dark {
-    --color-mode: 'dark';
-    --body-bg-color: #181c27;
-    --board-bg-color: #252d38;
-    --mask-bg-color: rgba(37, 45, 56, 0.8);
-    --text-color: #c4c6c9;
-    --sec-text-color: #a7a9ad;
-    --post-text-color: #c4c6c9;
-    --post-heading-color: #c4c6c9;
-    --post-link-color: #1589e9;
-    --link-hover-color: #30a9de;
-    --link-hover-bg-color: #364151;
-    --border-color: #364151;
-    --navbar-bg-color: #1f3144;
-    --navbar-text-color: #d0d0d0;
-    --input-bg-color: #141a26;
-    .el-button:not(.el-button--primary),
+    //.el-button:not(.el-button--primary),
     .el-pagination button {
       border: none;
       background: none;
@@ -142,23 +112,22 @@ a {
     }
   }
 }
+
 .main-width {
   margin: auto;
   max-width: 1200px;
   width: 100%;
   @media (max-width: 576px) {
-    max-width: 540px;
     --radius: 0;
     --board-radius: 0;
   }
-  @media (min-width: 768px) {
-    max-width: 720px;
+  @media (min-width: 880px) {
+    max-width: 100%;
   }
-  @media (min-width: 992px) {
-    max-width: 960px;
+  @media (min-width: 1100px) {
+    max-width: 1100px;
   }
-  @media (min-width: 1500px) {
-    padding: 0 50px;
+  @media (min-width: 1400px) {
     max-width: 1200px;
   }
 }
@@ -167,14 +136,6 @@ a {
 }
 [v-cloak] {
   display: none !important;
-}
-.img-box {
-  > img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
 }
 .w-p100 {
   width: 100%;
@@ -187,53 +148,21 @@ a {
 }
 .board {
   position: relative;
-  margin-top: 30px;
-  padding: 40px 20px;
+  margin-top: 1rem;
+  padding: 1rem;
   width: 100%;
-  //border-radius: var(--board-radius);
+  border-radius: var(--board-radius);
   //box-shadow: var(--board-shadow);
-  //background: var(--board-bg-color);
-  background: none;
+  background-color: var(--board-bg-color);
   color: var(--text-color);
   @media (max-width: 576px) {
-    padding: 0;
+    //padding: 0;
   }
-}
-.flex-1 {
-  flex: 1;
 }
 .btn:not(.disabled):not(.active) {
   cursor: pointer;
 }
-.el-loading-mask {
-  background: var(--mask-bg-color);
-}
-.el-overlay-dialog {
-  overflow: auto;
-}
-.el-dialog {
-  background: var(--board-bg-color);
-  max-width: 800px;
-}
-.el-form-item {
-  text-align: left;
-  .el-form-item__label {
-    color: var(--text-color);
-  }
-  .el-input .el-input__wrapper,
-  textarea,
-  .v-md-editor,
-  .vuepress-markdown-body {
-    --el-input-bg-color: var(--input-bg-color);
-    color: var(--text-color);
-    background: var(--input-bg-color);
-    border-color: var(--link-hover-bg-color);
-  }
-  .v-md-editor__toolbar,
-  .v-md-editor__editor-wrapper {
-    border-color: var(--border-color);
-  }
-}
+
 @keyframes heart-beat {
   0% {
     opacity: 0.8;
@@ -290,4 +219,7 @@ a {
 .use-jump {
   animation: jump ease 1.5s 1;
   -webkit-animation: jump ease 1.5s 1;
+}
+.vuepress-markdown-body h1 {
+  font-size: 1.75rem !important;
 }

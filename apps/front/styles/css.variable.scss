@@ -1,0 +1,52 @@
+:root {
+  --theme-color: #f04494;
+  --color-mode: 'light';
+  --body-bg-color: #f5f6f7;
+  --board-bg-color: white;
+  --radius: 10px;
+  --board-radius: 10px;
+  --board-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+  --mask-bg-color: rgba(255, 255, 255, 0.8);
+  --input-bg-color: #f3f3f3;
+  --text-color: #3c4858;
+  --sec-text-color: #718096;
+  --post-text-color: #2c3e50;
+  --post-heading-color: #1a202c;
+  --post-link-color: #0366d6;
+  --link-hover-color: #30a9de;
+  --link-hover-bg-color: #f8f9fa;
+  --navbar-bg-color: rgba(255, 255, 255, 0.8);
+  --navbar-text-color: #fff;
+  --border-color: #dadada;
+  --font-family-sans-serif: zz, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --tag-bg-color: #d9ecff;
+  --tag-text-color: #3e79bb;
+  //--hover-transparent-bg: rgba(255, 255, 255, 0.5);
+  --hover-transparent-bg: #d9ecff70;
+  --text-color-disabled: #c0c4cc;
+  --toolbar-btn-bg-color: var(--board-bg-color);
+  &.dark {
+    --color-mode: 'dark';
+    --body-bg-color: #292a2d;
+    --board-bg-color: #323335;
+    --mask-bg-color: rgba(37, 45, 56, 0.8);
+    --text-color: #c4c6c9;
+    --sec-text-color: #a7a9ad;
+    --post-text-color: #c4c6c9;
+    --post-heading-color: #c4c6c9;
+    --post-link-color: #1589e9;
+    --link-hover-color: #30a9de;
+    --link-hover-bg-color: #364151;
+    --border-color: #364151;
+    --navbar-bg-color: rgba(50, 51, 53, 0.8);
+    --navbar-text-color: #d0d0d0;
+    --input-bg-color: #141a26;
+    --tag-bg-color: #3e79bb;
+    --tag-text-color: #d9ecff;
+    --hover-transparent-bg: rgba(0, 0, 0, 0.5);
+    --text-color-disabled: #9c9a9a;
+    --toolbar-btn-bg-color: rgba(70, 70, 70, 0.4);
+  }
+}

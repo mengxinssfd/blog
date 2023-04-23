@@ -1,0 +1,100 @@
+:root {
+  .el-loading-mask {
+    background: var(--mask-bg-color);
+  }
+
+  .el-overlay-dialog {
+    overflow: auto;
+  }
+
+  .el-dialog {
+    background: var(--board-bg-color);
+    max-width: 800px;
+  }
+
+  .el-form-item {
+    text-align: left;
+
+    .el-form-item__label {
+      color: var(--text-color);
+      @media (max-width: 750px) {
+        justify-content: flex-start;
+      }
+    }
+
+    .el-input .el-input__wrapper,
+    textarea,
+    .v-md-editor,
+    .vuepress-markdown-body {
+      --el-input-bg-color: var(--input-bg-color);
+      color: var(--text-color);
+      border-color: var(--link-hover-bg-color);
+    }
+
+    .v-md-editor__toolbar,
+    .v-md-editor__editor-wrapper {
+      border-color: var(--border-color);
+    }
+  }
+
+  .el-textarea__inner {
+    box-shadow: none;
+  }
+
+  .el-input {
+    --el-input-text-color: var(--text-color);
+    --el-input-bg-color: var(--navbar-bg-color);
+
+    .el-input__wrapper {
+      box-shadow: none;
+      backdrop-filter: saturate(5) blur(20px);
+    }
+  }
+
+  .el-tag {
+    margin: 2px;
+    border: 0;
+    font-family: initial;
+
+    &.el-tag--light {
+      background: var(--tag-bg-color);
+      color: var(--tag-text-color);
+    }
+
+    .el-tag__close {
+      color: var(--tag-text-color);
+    }
+  }
+
+  .el-popover.el-popper {
+    min-width: 120px;
+  }
+
+  .el-popper {
+    border: 0 !important;
+    --el-bg-color-overlay: var(--navbar-bg-color);
+    --el-border-color-light: var(--navbar-bg-color);
+    --el-dropdown-menuItem-hover-color: var(--theme-color);
+    --el-dropdown-menuItem-hover-fill: var(--hover-transparent-bg);
+    --el-text-color-regular: var(--text-color);
+    --el-text-color-disabled: var(--text-color-disabled);
+    backdrop-filter: saturate(5) blur(20px);
+
+    .el-popper__arrow::before {
+      //border: 0 !important;
+      background: unset !important;
+      backdrop-filter: saturate(5) blur(20px);
+    }
+  }
+
+  .el-dropdown__popper {
+    background-color: unset !important;
+
+    .el-dropdown-menu {
+    }
+  }
+
+  .el-upload-dragger {
+    --el-fill-color-blank: var(--board-bg-color);
+  }
+}
