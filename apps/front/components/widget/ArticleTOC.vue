@@ -8,6 +8,7 @@ const menuRef = ref<typeof ElMenu>();
 const treeMap = ref(new Map<string, AnchorTree>());
 const elRef = ref<HTMLElement>();
 const headings = ref<HTMLHeadingElement[]>([]);
+const route = useRoute();
 
 function getHeads() {
   const anchors = (
@@ -65,6 +66,7 @@ function getTree(heads: HTMLHeadingElement[]): AnchorTree[] {
   return tree;
 }
 function parseTree(): void {
+  treeMap.value.clear();
   const heads = getHeads();
 
   if (!heads.length) {
@@ -75,34 +77,41 @@ function parseTree(): void {
 
   tree.value = getTree(heads);
 }
-function scrollHandler() {
-  const headingList = headings.value;
-  if (!headingList.length) return;
-  // const el = document.querySelector('.article article') as HTMLElement;
-  const hlLen = headingList.length;
-  headingList.forEach((item) => (treeMap.value.get(item.id)!.active = false));
-  const index = headingList.findIndex((item, index) => {
-    if (index === hlLen - 1) return true;
-    const rect = item.getBoundingClientRect();
-    // 如果是在top在屏幕内，或者比较高的内容
-    return rect.top > 0;
-  });
-  if (index === -1) return;
-  // const innerText = find.innerText.replace(/#+\s?/, '');
-  let item = treeMap.value.get(headingList[index].id);
-  if (!item) return;
-  item.active = true;
-  if (!item.children.length && !item.parent) return;
-  if (!item.children.length) item = item.parent!;
-  menuRef.value?.open(item.index);
-}
+const scrollHandler = throttle(
+  () => {
+    const headingList = headings.value;
+    if (!headingList.length) return;
+    // const el = document.querySelector('.article article') as HTMLElement;
+    const hlLen = headingList.length;
+    headingList.forEach((item) => (treeMap.value.get(item.id)!.active = false));
+    const index = headingList.findIndex((item, index) => {
+      if (index === hlLen - 1) return true;
+      const rect = item.getBoundingClientRect();
+      // 如果是在top在屏幕内，或者比较高的内容
+      return rect.top > 0;
+    });
+    if (index === -1) return;
+    // const innerText = find.innerText.replace(/#+\s?/, '');
+    let item = treeMap.value.get(headingList[index].id);
+    if (!item) return;
+    item.active = true;
+    if (!item.children.length && !item.parent) return;
+    if (!item.children.length) item = item.parent!;
+    menuRef.value?.open(item.index);
+  },
+  300,
+  { leading: true, trailing: true },
+);
 
 onMounted(() => {
-  parseTree();
-  window.addEventListener(
-    'scroll',
-    throttle(scrollHandler, 300, { leading: true, trailing: true }),
+  watch(
+    route,
+    () => {
+      parseTree();
+    },
+    { immediate: true },
   );
+  window.addEventListener('scroll', scrollHandler);
 });
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', scrollHandler);
@@ -131,5 +140,8 @@ function onSelect(id: string) {
   --el-menu-text-color: var(--text-color);
   --el-menu-hover-bg-color: var(--link-hover-bg-color);
   --el-menu-active-color: var(--theme-color);
+  .el-menu {
+    border-right: 0 !important;
+  }
 }
 </style>
