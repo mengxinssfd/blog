@@ -7,7 +7,7 @@ import highlight from 'highlight.js';
 import ImgZoom from '@mxssfd/img-zoom';
 import { getArticleLikeCount, setArticleLike } from '@blog/apis';
 import { ROLE, ArticleEntity } from '@blog/entities';
-import useUserStore from '~/store/user';
+import useUserStore from '~/store/user.store';
 
 export function useArticle() {
   type ArticleId = string | number;
@@ -35,6 +35,7 @@ export function useArticle() {
     },
     resolveArticleRender() {
       const articleEl = Data.articleRef.value as HTMLElement;
+      if (!articleEl) return;
       // code添加复制按钮
       const blocks = articleEl.querySelectorAll<HTMLElement>('pre code');
       blocks.forEach((block) => {
