@@ -50,6 +50,10 @@ const tabs = reactive({
       label: '友链',
       name: 'friend-link',
     },
+    {
+      label: '文件',
+      name: 'file',
+    },
   ],
   activeName: /\/admin\/([^/]+)/.exec(route.path)?.[1] ?? 'account',
 });
