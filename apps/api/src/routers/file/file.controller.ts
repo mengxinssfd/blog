@@ -8,6 +8,8 @@ import {
   UploadedFile,
   UseGuards,
   Body,
+  ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -18,6 +20,7 @@ import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
 import { FileEntity } from '@blog/entities';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
+import { PageDto } from '@blog/dtos/page.dto';
 
 @ApiTags('file')
 @Controller('file')
@@ -32,21 +35,10 @@ export class FileController {
   @UseInterceptors(FileInterceptor('file')) // FormData中的key
   create(
     @UploadedFile()
-    file: {
-      fieldname: string;
-      originalname: string;
-      encoding: string;
-      mimetype: string;
-      buffer: Buffer;
-      size: number;
-    },
+    file: any,
     @Body() createFileDto: CreateFileDto,
   ) {
-    return this.fileService.create(
-      file.originalname,
-      file.buffer,
-      createFileDto.timeStampName === '1',
-    );
+    return this.fileService.create(file, createFileDto.timeStampName === '1');
   }
 
   @ApiBearerAuth()
@@ -54,16 +46,16 @@ export class FileController {
   @JwtAuth()
   @UseGuards(PoliciesGuard)
   @Get()
-  findAll() {
-    return this.fileService.findAll();
+  findAll(@Query() page: PageDto) {
+    return this.fileService.findAll(page);
   }
 
   @ApiBearerAuth()
   @CheckPolicies((ab) => ab.can(Action.Delete, FileEntity.modelName))
   @JwtAuth()
   @UseGuards(PoliciesGuard)
-  @Delete(':name')
-  remove(@Param('name') name: string) {
-    return this.fileService.remove(name);
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.fileService.remove(id);
   }
 }

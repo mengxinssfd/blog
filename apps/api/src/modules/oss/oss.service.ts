@@ -1,11 +1,13 @@
+import { Inject, Injectable } from '@nestjs/common';
 import * as OSS from 'ali-oss';
-import type { Configuration } from '@/config/configuration';
+import { Configuration } from '@/config/configuration';
 import { Logger } from '@/utils/log4js';
+import { OSS_PREFIX, TOKEN } from '@/modules/oss/oss.constant';
 
-const prefix = 'store/';
-export class OssHelper {
+@Injectable()
+export class OssService {
   private oss!: OSS;
-  constructor(config: Configuration['oss']) {
+  constructor(@Inject(TOKEN) config: Configuration['oss']) {
     this.oss = new OSS(config);
   }
 
@@ -23,8 +25,8 @@ export class OssHelper {
       return this.upload(ossPath, localPath);
     }
   }
-  async uploadBuffer(ossPath: string, buffer: Buffer): Promise<string | void> {
-    const p = prefix + ossPath;
+  async uploadBuffer(ossPath: string, buffer: Buffer): Promise<string> {
+    const p = OSS_PREFIX + ossPath;
     try {
       const res = await this.oss.put(p, buffer, {
         headers: { 'x-oss-forbid-overwrite': true }, // 禁止覆盖同名文件(经测试无用)
@@ -35,6 +37,7 @@ export class OssHelper {
       return res.url;
     } catch (e) {
       Logger.error('oss上传出错', e);
+      throw e;
     }
   }
   /**
@@ -96,8 +99,10 @@ export class OssHelper {
   /**
    * 删除一个文件
    */
-  deleteOne(name: string): Promise<{ res: OSS.NormalSuccessResponse }> {
-    return this.oss.delete(prefix + name) as any;
+  async deleteOne(name: string): Promise<void> {
+    Logger.info('【OSS】删除文件开始：', name);
+    const res = await this.oss.delete(OSS_PREFIX + name);
+    Logger.info('【OSS】删除文件结果：', name, res);
   }
 
   /**

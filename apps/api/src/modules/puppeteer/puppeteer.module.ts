@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PuppeteerModule } from '@mxssfd/nest-puppeteer';
 import { AppPuppeteerService } from './puppeteer.service';
-import { FileService } from '@/routers/file/file.service';
+import { FileHelperModule } from '@/modules/file-helper/file-helper.module';
 
 @Module({
   imports: [
+    FileHelperModule,
     PuppeteerModule.forRoot({
       pipe: true,
       headless: true,
@@ -35,7 +36,7 @@ import { FileService } from '@/routers/file/file.service';
       ],
     }),
   ],
-  providers: [AppPuppeteerService, FileService],
+  providers: [AppPuppeteerService],
   exports: [AppPuppeteerService],
 })
 export class AppPuppeteerModule {}

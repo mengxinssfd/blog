@@ -3,21 +3,21 @@ import { FriendLinkEntity } from '@blog/entities';
 import { Logger } from '@/utils/log4js';
 import { InjectContext } from '@mxssfd/nest-puppeteer';
 import { BrowserContext } from 'puppeteer';
-import { FileService } from '@/routers/file/file.service';
+import { FileHelperService } from '@/modules/file-helper/file-helper.service';
 
 @Injectable()
 export class AppPuppeteerService {
   constructor(
     @InjectContext() private readonly browserContext: BrowserContext,
-    private readonly fileService: FileService,
+    private readonly fileHelperService: FileHelperService,
   ) {}
 
   async getSiteInfoWithScreenshotUrl(link: string, filename?: string) {
     const siteInfo = await this.getSiteInfo(link);
-    const screenshotUrl = await this.fileService.create(
+    const screenshotUrl = await this.fileHelperService.create(
       filename || siteInfo.name,
       siteInfo.screenshot,
-      false,
+      'image/jpeg',
     );
     Logger.info('上传截图到oss', link, screenshotUrl);
     return { ...siteInfo, screenshot: screenshotUrl };
