@@ -28,6 +28,10 @@ const useUserStore = defineStore('user', () => {
     user,
     login,
     getSelfInfo,
+    logout() {
+      Token.clear();
+      user.value = {} as UserEntity;
+    },
   };
 });
 
