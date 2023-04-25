@@ -1,28 +1,23 @@
 <template>
-  <header class="c-header" :class="{ 'on-top': scrollTop === 0, [mode]: true }">
+  <header class="c-header" :class="{ 'on-top': scrollTop === 0 }">
     <div class="effective-area _ flex-c-between main-width">
       <div class="left _ flex-c">
-        <div v-for="nav in HeadNavRoutes" :key="nav.path">
-          <NuxtLink :to="nav.path">
-            <el-button size="small" :disabled="isActive(nav.path)">{{ nav.title }}</el-button>
-          </NuxtLink>
+        <div class="btns _ flex-c">
+          <template v-for="nav in menuStore.menu" :key="nav.path">
+            <div v-if="!nav.disabled">
+              <NuxtLink :to="nav.path">
+                <el-button :disabled="menuStore.isActive(nav.path)">{{ nav.title }}</el-button>
+              </NuxtLink>
+            </div>
+          </template>
         </div>
-        <!--    后台    -->
-        <div v-if="user.role === 0" class="admin">
-          <NuxtLink to="/admin">
-            <el-button size="small" :disabled="isActive('/admin')">
-              <!--              <i class="iconfont icon-admin"></i>-->
-              后台
-            </el-button>
-          </NuxtLink>
-        </div>
+        <SideMenuSwitcher />
       </div>
       <div class="right">
         <div class="search">
           <el-input
             v-model="searchValue"
-            placeholder="搜索内容"
-            size="small"
+            placeholder="搜索文章"
             clearable
             @keydown.enter="toSearch"
             @clear="toSearch">
@@ -33,20 +28,25 @@
             </template>
           </el-input>
         </div>
-        <template v-if="false">
-          <div v-if="currentPath !== '/article/create'" class="write">
-            <NuxtLink to="/article/create">
-              <el-button size="small"><i class="iconfont icon-edit"></i></el-button>
-            </NuxtLink>
-          </div>
+        <template v-if="route.path !== '/'">
           <template v-if="user.id">
             <client-only>
-              <el-dropdown>
+              <el-dropdown @command="onSelect">
                 <div class="avatar img-box"><img :src="user.avatar" :alt="user.nickname" /></div>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="toUserInfoPage">个人中心</el-dropdown-item>
-                    <el-dropdown-item @click="logout">登出</el-dropdown-item>
+                    <el-dropdown-item command="/article/create">
+                      <i class="iconfont icon-edit"></i>
+                      写文章
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'/user/info/' + user.id">
+                      <i class="iconfont icon-user"></i>
+                      个人中心
+                    </el-dropdown-item>
+                    <el-dropdown-item command="logout">
+                      <el-icon><SwitchButton /></el-icon>
+                      登出</el-dropdown-item
+                    >
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -64,87 +64,62 @@
   </header>
 </template>
 
-<script lang="ts">
-import { Search } from '@element-plus/icons-vue';
+<script setup lang="ts">
+import { Search, SwitchButton } from '@element-plus/icons-vue';
+import { ElMessageBox } from 'element-plus';
 import { useRoute, useRouter } from '#app';
-import { Token } from '~/feature/request/primary/token';
 import useUserStore from '~/store/user.store';
-import useHeaderStore from '~/store/header.store';
+import useMenuStore from '~/store/menu.store';
+import SideMenuSwitcher from '~/components/AsideMenuSwitcher.vue';
 
-export default defineComponent({
-  compatConfig: {
-    INSTANCE_ATTRS_CLASS_STYLE: true,
-  },
-  components: { Search },
-  setup() {
-    const route = useRoute();
-    const headerStore = useHeaderStore();
-    const router = useRouter();
-    const store = useUserStore();
-    // 未通过router-view的组件在刷新页面时route获取不到query值，必须watch等它刷新过后才能拿到
-    /* console.log('qqqqqqqqqqqqqqq', location.search, router.currentRoute.value);
-    watch(route, () => {
-      const query = route.query.query as string;
-      query && (searchValue.value = query);
-    }); */
+const route = useRoute();
+const menuStore = useMenuStore();
+const router = useRouter();
+const userStore = useUserStore();
+const searchValue = ref((route.query.query as string) || '');
+const scrollTop = ref(0);
 
-    const _Methods = {
-      getScrollTop() {
-        Data.scrollTop.value = document.documentElement.scrollTop || document.body.scrollTop;
-      },
-    };
-    const Data = {
-      searchValue: ref((route.query.query as string) || ''),
-      scrollTop: ref(0),
-    };
-    const Computed = {
-      mode: computed(() => headerStore.mode),
-      currentPath: computed(() => route.path),
-      user: computed(() => store.user),
-      loginPageUrl: computed(() => '/user/login?fromUrl=' + encodeURIComponent(route.fullPath)),
-    };
-    const Methods = {
-      isActive(path: string) {
-        if (path === '/') return path === route.path;
-        return new RegExp(`^${path}`).test(route.path);
-      },
-      toSearch() {
-        const query = { ...route.query, query: Data.searchValue.value };
-        router.push({ path: '/', query });
-      },
-      toUserInfoPage() {
-        router.push({ path: '/user/info/' + Computed.user.value.id });
-      },
-      logout() {
-        Token.clear();
-        location.reload();
-      },
-    };
+const loginPageUrl = computed(() => '/user/login?fromUrl=' + encodeURIComponent(route.fullPath));
+const currentPath = computed(() => route.path);
+const user = computed(() => userStore.user);
 
-    function init() {
-      // Methods.setThemeClass();
-      _Methods.getScrollTop();
-      // _Methods.loadTheme();
-      addEventListener('scroll', () => {
-        _Methods.getScrollTop();
-      });
-    }
+// 未通过router-view的组件在刷新页面时route获取不到query值，必须watch等它刷新过后才能拿到
+/* console.log('qqqqqqqqqqqqqqq', location.search, router.currentRoute.value);
+watch(route, () => {
+  const query = route.query.query as string;
+  query && (searchValue.value = query);
+}); */
 
-    onMounted(init);
-    return {
-      ...headerStore.$state,
-      ...Data,
-      ...Computed,
-      ...Methods,
-    };
-  },
+const getScrollTop = () =>
+  (scrollTop.value = document.documentElement.scrollTop || document.body.scrollTop);
+
+const toSearch = () => {
+  const query = { ...route.query, query: searchValue.value };
+  router.push({ path: '/', query });
+};
+
+const onSelect = (command: string) => {
+  if (command === 'logout') {
+    ElMessageBox.confirm('确认退出？', undefined, { type: 'warning' }).then(userStore.logout);
+    return;
+  }
+  router.replace({ path: command });
+};
+
+onMounted(() => {
+  getScrollTop();
+  addEventListener('scroll', getScrollTop);
+});
+
+onBeforeUnmount(() => {
+  removeEventListener('scroll', getScrollTop);
 });
 </script>
 <style lang="scss">
 .c-header {
-  height: 60px;
+  height: var(--header-height);
   + * {
-    margin-top: 60px;
+    padding-top: 60px;
   }
   background: var(--navbar-bg-color);
   backdrop-filter: saturate(5) blur(20px);
@@ -185,9 +160,6 @@ export default defineComponent({
         margin-right: 4px;
       }
     }
-    .theme-switcher {
-      margin-right: 10px;
-    }
     .avatar {
       width: 30px;
       height: 30px;
@@ -215,6 +187,17 @@ export default defineComponent({
         border: 0;
         box-shadow: none;
       }
+    }
+  }
+  .c-aside-menu-switcher {
+    visibility: hidden;
+  }
+  @media (max-width: 750px) {
+    .c-aside-menu-switcher {
+      visibility: visible;
+    }
+    .effective-area .left .btns {
+      display: none;
     }
   }
 }
