@@ -6,6 +6,14 @@ import type { ResType } from 'request-template';
 import { HttpStatus } from 'request-template';
 import { Token } from '~/feature/request/primary/token';
 
+defineProps({
+  minimal: {
+    type: Boolean,
+    default: false,
+  },
+});
+const emits = defineEmits(['success']);
+
 const fileList = ref<{ name: string; url: string }[]>([]);
 const uploadOpt = {
   action: import.meta.env.VITE_BASE_URL + uploadUrl,
@@ -26,6 +34,7 @@ const uploadOpt = {
     }
     const find = fileList.value.find((i) => i.name === file.name);
     if (!find) return;
+    emits('success');
     find.url = res.data;
   },
   'on-change'(file: any, _fileList: any) {
@@ -46,8 +55,8 @@ const uploadOpt = {
 };
 </script>
 <template>
-  <Widget>
-    <template #title>
+  <Widget :class="{ minimal }">
+    <template v-if="!minimal" #title>
       <h5 class="widget-title">文件上传</h5>
     </template>
     <div class="widget-content">
@@ -57,7 +66,7 @@ const uploadOpt = {
           v-model="uploadOpt.data.timeStampName"
           :inactive-value="0"
           :active-value="1"></el-switch>
-        <el-upload class="upload-demo" v-bind="uploadOpt" :file-list="fileList" drag>
+        <el-upload v-bind="uploadOpt" :file-list="fileList" drag>
           <div class="el-upload__text _ h-p100 flex-c-c">
             Drop file here or <em>click to upload</em>
           </div>
@@ -73,5 +82,28 @@ const uploadOpt = {
 <style lang="scss" scoped>
 .widget-content {
   font-size: 13px;
+}
+.minimal {
+  padding: 0 !important;
+  .upload {
+    display: flex;
+    align-items: center;
+    width: 500px;
+    > * {
+      margin-right: 10px;
+    }
+
+    .el-upload__tip {
+      display: none;
+    }
+    :deep(.el-upload) {
+      .el-upload-dragger {
+        padding: 0 10px;
+      }
+    }
+    :deep(.el-upload-list) {
+      display: none;
+    }
+  }
 }
 </style>
