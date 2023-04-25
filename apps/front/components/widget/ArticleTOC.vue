@@ -140,6 +140,8 @@ function onSelect(id: string) {
   --el-menu-text-color: var(--text-color);
   --el-menu-hover-bg-color: var(--link-hover-bg-color);
   --el-menu-active-color: var(--theme-color);
+  --el-menu-item-height: 2.3rem;
+  --el-menu-sub-item-height: 2.3rem;
   .el-menu {
     border-right: 0 !important;
   }

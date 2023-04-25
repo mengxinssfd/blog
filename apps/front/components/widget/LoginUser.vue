@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SwitchButton } from '@element-plus/icons-vue';
 import useUserStore from '~/store/user.store';
 
 const userStore = useUserStore();
@@ -8,23 +9,29 @@ const link = computed(() => '/user/info/' + userStore.user.id);
 <template>
   <Widget>
     <template #title>
-      <h5 class="widget-title"></h5>
+      <h5 class="widget-title">{{ userStore.user?.id ? '已登录' : '未登录' }}</h5>
     </template>
     <div class="widget-content">
       <template v-if="userStore.user?.id">
-        <nuxt-link :to="link" class="_ flex-col-c" external>
+        <nuxt-link :to="link" class="_ flex-col-c">
           <el-avatar :src="userStore.user.avatar" size="large"></el-avatar>
           <div class="title _ ellipsis-2">{{ userStore.user.nickname }}</div>
         </nuxt-link>
         <div class="btns _ flex-c-c">
           <NuxtLink to="/article/create">
             <el-button class="post" type="primary" size="small">
-              发布 <i class="iconfont icon-edit"></i>
+              <i class="iconfont icon-edit"></i> 写文章
             </el-button>
           </NuxtLink>
-          <el-button class="logout" type="warning" size="small" @click="userStore.logout">
-            登出
-          </el-button>
+          <ClientOnly>
+            <el-popconfirm title="确认退出?" @confirm="userStore.logout">
+              <template #reference>
+                <el-button class="logout" type="warning" size="small">
+                  <el-icon><SwitchButton /></el-icon> 登出
+                </el-button>
+              </template>
+            </el-popconfirm>
+          </ClientOnly>
         </div>
       </template>
       <template v-else>
@@ -55,7 +62,8 @@ const link = computed(() => '/user/info/' + userStore.user.id);
       margin-left: 10px;
     }
     i {
-      margin-left: 2px;
+      margin-right: 3px;
+      font-size: inherit;
     }
   }
 }

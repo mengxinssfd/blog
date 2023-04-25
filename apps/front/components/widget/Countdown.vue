@@ -106,8 +106,9 @@ onUnmounted(() => clearTimeout(timer));
 
 <style lang="scss" scoped>
 .widget-content {
+  font-size: 13px;
   li {
-    margin-top: 10px;
+    margin-top: 1rem;
   }
   :deep(.el-progress) {
     + .el-progress {

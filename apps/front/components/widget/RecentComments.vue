@@ -45,6 +45,7 @@ function toArticle(item: InnerComment) {
 
 <style lang="scss" scoped>
 .c-comment {
+  margin-bottom: 0.3rem;
   &:not(.active) {
     :deep(.content) {
       cursor: pointer;

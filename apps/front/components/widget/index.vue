@@ -1,7 +1,9 @@
 <template>
   <section class="widget board">
-    <div class="title">
-      <slot name="title"></slot>
+    <div v-if="!removeTitle" class="title">
+      <slot name="title">
+        <h5>{{ title }}</h5>
+      </slot>
     </div>
     <div class="content">
       <slot></slot>
@@ -11,9 +13,13 @@
 
 <script setup lang="ts">
 defineProps({
-  sticky: {
+  removeTitle: {
     type: Boolean,
     default: false,
+  },
+  title: {
+    type: String,
+    default: '',
   },
   top: {
     type: [Number, String],
@@ -27,9 +33,8 @@ defineProps({
   margin-top: 0;
   margin-bottom: 1rem;
   .title {
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-    font-weight: bold;
+    margin-bottom: 1rem;
+    font-size: 1rem;
   }
 }
 </style>

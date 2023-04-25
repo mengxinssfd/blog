@@ -23,14 +23,14 @@ const list = computed(() => {
 onMounted(() => request({ page: 1, pageSize: 5, tags: [], sort: 1 }, !!process.client));
 </script>
 <template>
-  <Widget>
-    <template #title>
-      <h5 class="widget-title">最新文章</h5>
-    </template>
+  <Widget title="最新文章">
     <div class="widget-content">
       <ul>
-        <li v-for="item in list" :key="item.id" :class="{ active: item.active }">
-          <nuxt-link :to="item.link" class="_ flex" external>
+        <li
+          v-for="item in list"
+          :key="item.id"
+          :class="{ 'iconfont icon-view active': item.active }">
+          <nuxt-link :to="item.link" class="_ flex">
             <el-avatar :src="item.cover" size="large" shape="square"></el-avatar>
             <div class="texts _ flex-1">
               <div class="title _ ellipsis-2">{{ item.title }}</div>
@@ -55,11 +55,11 @@ onMounted(() => request({ page: 1, pageSize: 5, tags: [], sort: 1 }, !!process.c
         top: 0;
         left: 0;
         color: white;
-        background-color: red;
+        background-color: var(--theme-color);
         padding: 0 4px;
         border-bottom-right-radius: 4px;
         border-top-left-radius: 4px;
-        content: 'cur';
+        content: '\e661';
       }
     }
     &:not(.active) {
@@ -71,7 +71,7 @@ onMounted(() => request({ page: 1, pageSize: 5, tags: [], sort: 1 }, !!process.c
       }
     }
     + li {
-      margin-top: 10px;
+      margin-top: 1rem;
     }
   }
   .el-avatar {
