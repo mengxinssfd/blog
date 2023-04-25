@@ -1,12 +1,33 @@
-<script setup lang="ts"></script>
+<script lang="tsx" setup>
+import Drawer from './Drawer.vue';
+const state = useState('aside.hiddenContent', () => false);
+const Contents = defineComponent({
+  setup(_props, { slots }) {
+    return () => (
+      <>
+        <aside class="c-aside">{slots.default?.()}</aside>
+        <Drawer
+          modelValue={state}
+          onUpdate:modelValue={(v: boolean) => (state.value = v)}
+          size="300px"
+          z-index={11}
+          direction="rtl">
+          {slots.default?.()}
+        </Drawer>
+      </>
+    );
+  },
+});
+</script>
 <template>
-  <aside class="c-aside">
+  <Contents>
     <slot>
       <WidgetLoginUser />
       <WidgetCountdown />
-      <WidgetRecentComments></WidgetRecentComments>
+      <WidgetRecentComments />
+      <WidgetStatisticsEarth />
     </slot>
-  </aside>
+  </Contents>
 </template>
 
 <style lang="scss">

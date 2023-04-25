@@ -37,10 +37,6 @@ defineProps({
   padding: 10px;
   border-radius: 8px;
   color: var(--text-color);
-  background: rgba(0, 0, 0, 0.02);
-  &:hover {
-    background: rgba(0, 0, 0, 0.05);
-  }
   .screenshot {
     margin-bottom: 10px;
     border-radius: 4px;
@@ -49,7 +45,7 @@ defineProps({
     color: inherit;
     &:hover {
       .name {
-        color: #7da5ed;
+        color: var(--theme-color);
       }
     }
   }
