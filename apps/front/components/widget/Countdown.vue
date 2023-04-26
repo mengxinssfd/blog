@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getTheLastDateOfAMonth, getTimePeriodConst } from '@tool-pack/basic';
+import { getEndOfMonth, getTimePeriodConst } from '@tool-pack/basic';
 
 function getHoursAgo(date: Date): number {
   return Number((date.getHours() / 24).toFixed(2));
@@ -41,7 +41,7 @@ const list: Array<Item> = [
     status: 'exception',
     text: '',
     result(now) {
-      const dateCount = getTheLastDateOfAMonth(now).getDate();
+      const dateCount = getEndOfMonth(now).getDate();
       const ago = now.getDate() - 1 + getHoursAgo(now);
       return { ago, percentage: Number(ago) / dateCount };
     },
