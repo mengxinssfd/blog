@@ -1,7 +1,13 @@
 import { methodsWithUrl } from '../request';
 import type { ROLE, UserEntity } from '@blog/entities';
 import type { PageVo } from '@blog/dtos/src/page.vo';
-import type { LoginDTO, RegisterDTO, UpdatePasswordDto, UpdateUserDto } from '@blog/dtos';
+import type {
+  LoginDTO,
+  RegisterDTO,
+  UpdatePasswordDto,
+  UpdateUserDto,
+  AdminUpdateUserDto,
+} from '@blog/dtos';
 import type { CustomCacheConfig } from 'request-template';
 import type { ID } from '../types';
 
@@ -34,6 +40,9 @@ export function register(data: RegisterDTO) {
 }
 export function updateUserInfo(userId: ID, data: UpdateUserDto) {
   return Patch('/' + userId, data, { successMsg: '修改成功' });
+}
+export function updateUserInfoByAdmin(userId: ID, data: AdminUpdateUserDto) {
+  return Patch('/by-admin/' + userId, data, { successMsg: '修改成功' });
 }
 export function updatePassword(userId: ID, data: UpdatePasswordDto) {
   return Patch('/password/' + userId, data, { successMsg: '修改成功' });
