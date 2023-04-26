@@ -156,16 +156,16 @@ export default defineComponent({
       <el-table-column label="登录IP" prop="loginIp"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-dropdown
-            v-if="ROLE.superAdmin !== scope.row.role"
-            @command="handleCommand($event, scope.row)">
+          <el-dropdown @command="handleCommand($event, scope.row)">
             <el-button type="primary" text><i class="iconfont icon-select"></i></el-button>
             <template #dropdown>
               <el-dropdown-menu>
                 <template v-if="!scope.row.deletedAt">
                   <el-dropdown-item command="update">编辑</el-dropdown-item>
-                  <el-dropdown-item command="delete">删除</el-dropdown-item>
-                  <el-dropdown-item command="mute">
+                  <el-dropdown-item v-if="ROLE.superAdmin !== scope.row.role" command="delete">
+                    删除
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="ROLE.superAdmin !== scope.row.role" command="mute">
                     {{ scope.row.muted ? '解除禁言' : '禁言' }}
                   </el-dropdown-item>
                 </template>
@@ -176,7 +176,11 @@ export default defineComponent({
         </template>
       </el-table-column>
     </el-table>
-    <UserUpdateInfoDialog v-model:show="updateData.visible" :user="updateData.user" />
+    <UserUpdateInfoDialog
+      v-model:show="updateData.visible"
+      :user="updateData.user"
+      by-admin
+      @updated="getData" />
   </div>
 </template>
 
@@ -202,12 +206,6 @@ export default defineComponent({
         text-decoration: line-through;
       }
     }
-    /* .el-dropdown {
-       position: absolute;
-       right: 0;
-       top: 0;
-       padding: 2px 4px;
-     }*/
     .icon-select {
       font-size: 16px;
       font-weight: bold;

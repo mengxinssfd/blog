@@ -25,7 +25,7 @@
 <script lang="ts" setup>
 import * as Vue from 'vue';
 import { updateObj } from '@tool-pack/basic';
-import { updateUserInfo } from '@blog/apis';
+import { updateUserInfo, updateUserInfoByAdmin } from '@blog/apis';
 import type { UserEntity } from '@blog/entities';
 import { Validator } from '~/types';
 
@@ -40,6 +40,10 @@ const props = defineProps({
     type: Object as Vue.PropType<UserEntity>,
     require: true,
     default: () => ({}),
+  },
+  byAdmin: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -83,7 +87,9 @@ const editUserInfo = async () => {
   try {
     form.loading = true;
     await formRef.value.validate();
-    await updateUserInfo(props.user?.id, { ...form.model });
+    await (props.byAdmin ? updateUserInfoByAdmin : updateUserInfo)(props.user?.id, {
+      ...form.model,
+    });
     emit('updated');
     visible.value = false;
   } catch (e) {
