@@ -38,7 +38,7 @@
     "@nestjs/swagger": "^6.2.1",
     "@nestjs/throttler": "^4.0.0",
     "@nestjs/typeorm": "^9.0.1",
-    "@tool-pack/basic": "^0.0.17",
+    "@tool-pack/basic": "^0.0.18",
     "ali-oss": "^6.17.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",

@@ -75,7 +75,7 @@
     "@blog/dtos": "link:packages/dtos",
     "@blog/entities": "link:packages/entities",
     "@blog/permission-rules": "link:packages/permission-rules",
-    "@tool-pack/basic": "^0.0.17",
+    "@tool-pack/basic": "^0.0.18",
     "typeorm": "^0.3.12"
   }
 }
