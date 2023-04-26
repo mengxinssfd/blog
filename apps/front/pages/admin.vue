@@ -1,26 +1,3 @@
-<template>
-  <div class="pg admin">
-    <Title>Nice's Blog - 管理</Title>
-    <!--    <Banner
-      height="50vh"
-      bg-img="https://pic3.zhimg.com/v2-0d085c719b2049343822acc207aa2f01_1200x500.jpg"
-      :blur="false"
-    ></Banner>-->
-    <ClientOnly>
-      <div class="admin-content board">
-        <el-tabs v-model="tabs.activeName" @tab-click="handleClick">
-          <el-tab-pane
-            v-for="item in tabs.list"
-            :key="item.name"
-            :label="item.label"
-            :name="item.name"></el-tab-pane>
-        </el-tabs>
-        <NuxtPage />
-      </div>
-    </ClientOnly>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ROLE } from '@blog/entities';
 import { navigateTo, useRoute } from '#app';
@@ -41,27 +18,70 @@ const tabs = reactive({
     {
       label: '账号',
       name: 'account',
+      icon: 'icon-user',
     },
     {
       label: '统计',
       name: 'statistics',
+      icon: 'icon-huifu',
     },
     {
       label: '友链',
       name: 'friend-link',
+      icon: 'icon-link',
     },
     {
       label: '文件',
       name: 'file',
+      icon: 'icon-tag',
     },
   ],
   activeName: /\/admin\/([^/]+)/.exec(route.path)?.[1] ?? 'account',
 });
 
-async function handleClick() {
-  await nextTick();
+function handleClick(name: string) {
   // router.replace({ path: '/admin/' + Data.tabs.activeName });
-  navigateTo({ path: '/admin/' + tabs.activeName, replace: true });
+  navigateTo({ path: '/admin/' + name, replace: true });
 }
 </script>
-<style lang="scss"></style>
+
+<template>
+  <Title>Nice's Blog - 管理</Title>
+  <div class="pg admin">
+    <div class="board _ flex">
+      <el-menu class="menu" :default-active="tabs.activeName" unique-opened @select="handleClick">
+        <el-menu-item v-for="item in tabs.list" :key="item.name" :index="item.name">
+          <i class="iconfont" :class="item.icon"></i> {{ item.label }}
+        </el-menu-item>
+      </el-menu>
+      <div class="page _ flex-1">
+        <NuxtPage />
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.pg.admin {
+  overflow: hidden;
+  .page {
+    overflow: auto;
+    padding: 1rem;
+  }
+  .menu {
+    width: 200px;
+    .iconfont {
+      margin-right: 6px;
+    }
+  }
+  > .board {
+    position: absolute;
+    top: var(--header-height);
+    bottom: var(--footer-height);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+</style>

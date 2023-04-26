@@ -1,3 +1,30 @@
+<script setup lang="ts">
+import { getStatisticsTotal as getStatisticsTotalApi, StatisticsTotal } from '@blog/apis';
+import { useRouter } from '#app';
+import useUserStore from '~/store/user.store';
+
+const router = useRouter();
+
+const total = ref<StatisticsTotal>({} as any);
+
+const loginUser = computed(() => useUserStore().user);
+
+async function getStatisticsTotal() {
+  const res = await getStatisticsTotalApi();
+  total.value = res.data;
+}
+
+watch(
+  loginUser,
+  (n) => {
+    if (n.role !== 0) router.back();
+  },
+  { immediate: true },
+);
+
+getStatisticsTotal();
+</script>
+
 <template>
   <div class="pg statistics">
     <section v-if="total.user" class="total">
@@ -85,32 +112,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { getStatisticsTotal as getStatisticsTotalApi, StatisticsTotal } from '@blog/apis';
-import { useRouter } from '#app';
-import useUserStore from '~/store/user.store';
-
-const router = useRouter();
-
-const total = ref<StatisticsTotal>({} as any);
-
-const loginUser = computed(() => useUserStore().user);
-
-async function getStatisticsTotal() {
-  const res = await getStatisticsTotalApi();
-  total.value = res.data;
-}
-
-watch(
-  loginUser,
-  (n) => {
-    if (n.role !== 0) router.back();
-  },
-  { immediate: true },
-);
-
-getStatisticsTotal();
-</script>
 <style lang="scss">
 .pg.statistics {
   > section {

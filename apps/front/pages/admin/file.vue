@@ -1,48 +1,3 @@
-<template>
-  <div class="pg file">
-    <WidgetUpload minimal @success="onUploaded" />
-    <el-table v-loading="loading" :data="fileList" empty-text="暂无文件" stripe>
-      <el-table-column label="id" prop="id" width="60" />
-      <el-table-column label="文件类型" prop="mimetype" width="130" />
-      <el-table-column label="创建日期" prop="createAt">
-        <template #default="scope">
-          {{ formatDate(scope.row.createAt) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="文件名" prop="filename" />
-      <el-table-column label="图片" prop="url">
-        <template #default="scope">
-          <template v-if="scope.row.mimetype.startsWith('image')">
-            <el-image :src="scope.row.url" :preview-src-list="[scope.row.url]" preview-teleported />
-          </template>
-          <a v-else :href="scope.row.url">{{ scope.row.url }}</a>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="操作" header-align="center" width="90">
-        <template #default="scope">
-          <el-dropdown @command="handleCommand($event, scope.row)">
-            <el-button type="primary" text>管理</el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="delete">删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="_ flex-c-c pager">
-      <el-pagination
-        v-model:current-page="page.page"
-        background
-        :total="page.total"
-        :page-size="10"
-        layout="prev, pager, next,total" />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { getFileList as getFileListApi, deleteFile as deleteFileApi } from '@blog/apis';
 import type { FileEntity } from '@blog/entities';
@@ -110,6 +65,52 @@ watch(
 
 getData();
 </script>
+
+<template>
+  <div class="pg file">
+    <WidgetUpload minimal @success="onUploaded" />
+    <el-table v-loading="loading" :data="fileList" empty-text="暂无文件" stripe>
+      <el-table-column label="id" prop="id" width="60" />
+      <el-table-column label="文件类型" prop="mimetype" />
+      <el-table-column label="创建日期" prop="createAt">
+        <template #default="scope">
+          {{ formatDate(scope.row.createAt) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="文件名" prop="filename" />
+      <el-table-column label="图片" prop="url">
+        <template #default="scope">
+          <template v-if="scope.row.mimetype.startsWith('image')">
+            <el-image :src="scope.row.url" :preview-src-list="[scope.row.url]" preview-teleported />
+          </template>
+          <a v-else :href="scope.row.url">{{ scope.row.url }}</a>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="操作" header-align="center" width="90">
+        <template #default="scope">
+          <el-dropdown @command="handleCommand($event, scope.row)">
+            <el-button type="primary" text><i class="iconfont icon-select"></i></el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="_ flex-c-c pager">
+      <el-pagination
+        v-model:current-page="page.page"
+        background
+        :total="page.total"
+        :page-size="10"
+        layout="prev, pager, next,total" />
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .pg.file {
   > section {
@@ -118,6 +119,10 @@ getData();
   }
   .pager {
     margin-top: 2rem;
+  }
+  .el-image {
+    max-width: 100px;
+    max-height: 100px;
   }
 }
 </style>

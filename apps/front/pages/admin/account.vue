@@ -1,85 +1,3 @@
-<template>
-  <div class="pg admin-account">
-    <div class="filters">
-      <IndexTags v-model:value="filter.value" :list="filter.list" @change="getData" />
-    </div>
-    <el-table :data="userList">
-      <el-table-column label="头像" width="60">
-        <template #default="scope">
-          <router-link :to="`/user/info/${scope.row.id}`">
-            <el-avatar :src="scope.row.avatar" :size="32"></el-avatar>
-          </router-link>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="username">
-        <template #default="scope">
-          <div class="username" :class="{ deleted: scope.row.deletedAt }">
-            {{ scope.row.username }} [{{ scope.row.id }}]
-          </div>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="nickname" prop="nickname"></el-table-column>
-
-      <el-table-column label="role">
-        <template #default="scope">
-          <el-dropdown
-            :disabled="ROLE.superAdmin === scope.row.role"
-            @command="handleRoleCommand($event, scope.row)">
-            <el-button type="primary" text class="role">
-              <i class="iconfont icon-user"></i>{{ getRoleName(scope.row) }}
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <template v-for="role in roleList">
-                  <el-dropdown-item v-if="role !== scope.row.role" :key="role" :command="role">
-                    {{ RoleNames[role] }}
-                  </el-dropdown-item>
-                </template>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" width="150">
-        <template #default="scope">
-          {{ getFormattedDate(scope.row.createAt) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="上次登录时间" width="150">
-        <template #default="scope">
-          {{ getFormattedDate(scope.row.loginAt) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="注册IP" prop="registerIp"></el-table-column>
-      <el-table-column label="登录IP" prop="loginIp"></el-table-column>
-      <el-table-column label="操作">
-        <template #default="scope">
-          <el-dropdown
-            v-if="ROLE.superAdmin !== scope.row.role"
-            @command="handleCommand($event, scope.row)">
-            <el-button type="primary" text>管理</el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <template v-if="!scope.row.deletedAt">
-                  <el-dropdown-item command="update">编辑</el-dropdown-item>
-                  <el-dropdown-item command="delete">删除</el-dropdown-item>
-                  <el-dropdown-item command="mute">
-                    {{ scope.row.muted ? '解除禁言' : '禁言' }}
-                  </el-dropdown-item>
-                </template>
-                <el-dropdown-item v-else command="restore">恢复</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </template>
-      </el-table-column>
-    </el-table>
-    <UserUpdateInfoDialog v-model:show="updateData.visible" :user="updateData.user" />
-  </div>
-</template>
-
 <script lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { deleteUser, getUserAll, restoreUser, setMute, setRole } from '@blog/apis';
@@ -182,6 +100,86 @@ export default defineComponent({
   },
 });
 </script>
+
+<template>
+  <div class="pg admin-account">
+    <el-table :data="userList">
+      <el-table-column label="头像" width="60">
+        <template #default="scope">
+          <router-link :to="`/user/info/${scope.row.id}`">
+            <el-avatar :src="scope.row.avatar" :size="32"></el-avatar>
+          </router-link>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="username/id">
+        <template #default="scope">
+          <div class="username" :class="{ deleted: scope.row.deletedAt }">
+            {{ scope.row.username }} [{{ scope.row.id }}]
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="nickname" prop="nickname"></el-table-column>
+
+      <el-table-column label="role">
+        <template #default="scope">
+          <el-dropdown
+            :disabled="ROLE.superAdmin === scope.row.role"
+            @command="handleRoleCommand($event, scope.row)">
+            <el-button type="primary" text class="role">
+              <i class="iconfont icon-user"></i>{{ getRoleName(scope.row) }}
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <template v-for="role in roleList">
+                  <el-dropdown-item v-if="role !== scope.row.role" :key="role" :command="role">
+                    {{ RoleNames[role] }}
+                  </el-dropdown-item>
+                </template>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="150">
+        <template #default="scope">
+          {{ getFormattedDate(scope.row.createAt) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="上次登录时间" width="150">
+        <template #default="scope">
+          {{ getFormattedDate(scope.row.loginAt) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="注册IP" prop="registerIp"></el-table-column>
+      <el-table-column label="登录IP" prop="loginIp"></el-table-column>
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-dropdown
+            v-if="ROLE.superAdmin !== scope.row.role"
+            @command="handleCommand($event, scope.row)">
+            <el-button type="primary" text><i class="iconfont icon-select"></i></el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <template v-if="!scope.row.deletedAt">
+                  <el-dropdown-item command="update">编辑</el-dropdown-item>
+                  <el-dropdown-item command="delete">删除</el-dropdown-item>
+                  <el-dropdown-item command="mute">
+                    {{ scope.row.muted ? '解除禁言' : '禁言' }}
+                  </el-dropdown-item>
+                </template>
+                <el-dropdown-item v-else command="restore">恢复</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+    </el-table>
+    <UserUpdateInfoDialog v-model:show="updateData.visible" :user="updateData.user" />
+  </div>
+</template>
+
 <style lang="scss">
 .pg.admin-account {
   .el-table {
