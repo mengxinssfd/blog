@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ROLE } from '@blog/entities';
-import { navigateTo, useRoute } from '#app';
-import { definePageMeta } from '#imports';
 
 definePageMeta({
   // middleware: ['admin'],
@@ -12,7 +10,6 @@ definePageMeta({
 });
 
 const route = useRoute();
-
 const tabs = reactive({
   list: [
     {
@@ -38,6 +35,7 @@ const tabs = reactive({
   ],
   activeName: /\/admin\/([^/]+)/.exec(route.path)?.[1] ?? 'account',
 });
+const isCollapse = ref(true);
 
 function handleClick(name: string) {
   // router.replace({ path: '/admin/' + Data.tabs.activeName });
@@ -49,12 +47,19 @@ function handleClick(name: string) {
   <Title>Nice's Blog - 管理</Title>
   <div class="pg admin">
     <div class="board _ flex">
-      <el-menu class="menu" :default-active="tabs.activeName" unique-opened @select="handleClick">
+      <el-menu
+        class="menu"
+        :default-active="tabs.activeName"
+        :collapse="isCollapse"
+        unique-opened
+        @select="handleClick">
         <el-menu-item v-for="item in tabs.list" :key="item.name" :index="item.name">
-          <i class="iconfont" :class="item.icon"></i> {{ item.label }}
+          <el-icon><i class="iconfont" :class="item.icon"></i></el-icon>
+          <span>{{ item.label }}</span>
         </el-menu-item>
       </el-menu>
       <div class="page _ flex-1">
+        <MenuSwitcher :model-value="!isCollapse" @update:model-value="isCollapse = !$event" />
         <NuxtPage />
       </div>
     </div>
@@ -69,9 +74,11 @@ function handleClick(name: string) {
     padding: 1rem;
   }
   .menu {
-    width: 200px;
     .iconfont {
       margin-right: 6px;
+    }
+    &:not(.el-menu--collapse) {
+      width: 180px;
     }
   }
   > .board {
