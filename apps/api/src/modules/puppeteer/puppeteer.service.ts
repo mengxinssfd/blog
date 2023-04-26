@@ -15,9 +15,9 @@ export class AppPuppeteerService {
   async getSiteInfoWithScreenshotUrl(link: string, filename?: string) {
     const siteInfo = await this.getSiteInfo(link);
     const screenshotUrl = await this.fileHelperService.create(
-      filename || siteInfo.name,
+      filename || new URL(link).host,
       siteInfo.screenshot,
-      'image/jpeg',
+      'image/webp',
     );
     Logger.info('上传截图到oss', link, screenshotUrl);
     return { ...siteInfo, screenshot: screenshotUrl };
@@ -45,7 +45,7 @@ export class AppPuppeteerService {
         } satisfies Pick<FriendLinkEntity, 'name' | 'desc' | 'avatar'>;
       }, link);
       Logger.info('生成站点截图', link);
-      const screenshot = await page.screenshot({ encoding: 'binary', type: 'jpeg' });
+      const screenshot = await page.screenshot({ encoding: 'binary', quality: 10, type: 'webp' });
       return { ...info, screenshot };
     } catch (e) {
       Logger.error(e);
