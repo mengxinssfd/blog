@@ -24,6 +24,7 @@ import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
 import {
+  AdminUpdateUserDto,
   LoginDTO,
   LoginVO,
   MuteDto,
@@ -157,6 +158,19 @@ export class UserController {
   ) {
     await this.findUser(id).unless(user).can(Action.Update);
     return this.userService.update(+id, updateDto);
+  }
+
+  @ApiBearerAuth()
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ab) => ab.can(Action.Manage, UserEntity))
+  @Patch('by-admin/:id')
+  adminUpdate(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: AdminUpdateUserDto,
+    @User() user: UserEntity,
+  ) {
+    return this.update(id, updateDto, user);
   }
 
   // TODO 限制密码错误次数
