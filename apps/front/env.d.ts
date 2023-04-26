@@ -25,11 +25,13 @@ export interface Env {
   // cdn
   readonly VITE_SITE_CDN?: string;
   // # 网站名
-  VITE_SITE_NAME: string;
+  readonly VITE_SITE_NAME: string;
   // # 网站描述
-  VITE_SITE_DESC: string;
+  readonly VITE_SITE_DESC: string;
   // # 网站关键词
-  VITE_SITE_KEYWORD: string;
+  readonly VITE_SITE_KEYWORD: string;
+  // # 网站开始运行日期
+  readonly VITE_SITE_START_AT: string;
 }
 
 // import.meta.env.VITE_APP_TITLE 使用时的ts类型提示
