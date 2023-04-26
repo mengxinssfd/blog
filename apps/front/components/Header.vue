@@ -11,7 +11,7 @@
             </div>
           </template>
         </div>
-        <SideMenuSwitcher />
+        <MenuSwitcher v-model="menuStore.sideMenuVisible" />
       </div>
       <div class="right">
         <div class="search">
@@ -70,7 +70,6 @@ import { ElMessageBox } from 'element-plus';
 import { useRoute, useRouter } from '#app';
 import useUserStore from '~/store/user.store';
 import useMenuStore from '~/store/menu.store';
-import SideMenuSwitcher from '~/components/AsideMenuSwitcher.vue';
 
 const route = useRoute();
 const menuStore = useMenuStore();

@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import useMenuStore from '~/store/menu.store';
+const props = defineProps({
+  modelValue: {
+    type: [Boolean, Object],
+    default: false,
+  },
+});
 
-const menuStore = useMenuStore();
+const emit = defineEmits(['update:modelValue']);
 
-const visible = computed(() => menuStore.sideMenuVisible);
+const visible = computed({
+  get: () => (typeof props.modelValue === 'boolean' ? props.modelValue : props.modelValue.value),
+  set: (value: boolean) => emit('update:modelValue', value),
+});
 </script>
 <template>
-  <div
-    class="_ btn c-aside-menu-switcher"
-    :class="{ visible }"
-    @click="menuStore.toggleSideMenuVisible()">
+  <div class="_ btn c-aside-menu-switcher" :class="{ visible }" @click="visible = !visible">
     <div class="row row-1"></div>
     <div class="row row-2"></div>
     <div class="row row-3"></div>
