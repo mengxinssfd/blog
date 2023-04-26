@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getFileList as getFileListApi, deleteFile as deleteFileApi } from '@blog/apis';
 import type { FileEntity } from '@blog/entities';
-import { formatDate as formatDateKit } from '@tool-pack/basic';
+import { formatDate as formatDateKit, formatBytes } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import { useRouter } from '#app';
 import useUserStore from '~/store/user.store';
@@ -72,6 +72,11 @@ getData();
     <el-table v-loading="loading" :data="fileList" empty-text="暂无文件" stripe>
       <el-table-column label="id" prop="id" width="60" />
       <el-table-column label="文件类型" prop="mimetype" />
+      <el-table-column label="文件大小" prop="size">
+        <template #default="scope">
+          {{ formatBytes(scope.row.size) }}
+        </template>
+      </el-table-column>
       <el-table-column label="创建日期" prop="createAt">
         <template #default="scope">
           {{ formatDate(scope.row.createAt) }}
