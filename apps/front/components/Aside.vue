@@ -1,6 +1,18 @@
 <script lang="tsx" setup>
 import Drawer from './Drawer.vue';
 const state = useState('aside.hiddenContent', () => false);
+const route = useRoute();
+
+onMounted(() => {
+  watch(
+    route,
+    () => {
+      state.value = false;
+    },
+    { immediate: true }, // false的话watch不生效
+  );
+});
+
 const Contents = defineComponent({
   setup(_props, { slots }) {
     return () => (
