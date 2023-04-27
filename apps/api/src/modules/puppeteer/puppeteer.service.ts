@@ -14,16 +14,26 @@ export class AppPuppeteerService {
 
   async getSiteInfoWithScreenshotUrl(link: string, filename?: string) {
     const siteInfo = await this.getSiteInfo(link);
+    const timeStart = Date.now();
     const screenshotUrl = await this.fileHelperService.create(siteInfo.screenshot, {
       filename: filename || new URL(link).host,
       ownerId: 1,
       mimetype: 'image/webp',
     });
-    Logger.info('上传截图到oss', link, screenshotUrl);
+    Logger.info(
+      '上传截图',
+      link,
+      '到oss',
+      screenshotUrl,
+      '共耗时：',
+      Date.now() - timeStart,
+      '毫秒',
+    );
     return { ...siteInfo, screenshot: screenshotUrl };
   }
 
   async getSiteInfo(link: string) {
+    const timeStart = Date.now();
     const page = await this.browserContext.newPage();
     try {
       Logger.info('访问站点', link);
@@ -46,6 +56,7 @@ export class AppPuppeteerService {
       }, link);
       Logger.info('生成站点截图', link);
       const screenshot = await page.screenshot({ encoding: 'binary', quality: 10, type: 'webp' });
+      Logger.info('从访问站点到截图完成共耗时：', Date.now() - timeStart, '毫秒');
       return { ...info, screenshot };
     } catch (e) {
       Logger.error(e);
