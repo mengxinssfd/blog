@@ -23,7 +23,6 @@ export class FriendLinkService {
 
   async create(friendLink: FriendLinkEntity) {
     const find = await this.findByLink(friendLink.link);
-    console.log('fffff', find, friendLink);
     if (find) {
       throw new BadRequestException('网站链接已存在');
     }

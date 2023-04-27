@@ -211,8 +211,6 @@ export class CommentService {
     // 解决报错(没有alias)问题
     rep.expressionMap.mainAlias!.metadata = rep.connection.getMetadata(CommentEntity);
 
-    console.log(rep.getQuery(), rep.getQueryAndParameters());
-
     const count = await rep.clone().getCount();
 
     rep.leftJoinAndSelect(`${EntityAlias.comment}.user`, EntityAlias.user);
