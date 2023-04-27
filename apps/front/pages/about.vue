@@ -1,80 +1,92 @@
-<template>
-  <div class="pg about _ flex-col">
-    <Title>Nice's Blog - 关于我</Title>
-    <Banner :bg-img="article.cover" :blur="false" height="50vh"></Banner>
-    <div class="pg-content main-width board">
-      <audio
-        v-if="article.bgm && audioVisible"
-        controls
-        :src="article.bgm"
-        autoplay
-        loop
-        @error="audioVisible = false"></audio>
-      <ArticleDetailAuthorBlock
-        v-if="user.role === ROLE.superAdmin && article.author"
-        :article="article"
-        @comment-lock-updated="onCommentLockUpdate"></ArticleDetailAuthorBlock>
-      <section class="article">
-        <article ref="articleRef" class="vuepress-markdown-body" v-html="article.content"></article>
-      </section>
-      <ArticleDetailCommentBlock
-        v-if="article.author"
-        :article="article"></ArticleDetailCommentBlock>
-    </div>
-  </div>
-</template>
-
-<script lang="ts">
+<script setup lang="ts">
 import 'highlight.js/styles/atom-one-dark.css';
 import { getAbout } from '@blog/apis';
 import type { ArticleEntity } from '@blog/entities';
 import { useAsyncData } from '#app';
 import { useArticle } from '~/feature/hooks';
+import useHeaderStore from '~/store/header.store';
 
-export default defineComponent({
-  async setup() {
-    const Art = useArticle();
-    const Data = {
-      ...Art.Data,
-    };
-    const _Methods = {
-      ...Art._Methods,
-      async getData() {
-        const { data } = await useAsyncData(() => getAbout(), {
-          default: () => ({ data: {} as ArticleEntity }),
-        });
-        Data.article.value = data.value!.data;
-      },
-    };
-    const Methods = {
-      ...Art.Methods,
-    };
-    const init = () => {
-      Art._Methods.resolveArticleRender();
-      const article = Art.Data.article.value;
-      if (!article) return;
-      Art.setArticleId(article.id);
-      _Methods.getLikeCountData();
-    };
+useHeaderStore().useTransparent();
 
-    onMounted(init);
+const Art = useArticle();
+const { article, audioVisible } = Art.Data;
+const { getLikeCountData } = Art._Methods;
+const { onCommentLockUpdate } = Art.Methods;
 
-    await _Methods.getData();
+async function getData() {
+  const { data } = await useAsyncData(() => getAbout(), {
+    default: () => ({ data: {} as ArticleEntity }),
+  });
+  article.value = data.value!.data;
+}
+const init = () => {
+  Art._Methods.resolveArticleRender();
+  const article = Art.Data.article.value;
+  if (!article) return;
+  Art.setArticleId(article.id);
+  getLikeCountData();
+};
 
-    return {
-      ...Data,
-      ...Methods,
-    };
-  },
-});
+onMounted(init);
+
+await getData();
 </script>
+
+<template>
+  <Title>Nice's Blog - 关于我</Title>
+  <NuxtLayout name="page">
+    <template #banner>
+      <Banner
+        :bg-img="article.cover"
+        :blur="false"
+        :brightness="0.7"
+        height="50vh"
+        content="关于我"></Banner>
+    </template>
+    <template #aside>
+      <template v-if="article.author">
+        <WidgetArticleOperator :article="article" @comment-lock-updated="onCommentLockUpdate" />
+      </template>
+      <WidgetRecentArticle />
+      <WidgetArticleTOC v-if="article.id" v-sticky="'76px'" />
+    </template>
+    <div class="pg about _ flex-col">
+      <div class="pg-content main-width">
+        <audio
+          v-if="article.bgm && audioVisible"
+          controls
+          :src="article.bgm"
+          autoplay
+          loop
+          @error="audioVisible = false"></audio>
+        <div class="board">
+          <section class="article">
+            <article v-if="!article.id">
+              <el-skeleton :rows="10" animated />
+            </article>
+            <article
+              v-else
+              ref="articleRef"
+              class="vuepress-markdown-body"
+              v-html="article.content"></article>
+          </section>
+        </div>
+        <div class="board">
+          <ArticleDetailCommentBlock
+            v-if="article.author"
+            :article="article"></ArticleDetailCommentBlock>
+        </div>
+      </div>
+    </div>
+  </NuxtLayout>
+</template>
+
 <style lang="scss">
 .pg.about {
   margin: 0 !important;
   .pg-content {
     flex: 1;
     position: relative;
-    padding: 1rem 0;
     audio {
       position: fixed;
       right: 0;
@@ -82,7 +94,7 @@ export default defineComponent({
       height: 40px;
     }
     section {
-      padding: 1rem 2rem;
+      padding: 1rem;
       &.info {
         display: flex;
         align-items: center;
