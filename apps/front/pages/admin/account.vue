@@ -36,7 +36,10 @@ export default defineComponent({
       getRoleName(row: InnerUser) {
         return RoleNames[row.role];
       },
-      getFormattedDate: howLongAgo,
+      getFormattedDate(date: string | null) {
+        if (!date) return '--';
+        return howLongAgo(date);
+      },
       async setMute(mute: boolean, user: InnerUser) {
         user.muteLoading = true;
         try {
@@ -112,10 +115,15 @@ export default defineComponent({
         </template>
       </el-table-column>
 
-      <el-table-column label="username/id">
+      <el-table-column label="id" width="60">
+        <template #default="scope">
+          <div class="username" :class="{ deleted: scope.row.deletedAt }">[{{ scope.row.id }}]</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="username">
         <template #default="scope">
           <div class="username" :class="{ deleted: scope.row.deletedAt }">
-            {{ scope.row.username }} [{{ scope.row.id }}]
+            {{ scope.row.username }}
           </div>
         </template>
       </el-table-column>
@@ -142,19 +150,19 @@ export default defineComponent({
           </el-dropdown>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="150">
+      <el-table-column label="创建时间" width="170">
         <template #default="scope">
           {{ getFormattedDate(scope.row.createAt) }}
         </template>
       </el-table-column>
-      <el-table-column label="上次登录时间" width="150">
+      <el-table-column label="上次登录时间" width="170">
         <template #default="scope">
           {{ getFormattedDate(scope.row.loginAt) }}
         </template>
       </el-table-column>
       <el-table-column label="注册IP" prop="registerIp"></el-table-column>
       <el-table-column label="登录IP" prop="loginIp"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="60">
         <template #default="scope">
           <el-dropdown @command="handleCommand($event, scope.row)">
             <el-button type="primary" text><i class="iconfont icon-select"></i></el-button>
