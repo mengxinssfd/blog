@@ -18,12 +18,7 @@ const Contents = defineComponent({
     return () => (
       <>
         <aside class="c-aside">{slots.default?.()}</aside>
-        <Drawer
-          modelValue={state}
-          onUpdate:modelValue={(v: boolean) => (state.value = v)}
-          size="300px"
-          z-index={11}
-          direction="rtl">
+        <Drawer v-model={state.value} size="300px" z-index={11} direction="rtl">
           {slots.default?.()}
         </Drawer>
       </>
