@@ -65,7 +65,7 @@ describe('/comment 评论', () => {
         .expect(200)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":\\d+,"createAt":"${dateReg}","content":"hello world","articleId":${ArticleIds.publicArticleId},"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"userId":null,"touristName":"你好啊","user":null,"replyUser":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}},\\{"id":1,"createAt":"${dateReg}","content":"你好呀","articleId":1,"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"userId":${RoleUsers.common.id},"touristName":null,"user":\\{"id":${RoleUsers.common.id},"nickname":"${RoleUsers.common.nickname}","avatar":"${UserEntity.DEFAULT_AVATAR}"},"replyUser":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}}],"count":2}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":\\d+,"createAt":"${dateReg}","content":"hello world","articleId":${ArticleIds.publicArticleId},"isTop":null,"parentId":null,"replyId":null,"userId":null,"touristName":"你好啊","user":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}},\\{"id":1,"createAt":"${dateReg}","content":"你好呀","articleId":1,"isTop":null,"parentId":null,"replyId":null,"userId":${RoleUsers.common.id},"touristName":null,"user":\\{"id":${RoleUsers.common.id},"nickname":"${RoleUsers.common.nickname}","avatar":"${UserEntity.DEFAULT_AVATAR}"},"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}}],"count":2}}`,
           ),
         );
     });
@@ -150,7 +150,7 @@ describe('/comment 评论', () => {
           RoleUsers.dev.token,
         )
         .expect(
-          /\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"user":{"id":\d},"userId":\d,"content":"[^"]+","parentId":\d+,"replyId":\d+,"deletedAt":null,"isTop":null,"replyUserId":null,"touristIp":null,"touristName":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/,
+          /\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"user":{"id":\d},"userId":\d,"content":"[^"]+","parentId":\d+,"replyId":\d+,"deletedAt":null,"isTop":null,"touristIp":null,"touristName":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/,
         );
     });
     it('获取回复', () => {
@@ -159,7 +159,7 @@ describe('/comment 评论', () => {
         .getReplyMeAll(RoleUsers.dev.token)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"count":4,"list":\\[\\{"user":\\{"id":2,"nickname":"hello_1","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":1,"userId":2},\\{"user":\\{"id":null,"nickname":null,"avatar":null},"createAt":"${dateReg}","deletedAt":null,"content":"hello world","replyUserId":null,"touristName":"你好啊","article":${articleReg},"id":2,"userId":null},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":3,"userId":3},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","replyUserId":null,"touristName":null,"article":${articleReg},"id":4,"userId":3}]}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"count":4,"list":\\[\\{"user":\\{"id":2,"nickname":"hello_1","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","touristName":null,"article":${articleReg},"id":1,"userId":2},\\{"user":\\{"id":null,"nickname":null,"avatar":null},"createAt":"${dateReg}","deletedAt":null,"content":"hello world","touristName":"你好啊","article":${articleReg},"id":2,"userId":null},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","touristName":null,"article":${articleReg},"id":3,"userId":3},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","touristName":null,"article":${articleReg},"id":4,"userId":3}]}}`,
           ),
         );
     });

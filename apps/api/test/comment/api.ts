@@ -82,10 +82,8 @@ export const ResType = {
   notFound: '{"code":403,"msg":"文章不存在"}',
   isExists: /\{"code":403,"msg":"标签'[^']+'已存在"}/,
   createdByUser:
-    /\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"user":{"id":\d},"userId":\d,"content":"[^"]+","deletedAt":null,"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"touristIp":null,"touristName":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/,
+    /\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"user":{"id":\d},"userId":\d,"content":"[^"]+","deletedAt":null,"isTop":null,"parentId":null,"replyId":null,"touristIp":null,"touristName":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/,
   createdByTourist:
-    // '{"code":201,"msg":"Success","data":{"article":{"id":1},"articleId":1,     "touristIp":"127.0.0.1","touristName":"tourist","content":"hello world","deletedAt":null,"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"userId":null,"id":2,"createAt":"2023-04-01T23:26:31.000Z","updateAt":"2023-04-01T23:26:31.000Z"}}'
-    ///\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"touristIp":"127.0.0.1","touristName":"tourist","content":"[^"]+",      "deletedAt":null,"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/
-    /\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"touristIp":"127\.0\.0\.1","touristName":"你好啊","content":"[^"]+","deletedAt":null,"isTop":null,"parentId":null,"replyId":null,"replyUserId":null,"userId":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/,
+    /\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"touristIp":"127\.0\.0\.1","touristName":"你好啊","content":"[^"]+","deletedAt":null,"isTop":null,"parentId":null,"replyId":null,"userId":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/,
   emptyList: '{"code":200,"msg":"Success","data":{"list":[],"count":0}}',
 };
