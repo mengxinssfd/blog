@@ -61,7 +61,7 @@ a {
   .page-wrapper {
     position: relative;
     min-height: 100vh;
-    padding-bottom: 136px;
+    padding-bottom: calc(var(--footer-height) + 1rem);
     box-sizing: border-box;
     //content-visibility: auto;
     .pg {
@@ -74,7 +74,7 @@ a {
   text-decoration: none;
   color: #409eff;
   &:hover {
-    color: #87bffa;
+    color: var(--theme-color);
   }
 }
 
@@ -222,4 +222,9 @@ a {
 }
 .vuepress-markdown-body h1 {
   font-size: 1.75rem !important;
+}
+
+input:-webkit-autofill {
+  box-shadow: inset 0 0 0 1000px var(--input-bg-color) !important; // 改变了背景色
+  -webkit-text-fill-color: var(--text-color); // 改变了字体颜色
 }
