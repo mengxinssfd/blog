@@ -55,6 +55,7 @@ const links = computed<Array<{ page: number; link: string }>>(() => {
     padding: 0;
   }
   a {
+    pointer-events: initial !important;
     color: inherit;
     width: 100%;
     height: 100%;
