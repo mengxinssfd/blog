@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BlogBaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
 
@@ -15,10 +15,13 @@ export class FriendLinkEntity extends BlogBaseEntity {
 
   @Column('varchar', { length: 100, comment: '站名' })
   name!: string;
-  @Column('varchar', { length: 254, comment: '描述', nullable: true })
+  @Column('varchar', { length: 500, comment: '描述', nullable: true })
   desc?: string;
   @Column('varchar', { length: 254, comment: '链接', unique: true })
   link!: string;
+
+  @Column('varchar', { length: 500, comment: '申请描述', nullable: true })
+  applyDesc?: string;
 
   @Column('varchar', { length: 500, comment: '屏幕截图', nullable: true })
   screenshot!: string;
@@ -29,16 +32,6 @@ export class FriendLinkEntity extends BlogBaseEntity {
     default: UserEntity.DEFAULT_AVATAR,
   })
   avatar!: string;
-
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'createBy' })
-  owner!: UserEntity;
-
-  @Column('int', {
-    comment: '创建人id',
-    select: false,
-  })
-  createBy!: number;
 
   @Column('enum', {
     enum: FriendLinkState,
