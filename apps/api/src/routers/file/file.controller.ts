@@ -18,9 +18,10 @@ import { CreateFileDto } from '@blog/dtos/file/create-file.dto';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
-import { FileEntity } from '@blog/entities';
+import { FileEntity, UserEntity } from '@blog/entities';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
 import { PageDto } from '@blog/dtos/page.dto';
+import { User } from '@/utils/decorator';
 
 @ApiTags('file')
 @Controller('file')
@@ -37,8 +38,9 @@ export class FileController {
     @UploadedFile()
     file: any,
     @Body() createFileDto: CreateFileDto,
+    @User() user: UserEntity,
   ) {
-    return this.fileService.create(file, createFileDto.timeStampName === '1');
+    return this.fileService.create(file, createFileDto.timeStampName === '1', user);
   }
 
   @ApiBearerAuth()

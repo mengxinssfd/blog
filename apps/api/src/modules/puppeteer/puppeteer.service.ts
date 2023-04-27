@@ -14,11 +14,11 @@ export class AppPuppeteerService {
 
   async getSiteInfoWithScreenshotUrl(link: string, filename?: string) {
     const siteInfo = await this.getSiteInfo(link);
-    const screenshotUrl = await this.fileHelperService.create(
-      filename || new URL(link).host,
-      siteInfo.screenshot,
-      'image/webp',
-    );
+    const screenshotUrl = await this.fileHelperService.create(siteInfo.screenshot, {
+      filename: filename || new URL(link).host,
+      ownerId: 1,
+      mimetype: 'image/webp',
+    });
     Logger.info('上传截图到oss', link, screenshotUrl);
     return { ...siteInfo, screenshot: screenshotUrl };
   }

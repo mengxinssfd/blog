@@ -1,5 +1,6 @@
 import { BlogBaseEntity } from './base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { UserEntity } from './user.entity';
 
 @Entity('file')
 export class FileEntity extends BlogBaseEntity {
@@ -16,4 +17,13 @@ export class FileEntity extends BlogBaseEntity {
 
   @Column('varchar', { comment: '文件类型', length: 50 })
   mimetype!: string;
+
+  @Column('int', { comment: '创建人ID', nullable: true })
+  ownerId!: number;
+
+  @ManyToOne(() => UserEntity, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'ownerId' })
+  owner!: UserEntity;
 }

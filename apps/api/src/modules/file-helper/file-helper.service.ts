@@ -30,21 +30,21 @@ export class FileHelperService {
     }
   }
 
-  private async saveFile(filename: string, size: number, mimetype: string, url: string) {
+  private async saveFile(
+    options: Pick<FileEntity, 'filename' | 'size' | 'mimetype' | 'url' | 'ownerId'>,
+  ) {
     const file =
-      (await this.repository.findOne({ where: { filename: filename } })) || new FileEntity();
+      (await this.repository.findOne({ where: { filename: options.filename } })) ||
+      new FileEntity();
 
-    file.filename = filename;
-    file.size = size;
-    file.url = url;
-    file.mimetype = mimetype;
+    Object.assign(file, options);
 
     return await this.repository.save(file);
   }
 
-  async create(filename: string, buffer: Buffer, mimetype: string) {
-    const url = await this.ossService.uploadBuffer(filename, buffer);
-    this.saveFile(filename, buffer.length, mimetype, url);
+  async create(buffer: Buffer, options: Pick<FileEntity, 'filename' | 'mimetype' | 'ownerId'>) {
+    const url = await this.ossService.uploadBuffer(options.filename, buffer);
+    this.saveFile({ ...options, size: buffer.length, url });
     return url;
   }
 

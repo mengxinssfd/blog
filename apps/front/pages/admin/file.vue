@@ -77,12 +77,17 @@ getData();
           {{ formatBytes(scope.row.size) }}
         </template>
       </el-table-column>
+      <el-table-column label="创建人">
+        <template #default="scope">
+          {{ scope.row.owner.username }}
+        </template>
+      </el-table-column>
       <el-table-column label="创建日期" prop="createAt">
         <template #default="scope">
           {{ formatDate(scope.row.createAt) }}
         </template>
       </el-table-column>
-      <el-table-column label="更新日期" prop="createAt">
+      <el-table-column label="更新日期" prop="updateAt">
         <template #default="scope">
           {{ formatDate(scope.row.updateAt) }}
         </template>
