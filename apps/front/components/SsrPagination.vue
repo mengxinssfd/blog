@@ -43,7 +43,6 @@ const links = computed<Array<{ page: number; link: string }>>(() => {
     .map((_, index) => {
       const page = index + 1;
       const link = setUrlQuery({ page }, route.fullPath);
-      console.log(link);
       return { page, link };
     });
 });

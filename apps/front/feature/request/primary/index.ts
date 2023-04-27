@@ -110,5 +110,4 @@ export class PrimaryRequest<
   }
 }
 
-console.log('111111111');
 setRequestIns(PrimaryRequest.ins);

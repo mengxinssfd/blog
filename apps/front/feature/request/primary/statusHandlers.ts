@@ -7,7 +7,6 @@ import { PrimaryCustomConfig } from '@blog/apis';
 // 通用错误Handler
 const errorHandler: StatusHandler<PrimaryCustomConfig> = ({ customConfig }, res, data) => {
   !process.server && !customConfig.silent && ElMessage({ type: 'error', message: data.msg });
-  console.log('000000', data, res);
   // throw data.data || new Error( `data: ${JSON.stringify(data)}`);
   return Promise.reject(customConfig.returnRes ? res : data);
 };
