@@ -21,6 +21,10 @@ export function deleteCommentOne(id: ID) {
   return Delete(`/${id}`);
 }
 
-export function getReplyMeList(data: PageDto) {
+export function getReplyMeList(_: unknown, data: PageDto) {
   return Get<PageVo<CommentEntity>>(`/reply`, data, { cache: true });
+}
+
+export function getRecentComment(count = 6) {
+  return Get<CommentEntity[]>(`/recent/${count}`, undefined, { cache: false });
 }
