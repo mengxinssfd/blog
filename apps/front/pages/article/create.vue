@@ -1,146 +1,178 @@
 <template>
-  <div class="pg article-create">
-    <Banner height="300px" :bg-img="bannerImg">
-      <template #content>
-        <h1 class="pg-title">{{ writeType }}</h1>
-      </template>
-    </Banner>
-    <ClientOnly>
-      <div class="pg-content main-width">
-        <el-form ref="formRef" :model="form" :rules="rules" label-width="60px">
-          <el-form-item label="标题:" prop="title">
-            <el-input v-model="form.title"></el-input>
-          </el-form-item>
-          <el-form-item label="描述:" prop="description">
-            <el-input v-model="form.description" type="textarea"></el-input>
-          </el-form-item>
-          <el-form-item label="封面:" prop="cover">
-            <el-input v-model="form.cover"></el-input>
-            <img v-if="form.cover" class="cover" :src="form.cover" alt="" />
-          </el-form-item>
-          <el-form-item label="BGM:" prop="bgm">
-            <el-input v-model="form.bgm"></el-input>
-            <audio v-if="form.bgm" :src="form.bgm" autoplay controls></audio>
-          </el-form-item>
-          <el-form-item label="分类:" prop="categoryId">
-            <el-select v-model="form.categoryId" placeholder="请选择文章分类">
-              <el-option
-                v-for="item in categories"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
-            <el-icon class="el-icon-plus" size="16">
-              <Plus @click="toggleCateVisible()"></Plus>
-            </el-icon>
-          </el-form-item>
+  <NuxtLayout name="page">
+    <template #aside>
+      <Widget title="本地缓存">
+        <ClientOnly>
+          <div class="widget-content">
+            <ul>
+              <li>
+                <el-popconfirm title="清理手动存储的存档?" @confirm="clearSaved">
+                  <template #reference>
+                    <el-button link>
+                      <el-icon>
+                        <i class="iconfont icon-delete"></i>
+                      </el-icon>
+                      <span>清理缓存(浏览器)</span>
+                    </el-button>
+                  </template>
+                </el-popconfirm>
+              </li>
+              <li>
+                <el-button link @click="onSave">
+                  <el-icon>
+                    <Coin />
+                  </el-icon>
+                  <span>手动保存(浏览器)</span>
+                </el-button>
+              </li>
+              <li>
+                <el-popconfirm title="清理自动存储的存档?" @confirm="clearAutoSaved">
+                  <template #reference>
+                    <el-button link>
+                      <el-icon>
+                        <i class="iconfont icon-delete"></i>
+                      </el-icon>
+                      <span>清理自动缓存(浏览器标签页)</span>
+                    </el-button>
+                  </template>
+                </el-popconfirm>
+              </li>
+              <li class="_ flex-c" title="(关闭浏览器标签后清除)">
+                <label>自动保存(浏览器标签页)：<el-switch v-model="autoSave"></el-switch></label>
+              </li>
+            </ul>
+          </div>
+        </ClientOnly>
+      </Widget>
+      <WidgetDailyImg />
+      <WidgetUpload />
+    </template>
+    <div class="pg article-create">
+      <ClientOnly>
+        <div class="pg-content board">
+          <el-form ref="formRef" :model="form" :rules="rules" label-width="60px">
+            <el-form-item label="标题:" prop="title">
+              <el-input v-model="form.title"></el-input>
+            </el-form-item>
+            <el-form-item label="描述:" prop="description">
+              <el-input v-model="form.description" type="textarea"></el-input>
+            </el-form-item>
+            <el-form-item label="封面:" prop="cover">
+              <el-input v-model="form.cover"></el-input>
+              <img v-if="form.cover" class="cover" :src="form.cover" alt="" />
+            </el-form-item>
+            <el-form-item label="BGM:" prop="bgm">
+              <el-input v-model="form.bgm"></el-input>
+              <audio v-if="form.bgm" :src="form.bgm" autoplay controls></audio>
+            </el-form-item>
+            <el-form-item label="分类:" prop="categoryId">
+              <el-select v-model="form.categoryId" placeholder="请选择文章分类">
+                <el-option
+                  v-for="item in categories"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+              <el-icon class="el-icon-plus" size="16">
+                <Plus @click="toggleCateVisible()"></Plus>
+              </el-icon>
+            </el-form-item>
 
-          <el-form-item label="标签:" prop="tags">
-            <el-select
-              v-model="form.tags"
-              class="tag-select"
-              multiple
-              filterable
-              allow-create
-              default-first-option
-              placeholder="请选择文章标签">
-              <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.id">
-              </el-option>
-            </el-select>
-            <el-icon class="el-icon-plus" size="16">
-              <Plus @click="toggleTagVisible()"></Plus>
-            </el-icon>
-          </el-form-item>
-          <el-form-item label="公开:" prop="isPublic">
-            <el-checkbox v-model="form.isPublic"></el-checkbox>
-          </el-form-item>
-          <el-form-item label="文章:" prop="content">
-            <div class="editor-wrapper">
-              <ClientOnly>
-                <ArticleCreateMdEditor
-                  v-model:value="form.content"
-                  @save="onSaveMd"></ArticleCreateMdEditor>
-              </ClientOnly>
-            </div>
-          </el-form-item>
-        </el-form>
-        <div class="upload">
-          timeStampName
-          <el-switch
-            v-model="uploadOpt.data.timeStampName"
-            :inactive-value="0"
-            :active-value="1"></el-switch>
-          <el-upload class="upload-demo" v-bind="uploadOpt" :file-list="fileList" drag>
-            <div class="el-upload__text _ h-p100 flex-c-c">
-              Drop file here or <em>click to upload</em>
-            </div>
-            <template #tip>
-              <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
-            </template>
-          </el-upload>
-        </div>
+            <el-form-item label="标签:" prop="tags">
+              <el-select
+                v-model="form.tags"
+                class="tag-select"
+                multiple
+                filterable
+                allow-create
+                default-first-option
+                placeholder="请选择文章标签">
+                <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.id">
+                </el-option>
+              </el-select>
+              <el-icon class="el-icon-plus" size="16">
+                <Plus @click="toggleTagVisible()"></Plus>
+              </el-icon>
+            </el-form-item>
+            <el-form-item label="公开:" prop="isPublic">
+              <el-checkbox v-model="form.isPublic"></el-checkbox>
+            </el-form-item>
+            <el-form-item label="文章:" prop="content">
+              <div class="editor-wrapper">
+                <ClientOnly>
+                  <ArticleCreateMdEditor
+                    v-model:value="form.content"
+                    @save="onSave"></ArticleCreateMdEditor>
+                </ClientOnly>
+              </div>
+            </el-form-item>
+          </el-form>
 
-        <div class="btn-block">
-          <el-button type="primary" @click="submit">提交</el-button>
+          <div class="btn-block">
+            <el-button type="primary" @click="submit">提交</el-button>
+          </div>
         </div>
-      </div>
-      <ArticleCreateCategory
-        :visible="cateVisible"
-        @update:content="cateVisible = $event"
-        @create-success="getCategoryListData"></ArticleCreateCategory>
-      <ArticleCreateTag
-        v-model:visible="tagVisible"
-        @create-success="getTagList"></ArticleCreateTag>
-    </ClientOnly>
-  </div>
+        <ArticleCreateCategory
+          :visible="cateVisible"
+          @update:content="cateVisible = $event"
+          @create-success="getCategoryListData"></ArticleCreateCategory>
+        <ArticleCreateTag
+          v-model:visible="tagVisible"
+          @create-success="getTagList"></ArticleCreateTag>
+      </ClientOnly>
+    </div>
+  </NuxtLayout>
 </template>
 
 <script lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { updateObj } from '@tool-pack/basic';
-import { Plus } from '@element-plus/icons-vue';
-import { copy2Clipboard } from '@mxssfd/ts-utils';
+import { debounce, updateObj } from '@tool-pack/basic';
+import { Plus, Coin } from '@element-plus/icons-vue';
 import {
   createArticle,
   getCategoryList,
   getRawArticleDetail,
   updateArticle,
   getTags,
-  uploadUrl,
 } from '@blog/apis';
 import type { ArticleEntity, CategoryEntity, TagEntity } from '@blog/entities';
-import { useRoute, useRouter } from '#app';
-import { useToggleState } from '~/feature/hooks';
-import { Token } from '~/feature/request/primary/token';
-import { definePageMeta } from '#imports';
+import { useToggleState, useStorageItem } from '~/feature/hooks';
 
 definePageMeta({ authorized: true });
 export default defineComponent({
   components: {
     Plus,
+    Coin,
   },
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const localStorageKey = 'md-save';
     const [cateVisible, toggleCateVisible] = useToggleState(false);
     const [tagVisible, toggleTagVisible] = useToggleState(false);
     const formRef = ref();
+    const autoSaveSI = useStorageItem<boolean>('autoSaveArticle');
+    const form = reactive({
+      title: '',
+      description: '',
+      cover: '',
+      content: '',
+      tags: [],
+      bgm: '',
+      categoryId: '',
+      isPublic: true,
+    });
+    const tempFormSI = useStorageItem<typeof form>(
+      'tempArticleSave',
+      process.client ? sessionStorage : null,
+    );
+    const formSI = useStorageItem<typeof form>('articleSave');
+
     const Data = {
       categories: ref<CategoryEntity[]>([]),
       tags: ref<TagEntity[]>([]),
       showEditor: ref(false),
-      form: reactive({
-        title: '',
-        description: '',
-        cover: '',
-        content: '',
-        tags: [],
-        bgm: '',
-        categoryId: '',
-        isPublic: true,
-      }),
+      form,
       article: ref<ArticleEntity | null>(null),
       mdEditorRef: ref(),
       formRef,
@@ -154,44 +186,7 @@ export default defineComponent({
         tags: { required: true, message: '标签不能为空' },
         categoryId: { required: true, message: '分类不能为空' },
       },
-      uploadOpt: {
-        action: import.meta.env.VITE_BASE_URL + uploadUrl,
-        headers: {
-          authorization: `Bearer ${Token.get()}`,
-        },
-        'on-error'(res: { message: string }) {
-          const { msg }: { msg: string } = JSON.parse(res.message);
-          ElMessage({ type: 'error', message: msg });
-        },
-        'on-success'(res: { data: string }, file: { name: string }) {
-          const find = Data.fileList.value.find((i) => i.name === file.name);
-          if (!find) {
-            return;
-          }
-          find.url = res.data;
-        },
-        'on-change'(file: any, fileList: any) {
-          file.status === 'ready' && (Data.fileList.value = fileList.slice());
-        },
-        'on-preview'({ url }: { url: string }) {
-          if (!url) {
-            ElMessage({ type: 'error', message: '链接为空' });
-            return;
-          }
-          copy2Clipboard(url).then(() =>
-            ElMessage({ type: 'success', message: '链接已复制到剪贴板' }),
-          );
-        },
-        data: reactive({
-          timeStampName: 0,
-        }),
-      },
-      fileList: ref<{ name: string; url: string }[]>([
-        /* {
-          name: 'food.jpeg',
-          url: 'https://....',
-        }, */
-      ]),
+      autoSave: ref(autoSaveSI.get(true)),
     };
     const Computed = {
       writeType: computed(() => {
@@ -203,8 +198,20 @@ export default defineComponent({
       }),
     };
     const _Methods = {
-      loadMd() {
-        Data.form.content = localStorage.getItem(localStorageKey) || '';
+      autoSaveData: debounce(() => {
+        tempFormSI.set(Data.form);
+      }, 1000),
+      loadSaved() {
+        let saved = tempFormSI.get();
+        let scoped = '临时缓存，存于当前浏览器标签页';
+        if (!saved) {
+          saved = formSI.get();
+          scoped = '存于当前浏览器';
+        }
+        if (!saved) return;
+        ElMessageBox.confirm(`有草稿存档(${scoped})，是否加载存档？`).then(() => {
+          updateObj(Data.form, saved);
+        });
       },
       async getArticle() {
         const { data: article } = await getRawArticleDetail(articleId);
@@ -216,8 +223,16 @@ export default defineComponent({
       },
     };
     const Methods = {
-      onSaveMd() {
-        localStorage.setItem(localStorageKey, Data.form.content);
+      clearAutoSaved() {
+        tempFormSI.remove();
+        ElMessage.success('清除成功');
+      },
+      clearSaved() {
+        formSI.remove();
+        ElMessage.success('清除成功');
+      },
+      onSave() {
+        formSI.set(Data.form);
         ElMessage.success('保存成功');
       },
       async getCategoryListData() {
@@ -252,6 +267,8 @@ export default defineComponent({
           const res = await createArticle(form);
           articleId = res.data.id;
         }
+
+        tempFormSI.remove();
         await ElMessageBox.confirm('是否打开文章详情页?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -268,8 +285,16 @@ export default defineComponent({
     onMounted(() => {
       if (articleId) {
         _Methods.getArticle();
+      } else {
+        _Methods.loadSaved();
       }
-      _Methods.loadMd();
+      watch(Data.autoSave, (n) => {
+        autoSaveSI.set(n);
+      });
+      watch(Data.form, () => {
+        if (Data.autoSave.value) _Methods.autoSaveData();
+      });
+
       Methods.getTagList();
       Methods.getCategoryListData();
 
@@ -285,7 +310,7 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .pg.article-create {
   .editor-wrapper {
     display: block;
@@ -299,23 +324,13 @@ export default defineComponent({
   }
   .pg-content {
     position: relative;
-    margin-top: -20px;
     padding: 40px 20px;
-    border-radius: var(--board-radius);
-    box-shadow: var(--board-shadow);
-    background: var(--board-bg-color);
   }
   .pg-title {
     font-size: 30px;
     text-align: center;
     font-weight: bold;
     color: var(--navbar-text-color);
-  }
-  .upload {
-    margin-left: 60px;
-    .el-upload {
-      margin-top: 6px;
-    }
   }
   .cover {
     height: 100px;
@@ -345,6 +360,16 @@ export default defineComponent({
         display: block;
       }
     }
+  }
+}
+.widget-content {
+  padding: 0 10px;
+  font-size: 13px;
+  .el-button {
+    font-size: inherit;
+  }
+  li + li {
+    margin-top: 10px;
   }
 }
 </style>
