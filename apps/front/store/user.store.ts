@@ -32,6 +32,9 @@ const useUserStore = defineStore('user', () => {
       Token.clear();
       user.value = {} as UserEntity;
     },
+    isLogin() {
+      return Token.exists();
+    },
   };
 });
 
