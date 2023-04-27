@@ -82,6 +82,11 @@ getData();
           {{ formatDate(scope.row.createAt) }}
         </template>
       </el-table-column>
+      <el-table-column label="更新日期" prop="createAt">
+        <template #default="scope">
+          {{ formatDate(scope.row.updateAt) }}
+        </template>
+      </el-table-column>
       <el-table-column label="文件名" prop="filename" />
       <el-table-column label="图片" prop="url">
         <template #default="scope">
