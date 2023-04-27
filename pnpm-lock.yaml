@@ -9,7 +9,7 @@ importers:
       '@commitlint/cli': ^17.4.4
       '@commitlint/config-conventional': ^17.4.4
       '@nuxtjs/eslint-config-typescript': ^12.0.0
-      '@tool-pack/basic': ^0.0.18
+      '@tool-pack/basic': ^0.0.19
       '@tool-pack/types': ^0.0.2
       '@types/jest': ^29.4.0
       '@typescript-eslint/eslint-plugin': ^5.54.1
@@ -37,7 +37,7 @@ importers:
       '@blog/dtos': link:packages/dtos
       '@blog/entities': link:packages/entities
       '@blog/permission-rules': link:packages/permission-rules
-      '@tool-pack/basic': 0.0.18
+      '@tool-pack/basic': 0.0.19
       typeorm: 0.3.12
     devDependencies:
       '@commitlint/cli': 17.4.4
@@ -83,7 +83,7 @@ importers:
       '@nestjs/testing': ^9.2.1
       '@nestjs/throttler': ^4.0.0
       '@nestjs/typeorm': ^9.0.1
-      '@tool-pack/basic': ^0.0.18
+      '@tool-pack/basic': ^0.0.19
       '@types/ali-oss': ^6.16.7
       '@types/express': ^4.17.16
       '@types/marked': ^4.0.8
@@ -132,7 +132,7 @@ importers:
       '@nestjs/swagger': 6.2.1_4fhhxyztwhblafku3krlstrun4
       '@nestjs/throttler': 4.0.0_dntc3uqqknzoduyjojusds5kla
       '@nestjs/typeorm': 9.0.1_rq3e63xrdnihep2b3mxfcpnrny
-      '@tool-pack/basic': 0.0.18
+      '@tool-pack/basic': 0.0.19
       ali-oss: 6.17.1
       class-transformer: 0.5.1
       class-validator: 0.14.0
@@ -180,7 +180,7 @@ importers:
       '@pinia/nuxt': ^0.4.7
       '@request-template/axios': ^2.2.0
       '@request-template/vue3-hooks': ^2.2.0
-      '@tool-pack/basic': ^0.0.18
+      '@tool-pack/basic': ^0.0.19
       '@tool-pack/bom': ^0.0.1-beta.0
       '@tool-pack/dom': ^0.0.1-beta.5
       '@tool-pack/types': ^0.0.2
@@ -204,7 +204,7 @@ importers:
       '@pinia/nuxt': 0.4.7_vue@3.2.47
       '@request-template/axios': 2.2.0_kwluvmi6j6kwp7dzvjbpwkkfty
       '@request-template/vue3-hooks': 2.2.0_vue@3.2.47
-      '@tool-pack/basic': 0.0.18
+      '@tool-pack/basic': 0.0.19
       '@tool-pack/bom': 0.0.1-beta.0
       '@tool-pack/dom': 0.0.1-beta.5
       axios: 1.3.5
@@ -3756,10 +3756,10 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
-  /@tool-pack/basic/0.0.18:
+  /@tool-pack/basic/0.0.19:
     resolution:
       {
-        integrity: sha512-PeE6ryoBKBQBU+8wvU46W9X6KYtd30D8Zk3C9BJrnAVNCPYIKZSsB3IcFGgmPOTg8vIeVx/k/a8fFqvc2bbBhw==,
+        integrity: sha512-enliVB7a9w/cQDZ2Q46uVhGna89SBEX2AjoX63EQLSyxFH5OA0aA9UIr8wlFKaA/E89flqOZ024jJtD/SKD8lA==,
       }
     dependencies:
       '@tool-pack/types': 0.0.2
