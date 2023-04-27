@@ -136,10 +136,6 @@ function onSelect(id: string) {
 .widget-content {
   max-height: 60vh;
   overflow: auto;
-  --el-menu-bg-color: var(--board-bg-color);
-  --el-menu-text-color: var(--text-color);
-  --el-menu-hover-bg-color: var(--link-hover-bg-color);
-  --el-menu-active-color: var(--theme-color);
   --el-menu-item-height: 2.3rem;
   --el-menu-sub-item-height: 2.3rem;
   .el-menu {

@@ -6,8 +6,9 @@
     <section class="list">
       <template v-if="article.list.length">
         <IndexCard
-          v-for="item in article.list"
+          v-for="(item, i) in article.list"
           :key="item.id"
+          :reverse="i % 2 !== 0"
           :item="item"
           @update-like="updateLike(item, $event)"></IndexCard>
       </template>
@@ -34,7 +35,6 @@
 
 <script lang="ts">
 import { getArticleList, type GetArticleListRes } from '@blog/apis';
-import { defineComponent, reactive, ref, onMounted, watch } from '#imports';
 import { navigateTo, useAsyncData, useRoute } from '#app';
 
 definePageMeta({
@@ -69,7 +69,7 @@ export default defineComponent({
       refreshData() {},
       backTop() {
         // scrollTo((Data.contentRef.value?.offsetTop ?? 741) - 60, 30);
-        Data.contentRef.value?.scrollIntoView({ block: 'start' /* , behavior: 'smooth' */ });
+        document.body.scrollIntoView({ block: 'start' /* , behavior: 'smooth' */ });
       },
       onPageChange() {
         Methods.backTop();
@@ -112,12 +112,6 @@ export default defineComponent({
   display: block;
   margin: 0 !important;
   font-size: 0;
-  @media screen and (max-width: 600px) {
-    padding-top: 68px;
-    .c-banner {
-      display: none;
-    }
-  }
   .text-block {
     width: 100%;
     color: white;
@@ -153,17 +147,16 @@ export default defineComponent({
       background: linear-gradient(#161329, var(--body-bg-color));
     }
     &.content {
-      margin-top: 0;
       position: relative;
       > .filters,
       > .list,
       > .pagination {
         position: relative;
-        padding: 20px;
+        margin-top: 1rem;
         font-size: 1rem;
       }
       > .filters {
-        position: relative;
+        margin-top: 0;
         z-index: 5;
         //margin-top: -70px;
         //min-height: 150px;

@@ -34,15 +34,16 @@ defineProps({
 </script>
 <style lang="scss">
 .c-link-card {
-  padding: 10px;
-  border-radius: 8px;
   color: var(--text-color);
+  border-radius: 8px;
   .screenshot {
     margin-bottom: 10px;
-    border-radius: 4px;
+    border-radius: 8px 8px 0 0;
   }
   .link-info {
+    padding: 10px;
     color: inherit;
+    border-radius: 0 0 8px 8px;
     &:hover {
       .name {
         color: var(--theme-color);

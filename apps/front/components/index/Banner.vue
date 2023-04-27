@@ -95,7 +95,7 @@ export default defineComponent({
       default: false,
     },
   },
-  async setup(props) {
+  setup(props) {
     const [bannerStyle, useBannerScrollWatch] = useBanner();
     const Data = {
       bgClass: 'color-' + randomInt(1, 4),
@@ -141,7 +141,7 @@ export default defineComponent({
 
     onMounted(init);
 
-    await Methods.getDailyImg();
+    // await Methods.getDailyImg();
     return {
       ...Data,
       ...Computed,

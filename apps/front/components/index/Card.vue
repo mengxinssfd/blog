@@ -1,6 +1,6 @@
 <template>
-  <NuxtLink :to="detailUrl" class="c-card">
-    <div class="cover-block img-box">
+  <NuxtLink :to="detailUrl" class="c-card _ flex-c" :class="{ reverse }">
+    <div class="cover-block before-cover _ img-box">
       <img
         :src="item?.cover || TODAY_COVER_URL"
         alt=""
@@ -8,18 +8,23 @@
         :onerror="`this.src='${TODAY_COVER_URL}'`" />
     </div>
     <div class="content-block _ flex-col-evenly">
-      <h1 class="title">
+      <h1 class="title _ ellipsis-2">
         {{ item.title }}
       </h1>
-      <div class="time">
+      <div class="info _ flex-c">
+        <div class="author _ flex-c">
+          <div class="author-name _ ellipsis-1" @click.stop.prevent="toUser(item)">
+            <i class="iconfont icon-user"></i>{{ item.author.nickname }}
+          </div>
+        </div>
         <div class="create-at">
-          <i class="iconfont icon-create-at"></i>{{ relativeTime(item.createAt) }}
+          <i class="iconfont icon-create-at"></i>
+          发布于{{ relativeTime(item.createAt) }}
         </div>
         <div class="update-at">
-          <i class="iconfont icon-update-at"></i>{{ relativeTime(item.updateAt) }}
+          <i class="iconfont icon-update-at"></i>
+          更新于{{ relativeTime(item.updateAt) }}
         </div>
-      </div>
-      <div class="cate-tag _ flex-c">
         <div class="category _ flex-c">
           <i class="iconfont icon-category"></i>{{ item.category?.name }}
         </div>
@@ -30,15 +35,9 @@
           </span>
         </div>
       </div>
-      <p class="desc _ ellipsis-1">{{ item.description }}</p>
+      <p class="desc _ ellipsis-2">{{ item.description }}</p>
 
       <div class="bottom _ flex-c-between">
-        <div class="author _ flex-c">
-          <div class="author-name _ ellipsis-1" @click.stop.prevent="toUser(item)">
-            <i class="iconfont icon-user"></i>{{ item.author.nickname }}
-          </div>
-        </div>
-
         <div class="operate _ flex-c">
           <div class="view">
             <i class="iconfont icon-view"></i>
@@ -54,6 +53,13 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="cover-block after-cover _ img-box">
+      <img
+        :src="item?.cover || TODAY_COVER_URL"
+        alt=""
+        loading="lazy"
+        :onerror="`this.src='${TODAY_COVER_URL}'`" />
     </div>
   </NuxtLink>
 </template>
@@ -79,6 +85,10 @@ export default defineComponent({
         };
       },
     },
+    reverse: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['updateLike'],
   setup(props, ctx) {
@@ -86,7 +96,6 @@ export default defineComponent({
     const Data = {
       detailUrl: '/article/detail/' + props.item.id,
       randCoverColor: RGB.random(),
-      tagColors: ['', 'success', 'info', 'warning', 'danger'],
       TODAY_COVER_URL,
     };
     const Methods = {
@@ -113,38 +122,29 @@ export default defineComponent({
 .c-card {
   display: block;
   box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.015);
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
   border-radius: 10px;
-  padding: 0;
   text-decoration: none;
   transition: transform 0.3s;
   color: #4e5969;
-  @media (min-width: 780px) {
-    display: inline-block;
-    vertical-align: top;
-    width: 49%;
-    &:nth-child(even) {
-      margin-left: 2%;
-    }
-  }
   &:hover {
-    transform: translateZ(0);
-    //box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.06);
-    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.66));
+    position: relative;
+    //transform: translateZ(0);
+    box-shadow: 0 0 16px 16px rgba(0, 0, 0, 0.06);
+    //filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.66));
+    transform: translateY(-12px);
     .img-box img {
       filter: saturate(1.75);
     }
   }
   .cover-block {
-    height: 286px;
+    height: 238px;
+    width: 238px;
     overflow: hidden;
     filter: brightness(0.99);
     background: #fcfcfc;
-    border-radius: 10px 10px 0 0;
-    .empty-cover {
-      width: 100%;
-      height: 100%;
-    }
+    border-radius: 10px 0 0 10px;
+    transition: width 0.3s linear;
   }
   .content-block {
     flex: 1;
@@ -158,11 +158,6 @@ export default defineComponent({
       .iconfont {
         font-size: 12px;
       }
-      .time {
-        span {
-          margin-right: 8px;
-        }
-      }
       div {
         + div {
           margin-left: 6px;
@@ -171,15 +166,17 @@ export default defineComponent({
         }
       }
     }
-    .time {
-      display: flex;
-      align-items: center;
+    .info {
+      flex-wrap: wrap;
+      margin: -6px;
       font-size: 12px;
       line-height: 1em;
       color: var(--sec-text-color);
-      font-family: 'Rubik', sans-serif;
+      span {
+        margin-right: 8px;
+      }
       > div {
-        margin-right: 6px;
+        margin: 6px;
       }
       i {
         font-size: 0.99em;
@@ -203,13 +200,12 @@ export default defineComponent({
       align-items: baseline;
       font-weight: 700;
       font-size: 22px;
-      line-height: 1em;
+      line-height: 1.6em;
       color: var(--text-color);
     }
     .desc {
       color: var(--text-color);
       font-size: 12px;
-      line-height: 22px;
     }
     .operate {
       font-size: 12px;
@@ -233,37 +229,33 @@ export default defineComponent({
       }
     }
   }
-  @media (max-width: 992px) {
-    .left {
-      flex: 0 0 200px;
+  .after-cover {
+    display: none;
+    border-radius: 0 10px 10px 0;
+  }
+
+  &.reverse {
+    .before-cover {
+      display: none;
     }
-    .right {
-      .author-name {
-        max-width: 50px;
-      }
+    .after-cover {
+      display: block;
     }
   }
-  @media (max-width: 767px) {
+  @media (max-width: 750px) {
     display: block !important;
-    .left {
+    box-shadow: none;
+    .before-cover {
+      display: block !important;
       width: 100%;
-      //height: auto;
-      margin-bottom: 20px;
+      border-radius: 0 !important;
     }
-    .right {
-      height: 130px;
+    .after-cover {
+      display: none !important;
     }
-  }
-  @media (max-width: 500px) {
-    .right {
-      .time {
-        display: block;
-        .update-at {
-          margin: 2px 0 0;
-          padding: 0;
-          border: 0;
-        }
-      }
+    &:hover {
+      box-shadow: none;
+      transform: none;
     }
   }
 }

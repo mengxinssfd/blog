@@ -6,10 +6,11 @@ export interface AnchorTree {
   label: string;
   id: string;
   tagName: string;
-  data?: { indent: number; title: string; id: number | string };
+  index: string;
+  active: boolean;
 }
 export interface CommentTree extends CommentEntity {
-  children: CommentTree[];
+  children?: CommentTree[];
   parent?: CommentTree;
   isOrphan: boolean;
 }

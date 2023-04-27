@@ -38,8 +38,24 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .md-preview {
   line-height: initial;
+}
+.md-editor {
+  border: 0;
+  height: 600px;
+  &,
+  & :deep(.md-editor-preview) {
+    --md-bk-color: var(--input-bg-color);
+    --md-color: var(--text-color);
+    --md-theme-color: var(--text-color);
+  }
+  .md-editor-toolbar-wrapper {
+    //border: 0;
+  }
+  :deep(.md-editor-footer) {
+    line-height: 20px;
+  }
 }
 </style>

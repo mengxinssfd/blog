@@ -2,23 +2,14 @@
 import useMenuStore from '~/store/menu.store';
 
 const menuStore = useMenuStore();
-
-watch(
-  () => menuStore.sideMenuVisible,
-  (n) => {
-    console.log(n);
-  },
-  { immediate: true },
-);
 </script>
 <template>
-  <el-drawer
+  <Drawer
     v-model="menuStore.sideMenuVisible"
-    :with-header="false"
-    :z-index="9"
     direction="ltr"
     class="c-aside-menu"
-    size="80%">
+    size="80%"
+    :z-index="9">
     <ul>
       <template v-for="item in menuStore.menu" :key="item.path">
         <li
@@ -26,23 +17,27 @@ watch(
           :class="{ active: menuStore.isActive(item.path) }"
           @click="menuStore.sideMenuVisible = false">
           <NuxtLink :to="item.path">
+            <i class="iconfont" :class="item.icon"></i>
             {{ item.title }}
           </NuxtLink>
         </li>
       </template>
     </ul>
-  </el-drawer>
+  </Drawer>
 </template>
 
 <style lang="scss">
 .c-aside-menu {
   .el-drawer__body {
-    padding-top: var(--header-height);
+    padding: var(--header-height) 0 1rem;
     li {
       > a {
         display: block;
-        padding: 1rem 10px;
+        padding: 1rem;
         color: inherit;
+        > .iconfont {
+          margin-right: 6px;
+        }
       }
       &.active {
         color: var(--theme-color);

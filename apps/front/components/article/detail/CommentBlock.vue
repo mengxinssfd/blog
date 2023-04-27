@@ -1,5 +1,6 @@
 <template>
-  <section class="c-comment-block main-width">
+  <div class="c-comment-block main-width">
+    <h2>评论</h2>
     <div class="write">
       <el-input
         v-model.trim="comment.form.content"
@@ -27,7 +28,7 @@
         :author-id="article.author.id"
         @update="onCommentUpdate"></ArticleDetailComment>
     </div>
-  </section>
+  </div>
 </template>
 
 <script lang="ts">
@@ -37,7 +38,7 @@ import { forEachRight } from '@tool-pack/basic';
 import { createComment, getCommentByArticle } from '@blog/apis';
 import { type ArticleEntity, ROLE } from '@blog/entities';
 import type { CommentTree } from './tree';
-import useUserStore from '~/store/user';
+import useUserStore from '~/store/user.store';
 
 export default defineComponent({
   name: 'CommentBlock',
@@ -128,12 +129,22 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .c-comment-block {
-  margin-top: 30px;
-  textarea {
-    background: var(--input-bg-color);
+  h2 {
+    margin-bottom: 1rem;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  :deep(textarea) {
+    background: var(--link-hover-bg-color);
     border: 0;
+    box-shadow: none;
+  }
+  .comm-right {
+    :deep(textarea) {
+      background: var(--input-bg-color);
+    }
   }
   .tourist-name {
     width: 200px;
@@ -141,7 +152,7 @@ export default defineComponent({
   }
   .btn-block {
     text-align: right;
-    margin: 30px 0 60px;
+    margin: 1rem 0;
   }
 }
 </style>

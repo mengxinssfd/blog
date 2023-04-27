@@ -4,11 +4,11 @@
       <client-only>
         <!--  排序  -->
         <el-dropdown @command="searchData.sort = $event">
-          <div class="el-dropdown-link">
+          <div>
             排序
-            <el-icon class="el-icon--right">
-              <arrow-down />
-            </el-icon>
+            <el-tag :closable="searchData.sort !== 3" size="small" @close="searchData.sort = 3">
+              {{ activeSort.label }}
+            </el-tag>
           </div>
           <template #dropdown>
             <el-dropdown-menu>
@@ -22,13 +22,17 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+
         <!--  分类  -->
         <el-dropdown @command="searchData.category = $event">
-          <div class="el-dropdown-link">
+          <div>
             分类
-            <el-icon class="el-icon--right">
-              <arrow-down />
-            </el-icon>
+            <el-tag
+              :closable="searchData.category !== 0"
+              size="small"
+              @close="searchData.category = 0">
+              {{ activeCate.name }}
+            </el-tag>
           </div>
           <template #dropdown>
             <el-dropdown-menu>
@@ -42,15 +46,22 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+
         <!--  标签  -->
         <div class="tag">
           <el-popover :width="400" trigger="hover">
             <template #reference>
               <div>
                 <span>标签</span>
-                <el-icon>
-                  <arrow-down />
-                </el-icon>
+                <el-tag
+                  v-for="tag in activeTags"
+                  :key="tag.id"
+                  :closable="getResultTagClosable(tag)"
+                  :round="!tag.type"
+                  size="small"
+                  @close="handleResultTagClick(tag)">
+                  {{ tag.name }}
+                </el-tag>
               </div>
             </template>
             <div class="pop-content">
@@ -82,37 +93,15 @@
         </div>
       </client-only>
     </div>
-    <div class="result-tags">
-      <el-tag
-        v-for="tag in resultTag"
-        :key="tag.id"
-        :closable="getResultTagClosable(tag)"
-        :round="!tag.type"
-        size="large"
-        @close="handleResultTagClick(tag)">
-        {{ tag.name }}
-      </el-tag>
-    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Search, RefreshLeft, ArrowDown } from '@element-plus/icons-vue';
+import { Search, RefreshLeft } from '@element-plus/icons-vue';
 import { debounce } from '@tool-pack/basic';
 import { getTags, getCategoryList } from '@blog/apis';
 import { CategoryEntity, TagEntity } from '@blog/entities';
 import * as Vue from 'vue';
-import {
-  navigateTo,
-  useAsyncData,
-  useRoute,
-  computed,
-  defineComponent,
-  onMounted,
-  reactive,
-  ref,
-  watch,
-} from '#imports';
 
 interface ResultTag {
   name: string;
@@ -128,7 +117,6 @@ export default defineComponent({
   components: {
     Search,
     RefreshLeft,
-    ArrowDown,
   },
   async setup() {
     const route = useRoute();
@@ -327,25 +315,23 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .c-index-filters {
+  padding: 0.5rem;
   .operation {
     font-size: 14px;
-    .el-dropdown-link {
-      width: 100%;
-    }
     > div {
       margin-right: 10px;
-      width: 100px;
-      line-height: 30px;
-      background: #f0f0f0;
       border-radius: 4px;
       text-align: center;
-      color: black;
-    }
-  }
-  .result-tags {
-    margin-top: 10px;
-    .el-tag {
-      margin: 2px;
+      color: var(--text-color);
+      cursor: pointer;
+      &:hover {
+        color: var(--theme-color);
+      }
+      &:focus-visible,
+      .el-tooltip__trigger:focus-visible {
+        border: 0;
+        outline: 0;
+      }
     }
   }
 }

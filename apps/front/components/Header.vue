@@ -1,5 +1,7 @@
 <template>
-  <header class="c-header" :class="{ 'on-top': scrollTop === 0 }">
+  <header
+    class="c-header"
+    :class="{ 'on-top': headerStore.isOnTop, [`mode-${headerStore.mode}`]: true }">
     <div class="effective-area _ flex-c-between main-width">
       <div class="left _ flex-c">
         <div class="btns _ flex-c">
@@ -67,16 +69,16 @@
 <script setup lang="ts">
 import { Search, SwitchButton } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
-import { useRoute, useRouter } from '#app';
 import useUserStore from '~/store/user.store';
 import useMenuStore from '~/store/menu.store';
+import useHeaderStore from '~/store/header.store';
 
+const headerStore = useHeaderStore();
 const route = useRoute();
 const menuStore = useMenuStore();
 const router = useRouter();
 const userStore = useUserStore();
 const searchValue = ref((route.query.query as string) || '');
-const scrollTop = ref(0);
 
 const loginPageUrl = computed(() => '/user/login?fromUrl=' + encodeURIComponent(route.fullPath));
 const currentPath = computed(() => route.path);
@@ -88,9 +90,6 @@ watch(route, () => {
   const query = route.query.query as string;
   query && (searchValue.value = query);
 }); */
-
-const getScrollTop = () =>
-  (scrollTop.value = document.documentElement.scrollTop || document.body.scrollTop);
 
 const toSearch = () => {
   const query = { ...route.query, query: searchValue.value };
@@ -104,15 +103,6 @@ const onSelect = (command: string) => {
   }
   router.replace({ path: command });
 };
-
-onMounted(() => {
-  getScrollTop();
-  addEventListener('scroll', getScrollTop);
-});
-
-onBeforeUnmount(() => {
-  removeEventListener('scroll', getScrollTop);
-});
 </script>
 <style lang="scss">
 .c-header {
@@ -120,15 +110,18 @@ onBeforeUnmount(() => {
   + * {
     padding-top: 60px;
   }
-  background: var(--navbar-bg-color);
+  background-color: var(--navbar-bg-color);
   backdrop-filter: saturate(5) blur(20px);
   font-size: 14px;
   color: var(--text-color);
-  transition: background 0.5s ease-in-out, height 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  a,
+  .el-button {
+    color: inherit;
+  }
   .el-button {
     background: none !important;
     border: 0 !important;
-    color: var(--text-color);
     box-shadow: none;
     &.is-disabled {
       color: var(--theme-color);
@@ -142,6 +135,12 @@ onBeforeUnmount(() => {
     //height: 68px;
     //background: rgba(0, 0, 0, 0.05);
     //box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  }
+  &.mode-transparent.on-top {
+    --navbar-bg-color: rgba(0, 0, 0, 0);
+    --text-color: white;
+    backdrop-filter: none;
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
   }
   .effective-area {
     padding: 0 10px;
