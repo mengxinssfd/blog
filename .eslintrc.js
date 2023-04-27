@@ -49,6 +49,7 @@ module.exports = {
         // 使用结尾分号
         semi: 'off',
         'vue/no-v-model-argument': 'off',
+        'vue/no-multiple-template-root': 'off',
         'vue/html-indent': [
           'error',
           2,
