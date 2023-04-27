@@ -1,5 +1,6 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { ROLE } from '@blog/entities';
+import { Files, PieChart } from '@element-plus/icons-vue';
 
 definePageMeta({
   // middleware: ['admin'],
@@ -15,22 +16,22 @@ const tabs = reactive({
     {
       label: '账号',
       name: 'account',
-      icon: 'icon-user',
+      icon: <i class="iconfont icon-user" />,
     },
     {
       label: '统计',
       name: 'statistics',
-      icon: 'icon-huifu',
+      icon: <PieChart />,
     },
     {
       label: '友链',
       name: 'friend-link',
-      icon: 'icon-link',
+      icon: <i class="iconfont icon-link" />,
     },
     {
       label: '文件',
       name: 'file',
-      icon: 'icon-tag',
+      icon: <Files />,
     },
   ],
   activeName: /\/admin\/([^/]+)/.exec(route.path)?.[1] ?? 'account',
@@ -54,7 +55,9 @@ function handleClick(name: string) {
         unique-opened
         @select="handleClick">
         <el-menu-item v-for="item in tabs.list" :key="item.name" :index="item.name">
-          <el-icon><i class="iconfont" :class="item.icon"></i></el-icon>
+          <el-icon size="1em">
+            <component :is="item.icon"></component>
+          </el-icon>
           <span>{{ item.label }}</span>
         </el-menu-item>
       </el-menu>
@@ -74,9 +77,7 @@ function handleClick(name: string) {
     padding: 1rem;
   }
   .menu {
-    .iconfont {
-      margin-right: 6px;
-    }
+    overflow: auto;
     &:not(.el-menu--collapse) {
       width: 180px;
     }
