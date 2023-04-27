@@ -27,6 +27,9 @@ export default defineNuxtConfig({
   },
   app: {
     cdnURL: env.VITE_SITE_CDN,
+    // 页面切换动画
+    // pageTransition: { name: 'page', mode: 'out-in' },
+    // layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       meta: [
         { name: 'baidu-site-verification', content: 'code-xSBd0ubpSQ' },
