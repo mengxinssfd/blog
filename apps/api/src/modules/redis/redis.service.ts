@@ -27,6 +27,10 @@ export class AppRedisService {
     return this.redis.del(this.getTokenKeyName(user));
   }
 
+  getTokens() {
+    return this.redis.keys('tokens:*');
+  }
+
   setDailyImg(imgList: string) {
     const now = new Date();
     const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
