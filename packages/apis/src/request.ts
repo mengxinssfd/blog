@@ -5,6 +5,7 @@ import { Tuple } from '@tool-pack/types';
 export interface PrimaryCustomConfig extends CustomConfig {
   showSuccessMsg?: boolean;
   successMsg?: string;
+  loading?: boolean;
 }
 
 let _ins: RequestTemplate<PrimaryCustomConfig>;
