@@ -7,6 +7,7 @@ type RequiredCommentEntity = Required<CommentEntity>;
 
 type FlatCE = CommentEntity & {
   'article.deletedAt': CommentEntity['article']['deletedAt'];
+  'article.as': CommentEntity['article']['as'];
   'article.status': CommentEntity['article']['status'];
   'article.commentLock': CommentEntity['article']['commentLock'];
   'reply.deletedAt': RequiredCommentEntity['reply']['deletedAt'];
@@ -42,6 +43,7 @@ export const createCommentRule: RuleCreator = (user, { can, cannot }) => {
 
     cannot<FlatCE>([Action.Update, Action.Create], CommentEntity, {
       'article.status': ArticleEntity.STATE.private,
+      'article.as': null,
     }).because('文章不存在');
 
     cannot<FlatCE>([Action.Update, Action.Create], CommentEntity, {
