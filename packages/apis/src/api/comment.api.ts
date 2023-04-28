@@ -9,7 +9,7 @@ const urlPrefix = '/api/comment';
 
 const [Get, Post, Delete] = methodsWithUrl(['GET', 'POST', 'DELETE'] as const, urlPrefix);
 export function createComment(data: CreateCommentDto) {
-  return Post(``, data);
+  return Post(``, data, { successMsg: '评论成功' });
 }
 export function getCommentByArticle(articleId: ID) {
   return Get<PageVo<CommentEntity>>(`/article/${articleId}`);
@@ -18,7 +18,7 @@ export function setLike(articleId: number) {
   return Post('', { articleId });
 }
 export function deleteCommentOne(id: ID) {
-  return Delete(`/${id}`);
+  return Delete(`/${id}`, undefined, { successMsg: '删除成功' });
 }
 
 export function getReplyMeList(_: unknown, data: PageDto) {
