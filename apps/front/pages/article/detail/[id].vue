@@ -16,7 +16,11 @@
 
   <NuxtLayout name="page">
     <template #banner>
-      <Banner :bg-img="article.cover || TODAY_COVER_URL" height="55vh" blur>
+      <Banner
+        :bg-img="article.cover || TODAY_COVER_URL"
+        height="55vh"
+        :blur="false"
+        :brightness="0.7">
         <template #content>
           <el-skeleton v-if="!article.id" class="main-width" :rows="5" animated />
           <div v-else class="cover-content">
@@ -115,16 +119,18 @@ import { ArticleEntity } from '@blog/entities';
 import { useAsyncData, useRoute } from '#app';
 import { useArticle } from '~/feature/hooks';
 import { TODAY_COVER_URL } from '~/config/constants';
+import useHeaderStore from '~/store/header.store';
 // definePageMeta({
 //   layout: false,
 // });
 
+useHeaderStore().useTransparent();
 const route = useRoute();
 const articleId: number = route.params.id as any;
 const Art = useArticle();
 const textSize = ref(0);
 const mermaid = process.client ? (window as any).mermaid : undefined;
-const { article, like, audioVisible } = Art.Data;
+const { article, like, audioVisible, articleRef } = Art.Data;
 const { onCommentLockUpdate, setLike, formatDate } = Art.Methods;
 
 async function getArticle() {
@@ -176,7 +182,7 @@ const init = () => {
 
   if (process.client) {
     Art._Methods.resolveArticleRender();
-    textSize.value = (Art.Data.articleRef.value?.innerText || '').replace(/[\n ]+/g, '').length;
+    textSize.value = (articleRef.value?.innerText || '').replace(/[\n ]+/g, '').length;
   }
 };
 
