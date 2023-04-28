@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateArticleDto, UpdateArticleDto, ArticleListDto } from '@blog/dtos';
+import { ArticleListDto, ArticleSetAsDto, CreateArticleDto, UpdateArticleDto } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ARTICLE_STATE,
@@ -35,10 +35,12 @@ enum ORDER {
   down = 'DESC',
 }
 
+type AK = `article.${keyof ArticleEntity}`;
+
 const SORT_MAP: Record<
   SORT,
   {
-    sort: `article.${keyof ArticleEntity}` | 'articleLike.likeCount';
+    sort: AK | 'articleLike.likeCount';
     order: ORDER;
   }
 > = {
@@ -94,11 +96,11 @@ export class ArticleService {
           '`article`.`id` IN ' +
           qb
             .subQuery()
-            .select('`atc`.`id`')
+            .select('atc.id')
             .from(TagEntity, 'tag')
             .leftJoin('tag.articleList', 'atc')
             .where({ id: In(tags) })
-            .groupBy('`atc`.`id`')
+            .groupBy('atc.id')
             .getQuery()
         );
       });
@@ -189,6 +191,26 @@ export class ArticleService {
     return await this.handleFindAllBuilders(builders);
   }
 
+  /**
+   * 管理用
+   */
+  async getAll(
+    listDTO: ArticleListDto,
+    userId = 0,
+  ): Promise<{ list: ArticleEntity[]; count: number }> {
+    const builders: ReturnType<typeof this.createFindAllBuilders> = this.createFindAllBuilders(
+      listDTO,
+      userId,
+      (builder) => {
+        builder.withDeleted();
+      },
+    ).then(([countBuilder, builder]) => {
+      builder.addSelect(['article.as', 'article.deletedAt'] satisfies AK[]);
+      return [countBuilder, builder];
+    });
+    return await this.handleFindAllBuilders(builders);
+  }
+
   async findAllByAuthor(pageDto: PageDto, authorId: number, userId: number) {
     const builders = this.createFindAllBuilders(pageDto as ArticleListDto, userId, (builder) => {
       builder.andWhere({ authorId });
@@ -261,7 +283,7 @@ export class ArticleService {
         'article.updateAt',
         'article.authorId',
         'article.deletedAt',
-      ])
+      ] satisfies AK[])
       .addSelect(['tag.id', 'tag.name'])
       .addSelect(['category.id', 'category.name'])
       .withDeleted();
@@ -289,6 +311,25 @@ export class ArticleService {
 
     const articleEntity = await this.articleRepository.save(article);
     return { id: articleEntity.id };
+  }
+
+  async setAs(id: number, dto: ArticleSetAsDto) {
+    await this.findOneBase(id);
+    const entity = new ArticleEntity();
+    entity.as = dto.as || null;
+    entity.id = id;
+    return entity.save();
+  }
+
+  async getAs(as: string) {
+    const find = await this.articleRepository
+      .createQueryBuilder('article')
+      .addSelect(['article.content', 'article.createAt', 'article.updateAt'] satisfies AK[])
+      .where({ as, status: String(ARTICLE_STATE.private) })
+      .getOne();
+    if (!find) throw new NotFoundException(`as(${as})不存在`);
+    find.content = this.markedRender(find.content);
+    return find;
   }
 
   async update(id: number, updateArticleDto: UpdateArticleDto) {
@@ -343,45 +384,5 @@ export class ArticleService {
       .execute();
 
     return article.commentLock ? '文章评论已锁定' : '文章评论已解锁';
-  }
-
-  // 查找"关于"的条件
-  aboutCondition() {
-    const where = new ArticleEntity();
-    where.authorId = 1; // 超级管理员id
-    where.title = '关于';
-    where.status = ARTICLE_STATE.private; // 私有的文章
-    return where;
-  }
-
-  // 判断是否"关于"
-  isAboutArticle(article: ArticleEntity): boolean {
-    const where = this.aboutCondition();
-    return (
-      article.authorId === where.authorId &&
-      article.title === where.title &&
-      article.status === where.status
-    );
-  }
-
-  async about() {
-    // 设置条件
-    const where = this.aboutCondition();
-    // 查询
-    const rep = this.articleRepository
-      .createQueryBuilder('a')
-      .addSelect(['a.content', 'a.createAt', 'a.updateAt'])
-      .leftJoinAndSelect('a.author', 'at')
-      .where({
-        authorId: String(where.authorId),
-        title: where.title,
-        status: String(where.status),
-      });
-    const article = await rep.getOne();
-    // 未发现
-    if (!article) throw new NotFoundException('不存在关于');
-
-    article.content = this.markedRender(article.content);
-    return article;
   }
 }

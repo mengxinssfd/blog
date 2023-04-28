@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
-import { CreateArticleDto, UpdateArticleDto, ArticleListDto } from '@blog/dtos';
+import { CreateArticleDto, UpdateArticleDto, ArticleListDto, ArticleSetAsDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
 import { CategoryService } from '../category/category.service';
@@ -87,6 +87,14 @@ export class ArticleController {
     return this.articleService.findAll(listDTO, userId);
   }
 
+  @JwtAuth()
+  @CheckPolicies((ab) => ab.can(Action.Manage, ArticleEntity.modelName))
+  @UseGuards(PoliciesGuard)
+  @Get('all')
+  async getAll(@Query() listDTO: ArticleListDto, @User('id') userId: number) {
+    return this.articleService.getAll(listDTO, userId);
+  }
+
   @Get('author/:authorId')
   findAllByAuthor(
     @Query() pageDto: PageDto,
@@ -103,12 +111,6 @@ export class ArticleController {
   @Get('comment-user/:id')
   findAllByCommentUser(@Query() pageDto: PageDto, @Param('id', ParseIntPipe) userId: number) {
     return this.articleService.findAllByCommentUser(pageDto, userId);
-  }
-
-  // about
-  @Get('about')
-  about() {
-    return this.articleService.about();
   }
 
   @Get(':id')
@@ -158,6 +160,20 @@ export class ArticleController {
 
     // 保存文章
     return this.articleService.update(id, updateArticleDto);
+  }
+
+  @ApiBearerAuth()
+  @JwtAuth()
+  @CheckPolicies((ab) => ab.can(Action.Manage, ArticleEntity.modelName))
+  @UseGuards(PoliciesGuard)
+  @Patch('as/:id')
+  async setAs(@Param('id', ParseIntPipe) id: number, @Body() dto: ArticleSetAsDto) {
+    return this.articleService.setAs(id, dto);
+  }
+
+  @Get('as/:as')
+  async getAs(@Param('as') as: string) {
+    return this.articleService.getAs(as);
   }
 
   @ApiBearerAuth()
