@@ -64,7 +64,9 @@ export class CommentService {
     const alias = 'comment';
     const getComment = this.createFindAllBuilder(ip, userId)
       .orderBy(`${alias}.createAt`, 'DESC')
-      .limit(limit);
+      .limit(limit)
+      .leftJoin('comment.article', 'article')
+      .addSelect(['article.id', 'article.as']);
     const list = await getComment.getRawAndEntities();
 
     return this.handlerFindAllResult(list).list;
