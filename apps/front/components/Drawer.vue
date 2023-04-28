@@ -1,7 +1,9 @@
 <template>
-  <el-drawer v-model="value" :with-header="false" class="c-drawer" append-to-body v-bind="$attrs">
-    <slot></slot>
-  </el-drawer>
+  <ClientOnly>
+    <el-drawer v-model="value" :with-header="false" class="c-drawer" append-to-body v-bind="$attrs">
+      <slot></slot>
+    </el-drawer>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">

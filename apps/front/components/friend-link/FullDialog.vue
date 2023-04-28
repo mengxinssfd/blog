@@ -1,26 +1,32 @@
 <!--友链新增/编辑弹窗 FriendLinkDialog.vue-->
 <template>
-  <el-dialog v-model="visible" class="edit-user-info-dialog" :title="data ? '编辑' : '新增'">
-    <el-form ref="elFormRef" :model="form" :rules="rules" label-width="80px">
-      <el-form-item label="网站名" prop="name">
-        <el-input v-model="form.name"></el-input>
-      </el-form-item>
-      <el-form-item label="头像" prop="avatar">
-        <el-input v-model="form.avatar"></el-input>
-        <img v-if="form.avatar" class="avatar-view" :src="form.avatar" alt="" />
-      </el-form-item>
-      <el-form-item label="网站描述" prop="desc">
-        <el-input v-model="form.desc" type="textarea" rows="5"></el-input>
-      </el-form-item>
-      <el-form-item label="网站链接" prop="link">
-        <el-input v-model="form.link"></el-input>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <el-button type="primary" plain @click="hideDialog">取消</el-button>
-      <el-button v-loading="loading" type="primary" @click="submit">确定</el-button>
-    </template>
-  </el-dialog>
+  <ClientOnly>
+    <el-dialog v-model="visible" class="edit-user-info-dialog" :title="data ? '编辑' : '新增'">
+      <el-form ref="elFormRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="网站名" prop="name">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <el-input v-model="form.avatar"></el-input>
+          <img v-if="form.avatar" class="avatar-view" :src="form.avatar" alt="" />
+        </el-form-item>
+        <el-form-item label="网站描述" prop="desc">
+          <el-input v-model="form.desc" type="textarea" rows="5"></el-input>
+        </el-form-item>
+        <el-form-item label="网站链接" prop="link">
+          <el-input v-model="form.link"></el-input>
+        </el-form-item>
+        <el-form-item label="网站截图" prop="screenshot">
+          <el-input v-model="form.screenshot"></el-input>
+          <img v-if="form.screenshot" class="avatar-view" :src="form.screenshot" alt="" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button type="primary" plain @click="hideDialog">取消</el-button>
+        <el-button v-loading="loading" type="primary" @click="submit">确定</el-button>
+      </template>
+    </el-dialog>
+  </ClientOnly>
 </template>
 
 <script lang="ts" setup>
@@ -29,7 +35,7 @@ import { updateObj } from '@tool-pack/basic';
 import type { FriendLinkEntity } from '@blog/entities';
 import { createFriendLink, updateFriendLink } from '@blog/apis';
 
-type Form = Pick<FriendLinkEntity, 'name' | 'desc' | 'link' | 'avatar'>;
+type Form = Pick<FriendLinkEntity, 'name' | 'desc' | 'link' | 'avatar' | 'screenshot'>;
 
 const props = defineProps({
   show: {
@@ -44,7 +50,7 @@ const props = defineProps({
 
 const emits = defineEmits(['update:show', 'success']);
 
-const createFormValue = (): Form => ({ name: '', desc: '', link: '', avatar: '' });
+const createFormValue = (): Form => ({ name: '', desc: '', link: '', avatar: '', screenshot: '' });
 
 const elFormRef = ref();
 const visible = computed({

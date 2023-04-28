@@ -1,25 +1,27 @@
 <template>
-  <el-dialog v-model="visible" class="edit-user-info-dialog" title="编辑" append-to-body>
-    <el-form ref="formRef" :model="form.model" :rules="form.rules" label-width="80px">
-      <el-form-item label="昵称" prop="nickname">
-        <el-input v-model="form.model.nickname"></el-input>
-      </el-form-item>
-      <el-form-item label="头像" prop="avatar">
-        <el-input v-model="form.model.avatar"></el-input>
-        <img v-if="form.model.avatar" class="avatar-view" :src="form.model.avatar" alt="" />
-      </el-form-item>
-      <el-form-item label="手机号码" prop="mobile">
-        <el-input v-model="form.model.mobile"></el-input>
-      </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.model.email"></el-input>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <el-button type="primary" plain @click="visible = false">取消</el-button>
-      <el-button v-loading="form.loading" type="primary" @click="editUserInfo"> 确定 </el-button>
-    </template>
-  </el-dialog>
+  <ClientOnly>
+    <el-dialog v-model="visible" class="edit-user-info-dialog" title="编辑" append-to-body>
+      <el-form ref="formRef" :model="form.model" :rules="form.rules" label-width="80px">
+        <el-form-item label="昵称" prop="nickname">
+          <el-input v-model="form.model.nickname"></el-input>
+        </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <el-input v-model="form.model.avatar"></el-input>
+          <img v-if="form.model.avatar" class="avatar-view" :src="form.model.avatar" alt="" />
+        </el-form-item>
+        <el-form-item label="手机号码" prop="mobile">
+          <el-input v-model="form.model.mobile"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="form.model.email"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button type="primary" plain @click="visible = false">取消</el-button>
+        <el-button v-loading="form.loading" type="primary" @click="editUserInfo"> 确定 </el-button>
+      </template>
+    </el-dialog>
+  </ClientOnly>
 </template>
 
 <script lang="ts" setup>
