@@ -38,6 +38,10 @@ const themeSetup = () => {
     }
   }
 
+  // 由于系统默认主题时server默认light(media?.matches ? Theme.dark : Theme.light)
+  // 所以在client要获取一次系统主题
+  onMounted(() => (theme.value = getThemeType()));
+
   function systemThemeChangeHandler() {
     if (themeMode.value !== ThemeMode.system) return;
     theme.value = media?.matches ? Theme.dark : Theme.light;
