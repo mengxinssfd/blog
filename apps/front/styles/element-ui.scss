@@ -105,11 +105,27 @@
     --el-text-color-regular: var(--text-color);
     --el-text-color-disabled: var(--text-color-disabled);
     backdrop-filter: saturate(5) blur(20px);
-
     .el-popper__arrow::before {
       //border: 0 !important;
       background: unset !important;
-      backdrop-filter: saturate(5) blur(20px);
+      //backdrop-filter: saturate(5) blur(20px);
+      border-right-color: transparent;
+      border-top-color: transparent;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+      width: 0;
+      height: 0;
+      border-width: 6px;
+      transform: rotate(0);
+    }
+
+    $position: top, right, bottom, left;
+    @each $p in $position {
+      &[data-popper-placement^='#{$p}'] .el-popper__arrow::before {
+        border-#{$p}-color: #ffffff7a !important;
+        #{$p}: 100%;
+        margin-#{$p}: -5px;
+      }
     }
   }
 
