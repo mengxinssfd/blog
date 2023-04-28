@@ -29,6 +29,12 @@
 |  └── permission-rules     // 账号权限规则，前后端都可用
 ```
 
+## 环境
+
+- NodeJs 18
+- Pnpm
+- Docker
+
 ## 准备
 
 使用 pnpm 作为包管理工具，不推荐其他包管理工具安装
