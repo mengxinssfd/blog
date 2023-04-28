@@ -115,4 +115,12 @@ export class ArticleEntity extends BlogBaseEntity {
     default: false,
   })
   commentLock!: boolean;
+
+  @Column('varchar', {
+    length: 80,
+    comment: '作为文章以外使用',
+    nullable: true,
+    select: false,
+  })
+  as?: string | null;
 }
