@@ -35,7 +35,8 @@
 
 <script lang="ts">
 import { getArticleList, type GetArticleListRes } from '@blog/apis';
-import { navigateTo, useAsyncData, useRoute } from '#app';
+import { filterObj } from '@tool-pack/basic';
+import type { ArticleListDto } from '@blog/dtos';
 
 definePageMeta({
   // alias: '/',
@@ -47,14 +48,16 @@ export default defineComponent({
     const _Methods = {
       getDataByRoute() {
         const q = route.query;
-        // const p = route.params;
-        const data: any = {};
-        q.query && (data.keyword = q.query);
-        data.sort = q.sort ? Number(q.sort) : 3;
-        q.cate && (data.category = Number(q.cate));
-        data.tag = ((q.tag as string) || '').split(',').filter(Boolean).map(Number);
-        Data.page.current = data.page = q.page ? Number(q.page) : 1;
-        return data;
+        const data: ArticleListDto = {
+          keyword: q.query as string,
+          sort: q.sort ? Number(q.sort) : 3,
+          category: Number(q.cate),
+          tags: ((q.tag as string) || '').split(',').filter(Boolean).map(Number),
+          page: q.page ? Number(q.page) : 1,
+          pageSize: 10,
+        };
+        const nullable = [undefined, NaN, null];
+        return filterObj(data, (v) => !nullable.includes(v));
       },
     };
     const Data = {
