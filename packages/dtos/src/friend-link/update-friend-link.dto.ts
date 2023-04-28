@@ -21,4 +21,10 @@ export class UpdateFriendLinkDto extends PartialType(CreateFriendLinkDto) {
   @MaxLength(500, { message: '头像最大长度为500' })
   @IsUrl({}, { message: 'avatar必须是url' })
   avatar?: string;
+
+  @ApiProperty({ description: '屏幕截图' })
+  @IsOptional()
+  @MaxLength(500, { message: '截图最大长度为500' })
+  @IsUrl({}, { message: 'screenshot必须是url' })
+  screenshot?: string;
 }

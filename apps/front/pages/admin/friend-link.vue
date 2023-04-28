@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { formatDate, updateObj } from '@tool-pack/basic';
-import { adjudgeFriendLink, getFriendLinkList, refreshSiteInfo } from '@blog/apis';
+import {
+  adjudgeFriendLink,
+  deleteFriendLink,
+  getFriendLinkList,
+  refreshSiteInfo,
+} from '@blog/apis';
 import { type FriendLinkEntity, FriendLinkState } from '@blog/entities';
 
 const dialogVisible = ref(false);
@@ -38,31 +43,40 @@ function onSuccess() {
   getData();
 }
 async function handleCommand(
-  command: 'resolve' | 'reject' | 'edit' | 'update-site',
+  command: 'resolve' | 'reject' | 'edit' | 'refresh-site' | 'delete',
   link: FriendLinkEntity,
 ) {
-  if (command === 'update-site') {
-    updateSiteInfo(link);
-    return;
+  const data: { status: FriendLinkState; rejectReason?: string } = {
+    status: FriendLinkState.resolve,
+  };
+  switch (command) {
+    case 'refresh-site':
+      updateSiteInfo(link);
+      return;
+    case 'edit':
+      editLink.value = link;
+      showLinkApplyDialog();
+      return;
+    case 'delete':
+      await ElMessageBox.confirm('是否删除该申请？');
+      await deleteFriendLink(link.id);
+      getData();
+      return;
+    case 'reject':
+      data.rejectReason = (
+        await ElMessageBox.prompt('拒绝原因', '拒绝原因', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern: /[\s\S]{1,200}$/,
+          inputErrorMessage: '1-200个字符',
+        })
+      ).value;
+    // eslint-disable-next-line no-fallthrough
+    case 'resolve':
+      data.status = FriendLinkState[command];
+      await adjudgeFriendLink(link.id, data);
+      getData();
   }
-  if (command === 'edit') {
-    editLink.value = link;
-    showLinkApplyDialog();
-    return;
-  }
-  const data: any = { status: FriendLinkState[command] };
-  if (command === 'reject') {
-    data.rejectReason = (
-      await ElMessageBox.prompt('拒绝原因', '拒绝原因', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /[\s\S]{1,200}$/,
-        inputErrorMessage: '1-200个字符',
-      })
-    ).value;
-  }
-  await adjudgeFriendLink(link.id, data);
-  ElMessage({ type: 'success', message: '设置成功' });
 }
 async function getData() {
   loading.value = true;
@@ -115,6 +129,7 @@ getData();
       </el-table-column>
       <el-table-column label="网站名" prop="name" width="130" />
       <el-table-column label="描述" prop="desc" />
+      <el-table-column label="申请描述" prop="applyDesc" />
       <el-table-column label="链接">
         <template #default="scope">
           <a :href="scope.row.link" target="_blank" rel="noreferrer noopener">
@@ -153,8 +168,9 @@ getData();
               <el-dropdown-menu>
                 <el-dropdown-item command="resolve">通过</el-dropdown-item>
                 <el-dropdown-item command="reject">拒绝</el-dropdown-item>
-                <el-dropdown-item command="edit">编辑</el-dropdown-item>
-                <el-dropdown-item command="update-site" divided>更新信息</el-dropdown-item>
+                <el-dropdown-item command="edit" divided>编辑</el-dropdown-item>
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
+                <el-dropdown-item command="refresh-site">刷新信息</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>

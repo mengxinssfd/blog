@@ -23,6 +23,9 @@ import { Action } from '@blog/permission-rules';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
 import { AppPuppeteerService } from '@/modules/puppeteer/puppeteer.service';
+import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
+import { Throttle } from '@nestjs/throttler';
+import { PageDto } from '@blog/dtos/page.dto';
 
 @ApiTags('friend-link')
 @Controller('friend-link')
@@ -34,14 +37,11 @@ export class FriendLinkController {
   ) {}
 
   @ApiBearerAuth()
-  @JwtAuth()
+  @UseGuards(ThrottlerBehindProxyGuard)
+  @Throttle(5, 60)
   @Post()
-  async create(@Body() dto: CreateFriendLinkDto, @User('id') userId: number) {
-    const fl = new FriendLinkEntity();
-    fl.createBy = userId;
-    fl.link = dto.link;
-    fl.name = '';
-    return this.friendLinkService.create(fl);
+  async create(@Body() dto: CreateFriendLinkDto) {
+    return this.friendLinkService.create(dto);
   }
 
   @ApiBearerAuth()
@@ -61,7 +61,7 @@ export class FriendLinkController {
   @ApiBearerAuth()
   @JwtAuth()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity))
+  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity.modelName))
   @Get()
   findAll(@Query() query: FindAllFriendLinkDto) {
     return this.friendLinkService.findAll(query);
@@ -71,11 +71,20 @@ export class FriendLinkController {
   findResolveAll() {
     return this.friendLinkService.findResolveAll();
   }
+  @Get('resolve/recent')
+  findRecentResolveAll(@Query() dto: PageDto) {
+    return this.friendLinkService.findRecentResolveAll(dto);
+  }
+
+  @Get('apply')
+  findApplyAll(@Query() dto: PageDto) {
+    return this.friendLinkService.findApplyAll(dto);
+  }
 
   @ApiBearerAuth()
   @JwtAuth()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity))
+  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity.modelName))
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.friendLinkService.findOne(id);
@@ -83,24 +92,26 @@ export class FriendLinkController {
 
   @ApiBearerAuth()
   @JwtAuth()
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity.modelName))
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateFriendLinkDto: UpdateFriendLinkDto,
     @User() user: UserEntity,
   ) {
-    await this.casl
+    const entity = await this.casl
       .find(() => this.friendLinkService.findOne(id))
       .unless(user)
       .can(Action.Update);
 
-    return this.friendLinkService.update(id, updateFriendLinkDto, user);
+    return this.friendLinkService.update(entity, updateFriendLinkDto);
   }
 
   @ApiBearerAuth()
   @JwtAuth()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity))
+  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity.modelName))
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.friendLinkService.remove(id);
@@ -109,7 +120,7 @@ export class FriendLinkController {
   @ApiBearerAuth()
   @JwtAuth()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity))
+  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity.modelName))
   @Patch('adjudge/:id')
   adjudge(@Param('id', ParseIntPipe) id: number, @Body() data: AdjudgeFriendLinkDto) {
     return this.friendLinkService.adjudge(id, data);

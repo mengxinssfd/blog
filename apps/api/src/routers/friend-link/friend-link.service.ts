@@ -1,14 +1,16 @@
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { UpdateFriendLinkDto, AdjudgeFriendLinkDto, FindAllFriendLinkDto } from '@blog/dtos';
+  UpdateFriendLinkDto,
+  AdjudgeFriendLinkDto,
+  FindAllFriendLinkDto,
+  CreateFriendLinkDto,
+} from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ROLE, UserEntity, FriendLinkEntity, FriendLinkState } from '@blog/entities';
-import { rawsToEntities } from '@/utils/assemblyEntity';
+import { FriendLinkEntity, FriendLinkState } from '@blog/entities';
+import { PageDto } from '@blog/dtos/page.dto';
+
+type K = `fl.${keyof FriendLinkEntity}`;
 
 @Injectable()
 export class FriendLinkService {
@@ -21,36 +23,64 @@ export class FriendLinkService {
     return await this.repository.findOne({ where: { link } });
   }
 
-  async create(friendLink: FriendLinkEntity) {
-    const find = await this.findByLink(friendLink.link);
+  async create(dto: CreateFriendLinkDto) {
+    const fl = new FriendLinkEntity();
+    fl.link = dto.link;
+    fl.avatar = dto.link + '/favicon.ico';
+    fl.name = '';
+    const find = await this.findByLink(dto.link);
     if (find) {
       throw new BadRequestException('网站链接已存在');
     }
-    return await this.repository.save(friendLink);
+    return await this.repository.save(fl);
   }
 
   async findAll(query: FindAllFriendLinkDto) {
     const sql = this.repository
       .createQueryBuilder('fl')
       .addSelect([
-        '`fl`.`createAt` AS `fl_createAt`',
-        '`fl`.`status` AS `fl_status`',
-        '`fl`.`rejectReason` AS `fl_rejectReason`',
-        '`fl`.`updateAt` AS `fl_updateAt`',
-      ]);
+        'fl.createAt',
+        'fl.status',
+        'fl.rejectReason',
+        'fl.updateAt',
+        'fl.applyDesc',
+      ] satisfies K[]);
     if (query.status) {
       sql.where({ status: query.status });
     }
-    const rawList = await sql.getRawMany();
-
-    const list = rawsToEntities({ entityName: 'fl', rawList });
-
-    return { list, count: list.length };
+    const [list, count] = await sql.getManyAndCount();
+    return { list, count };
   }
+
   async findResolveAll() {
     const [list, count] = await this.repository
       .createQueryBuilder('fl')
+      .addSelect(['fl.createAt'] satisfies K[])
       .where({ status: String(FriendLinkState.resolve) })
+      .getManyAndCount();
+    return { list, count };
+  }
+
+  async findRecentResolveAll({ page, pageSize }: PageDto) {
+    const [list, count] = await this.repository
+      .createQueryBuilder('fl')
+      .addSelect(['fl.createAt'] satisfies K[])
+      .where({ status: String(FriendLinkState.resolve) })
+      .offset((page - 1) * pageSize)
+      .limit(pageSize)
+      .orderBy('fl.createAt' satisfies K, 'DESC')
+      .getManyAndCount();
+    return { list, count };
+  }
+
+  async findApplyAll({ page, pageSize }: PageDto) {
+    const [list, count] = await this.repository
+      .createQueryBuilder('fl')
+      .addSelect(['fl.applyDesc', 'fl.createAt'] satisfies K[])
+      .where({ status: String(FriendLinkState.padding) })
+      .offset((page - 1) * pageSize)
+      .limit(pageSize)
+      .orderBy('fl.createAt' satisfies K, 'DESC')
       .getManyAndCount();
     return { list, count };
   }
@@ -63,26 +93,15 @@ export class FriendLinkService {
     return res;
   }
 
-  async update(id: number, updateFriendLinkDto: UpdateFriendLinkDto, user: UserEntity) {
-    const rep = this.repository.createQueryBuilder('fl').where({ id });
-    const f = user.role === ROLE.superAdmin ? rep.withDeleted() : rep;
-    const find = await f.getOne();
-    if (!find) {
-      throw new NotFoundException(`id:${id}不存在`);
-    }
-    if (!(user.role === ROLE.superAdmin || user.id === find.createBy)) {
-      throw new ForbiddenException('无权修改');
-    }
+  async update(entity: FriendLinkEntity, dto: UpdateFriendLinkDto) {
     // 编辑后改为待审状态
-    const entity = new FriendLinkEntity();
-    Object.assign(entity, updateFriendLinkDto);
-    entity.id = id;
+    Object.assign(entity, dto);
     entity.status = FriendLinkState.padding;
     return await this.repository.save(entity);
   }
 
   async remove(id: number) {
-    return await this.repository.softDelete(id);
+    return await this.repository.delete(id);
   }
   async adjudge(id: number, data: AdjudgeFriendLinkDto) {
     const entity = new FriendLinkEntity();

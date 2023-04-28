@@ -1,9 +1,7 @@
 <script setup lang="ts">
 const asideContent = useState('aside.hiddenContent');
 const route = useRoute();
-const disabled = computed(() =>
-  ['/friend-link', /^\/admin/].some((item) => new RegExp(item).test(route.path)),
-);
+const disabled = computed(() => [/^\/admin/].some((item) => new RegExp(item).test(route.path)));
 </script>
 <template>
   <div

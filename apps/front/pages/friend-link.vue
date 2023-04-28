@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
 import type { FriendLinkEntity } from '@blog/entities';
-import { getResolveFriendLinkList } from '@blog/apis';
-import { useAsyncData, useRouter } from '#app';
-import useUserStore from '~/store/user.store';
+import {
+  getResolveFriendLinkList,
+  getRecentResolveFriendLink,
+  getApplyFriendLinkList,
+} from '@blog/apis';
+import { useRequest } from '@request-template/vue3-hooks';
+import { howLongAgo } from '~/feature/utils';
 import useHeaderStore from '~/store/header.store';
 
 useHeaderStore().useTransparent();
-const router = useRouter();
 const linkList = ref<FriendLinkEntity[]>([]);
 const dialogVisible = ref(false);
-const userStore = useUserStore();
 
 async function getData() {
   const { data } = await useAsyncData(() => getResolveFriendLinkList());
@@ -18,13 +20,6 @@ async function getData() {
 }
 
 function showLinkApplyDialog() {
-  if (!userStore.isLogin()) {
-    router.push({
-      path: '/user/login',
-      query: { fromUrl: encodeURIComponent(router.currentRoute.value.fullPath) },
-    });
-    return;
-  }
   dialogVisible.value = true;
 }
 
@@ -32,58 +27,164 @@ function onSuccess() {
   ElMessage({ type: 'success', message: '添加成功，待博主核对后才会显示出来' });
 }
 
+const defaultData = { list: [], count: 0 };
+
+const { data: applyData, request: reqApply } = useRequest(
+  getApplyFriendLinkList,
+  undefined,
+  defaultData,
+);
+const { data: recentData, request: reqRecent } = useRequest(
+  getRecentResolveFriendLink,
+  undefined,
+  defaultData,
+);
+
+onMounted(() => {
+  reqApply();
+  reqRecent();
+});
 await getData();
 </script>
 
 <template>
-  <div class="pg friend-link">
-    <Title>Nice's Blog - 友链</Title>
-    <Banner
-      :blur="false"
-      height="50vh"
-      :brightness="0.75"
-      bg-img="https://s.cn.bing.net/th?id=OHR.Honnavaralavenderfields_ZH-CN8054655091_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp">
-      <template #content>
-        <div class="title">友链</div>
-      </template>
-    </Banner>
-    <section class="board main-width">
-      <div class="sort-desc _ pos-rel">
-        按友链申请时间排序
-        <div v-if="false" class="_ btn apply abs-r" @click="showLinkApplyDialog">
-          <ClientOnly>
-            <el-tooltip content="添加我的网站到友链" placement="top">
-              <i class="_ pos-trans-c-c iconfont icon-apply"></i>
-            </el-tooltip>
-          </ClientOnly>
-        </div>
-      </div>
-      <ul v-if="linkList.length" class="link-list">
-        <li v-for="link in linkList" :key="link.id">
-          <FriendLinkCard :item="link"></FriendLinkCard>
-        </li>
-        <li class="add-link" @click="showLinkApplyDialog">
+  <Title>Nice's Blog - 友链</Title>
+  <NuxtLayout name="page">
+    <template #banner>
+      <Banner
+        :blur="false"
+        height="50vh"
+        :brightness="0.75"
+        bg-img="https://s.cn.bing.net/th?id=OHR.Honnavaralavenderfields_ZH-CN8054655091_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp">
+        <template #content>
+          <div class="title">友链</div>
+        </template>
+      </Banner></template
+    >
+    <template #aside>
+      <Widget title="添加">
+        <div class="add-link" @click="showLinkApplyDialog">
           <div class="_ pos-trans-c-c"></div>
           <div class="_ pos-trans-c-c col"></div>
-        </li>
-      </ul>
-      <el-empty v-else description="暂无友链"> </el-empty>
-
-      <div class="tips">
-        tips: 不定期检查友链，根据对等原则，如友链方无本站友链将撤回本站对方友链。
-      </div>
-    </section>
-    <ClientOnly>
-      <FriendLinkDialog v-model:show="dialogVisible" @success="onSuccess"></FriendLinkDialog>
-    </ClientOnly>
-  </div>
+        </div>
+      </Widget>
+      <Widget title="互链规则">
+        <ul class="rules">
+          <li>不添加广告网站和违法网站，博客网站最好在5篇文章以上。</li>
+          <li>若域名为公共（二级分发）、免费域名，视站点质量添加。</li>
+          <li>博主更喜欢内容有趣的和生活类的博客，会更多地访问博客进行互动并添加到关注列表。</li>
+          <li>为了友链的统一性和美观性，昵称过长或包含博客、XX的XX等内容将被简化。</li>
+          <li>通常按添加时间进行排序，优秀站点可能会提升顺序。</li>
+          <li>若站点长期失联（无法访问）将会删除友链。</li>
+          <li>申请友链之前请先添加本站链接。</li>
+        </ul>
+      </Widget>
+      <Widget v-if="applyData.list.length" title="添加列表">
+        <ul class="apply-list">
+          <li v-for="item in applyData.list" :key="item.id" class="_ flex-c">
+            <el-image :src="item.avatar" />
+            <div class="texts _ flex-1">
+              <div class="link">{{ item.link }}</div>
+              <div class="time">{{ howLongAgo(item.createAt) }}</div>
+            </div>
+          </li>
+        </ul>
+      </Widget>
+      <Widget title="最新添加">
+        <ul class="recent-list">
+          <li v-for="item in recentData.list" :key="item.id" class="_ flex-c">
+            <el-image :src="item.avatar" />
+            <div class="texts _ flex-1">
+              <div class="name _ ellipsis-1">{{ item.name }}</div>
+              <div class="time">{{ howLongAgo(item.createAt) }}</div>
+            </div>
+          </li>
+        </ul>
+      </Widget>
+    </template>
+    <div class="pg friend-link">
+      <section class="board main-width">
+        <div class="sort-desc _ pos-rel">
+          按友链申请时间排序
+          <div v-if="false" class="_ btn apply abs-r" @click="showLinkApplyDialog">
+            <ClientOnly>
+              <el-tooltip content="添加我的网站到友链" placement="top">
+                <i class="_ pos-trans-c-c iconfont icon-apply"></i>
+              </el-tooltip>
+            </ClientOnly>
+          </div>
+        </div>
+        <ul v-if="linkList.length" class="link-list">
+          <li v-for="link in linkList" :key="link.id">
+            <FriendLinkCard :item="link"></FriendLinkCard>
+          </li>
+        </ul>
+        <el-empty v-else description="暂无友链"> </el-empty>
+      </section>
+      <ClientOnly>
+        <FriendLinkDialog v-model:show="dialogVisible" @success="onSuccess"></FriendLinkDialog>
+      </ClientOnly>
+    </div>
+  </NuxtLayout>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.apply-list,
+.recent-list {
+  font-size: 14px;
+  .texts {
+    overflow: hidden;
+  }
+  li + li {
+    margin-top: 1rem;
+  }
+  .el-image {
+    margin-right: 10px;
+    width: 40px;
+    flex-basis: 40px;
+    height: 40px;
+  }
+  .time {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+}
+.rules {
+  padding-left: 1rem;
+
+  font-size: 14px;
+  list-style: decimal;
+  li + li {
+    margin-top: 10px;
+  }
+}
+.title {
+  font-size: 36px;
+}
+.add-link {
+  position: relative;
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: 60px;
+  &:hover {
+    > div {
+      background-color: var(--theme-color);
+    }
+  }
+  > div {
+    width: 30px;
+    height: 3px;
+    background-color: #dcdcdc;
+    transition: background-color 0.25ms;
+  }
+  .col {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+}
 .pg.friend-link {
   .link-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 1rem;
     > li {
       > div {
@@ -105,7 +206,6 @@ await getData();
     }
   }
   .board {
-    padding: 2rem 1rem;
     .btn.apply {
       bottom: -10px;
       width: 38px;
@@ -125,34 +225,6 @@ await getData();
   }
   .sort-desc {
     margin-bottom: 1rem;
-  }
-  .tips {
-    margin-top: 60px;
-    font-size: 12px;
-    text-align: center;
-  }
-  .title {
-    font-size: 36px;
-  }
-  .add-link {
-    position: relative;
-    border-radius: 10px;
-    cursor: pointer;
-    min-height: 260px;
-    &:hover {
-      > div {
-        background-color: var(--theme-color);
-      }
-    }
-    > div {
-      width: 50px;
-      height: 6px;
-      background-color: #dcdcdc;
-      transition: background-color 0.25ms;
-    }
-    .col {
-      transform: translate(-50%, -50%) rotate(90deg);
-    }
   }
 }
 </style>
