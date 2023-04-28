@@ -10,15 +10,20 @@
       <div class="comm-info">
         <!--    顶部信息    -->
         <div class="top">
-          <span class="nickname">{{ getNickname(item.user) }}</span>
+          <span class="nickname">{{ getNickname(item) }}</span>
+          <ClientOnly><component :is="getUserTag(item.user)" /></ClientOnly>
           <template v-if="item.reply">
             <span class="reply-text">回复</span>
-            <span class="replied-user">{{ getNickname(item.reply.user) }}</span>
+            <span class="replied-user">{{ getNickname(item.reply) }}</span>
+            <ClientOnly><component :is="getUserTag(item.reply.user)" /></ClientOnly>
           </template>
-          <span class="time">{{ formatDate(item.createAt) }}</span>
+          <span class="time">{{ howLongAgo(item.createAt) }}</span>
         </div>
         <!--    回复内容    -->
-        <div class="content" :class="{ '_ ellipsis-2': independent }" @click="clickContent">
+        <div
+          class="content"
+          :class="{ '_ ellipsis-2': independent }"
+          @click="emits('clickContent')">
           <p>{{ item.content }}</p>
         </div>
         <!--    回复引用    -->
@@ -36,56 +41,52 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="tsx">
 import * as Vue from 'vue';
 import { type UserEntity } from '@blog/entities';
-import useUserStore from '~/store/user.store';
+import type { CommentTreeType } from './tree.d';
 import { howLongAgo } from '~/feature/utils';
-import { CommentTree } from '~/components/article/detail/tree';
 
-export default defineComponent({
-  name: 'Comment',
-  compatConfig: {
-    INSTANCE_ATTRS_CLASS_STYLE: true,
+const props = defineProps({
+  item: {
+    type: Object as Vue.PropType<CommentTreeType>,
+    default: () => ({}),
   },
-  props: {
-    item: {
-      type: Object as Vue.PropType<CommentTree>,
-      default() {
-        return {};
-      },
-    },
-    // 判断是否是作者
-    authorId: { type: [Number, String], default: '' },
-    // 独立使用
-    independent: { type: Boolean, default: false },
-  },
-  emits: ['clickContent'],
-  setup(props, ctx) {
-    const Data = {
-      user: useUserStore().user,
-      defaultAvatar: 'https://pic1.zhimg.com/50/v2-6afa72220d29f045c15217aa6b275808_hd.jpg',
-    };
-
-    const Methods = {
-      getNickname(user: UserEntity) {
-        if (!user) return props.item.touristName + '(游客)' || '匿名用户';
-        if (user.id === props.authorId) return `${user.nickname}(作者)`;
-        return user.nickname;
-      },
-      formatDate: howLongAgo,
-      clickContent() {
-        ctx.emit('clickContent');
-      },
-    };
-
-    return {
-      ...Data,
-      ...Methods,
-    };
-  },
+  // 判断是否是作者
+  authorId: { type: [Number, String], default: '' },
+  // 独立使用
+  independent: { type: Boolean, default: false },
 });
+const emits = defineEmits(['clickContent']);
+
+const defaultAvatar = 'https://pic1.zhimg.com/50/v2-6afa72220d29f045c15217aa6b275808_hd.jpg';
+
+const getNickname = (tree: CommentTreeType) => {
+  if (!tree.user) return tree.touristName;
+  return tree.user.nickname;
+};
+
+const getUserTag = (user: UserEntity) => {
+  if (props.independent) return undefined;
+  if (!user)
+    return (
+      <el-tag size="small" type="info">
+        游客
+      </el-tag>
+    );
+  if (user.id === 1) return <el-tag size="small">博主</el-tag>;
+  if (user.id === props.authorId)
+    return (
+      <el-tag size="small" type="success">
+        作者
+      </el-tag>
+    );
+  return undefined;
+};
+
+defineExpose({ getNickname });
 </script>
+
 <style lang="scss">
 .c-comment {
   display: flex;

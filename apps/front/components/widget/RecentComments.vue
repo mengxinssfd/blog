@@ -14,7 +14,7 @@ interface InnerComment extends CommentEntity {
 const list = computed(() => {
   const path = route.path;
   return data.value.map((item) => {
-    const link = '/article/detail/' + item.articleId;
+    const link = item.article.as ? `/${item.article.as}` : '/article/detail/' + item.articleId;
     return { ...item, link, active: path === link };
   }) as InnerComment[];
 });
@@ -32,13 +32,13 @@ function toArticle(item: InnerComment) {
       <h5 class="widget-title">最新评论</h5>
     </template>
     <div class="widget-content">
-      <ArticleDetailBaseComment
+      <CommentBase
         v-for="item in list"
         :key="item.id"
         :item="item"
         :class="{ active: item.active }"
         independent
-        @click-content="toArticle(item)"></ArticleDetailBaseComment>
+        @click-content="toArticle(item)"></CommentBase>
     </div>
   </Widget>
 </template>

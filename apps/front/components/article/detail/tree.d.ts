@@ -9,8 +9,3 @@ export interface AnchorTree {
   index: string;
   active: boolean;
 }
-export interface CommentTree extends CommentEntity {
-  children?: CommentTree[];
-  parent?: CommentTree;
-  isOrphan: boolean;
-}
