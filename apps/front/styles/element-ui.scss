@@ -78,13 +78,12 @@
     font-family: initial;
     line-height: 24px;
 
-    &.el-tag--light {
+    &:not(.el-tag--success):not(.el-tag--warning):not(.el-tag--info) {
       background: var(--tag-bg-color);
       color: var(--tag-text-color);
-    }
-
-    .el-tag__close {
-      color: var(--tag-text-color);
+      .el-tag__close {
+        color: var(--tag-text-color);
+      }
     }
   }
   .el-select-tags-wrapper {
