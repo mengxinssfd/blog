@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ROLE } from '@blog/entities';
-import { Files, PieChart } from '@element-plus/icons-vue';
+import { Folder, PieChart, Tickets } from '@element-plus/icons-vue';
 
 definePageMeta({
   // middleware: ['admin'],
@@ -24,6 +24,11 @@ const tabs = reactive({
       icon: <PieChart />,
     },
     {
+      label: '文章',
+      name: 'article',
+      icon: <Tickets />,
+    },
+    {
       label: '友链',
       name: 'friend-link',
       icon: <i class="iconfont icon-link" />,
@@ -31,7 +36,7 @@ const tabs = reactive({
     {
       label: '文件',
       name: 'file',
-      icon: <Files />,
+      icon: <Folder />,
     },
   ],
   activeName: /\/admin\/([^/]+)/.exec(route.path)?.[1] ?? 'account',

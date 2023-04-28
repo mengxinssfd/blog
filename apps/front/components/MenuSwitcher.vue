@@ -23,6 +23,7 @@ const visible = computed({
 
 <style lang="scss">
 .c-aside-menu-switcher {
+  display: inline-block;
   margin: 0 !important;
   padding: 10px;
   font-size: 1.2rem;
