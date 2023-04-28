@@ -5,6 +5,7 @@ import {
   getResolveFriendLinkList,
   getRecentResolveFriendLink,
   getApplyFriendLinkList,
+  getArticleAs,
 } from '@blog/apis';
 import { useRequest } from '@request-template/vue3-hooks';
 import { howLongAgo } from '~/feature/utils';
@@ -13,6 +14,7 @@ import useHeaderStore from '~/store/header.store';
 useHeaderStore().useTransparent();
 const linkList = ref<FriendLinkEntity[]>([]);
 const dialogVisible = ref(false);
+const { data: articleAs, request: reqArticleAs } = useRequest(getArticleAs);
 
 async function getData() {
   const { data } = await useAsyncData(() => getResolveFriendLinkList());
@@ -43,6 +45,7 @@ const { data: recentData, request: reqRecent } = useRequest(
 onMounted(() => {
   reqApply();
   reqRecent();
+  reqArticleAs('friend-link');
 });
 await getData();
 </script>
@@ -119,7 +122,11 @@ await getData();
             <FriendLinkCard :item="link"></FriendLinkCard>
           </li>
         </ul>
+
         <el-empty v-else description="暂无友链"> </el-empty>
+      </section>
+      <section v-if="articleAs" class="board">
+        <CommentBlock :article="{ ...articleAs, author: { id: 1 } }"></CommentBlock>
       </section>
       <ClientOnly>
         <FriendLinkDialog v-model:show="dialogVisible" @success="onSuccess"></FriendLinkDialog>

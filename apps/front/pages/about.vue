@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import 'highlight.js/styles/atom-one-dark.css';
-import { getAbout } from '@blog/apis';
-import type { ArticleEntity } from '@blog/entities';
+import { getArticleAs } from '@blog/apis';
+import type { ArticleEntity, UserEntity } from '@blog/entities';
 import { useAsyncData } from '#app';
 import { useArticle } from '~/feature/hooks';
 import useHeaderStore from '~/store/header.store';
@@ -14,10 +14,11 @@ const { getLikeCountData } = Art._Methods;
 const { onCommentLockUpdate } = Art.Methods;
 
 async function getData() {
-  const { data } = await useAsyncData(() => getAbout(), {
+  const { data } = await useAsyncData(() => getArticleAs('about'), {
     default: () => ({ data: {} as ArticleEntity }),
   });
   article.value = data.value!.data;
+  article.value.author = { id: 1 } as UserEntity;
 }
 const init = () => {
   Art._Methods.resolveArticleRender();
@@ -72,9 +73,7 @@ await getData();
           </section>
         </div>
         <div class="board">
-          <ArticleDetailCommentBlock
-            v-if="article.author"
-            :article="article"></ArticleDetailCommentBlock>
+          <CommentBlock v-if="article.author" :article="article" />
         </div>
       </div>
     </div>
