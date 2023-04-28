@@ -99,9 +99,7 @@
           </section>
         </div>
         <div class="board">
-          <ArticleDetailCommentBlock
-            v-if="article.author"
-            :article="article"></ArticleDetailCommentBlock>
+          <CommentBlock v-if="article.author" :article="article" />
         </div>
       </div>
     </div>
