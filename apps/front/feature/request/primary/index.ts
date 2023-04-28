@@ -75,6 +75,9 @@ export class PrimaryRequest<
   protected beforeRequest(ctx: Context<CC>) {
     // 复用基础模板逻辑
     super.beforeRequest(ctx);
+    if (process.client && ctx.customConfig.loading) {
+      this.loading = ElLoading.service();
+    }
 
     // 未设置showSuccessMsg时，且非get请求则全部显示请求成功信息
     if (ctx.requestConfig.method !== 'get' && ctx.customConfig.showSuccessMsg === undefined) {
