@@ -1,12 +1,18 @@
 import { HttpStatus, StatusHandler, StatusHandlers } from 'request-template';
-import { ElMessage } from 'element-plus';
+import { ElNotification } from 'element-plus';
 import { Token } from './token';
 // import Store from '@/store/index';
 import { PrimaryCustomConfig } from '@blog/apis';
 
 // 通用错误Handler
 const errorHandler: StatusHandler<PrimaryCustomConfig> = ({ customConfig }, res, data) => {
-  !process.server && !customConfig.silent && ElMessage({ type: 'error', message: data.msg });
+  !process.server &&
+    !customConfig.silent &&
+    ElNotification({
+      title: 'Error',
+      message: data.msg,
+      type: 'error',
+    });
   // throw data.data || new Error( `data: ${JSON.stringify(data)}`);
   return Promise.reject(customConfig.returnRes ? res : data);
 };
@@ -26,12 +32,12 @@ export const statusHandlers: StatusHandlers<PrimaryCustomConfig> = {
   [HttpStatus.OK]: ({ customConfig }, _, data) => {
     !process.server &&
       customConfig.showSuccessMsg &&
-      ElMessage({ type: 'success', message: customConfig.successMsg || data.msg });
+      ElNotification({ type: 'success', message: customConfig.successMsg || data.msg });
   },
   [HttpStatus.CREATED]: ({ customConfig }, _, data) => {
     !process.server &&
       customConfig.showSuccessMsg &&
-      ElMessage({ type: 'success', message: customConfig.successMsg || data.msg });
+      ElNotification({ type: 'success', message: customConfig.successMsg || data.msg });
   },
   default: errorHandler,
 };
