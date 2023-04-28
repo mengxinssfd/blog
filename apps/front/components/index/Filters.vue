@@ -6,7 +6,7 @@
         <el-dropdown @command="searchData.sort = $event">
           <div>
             排序
-            <el-tag :closable="searchData.sort !== 3" size="small" @close="searchData.sort = 3">
+            <el-tag :closable="searchData.sort !== 3" @close="searchData.sort = 3">
               {{ activeSort.label }}
             </el-tag>
           </div>
@@ -27,10 +27,7 @@
         <el-dropdown @command="searchData.category = $event">
           <div>
             分类
-            <el-tag
-              :closable="searchData.category !== 0"
-              size="small"
-              @close="searchData.category = 0">
+            <el-tag :closable="searchData.category !== 0" @close="searchData.category = 0">
               {{ activeCate.name }}
             </el-tag>
           </div>
@@ -58,7 +55,6 @@
                   :key="tag.id"
                   :closable="getResultTagClosable(tag)"
                   :round="!tag.type"
-                  size="small"
                   @close="handleResultTagClick(tag)">
                   {{ tag.name }}
                 </el-tag>

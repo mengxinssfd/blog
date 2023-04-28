@@ -121,7 +121,7 @@ export default defineComponent({
 <style lang="scss">
 .c-card {
   display: block;
-  box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.015);
+  //box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.015);
   margin-bottom: 1rem;
   border-radius: 10px;
   text-decoration: none;

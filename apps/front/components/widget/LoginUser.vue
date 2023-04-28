@@ -19,14 +19,14 @@ const link = computed(() => '/user/info/' + userStore.user.id);
         </nuxt-link>
         <div class="btns _ flex-c-c">
           <NuxtLink to="/article/create">
-            <el-button class="post" type="primary" size="small">
+            <el-button class="post" type="primary">
               <i class="iconfont icon-edit"></i> 写文章
             </el-button>
           </NuxtLink>
           <ClientOnly>
             <el-popconfirm title="确认退出?" @confirm="userStore.logout">
               <template #reference>
-                <el-button class="logout" type="warning" size="small">
+                <el-button class="logout" type="warning">
                   <el-icon><SwitchButton /></el-icon> 登出
                 </el-button>
               </template>
@@ -37,10 +37,10 @@ const link = computed(() => '/user/info/' + userStore.user.id);
       <template v-else>
         <div class="btns _ flex-c-c">
           <NuxtLink to="/user/register">
-            <el-button class="post" type="primary" size="small">注册</el-button>
+            <el-button class="post" type="primary">注册</el-button>
           </NuxtLink>
           <NuxtLink to="/user/login?fromUrl=%2F">
-            <el-button class="login" type="primary" size="small">登录</el-button>
+            <el-button class="login" type="primary">登录</el-button>
           </NuxtLink>
         </div>
       </template>

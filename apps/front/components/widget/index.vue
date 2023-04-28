@@ -32,6 +32,7 @@ defineProps({
   max-width: 300px;
   margin-top: 0;
   margin-bottom: 1rem;
+  padding: 1.3rem;
   .title {
     margin-bottom: 1rem;
     font-size: 1rem;
