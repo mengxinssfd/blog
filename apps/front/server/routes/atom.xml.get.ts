@@ -2,6 +2,8 @@ import { Feed } from 'feed';
 import { Readable } from 'stream';
 import { getArticles } from '~/server/utils';
 
+// 注意：server的import.meta.env跟其它地方的env不一样，在服务器需要手动注入
+// 例如：在pm2的env中填入，否则会为空
 const hostname = import.meta.env.VITE_BASE_URL;
 
 async function buildRss() {

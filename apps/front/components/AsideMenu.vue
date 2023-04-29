@@ -41,7 +41,6 @@ const menuStore = useMenuStore();
       }
       &.active {
         color: var(--theme-color);
-        pointer-events: none;
       }
       &:hover {
         color: var(--theme-color);
