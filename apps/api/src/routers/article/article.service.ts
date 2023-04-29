@@ -35,7 +35,12 @@ enum ORDER {
   down = 'DESC',
 }
 
-type AK = `article.${keyof ArticleEntity}`;
+enum EntityAlias {
+  comment = 'comment',
+  article = 'article',
+}
+
+type AK = `${EntityAlias.article}.${keyof ArticleEntity}`;
 
 const SORT_MAP: Record<
   SORT,
@@ -58,10 +63,16 @@ const SORT_MAP: Record<
 
 @Injectable()
 export class ArticleService {
+  private allowedColumns: (keyof ArticleEntity)[];
   constructor(
     @InjectRepository(ArticleEntity)
     private readonly articleRepository: Repository<ArticleEntity>,
-  ) {}
+  ) {
+    this.allowedColumns = articleRepository.manager.connection
+      .getMetadata(ArticleEntity)
+      .columns.filter((column) => column.isSelect)
+      .map((column) => column.propertyName as keyof ArticleEntity);
+  }
 
   async getTotal() {
     const alias = 'article';
@@ -79,39 +90,86 @@ export class ArticleService {
   }
 
   private async createFindAllBuilders(
-    { page = 1, pageSize = 10, keyword, tags = [], category, sort }: ArticleListDto,
+    {
+      page = 1,
+      pageSize = 10,
+      keyword,
+      tags = [],
+      category,
+      sort = SORT.createAtDown,
+    }: ArticleListDto,
     userId = 0,
     beforeClone?: (builder: SelectQueryBuilder<ArticleEntity>) => void | Promise<void>,
   ): Promise<[SelectQueryBuilder<ArticleEntity>, SelectQueryBuilder<ArticleEntity>]> {
     const _sort = SORT_MAP[sort as SORT] || SORT_MAP[SORT.createAtUp];
 
-    const builder = this.articleRepository
-      .createQueryBuilder('article')
-      .leftJoinAndSelect('article.category', 'category');
+    const builder = this.articleRepository.manager
+      .createQueryBuilder()
+      .from<ArticleEntity>((qb) => {
+        qb.from(ArticleEntity, 'article')
+          .addSelect(
+            (
+              [
+                ...this.allowedColumns,
+                'createAt',
+                'updateAt',
+                'authorId',
+                'categoryId',
+              ] satisfies Array<keyof ArticleEntity>
+            ).map((item) => item),
+          )
+          .addSelect(
+            `ROW_NUMBER() OVER (ORDER BY ${_sort.sort} ${_sort.order}, article.id) AS \`rowid\``,
+          )
+          // 联查点赞表
+          .leftJoin(
+            (sqb) => {
+              return sqb
+                .select([
+                  'articleId',
+                  'COUNT(id) AS likeCount',
+                  `SUM(CASE WHEN userId = ${userId} THEN 1 ELSE 0 END ) AS checked`,
+                ])
+                .from(ArticleLikeEntity, 'lk')
+                .groupBy('articleId');
+            },
+            'articleLike',
+            'articleLike.articleId = article.id',
+          )
+          .addSelect([
+            'articleLike.likeCount AS `like_count`',
+            'articleLike.checked AS `like_checked`',
+          ]);
 
-    if (tags.length) {
-      // tag子查询
-      builder.andWhere((qb) => {
-        return (
-          '`article`.`id` IN ' +
-          qb
-            .subQuery()
-            .select('atc.id')
-            .from(TagEntity, 'tag')
-            .leftJoin('tag.articleList', 'atc')
-            .where({ id: In(tags) })
-            .groupBy('atc.id')
-            .getQuery()
-        );
-      });
-    }
-    if (category) builder.andWhere({ categoryId: category });
-    if (keyword) builder.andWhere({ title: Like(`%${keyword}%`) });
+        if (tags.length) {
+          // tag子查询
+          qb.andWhere((qb) => {
+            return (
+              '`article`.`id` IN ' +
+              qb
+                .subQuery()
+                .select('atc.id')
+                .from(TagEntity, 'tag')
+                .leftJoin('tag.articleList', 'atc')
+                .where({ id: In(tags) })
+                .groupBy('atc.id')
+                .getQuery()
+            );
+          });
+        }
+        if (category) {
+          qb.andWhere({ categoryId: category });
+        }
+        if (keyword) {
+          qb.andWhere({ title: Like(`%${keyword}%`) });
+        }
+        beforeClone?.(qb);
+        return qb;
+      }, EntityAlias.article)
+      // 子查询内部已经有判断了
+      .withDeleted();
 
-    if (beforeClone) {
-      const bcRes = beforeClone(builder);
-      if (bcRes?.then) await bcRes;
-    }
+    builder.expressionMap.mainAlias!.metadata = builder.connection.getMetadata(ArticleEntity);
 
     // 可以查总数了
     const countBuilder = builder.clone();
@@ -119,27 +177,14 @@ export class ArticleService {
 
     // 列表继续添加联查语句
     builder
-      .addSelect(['`article`.`createAt`', '`article`.`updateAt`'])
+      .addSelect(['article.*'])
+      // .addSelect(['`article`.`createAt`', '`article`.`updateAt`'])
       // 联查用户表
       .leftJoinAndSelect('article.author', 'author')
       // 联查标签表
       .leftJoinAndSelect('article.tags', 'tags')
-      // 联查点赞表
-      .leftJoin(
-        (sqb) => {
-          return sqb
-            .select([
-              'articleId',
-              'COUNT(id) AS likeCount',
-              `SUM(CASE WHEN userId = ${userId} THEN 1 ELSE 0 END ) AS checked`,
-            ])
-            .from(ArticleLikeEntity, 'lk')
-            .groupBy('articleId');
-        },
-        'articleLike',
-        'articleLike.articleId = article.id',
-      )
-      .addSelect(['articleLike.likeCount AS `like_count`', 'articleLike.checked AS `like_checked`'])
+      // 联查分类表
+      .leftJoinAndSelect('article.category', 'category')
       // 联查留言表
       .leftJoin(
         (sqb) => {
@@ -152,9 +197,10 @@ export class ArticleService {
         'comments.articleId = article.id',
       )
       .addSelect(['comments.commentCount AS article_commentCount'])
-      .orderBy(_sort.sort, _sort.order)
-      .offset((page - 1) * pageSize)
-      .limit(pageSize);
+      .where(`${EntityAlias.article}.rowId between :start and :end`, {
+        start: (page - 1) * pageSize + 1,
+        end: page * pageSize,
+      });
 
     return [countBuilder, builder];
   }
@@ -202,18 +248,17 @@ export class ArticleService {
       listDTO,
       userId,
       (builder) => {
+        builder.addSelect(['deletedAt', 'article.as AS `as`']);
         builder.withDeleted();
       },
-    ).then(([countBuilder, builder]) => {
-      builder.addSelect(['article.as', 'article.deletedAt'] satisfies AK[]);
-      return [countBuilder, builder];
-    });
+    );
     return await this.handleFindAllBuilders(builders);
   }
 
   async findAllByAuthor(pageDto: PageDto, authorId: number, userId: number) {
     const builders = this.createFindAllBuilders(pageDto as ArticleListDto, userId, (builder) => {
       builder.andWhere({ authorId });
+      if (userId !== authorId) builder.andWhere({ status: String(ARTICLE_STATE.public) });
     });
 
     return await this.handleFindAllBuilders(builders);
