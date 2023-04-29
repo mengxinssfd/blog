@@ -26,12 +26,13 @@ onMounted(() => request({ page: 1, pageSize: 5, tags: [], sort: 1 }, !!process.c
   <Widget title="最新文章">
     <div class="widget-content">
       <ul>
-        <li
-          v-for="item in list"
-          :key="item.id"
-          :class="{ 'iconfont icon-view active': item.active }">
+        <li v-for="item in list" :key="item.id" :class="{ active: item.active }">
           <nuxt-link :to="item.link" class="_ flex">
-            <el-avatar :src="item.cover" size="large" shape="square"></el-avatar>
+            <el-avatar
+              :src="item.cover"
+              :class="{ 'iconfont icon-view': item.active }"
+              size="large"
+              shape="square"></el-avatar>
             <div class="texts _ flex-1">
               <div class="title _ ellipsis-2">{{ item.title }}</div>
               <div class="time">{{ item.createTime }}</div>
@@ -50,17 +51,6 @@ onMounted(() => request({ page: 1, pageSize: 5, tags: [], sort: 1 }, !!process.c
     position: relative;
     &.active {
       pointer-events: none;
-      &:before {
-        position: absolute;
-        top: 0;
-        left: 0;
-        color: white;
-        background-color: var(--theme-color);
-        padding: 0 4px;
-        border-bottom-right-radius: 4px;
-        border-top-left-radius: 4px;
-        content: '\e661';
-      }
     }
     &:not(.active) {
       cursor: pointer;
@@ -76,6 +66,19 @@ onMounted(() => request({ page: 1, pageSize: 5, tags: [], sort: 1 }, !!process.c
   }
   .el-avatar {
     flex-basis: 56px;
+    &.iconfont {
+      &:before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: white;
+        background-color: var(--theme-color);
+        padding: 0 4px;
+        border-bottom-right-radius: 4px;
+        border-top-left-radius: 4px;
+        content: '\e661';
+      }
+    }
   }
   .texts {
     overflow-x: hidden;
