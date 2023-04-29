@@ -146,7 +146,7 @@ a {
 .board {
   position: relative;
   margin-top: 1rem;
-  padding: 2rem;
+  padding: var(--board-padding);
   width: 100%;
   border-radius: var(--board-radius);
   //box-shadow: var(--board-shadow);
@@ -154,6 +154,7 @@ a {
   color: var(--text-color);
   @media (max-width: 576px) {
     //padding: 0;
+    --board-padding: 0;
   }
 }
 .btn:not(.disabled):not(.active) {

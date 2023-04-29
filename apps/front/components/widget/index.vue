@@ -37,5 +37,8 @@ defineProps({
     margin-bottom: 1rem;
     font-size: 1rem;
   }
+  @media (max-width: 550px) {
+    padding: 1.3rem 0.5rem;
+  }
 }
 </style>
