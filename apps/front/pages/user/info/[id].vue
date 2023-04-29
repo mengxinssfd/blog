@@ -156,12 +156,8 @@ watch(
           </div>
         </div>
         <div v-if="loginUser.id === user.id" class="right">
-          <el-button type="danger" @click="showEditPasswordDialog">
-            修改密码
-          </el-button>
-          <el-button type="warning" @click="showEditUserInfoDialog">
-            编辑资料
-          </el-button>
+          <el-button type="danger" @click="showEditPasswordDialog"> 修改密码 </el-button>
+          <el-button type="warning" @click="showEditUserInfoDialog"> 编辑资料 </el-button>
           <el-button type="info" @click="restoreArticle"> 恢复文章 </el-button>
         </div>
       </section>
