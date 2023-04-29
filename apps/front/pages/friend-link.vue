@@ -15,6 +15,9 @@ useHeaderStore().useTransparent();
 const linkList = ref<FriendLinkEntity[]>([]);
 const dialogVisible = ref(false);
 const { data: articleAs, request: reqArticleAs } = useRequest(getArticleAs);
+const bannerBg = computed(
+  () => articleAs.value?.cover || 'https://bu.dusays.com/2022/12/04/638cb7ce7e3f6.jpg',
+);
 
 async function getData() {
   const { data } = await useAsyncData(() => getResolveFriendLinkList());
@@ -54,11 +57,7 @@ await getData();
   <Title>Nice's Blog - 友链</Title>
   <NuxtLayout name="page">
     <template #banner>
-      <Banner
-        :blur="false"
-        height="50vh"
-        :brightness="0.75"
-        bg-img="https://s.cn.bing.net/th?id=OHR.Honnavaralavenderfields_ZH-CN8054655091_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp">
+      <Banner :blur="false" height="55vh" :brightness="0.75" :bg-img="bannerBg">
         <template #content>
           <div class="title">友链</div>
         </template>

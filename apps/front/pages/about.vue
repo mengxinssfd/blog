@@ -41,7 +41,7 @@ await getData();
         :bg-img="article.cover"
         :blur="false"
         :brightness="0.7"
-        height="50vh"
+        height="55vh"
         content="关于我"></Banner>
     </template>
     <template #aside>
