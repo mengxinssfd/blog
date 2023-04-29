@@ -31,6 +31,17 @@
   .el-dialog {
     background: var(--board-bg-color);
     max-width: 800px;
+    @media (max-width: 750px) {
+      width: 100%;
+      .el-dialog__footer {
+        .el-button {
+          display: block;
+          width: 100%;
+          margin-top: 10px;
+          margin-left: 0;
+        }
+      }
+    }
   }
 
   .el-form-item {

@@ -271,6 +271,11 @@ if (process.client && !(window as any).__NUXT__.data[route.fullPath]) {
     flex: 1;
     position: relative;
     width: 100%;
+    @media (max-width: 750px) {
+      .board {
+        --board-padding: 0.5rem;
+      }
+    }
     audio {
       position: fixed;
       right: 0;

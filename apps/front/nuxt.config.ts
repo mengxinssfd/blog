@@ -32,6 +32,7 @@ export default defineNuxtConfig({
     // layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0' },
         { name: 'baidu-site-verification', content: 'code-xSBd0ubpSQ' },
         { name: 'description', content: env.VITE_SITE_DESC },
         { name: 'author', content: 'DYH' },

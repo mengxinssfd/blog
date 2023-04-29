@@ -152,9 +152,9 @@ a {
   //box-shadow: var(--board-shadow);
   background-color: var(--board-bg-color);
   color: var(--text-color);
-  @media (max-width: 576px) {
+  @media (max-width: 750px) {
     //padding: 0;
-    --board-padding: 0;
+    --board-padding: 5px;
   }
 }
 .btn:not(.disabled):not(.active) {

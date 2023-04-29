@@ -72,6 +72,17 @@ const createComment = async () => {
   .btn-block {
     text-align: right;
     margin: 1rem 0;
+    @media (max-width: 750px) {
+      .tourist-name {
+        float: none;
+      }
+      .el-button {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        margin-left: 0;
+      }
+    }
   }
 }
 </style>
