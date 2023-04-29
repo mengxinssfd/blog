@@ -2,8 +2,8 @@
   <div class="c-pagination el-pagination is-background">
     <button
       class="btn-prev is-first"
-      :disabled="page === 1"
-      @click="navigateTo(links[Math.max(page - 2, 0)].link)">
+      :disabled="pageCurrent === 1"
+      @click="navigateTo(links[Math.max(pageCurrent - 2, 0)].link)">
       prev
     </button>
     <ul class="_ flex-c el-pager">
@@ -11,14 +11,14 @@
         v-for="link in links"
         :key="link.link"
         class="number"
-        :class="{ 'is-active': link.page === page }">
+        :class="{ 'is-active': link.page === pageCurrent }">
         <nuxt-link :to="link.link">{{ link.page }}</nuxt-link>
       </li>
     </ul>
     <button
       class="btn-next is-last"
-      :disabled="page === links.length"
-      @click="navigateTo(links[Math.min(page, links.length - 1)].link)">
+      :disabled="pageCurrent === links.length"
+      @click="navigateTo(links[Math.min(pageCurrent, links.length - 1)].link)">
       next
     </button>
   </div>
@@ -35,13 +35,24 @@ const props = defineProps({
 });
 
 const route = useRoute();
-const page = computed(() => Number(route.query.page || 1));
+const pageTotal = computed(() => Math.ceil(props.total / props.size));
+const pageCurrent = computed(() => Number(route.query.page || 1));
 const links = computed<Array<{ page: number; link: string }>>(() => {
-  const size = Math.ceil(props.total / props.size);
-  return Array(size)
+  let offsetStart = pageCurrent.value - 2;
+  let offsetEnd = pageCurrent.value + 2;
+
+  if (offsetStart < 1) {
+    offsetEnd -= offsetStart - 1;
+  } else if (offsetEnd > pageTotal.value) {
+    offsetStart -= offsetEnd - pageTotal.value;
+  }
+
+  const pageStart = Math.max(offsetStart, 1);
+  const pageEnd = Math.min(offsetEnd, pageTotal.value);
+  return Array(pageEnd - pageStart + 1)
     .fill(1)
     .map((_, index) => {
-      const page = index + 1;
+      const page = pageStart + index;
       const link = setUrlQuery({ page }, route.fullPath);
       return { page, link };
     });
