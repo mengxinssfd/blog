@@ -7,7 +7,7 @@ import { FileHelperModule } from '@/modules/file-helper/file-helper.module';
   imports: [
     FileHelperModule,
     PuppeteerModule.forRoot({
-      pipe: true,
+      // pipe: true,
       headless: true,
       // 在浏览器输入url：`chrome://flags/`可以看到所有args
       args: [
