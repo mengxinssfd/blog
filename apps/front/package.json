@@ -1,12 +1,13 @@
 {
   "name": "@apps/front",
   "scripts": {
-    "build": "nuxt build",
+    "build": "nuxt build --dotenv .env.production&& npm run upload:oss",
     "dev": "nuxt dev --port 8080 --dotenv .env.local",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "check:ts": "vue-tsc --noEmit -p ./tsconfig.json"
+    "check:ts": "vue-tsc --noEmit -p ./tsconfig.json",
+    "upload:oss": "esno ./scripts/uploadToOSS.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
@@ -22,10 +23,8 @@
     "element-plus": "^2.3.2",
     "feed": "^4.2.2",
     "highlight.js": "^11.7.0",
-    "locss": "^1.0.2",
     "markdownlint": "^0.28.1",
     "request-template": "^2.2.0",
-    "sass": "^1.61.0",
     "sitemap": "^7.1.1",
     "vue": "^3.2.47",
     "xss": "^1.0.13",
@@ -33,6 +32,10 @@
   },
   "devDependencies": {
     "@tool-pack/types": "^0.0.2",
-    "nuxt": "^3.1.0"
+    "dotenv": "^16.0.3",
+    "locss": "^1.0.2",
+    "nuxt": "^3.1.0",
+    "sass": "^1.61.0",
+    "vite-plugin-oss": "^1.2.13"
   }
 }

@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import * as Path from 'path';
 import * as Fs from 'fs';
-import { Env } from '~/env';
+import { Env } from './env';
 
 const pkgs = Fs.readdirSync(Path.resolve(__dirname, '../../packages'));
 

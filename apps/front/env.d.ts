@@ -32,6 +32,12 @@ export interface Env {
   readonly VITE_SITE_KEYWORD: string;
   // # 网站开始运行日期
   readonly VITE_SITE_START_AT: string;
+
+  // oss
+  readonly VITE_OSS_REGION: string;
+  readonly VITE_OSS_ACCESSKEY_ID: string;
+  readonly VITE_OSS_ACCESS_KEY_SECRET: string;
+  readonly VITE_OSS_BUCKET: string;
 }
 
 // import.meta.env.VITE_APP_TITLE 使用时的ts类型提示
