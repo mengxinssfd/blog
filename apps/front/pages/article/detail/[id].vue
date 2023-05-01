@@ -249,6 +249,8 @@ if (process.client && !(window as any).__NUXT__.data[route.fullPath]) {
     padding: 0;
     li {
       display: table-row;
+      white-space: pre-line;
+      word-break: break-word;
       div {
         margin-left: 5px;
       }
@@ -257,6 +259,7 @@ if (process.client && !(window as any).__NUXT__.data[route.fullPath]) {
         padding: 0 5px;
         text-align: right;
         border-right: 1px solid #858585;
+        white-space: nowrap;
         counter-increment: index; // 自增1
         content: counter(index);
       }
