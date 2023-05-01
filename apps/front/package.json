@@ -28,7 +28,7 @@
     "sitemap": "^7.1.1",
     "vue": "^3.2.47",
     "xss": "^1.0.13",
-    "md-editor-v3": "^2.2.1"
+    "md-editor-v3": "^3.0.0"
   },
   "devDependencies": {
     "@tool-pack/types": "^0.0.2",
