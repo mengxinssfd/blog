@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import 'highlight.js/styles/atom-one-dark.css';
 import { getArticleAs } from '@blog/apis';
 import type { ArticleEntity, UserEntity } from '@blog/entities';
-import { useAsyncData } from '#app';
 import { useArticle } from '~/feature/hooks';
 import useHeaderStore from '~/store/header.store';
 
@@ -10,8 +8,7 @@ useHeaderStore().useTransparent();
 
 const Art = useArticle();
 const { article, audioVisible } = Art.Data;
-const { getLikeCountData } = Art._Methods;
-const { onCommentLockUpdate } = Art.Methods;
+const { onCommentLockUpdate, getLikeCountData } = Art.Methods;
 
 async function getData() {
   const { data } = await useAsyncData(() => getArticleAs('about'), {
@@ -21,7 +18,6 @@ async function getData() {
   article.value.author = { id: 1 } as UserEntity;
 }
 const init = () => {
-  Art._Methods.resolveArticleRender();
   const article = Art.Data.article.value;
   if (!article) return;
   Art.setArticleId(article.id);
@@ -65,11 +61,7 @@ await getData();
             <article v-if="!article.id">
               <el-skeleton :rows="10" animated />
             </article>
-            <article
-              v-else
-              ref="articleRef"
-              class="vuepress-markdown-body"
-              v-html="article.content"></article>
+            <MdViewer v-else :content="article.content" />
           </section>
         </div>
         <div class="board">
@@ -93,7 +85,6 @@ await getData();
       height: 40px;
     }
     section {
-      padding: 1rem;
       &.info {
         display: flex;
         align-items: center;
@@ -120,26 +111,6 @@ await getData();
       }
       &.article {
         position: relative;
-        .vuepress-markdown-body:not(.custom) {
-          padding: 0;
-        }
-        .vuepress-markdown-body {
-          color: var(--post-text-color);
-          //background: var(--board-bg-color);
-          background: none;
-        }
-        pre {
-          position: relative;
-          .btn.copy-code {
-            padding: 10px;
-            font-size: 12px;
-            line-height: 1em;
-            color: gray;
-            &:hover {
-              color: white;
-            }
-          }
-        }
       }
     }
   }

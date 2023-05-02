@@ -14,6 +14,10 @@
       article.title
     }`" />
 
+  <component
+    :is="'script'"
+    src="https://cdn.staticfile.org/mermaid/8.10.1/mermaid.min.js"></component>
+
   <NuxtLayout name="page">
     <template #banner>
       <Banner
@@ -73,11 +77,6 @@
       <WidgetArticleTOC v-if="article.id" v-sticky="'76px'" />
     </template>
     <div class="pg article-detail _ flex-col">
-      <component
-        :is="'script'"
-        v-if="!mermaid"
-        src="https://cdn.staticfile.org/mermaid/8.10.1/mermaid.min.js"></component>
-
       <div class="pg-content main-width">
         <audio
           v-if="article.bgm && audioVisible"
@@ -86,17 +85,14 @@
           autoplay
           loop
           @error="audioVisible = false"></audio>
-        <div class="board">
-          <section class="article">
-            <article v-if="!article.id">
-              <el-skeleton :rows="10" animated />
-            </article>
-            <article
-              v-else
-              ref="articleRef"
-              class="vuepress-markdown-body"
-              v-html="article.content"></article>
-          </section>
+        <div class="board article">
+          <article v-if="!article.id">
+            <el-skeleton :rows="10" animated />
+          </article>
+          <MdViewer
+            v-else
+            :content="article.content"
+            @word-count-change="textSize = $event"></MdViewer>
         </div>
         <div class="board">
           <CommentBlock v-if="article.author" :article="article" />
@@ -107,10 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import 'highlight.js/styles/atom-one-dark.css';
 // import DomPurify from 'dompurify';
-import * as xss from 'xss';
-import '~/styles/vuepress.css';
 import { View } from '@element-plus/icons-vue';
 import { getArticleDetail } from '@blog/apis';
 import { ArticleEntity } from '@blog/entities';
@@ -127,9 +120,8 @@ const route = useRoute();
 const articleId: number = route.params.id as any;
 const Art = useArticle();
 const textSize = ref(0);
-const mermaid = process.client ? (window as any).mermaid : undefined;
-const { article, like, audioVisible, articleRef } = Art.Data;
-const { onCommentLockUpdate, setLike, formatDate } = Art.Methods;
+const { article, like, audioVisible } = Art.Data;
+const { onCommentLockUpdate, setLike, formatDate, getLikeCountData } = Art.Methods;
 
 async function getArticle() {
   const { data /*, refresh */ } = await useAsyncData(
@@ -141,47 +133,12 @@ async function getArticle() {
       default: () => ({ data: {} as ArticleEntity }),
     },
   );
-  const _article = data.value!.data;
-  _article.content = xss.filterXSS(_article.content, {
-    onTag(tag, html) {
-      // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
-      // html是该标签的HTML，比如<a>标签，则html的值是'<a>'
-      // options是一些附加的信息，具体如下：
-      //   isWhite    boolean类型，表示该标签是否在白名单上
-      //   isClosing  boolean类型，表示该标签是否为闭合标签，比如</a>时为true
-      //   position        integer类型，表示当前标签在输出的结果中的起始位置
-      //   sourcePosition  integer类型，表示当前标签在原HTML中的起始位置
-      // 如果返回一个字符串，则当前标签将被替换为该字符串
-      // 如果不返回任何值，则使用默认的处理方法：
-      //   在白名单上：  通过onTagAttr来过滤属性，详见下文
-      //   不在白名单上：通过onIgnoreTag指定，详见下文
-
-      if (['input'].includes(tag)) return html;
-    },
-    onTagAttr(_tag, name, value) {
-      // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
-      // name是当前属性的名称，比如href="#"，则name的值是'href'
-      // value是当前属性的值，比如href="#"，则value的值是'#'
-      // isWhiteAttr是否为白名单上的属性
-      // 如果返回一个字符串，则当前属性值将被替换为该字符串
-      // 如果不返回任何值，则使用默认的处理方法
-      //   在白名单上：  调用safeAttrValue来过滤属性值，并输出该属性，详见下文
-      //   不在白名单上：通过onIgnoreTagAttr指定，详见下文
-
-      if (['id', 'class', 'align', 'style'].includes(name)) return `${name}="${value}"`;
-    },
-  });
-  article.value = _article;
+  article.value = data.value!.data;
 }
 const init = () => {
   // _Methods.refreshData();
   Art.setArticleId(articleId);
-  Art._Methods.getLikeCountData();
-
-  if (process.client) {
-    Art._Methods.resolveArticleRender();
-    textSize.value = (articleRef.value?.innerText || '').replace(/[\n ]+/g, '').length;
-  }
+  getLikeCountData();
 };
 
 if (process.client && !(window as any).__NUXT__.data[route.fullPath]) {
@@ -243,28 +200,6 @@ if (process.client && !(window as any).__NUXT__.data[route.fullPath]) {
 }
 .pg.article-detail {
   margin: 0 !important;
-  pre code ul {
-    list-style: none;
-    counter-reset: index;
-    padding: 0;
-    li {
-      display: table-row;
-      white-space: pre-line;
-      word-break: break-word;
-      div {
-        margin-left: 5px;
-      }
-      &:before {
-        display: table-cell;
-        padding: 0 5px;
-        text-align: right;
-        border-right: 1px solid #858585;
-        white-space: nowrap;
-        counter-increment: index; // 自增1
-        content: counter(index);
-      }
-    }
-  }
   .c-banner {
     .el-skeleton {
       padding: 0 2rem;
@@ -285,50 +220,13 @@ if (process.client && !(window as any).__NUXT__.data[route.fullPath]) {
       top: 77px;
       height: 40px;
     }
-    section {
+    .article {
       padding: 1rem;
       @media (max-width: 750px) {
         padding: 1rem 0;
       }
-      &.article {
-        position: relative;
-        img {
-          cursor: zoom-in;
-        }
-        .vuepress-markdown-body:not(.custom) {
-          padding: 0;
-        }
-        .vuepress-markdown-body {
-          color: var(--post-text-color);
-          //background: var(--board-bg-color);
-          background: none;
-        }
-        pre {
-          position: relative;
-          code {
-            padding: 0;
-          }
-          .lang-type,
-          .btn.copy-code {
-            padding: 10px;
-            font-size: 12px;
-            line-height: 1em;
-            color: gray;
-          }
-          .btn.copy-code {
-            &:hover {
-              color: white;
-            }
-          }
-        }
-      }
+      position: relative;
     }
-  }
-}
-.img-zoom-wrapper {
-  cursor: zoom-out;
-  img {
-    cursor: move;
   }
 }
 </style>
