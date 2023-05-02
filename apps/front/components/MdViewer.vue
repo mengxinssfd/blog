@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import 'highlight.js/styles/atom-one-dark.css';
-import '~/styles/vuepress.css';
 import * as xss from 'xss';
 import { createHtmlElement } from '@tool-pack/dom';
 import { Clipboard as ClipboardKit } from '@tool-pack/bom';
@@ -158,12 +156,17 @@ onMounted(() => {
   <article
     v-if="content"
     ref="articleRef"
-    class="c-md-viewer vuepress-markdown-body"
+    class="c-md-viewer vuepress-markdown-body markdown-body"
     v-html="filterContent"></article>
 </template>
 
 <style lang="scss">
+@import 'highlight.js/styles/atom-one-dark';
+@import '@/styles/vuepress';
+//@import '@/styles/markdown';
 .c-md-viewer {
+  background: none;
+  color: var(--text-color);
   img {
     cursor: zoom-in;
   }
@@ -172,13 +175,14 @@ onMounted(() => {
   }
   .vuepress-markdown-body {
     color: var(--post-text-color);
-    //background: var(--board-bg-color);
-    background: none;
   }
   pre {
     position: relative;
+    padding: 1rem;
+    background: #292a2d;
     code {
       padding: 0;
+      color: #fff;
     }
     .lang-type,
     .btn.copy-code {
