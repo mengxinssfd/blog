@@ -126,7 +126,7 @@ export class ArticleController {
       throw e;
     }
 
-    article.content = this.articleService.markedRender(article.content);
+    article.content = this.articleService.markdownToHtml(article.content);
     if (user?.id !== article.authorId && article.status === ArticleEntity.STATE.public) {
       article.viewCount++;
       await this.articleService.updateViewCount(article);

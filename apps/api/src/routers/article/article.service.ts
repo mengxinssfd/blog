@@ -13,10 +13,7 @@ import { In, Like, Not, Repository, SelectQueryBuilder } from 'typeorm';
 import { omit } from '@tool-pack/basic';
 import { rawsToEntities } from '@/utils/assemblyEntity';
 import { PageDto } from '@blog/dtos/page.dto';
-import initMarked from './init-marked';
-import { marked } from 'marked';
-
-const renderer = initMarked(marked);
+import { markdownToHtml } from './marked.init';
 
 enum SORT {
   createAtUp,
@@ -339,10 +336,8 @@ export class ArticleService {
     return article;
   }
 
-  markedRender(markdown: string): string {
-    // 这样转换把代码里面的都换掉了
-    // return marked(markdown.replace(/\n(?=\n)/g, '\n<br/>\n'), { renderer });
-    return marked(markdown, { renderer });
+  markdownToHtml(markdown: string): string {
+    return markdownToHtml(markdown);
   }
 
   async create(createArticleDto: CreateArticleDto, loginUser: UserEntity) {
@@ -373,7 +368,7 @@ export class ArticleService {
       .where({ as, status: String(ARTICLE_STATE.private) })
       .getOne();
     if (!find) throw new NotFoundException(`as(${as})不存在`);
-    find.content = this.markedRender(find.content);
+    find.content = this.markdownToHtml(find.content);
     return find;
   }
 

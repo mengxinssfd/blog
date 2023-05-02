@@ -1,6 +1,6 @@
-import type Marked from 'marked';
+import * as Marked from 'marked';
 // import hljs = require('highlight.js');
-export default function initMarked(marked: typeof Marked.marked) {
+function initMarked(marked: typeof Marked.marked) {
   // 使用服务器渲染会很慢
   // marked.setOptions({
   //   renderer: new marked.Renderer(),
@@ -43,4 +43,12 @@ export default function initMarked(marked: typeof Marked.marked) {
   } as any;
 
   return renderer;
+}
+
+const renderer = initMarked(Marked.marked);
+
+export function markdownToHtml(markdown: string): string {
+  // 这样转换把代码里面的都换掉了
+  // return marked(markdown.replace(/\n(?=\n)/g, '\n<br/>\n'), { renderer });
+  return Marked.marked(markdown, { renderer });
 }
