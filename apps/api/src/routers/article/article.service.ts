@@ -13,7 +13,8 @@ import { In, Like, Not, Repository, SelectQueryBuilder } from 'typeorm';
 import { omit } from '@tool-pack/basic';
 import { rawsToEntities } from '@/utils/assemblyEntity';
 import { PageDto } from '@blog/dtos/page.dto';
-import { markdownToHtml } from './marked.init';
+// import { markdownToHtml } from './marked.init';
+import { markdownToHtml } from './markdown-it.init';
 
 enum SORT {
   createAtUp,
