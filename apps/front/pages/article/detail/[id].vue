@@ -106,7 +106,7 @@
 // import DomPurify from 'dompurify';
 import { View } from '@element-plus/icons-vue';
 import { getArticleDetail } from '@blog/apis';
-import { ArticleEntity } from '@blog/entities';
+import type { ArticleEntity } from '@blog/entities';
 import { useAsyncData, useRoute } from '#app';
 import { useArticle } from '~/feature/hooks';
 import { TODAY_COVER_URL } from '~/config/constants';
@@ -125,7 +125,7 @@ const { onCommentLockUpdate, setLike, formatDate, getLikeCountData } = Art.Metho
 
 async function getArticle() {
   const { data /*, refresh */ } = await useAsyncData(
-    route.fullPath,
+    route.path,
     () => getArticleDetail(articleId),
     {
       // to do 使用了initialCache，刷新页面时会在浏览器额外再请求一次
@@ -141,15 +141,14 @@ const init = () => {
   getLikeCountData();
 };
 
-if (process.client && !(window as any).__NUXT__.data[route.fullPath]) {
-  onMounted(() => {
-    getArticle().then(init);
-  });
+if (process.client && !(window as any).__NUXT__?.data?.[route.path]) {
+  onMounted(() => getArticle().then(init));
 } else {
   onMounted(init);
   await getArticle();
 }
 </script>
+
 <style lang="scss">
 .cover-content {
   font-size: 13px;
