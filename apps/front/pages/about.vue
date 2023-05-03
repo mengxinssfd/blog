@@ -30,7 +30,7 @@ await getData();
 </script>
 
 <template>
-  <Title>Nice's Blog - 关于我</Title>
+  <Title>Nice's Blog - {{ article.title }}</Title>
   <NuxtLayout name="page">
     <template #banner>
       <Banner
@@ -38,7 +38,7 @@ await getData();
         :blur="false"
         :brightness="0.7"
         height="55vh"
-        content="关于我"></Banner>
+        :content="article.title"></Banner>
     </template>
     <template #aside>
       <template v-if="article.author">

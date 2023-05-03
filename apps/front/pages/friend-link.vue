@@ -10,14 +10,17 @@ import {
 import { useRequest } from '@request-template/vue3-hooks';
 import { howLongAgo } from '~/feature/utils';
 import useHeaderStore from '~/store/header.store';
+import useUserStore from '~/store/user.store';
 
 useHeaderStore().useTransparent();
+const userStore = useUserStore();
 const linkList = ref<FriendLinkEntity[]>([]);
 const dialogVisible = ref(false);
 const { data: articleAs, request: reqArticleAs } = useRequest(getArticleAs);
 const bannerBg = computed(
   () => articleAs.value?.cover || 'https://bu.dusays.com/2022/12/04/638cb7ce7e3f6.jpg',
 );
+const pageTitle = computed(() => articleAs.value?.title || '友链');
 
 async function getData() {
   const { data } = await useAsyncData(() => getResolveFriendLinkList());
@@ -54,12 +57,12 @@ await getData();
 </script>
 
 <template>
-  <Title>Nice's Blog - 友链</Title>
+  <Title>Nice's Blog - {{ pageTitle }}</Title>
   <NuxtLayout name="page">
     <template #banner>
       <Banner :blur="false" height="55vh" :brightness="0.75" :bg-img="bannerBg">
         <template #content>
-          <div class="title">友链</div>
+          <div class="title">{{ pageTitle }}</div>
         </template>
       </Banner></template
     >
@@ -70,16 +73,16 @@ await getData();
           <div class="_ pos-trans-c-c col"></div>
         </div>
       </Widget>
-      <Widget title="互链规则">
-        <ul class="rules">
-          <li>不添加广告网站和违法网站，博客网站最好在5篇文章以上。</li>
-          <li>若域名为公共（二级分发）、免费域名，视站点质量添加。</li>
-          <li>博主更喜欢内容有趣的和生活类的博客，会更多地访问博客进行互动并添加到关注列表。</li>
-          <li>为了友链的统一性和美观性，昵称过长或包含博客、XX的XX等内容将被简化。</li>
-          <li>通常按添加时间进行排序，优秀站点可能会提升顺序。</li>
-          <li>若站点长期失联（无法访问）将会删除友链。</li>
-          <li>申请友链之前请先添加本站链接。</li>
-        </ul>
+      <Widget v-if="articleAs">
+        <template #title>
+          <div class="_ flex-c-between">
+            <span>互链规则</span>
+            <NuxtLink v-if="userStore.isSuperAdmin" :to="`/article/create?id=${articleAs.id}`">
+              <i class="iconfont icon-edit _ btn"></i>
+            </NuxtLink>
+          </div>
+        </template>
+        <div class="rules" v-html="articleAs.content"></div>
       </Widget>
       <Widget v-if="applyData.list.length" title="添加列表">
         <ul class="apply-list">
@@ -156,12 +159,13 @@ await getData();
   }
 }
 .rules {
-  padding-left: 1rem;
-
-  font-size: 14px;
-  list-style: decimal;
-  li + li {
-    margin-top: 10px;
+  :deep(ol) {
+    padding-left: 1rem;
+    font-size: 14px;
+    list-style: decimal;
+    li + li {
+      margin-top: 10px;
+    }
   }
 }
 .title {
