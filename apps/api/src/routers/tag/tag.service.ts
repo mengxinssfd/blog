@@ -3,6 +3,7 @@ import { CreateTagDto, UpdateTagDto } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ROLE, TagEntity, UserEntity } from '@blog/entities';
+import { Logger } from '@/utils/log4js';
 
 @Injectable()
 export class TagService {
@@ -66,6 +67,17 @@ export class TagService {
     tag.articleCount = tag.articleList?.length || 0;
 
     return tag;
+  }
+
+  async findOrCreate(dto: CreateTagDto) {
+    const tag = await this.tagRepository.findOne({ where: { name: dto.name } });
+    if (tag) return tag;
+
+    Logger.info('创建标签:', dto.name);
+    return await this.create(dto, {
+      id: 1,
+      role: UserEntity.ROLE.superAdmin,
+    } as UserEntity);
   }
 
   async findByIds(ids: number[]) {

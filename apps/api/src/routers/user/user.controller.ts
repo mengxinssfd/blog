@@ -34,7 +34,6 @@ import {
   UpdateUserDto,
   WxLoginDTO,
 } from '@blog/dtos';
-import { AppConfigService } from '@/app.config.service';
 import { RequestWithUser } from '@/types';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
 import { AppRedisService } from '@/modules/redis/redis.service';
@@ -46,21 +45,8 @@ export class UserController {
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly caslAbilityFactory: CaslAbilityFactory,
-    private readonly configService: AppConfigService,
     private readonly redisService: AppRedisService,
-  ) {
-    this.registerRoot();
-  }
-
-  async registerRoot() {
-    const { count } = await this.userService.findAll();
-    if (count) return;
-
-    const admin = this.configService.val('admin');
-
-    await this.userService.register({ nickname: admin.username, ...admin }, '127.0.0.1');
-    console.log('初始账号注册成功');
-  }
+  ) {}
 
   @Post('miniprogram-login')
   async miniProgramLogin(@Body() data: WxLoginDTO) {

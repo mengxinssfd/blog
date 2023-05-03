@@ -5,6 +5,7 @@ import { ARTICLE_STATE, ArticleEntity, CategoryEntity, ROLE, UserEntity } from '
 import { Repository } from 'typeorm';
 import { rawsToEntities } from '@/utils/assemblyEntity';
 import FailedException from '@/exceptions/Failed.exception';
+import { Logger } from '@/utils/log4js';
 
 @Injectable()
 export class CategoryService {
@@ -90,6 +91,18 @@ export class CategoryService {
     const findCate = await this.categoryRepository.findOneBy({ name });
     if (!findCate) throw new NotFoundException('该分类不存在');
     return findCate;
+  }
+
+  async findOrCreate(dto: CreateCategoryDto) {
+    try {
+      return await this.findOneByName(dto.name);
+    } catch (_) {
+      Logger.info('创建分类:', dto.name);
+      return await this.create({ description: dto.description, name: dto.name }, {
+        id: 1,
+        role: UserEntity.ROLE.superAdmin,
+      } as UserEntity);
+    }
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {

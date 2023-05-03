@@ -15,6 +15,7 @@ import { rawsToEntities } from '@/utils/assemblyEntity';
 import { PageDto } from '@blog/dtos/page.dto';
 // import { markdownToHtml } from './marked.init';
 import { markdownToHtml } from './markdown-it.init';
+import { Logger } from '@/utils/log4js';
 
 enum SORT {
   createAtUp,
@@ -341,7 +342,10 @@ export class ArticleService {
     return markdownToHtml(markdown);
   }
 
-  async create(createArticleDto: CreateArticleDto, loginUser: UserEntity) {
+  async create(
+    createArticleDto: CreateArticleDto & Pick<ArticleEntity, 'as'>,
+    loginUser: UserEntity,
+  ) {
     const article = new ArticleEntity();
     Object.assign(article, {
       ...omit(createArticleDto, ['isPublic']),
@@ -369,8 +373,30 @@ export class ArticleService {
       .where({ as, status: String(ARTICLE_STATE.private) })
       .getOne();
     if (!find) throw new NotFoundException(`as(${as})不存在`);
-    find.content = this.markdownToHtml(find.content);
     return find;
+  }
+
+  async findAsOrCreate(
+    data: Required<Pick<ArticleEntity, 'title' | 'description' | 'as' | 'categoryId'>> &
+      Pick<CreateArticleDto, 'tags'>,
+  ) {
+    try {
+      await this.getAs(data.as as string);
+    } catch (_) {
+      Logger.info(`创建文章【${data.title}】作为 ${data.as}`);
+      await this.create(
+        {
+          content: '',
+          cover: '',
+          isPublic: false,
+          ...data,
+        },
+        {
+          id: 1,
+          role: UserEntity.ROLE.superAdmin,
+        } as UserEntity,
+      );
+    }
   }
 
   async update(id: number, updateArticleDto: UpdateArticleDto) {

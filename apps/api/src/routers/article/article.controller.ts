@@ -173,7 +173,9 @@ export class ArticleController {
 
   @Get('as/:as')
   async getAs(@Param('as') as: string) {
-    return this.articleService.getAs(as);
+    const res = await this.articleService.getAs(as);
+    res.content = this.articleService.markdownToHtml(res.content);
+    return res;
   }
 
   @ApiBearerAuth()

@@ -25,6 +25,7 @@ import { FriendLinkModule } from '@/routers/friend-link/friend-link.module';
 import { FileModule } from '@/routers/file/file.module';
 import { StatisticsModule } from '@/routers/statistics/statistics.module';
 import { RedisModule, type RedisModuleOptions } from '@liaoliaots/nestjs-redis';
+import { InitModule } from '@/modules/init/init.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { RedisModule, type RedisModuleOptions } from '@liaoliaots/nestjs-redis';
     FriendLinkModule,
     FileModule,
     StatisticsModule,
+    InitModule,
   ],
 })
 export class AppModule {}
