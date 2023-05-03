@@ -47,13 +47,23 @@ export class InitService implements OnApplicationBootstrap {
       as: 'friend-link',
       tags: [blogTag.id],
       categoryId: blogCate.id,
+      content: `
+1. 不添加广告网站和违法网站，博客网站最好在 5 篇文章以上。
+1. 若域名为公共（二级分发）、免费域名，视站点质量添加。
+1. 博主更喜欢内容有趣的和生活类的博客，会更多地访问博客进行互动并添加到关注列表。
+1. 为了友链的统一性和美观性，昵称过长或包含博客、XX 的 XX 等内容将被简化。
+1. 通常按添加时间进行排序，优秀站点可能会提升顺序。
+1. 若站点长期失联（无法访问）将会删除友链。
+1. 申请友链之前请先添加本站链接。
+`.trim(),
     });
     await this.articleService.findAsOrCreate({
-      description: '关于我',
-      title: '关于',
+      description: '关于页',
+      title: '关于我',
       as: 'about',
       tags: [blogTag.id],
       categoryId: blogCate.id,
+      content: '',
     });
   }
 }

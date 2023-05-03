@@ -377,7 +377,7 @@ export class ArticleService {
   }
 
   async findAsOrCreate(
-    data: Required<Pick<ArticleEntity, 'title' | 'description' | 'as' | 'categoryId'>> &
+    data: Required<Pick<ArticleEntity, 'title' | 'content' | 'description' | 'as' | 'categoryId'>> &
       Pick<CreateArticleDto, 'tags'>,
   ) {
     try {
@@ -386,7 +386,6 @@ export class ArticleService {
       Logger.info(`创建文章【${data.title}】作为 ${data.as}`);
       await this.create(
         {
-          content: '',
           cover: '',
           isPublic: false,
           ...data,
