@@ -1,9 +1,11 @@
 <template>
   <div class="c-comment-input-box">
     <el-input
-      v-model.trim="form.content"
+      v-model="form.content"
       :placeholder="placeholder"
       :rows="4"
+      :maxlength="800"
+      show-word-limit
       type="textarea"></el-input>
     <div class="btn-block">
       <div v-if="!user.id" class="tourist-name">

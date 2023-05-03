@@ -13,6 +13,7 @@ import { WordValidate } from '../word.validate';
 export class CreateCommentDto {
   @ApiProperty({ description: '评论内容', example: '' })
   @IsNotEmpty({ message: '评论内容不能为空' })
+  @MaxLength(800, { message: '评论内容不能超过800' })
   @IsString({ message: '内容必须是字符串' })
   @Validate(WordValidate)
   content!: string;
