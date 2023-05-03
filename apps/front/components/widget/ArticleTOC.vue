@@ -12,9 +12,10 @@ const route = useRoute();
 const router = useRouter();
 
 function getHeads() {
-  const anchors = (
-    document.querySelector('.article article') as HTMLElement
-  ).querySelectorAll<HTMLHeadingElement>('h1,h2,h3,h4,h5,h6');
+  const anchors =
+    document
+      .querySelector('.article .markdown-body')
+      ?.querySelectorAll<HTMLHeadingElement>('h1,h2,h3,h4,h5,h6') || [];
   return Array.from(anchors).filter((title) => !!title.innerText.trim());
 }
 function getTree(heads: HTMLHeadingElement[]): AnchorTree[] {
