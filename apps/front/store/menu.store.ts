@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import useUserStore from '~/store/user.store';
-import { ROLE } from '@blog/entities';
 import { useToggleState } from '~/feature/hooks';
 
 const useMenuStore = defineStore('menu', () => {
@@ -16,7 +15,7 @@ const useMenuStore = defineStore('menu', () => {
           path: '/admin',
           title: '后台',
           icon: 'icon-admin',
-          disabled: userStore.user.role !== ROLE.superAdmin,
+          disabled: !userStore.isSuperAdmin,
         },
       ];
     },

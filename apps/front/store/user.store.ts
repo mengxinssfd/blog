@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia';
 import { useAsyncData } from '#app';
-import type { UserEntity } from '@blog/entities';
+import { type UserEntity, ROLE } from '@blog/entities';
 import { getSelfInfo as getSelfInfoApi, login as loginApi } from '@blog/apis';
 import { Token } from '~/feature/request/primary/token';
 import type { CustomCacheConfig } from 'request-template';
 
 const useUserStore = defineStore('user', () => {
   const user = ref<UserEntity>({} as UserEntity);
+  const isSuperAdmin = computed(() => user.value.role === ROLE.superAdmin);
 
   async function login(username: string, password: string) {
     const res = await loginApi({ username, password });
@@ -28,6 +29,7 @@ const useUserStore = defineStore('user', () => {
     user,
     login,
     getSelfInfo,
+    isSuperAdmin,
     logout() {
       Token.clear();
       user.value = {} as UserEntity;
