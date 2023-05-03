@@ -22,10 +22,63 @@ const emit = defineEmits(['wordCountChange']);
 
 const articleRef = ref<HTMLElement>();
 
+const baseAttrs = ['class', 'id', 'style'];
+const baseWhiteList = (
+  [
+    'p',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'div',
+    'code',
+    'pre',
+    'i',
+    'ul',
+    'ol',
+    'li',
+    'blockquote',
+    'table',
+    'thead',
+    'tbody',
+    'tfoot',
+    'tr',
+    'td',
+    'th',
+    'em',
+    'sub',
+    'sup',
+    'span',
+  ] satisfies (keyof HTMLElementTagNameMap)[]
+).reduce(
+  // eslint-disable-next-line no-sequences
+  (prev, cur) => ((prev[cur] = baseAttrs), prev),
+  {} as Record<keyof HTMLElementTagNameMap, string[]>,
+);
+const emptyWhiteList = (
+  ['br', 's', 'strong', 'u'] satisfies (keyof HTMLElementTagNameMap)[]
+).reduce(
+  // eslint-disable-next-line no-sequences
+  (prev, cur) => ((prev[cur] = []), prev),
+  {} as Record<keyof HTMLElementTagNameMap, string[]>,
+);
+
 const filterContent = computed(() =>
   props.content
     ? xss.filterXSS(props.content, {
-        onTag(tag, html) {
+        whiteList: {
+          ...baseWhiteList,
+          ...emptyWhiteList,
+          svg: ['viewBox', 'data-icon', 'width', 'height', 'fill', 'aria-hidden'],
+          rect: ['x', 'y', 'width', 'height', 'fill'],
+          path: ['d'],
+          img: [...baseAttrs, 'src'],
+          a: [...baseAttrs, 'href'],
+          input: [...baseAttrs, 'checked', 'disabled', 'type'],
+        },
+        /* onTag(tag, html) {
           // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
           // html是该标签的HTML，比如<a>标签，则html的值是'<a>'
           // options是一些附加的信息，具体如下：
@@ -37,10 +90,11 @@ const filterContent = computed(() =>
           // 如果不返回任何值，则使用默认的处理方法：
           //   在白名单上：  通过onTagAttr来过滤属性，详见下文
           //   不在白名单上：通过onIgnoreTag指定，详见下文
-
-          if (['input'].includes(tag)) return html;
-        },
-        onTagAttr(_tag, name, value) {
+          // console.log('bbbb', tag, html);
+          // if (tag === 'path') return html;
+          // if (['input', 'br'].includes(tag)) return html;
+        }, */
+        /* onTagAttr(_tag, name, value) {
           // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
           // name是当前属性的名称，比如href="#"，则name的值是'href'
           // value是当前属性的值，比如href="#"，则value的值是'#'
@@ -50,8 +104,9 @@ const filterContent = computed(() =>
           //   在白名单上：  调用safeAttrValue来过滤属性值，并输出该属性，详见下文
           //   不在白名单上：通过onIgnoreTagAttr指定，详见下文
 
+          console.log('name', name);
           if (['id', 'class', 'align', 'style'].includes(name)) return `${name}="${value}"`;
-        },
+        }, */
       })
     : '',
 );
@@ -107,8 +162,8 @@ const resolveArticleRender = () => {
   const links = articleEl.querySelectorAll<HTMLAnchorElement>('a');
   const reg = new RegExp(`^${location.origin}`);
   links.forEach((link) => {
-    link.target = '_blank';
     if (!reg.test(link.href)) {
+      link.target = '_blank';
       link.href = '/link?target=' + encodeURIComponent(link.href);
     }
   });
@@ -116,15 +171,16 @@ const resolveArticleRender = () => {
   // 流程图
   const mermaids = articleEl.querySelectorAll<HTMLElement>('.mermaid');
   if (mermaids.length) {
-    const mermaid = (window as any).mermaid;
     // 从缓存读取也需要5ms
     setTimeout(() => {
       // (window as any).mermaid?.initialize({ startOnLoad: false });
+      const mermaid = (window as any).mermaid;
       if (!mermaid) return;
       const now = Date.now();
       mermaids.forEach((item, index) => {
         // mermaid加载完成后渲染的不需要再次渲染
-        if (item.innerHTML.startsWith('<svg')) return;
+        if (/^\s*<svg/.test(item.innerHTML)) return;
+        item.classList.replace('language-mermaid', 'mermaid');
         const id = 'mermaid-' + now + '-' + index;
         const content = item.innerHTML.replace(/&gt;/g, '>');
         mermaid.mermaidAPI.render(id, content, (svgCode: string) => {
@@ -156,7 +212,7 @@ onMounted(() => {
   <article
     v-if="content"
     ref="articleRef"
-    class="c-md-viewer vuepress-markdown-body markdown-body"
+    class="c-md-viewer markdown-body"
     v-html="filterContent"></article>
 </template>
 
@@ -178,7 +234,7 @@ onMounted(() => {
   }
   pre {
     position: relative;
-    padding: 1rem;
+    padding: 1rem 1rem 0;
     background: #292a2d;
     code {
       padding: 0;
@@ -196,6 +252,9 @@ onMounted(() => {
         color: white;
       }
     }
+    + pre {
+      margin-top: 10px;
+    }
   }
   pre code ul {
     list-style: none;
@@ -203,7 +262,7 @@ onMounted(() => {
     padding: 0;
     li {
       display: table-row;
-      white-space: pre-line;
+      white-space: pre-wrap;
       word-break: break-word;
       div {
         margin-left: 5px;
@@ -217,6 +276,13 @@ onMounted(() => {
         counter-increment: index; // 自增1
         content: counter(index);
       }
+    }
+  }
+  .mermaid {
+    .edgePaths .edgePath path,
+    .flowchart-link,
+    .marker {
+      stroke: var(--text-color) !important;
     }
   }
 }
