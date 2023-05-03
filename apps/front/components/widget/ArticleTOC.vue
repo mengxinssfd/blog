@@ -9,6 +9,7 @@ const treeMap = ref(new Map<string, AnchorTree>());
 const elRef = ref<HTMLElement>();
 const headings = ref<HTMLHeadingElement[]>([]);
 const route = useRoute();
+const router = useRouter();
 
 function getHeads() {
   const anchors = (
@@ -118,7 +119,8 @@ onBeforeUnmount(() => {
 });
 
 function onSelect(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  // document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  router.push({ path: route.path, hash: '#' + id });
 }
 </script>
 <template>
