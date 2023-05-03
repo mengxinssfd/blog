@@ -14,10 +14,6 @@
       article.title
     }`" />
 
-  <component
-    :is="'script'"
-    src="https://cdn.staticfile.org/mermaid/8.10.1/mermaid.min.js"></component>
-
   <NuxtLayout name="page">
     <template #banner>
       <Banner

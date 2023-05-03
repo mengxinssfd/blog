@@ -5,7 +5,9 @@ import { Clipboard as ClipboardKit } from '@tool-pack/bom';
 import { ElMessage } from 'element-plus';
 import highlight from 'highlight.js';
 import ImgZoom from '@mxssfd/img-zoom';
-import { onMounted } from '#imports';
+import mermaid from 'mermaid';
+
+mermaid.initialize({ startOnLoad: false });
 
 const props = defineProps({
   content: {
@@ -51,6 +53,8 @@ const baseWhiteList = (
     'sub',
     'sup',
     'span',
+    'hr',
+    'section',
   ] satisfies (keyof HTMLElementTagNameMap)[]
 ).reduce(
   // eslint-disable-next-line no-sequences
@@ -169,27 +173,8 @@ const resolveArticleRender = () => {
   });
 
   // 流程图
-  const mermaids = articleEl.querySelectorAll<HTMLElement>('.mermaid');
-  if (mermaids.length) {
-    // 从缓存读取也需要5ms
-    setTimeout(() => {
-      // (window as any).mermaid?.initialize({ startOnLoad: false });
-      const mermaid = (window as any).mermaid;
-      if (!mermaid) return;
-      const now = Date.now();
-      mermaids.forEach((item, index) => {
-        // mermaid加载完成后渲染的不需要再次渲染
-        if (/^\s*<svg/.test(item.innerHTML)) return;
-        item.classList.replace('language-mermaid', 'mermaid');
-        const id = 'mermaid-' + now + '-' + index;
-        const content = item.innerHTML.replace(/&gt;/g, '>');
-        mermaid.mermaidAPI.render(id, content, (svgCode: string) => {
-          item.innerHTML = svgCode;
-        });
-        item.style.display = 'block';
-      });
-    }, 100);
-  }
+  // https://mermaid.js.org/config/usage.html
+  mermaid.run({ nodes: articleEl.querySelectorAll('.mermaid') });
 
   emit('wordCountChange', (articleRef.value?.innerText || '').replace(/[\n\s]+/g, '').length);
 };
@@ -223,14 +208,9 @@ onMounted(() => {
 .c-md-viewer {
   background: none;
   color: var(--text-color);
-  img {
-    cursor: zoom-in;
-  }
-  .vuepress-markdown-body:not(.custom) {
-    padding: 0;
-  }
-  .vuepress-markdown-body {
-    color: var(--post-text-color);
+  code {
+    color: #fff;
+    background: #292a2d;
   }
   pre {
     position: relative;
@@ -279,17 +259,27 @@ onMounted(() => {
     }
   }
   .mermaid {
+    &:not([data-processed]) {
+      display: none;
+    }
     .edgePaths .edgePath path,
     .flowchart-link,
     .marker {
       stroke: var(--text-color) !important;
     }
   }
-}
-.img-zoom-wrapper {
-  cursor: zoom-out;
+  .footnotes-sep {
+    margin-top: 10px;
+  }
   img {
-    cursor: move;
+    cursor: zoom-in;
+  }
+  .img-zoom-wrapper {
+    cursor: zoom-out;
+
+    img {
+      cursor: move;
+    }
   }
 }
 </style>

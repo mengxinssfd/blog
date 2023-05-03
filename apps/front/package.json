@@ -24,6 +24,7 @@
     "feed": "^4.2.2",
     "highlight.js": "^11.7.0",
     "markdownlint": "^0.28.1",
+    "mermaid": "^10.1.0",
     "request-template": "^2.2.0",
     "sitemap": "^7.1.1",
     "vue": "^3.2.47",
