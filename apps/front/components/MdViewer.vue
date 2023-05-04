@@ -6,6 +6,7 @@ import { ElMessage } from 'element-plus';
 import highlight from 'highlight.js';
 import ImgZoom from '@mxssfd/img-zoom';
 import mermaid from 'mermaid';
+import { markdownToHtml } from '~/feature/markdown-it';
 
 mermaid.initialize({ startOnLoad: false });
 
@@ -15,6 +16,10 @@ const props = defineProps({
     default: '',
   },
   isMd: {
+    type: Boolean,
+    default: false,
+  },
+  isPreview: {
     type: Boolean,
     default: false,
   },
@@ -69,20 +74,22 @@ const emptyWhiteList = (
   {} as Record<keyof HTMLElementTagNameMap, string[]>,
 );
 
-const filterContent = computed(() =>
-  props.content
-    ? xss.filterXSS(props.content, {
-        whiteList: {
-          ...baseWhiteList,
-          ...emptyWhiteList,
-          svg: ['viewBox', 'data-icon', 'width', 'height', 'fill', 'aria-hidden'],
-          rect: ['x', 'y', 'width', 'height', 'fill'],
-          path: ['d'],
-          img: [...baseAttrs, 'src'],
-          a: [...baseAttrs, 'href'],
-          input: [...baseAttrs, 'checked', 'disabled', 'type'],
-        },
-        /* onTag(tag, html) {
+const filterContent = computed(() => {
+  let content = props.content;
+  if (!content) return '';
+  content = props.isMd ? markdownToHtml(props.content) : props.content;
+  return xss.filterXSS(content, {
+    whiteList: {
+      ...baseWhiteList,
+      ...emptyWhiteList,
+      svg: ['viewBox', 'data-icon', 'width', 'height', 'fill', 'aria-hidden'],
+      rect: ['x', 'y', 'width', 'height', 'fill'],
+      path: ['d'],
+      img: [...baseAttrs, 'src'],
+      a: [...baseAttrs, 'href'],
+      input: [...baseAttrs, 'checked', 'disabled', 'type'],
+    },
+    /* onTag(tag, html) {
           // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
           // html是该标签的HTML，比如<a>标签，则html的值是'<a>'
           // options是一些附加的信息，具体如下：
@@ -98,7 +105,7 @@ const filterContent = computed(() =>
           // if (tag === 'path') return html;
           // if (['input', 'br'].includes(tag)) return html;
         }, */
-        /* onTagAttr(_tag, name, value) {
+    /* onTagAttr(_tag, name, value) {
           // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
           // name是当前属性的名称，比如href="#"，则name的值是'href'
           // value是当前属性的值，比如href="#"，则value的值是'#'
@@ -111,9 +118,8 @@ const filterContent = computed(() =>
           console.log('name', name);
           if (['id', 'class', 'align', 'style'].includes(name)) return `${name}="${value}"`;
         }, */
-      })
-    : '',
-);
+  });
+});
 
 const clearList = ref<Function[]>([]);
 onBeforeUnmount(() => {
@@ -152,6 +158,8 @@ const resolveArticleRender = () => {
       block.innerHTML.replace(/\n(?!$)/g, '</div></li><li><div>') +
       '</div></li></ul>';
   });
+
+  if (props.isPreview) return;
 
   // 图片点击放大
   const img = articleEl.querySelectorAll<HTMLElement>('img');
@@ -198,6 +206,7 @@ onMounted(() => {
     v-if="content"
     ref="articleRef"
     class="c-md-viewer markdown-body"
+    :class="{ preview: isPreview }"
     v-html="filterContent"></article>
 </template>
 
@@ -271,14 +280,15 @@ onMounted(() => {
   .footnotes-sep {
     margin-top: 10px;
   }
-  img {
-    cursor: zoom-in;
-  }
   .img-zoom-wrapper {
     cursor: zoom-out;
-
     img {
       cursor: move;
+    }
+  }
+  &:not(.preview) {
+    img {
+      cursor: zoom-in;
     }
   }
 }

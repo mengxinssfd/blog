@@ -34,7 +34,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: '输入评论',
+    default: '输入评论，支持 markdown 格式',
   },
 });
 

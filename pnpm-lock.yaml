@@ -207,6 +207,9 @@ importers:
       feed: ^4.2.2
       highlight.js: ^11.7.0
       locss: ^1.0.2
+      markdown-it: ^13.0.1
+      markdown-it-attrs: ^4.1.6
+      markdown-it-task-lists: ^2.1.1
       markdownlint: ^0.28.1
       md-editor-v3: ^2.2.1
       mermaid: ^10.1.0
@@ -231,6 +234,9 @@ importers:
       element-plus: 2.3.2_vue@3.2.47
       feed: 4.2.2
       highlight.js: 11.7.0
+      markdown-it: 13.0.1
+      markdown-it-attrs: 4.1.6_markdown-it@13.0.1
+      markdown-it-task-lists: 2.1.1
       markdownlint: 0.28.1
       md-editor-v3: 2.11.0_vue@3.2.47
       mermaid: 10.1.0

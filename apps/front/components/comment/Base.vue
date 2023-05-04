@@ -24,14 +24,16 @@
           class="content"
           :class="{ '_ ellipsis-2': independent }"
           @click="emits('clickContent')">
-          <p>{{ item.content }}</p>
+          <p><MdViewer :content="item.content" :is-preview="independent" is-md /></p>
         </div>
         <!--    回复引用    -->
         <div
           v-if="(item.parentId && item.parentId !== item.replyId) || item.isOrphan"
           v-show="!independent"
           class="reply-content">
-          <p v-if="item.reply" class="_ ellipsis-1">{{ item.reply.content }}</p>
+          <p v-if="item.reply" class="_ ellipsis-1">
+            <MdViewer :content="item.reply.content" is-md is-preview />
+          </p>
           <p v-else>评论已删除</p>
         </div>
         <slot name="operate"></slot>
@@ -92,6 +94,9 @@ defineExpose({ getNickname });
   display: flex;
   align-items: flex-start;
   color: var(--text-color);
+  .markdown-body {
+    padding: 0;
+  }
   .c-comment {
     padding: 8px 0;
   }
