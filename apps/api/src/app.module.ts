@@ -35,9 +35,16 @@ import { InitModule } from '@/modules/init/init.module';
       cache: true,
       validate: envValidate,
       load: [configLoader],
-      envFilePath: ['.env.local', ...(ENV.isTest() ? ['.env.test'] : []), '.env'].map((file) =>
-        Path.resolve(__dirname, './env/' + file),
-      ), // 前面的会覆盖后面的
+      envFilePath: (
+        [
+          ['.env.production', ENV.isDev() || ENV.isTest()],
+          ['.env.local'],
+          ['.env.test', !ENV.isTest()],
+          ['.env'],
+        ] satisfies Array<[string] | [string, boolean]>
+      )
+        .filter(([, disable]) => !disable)
+        .map(([file]) => Path.resolve(__dirname, './env/' + file)), // 前面的会覆盖后面的
     }),
     ThrottlerModule.forRoot({
       ttl: 60,
