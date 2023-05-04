@@ -69,8 +69,12 @@
     }
   }
 
-  .el-textarea__inner {
-    box-shadow: none;
+  .el-textarea {
+    --el-fill-color-blank: var(--board-bg-color);
+    --el-input-text-color: var(--text-color);
+    .el-textarea__inner {
+      box-shadow: none;
+    }
   }
 
   .el-input {
