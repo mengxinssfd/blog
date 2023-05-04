@@ -30,6 +30,7 @@
 
   .el-dialog {
     background: var(--board-bg-color);
+    --el-border-radius-small: var(--board-radius);
     max-width: 800px;
     @media (max-width: 750px) {
       width: 100%;
