@@ -17,6 +17,8 @@ export class WordValidate implements ValidatorConstraintInterface {
   defaultMessage(args: ValidationArguments) {
     // console.log('1', args);
     // here you can provide default error message if validation failed
-    return `${args.property}($value)包含禁用词!请修改后再提交`;
+    return `${args.property}包含敏感词(${JSON.stringify(
+      mint.filter(args.value).words,
+    )})!请修改后再提交`;
   }
 }
