@@ -45,6 +45,12 @@
     }
   }
 
+  .el-message-box {
+    --el-bg-color: var(--board-bg-color);
+    --el-messagebox-content-color: var(--text-color);
+    border: 0;
+  }
+
   .el-form-item {
     text-align: left;
 
