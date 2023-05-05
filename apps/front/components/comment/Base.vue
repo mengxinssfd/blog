@@ -1,5 +1,5 @@
 <template>
-  <div class="c-comment">
+  <div :id="anchor" class="c-comment" :class="{ active: isActive }">
     <div class="comm-left">
       <router-link v-if="item.user" :to="`/user/info/${item.user.id}`">
         <el-avatar :size="32" :src="item.user?.avatar || defaultAvatar"></el-avatar>
@@ -49,6 +49,7 @@ import { type UserEntity } from '@blog/entities';
 import type { CommentTreeType } from './tree.d';
 import { howLongAgo } from '~/feature/utils';
 
+const route = useRoute();
 const props = defineProps({
   item: {
     type: Object as Vue.PropType<CommentTreeType>,
@@ -62,6 +63,8 @@ const props = defineProps({
 const emits = defineEmits(['clickContent']);
 
 const defaultAvatar = 'https://pic1.zhimg.com/50/v2-6afa72220d29f045c15217aa6b275808_hd.jpg';
+const anchor = computed(() => `_comment-${props.item.id}`);
+const isActive = computed(() => route.hash === '#' + anchor.value);
 
 const getNickname = (tree: CommentTreeType) => {
   if (!tree.user) return tree.touristName;
@@ -138,6 +141,12 @@ defineExpose({ getNickname });
         content: '"';
       }
     }
+  }
+  &.active {
+    box-shadow: 0 0 5px 1px #ff00004f;
+    border-radius: var(--board-radius);
+    padding-left: 7px !important;
+    margin: 0 -7px;
   }
 }
 </style>

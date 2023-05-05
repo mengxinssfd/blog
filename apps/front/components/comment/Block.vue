@@ -21,6 +21,7 @@ import { getCommentByArticle as getCommentByArticleApi } from '@blog/apis';
 import { type ArticleEntity } from '@blog/entities';
 import type { CommentTreeType } from './tree.d';
 
+const route = useRoute();
 const props = defineProps({
   article: {
     required: true,
@@ -32,6 +33,12 @@ const comment = reactive({
   list: [] as CommentTreeType[],
   count: 0,
 });
+
+const scrollToAnchor = () => {
+  const anchor = route.hash;
+  if (!anchor) return;
+  document.querySelector(anchor)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
 
 const getComment = async () => {
   const {
@@ -70,6 +77,9 @@ const getComment = async () => {
 
   comment.list = finalList;
   comment.count = count;
+
+  await nextTick();
+  scrollToAnchor();
 };
 const onCommentUpdate = () => {
   getComment();
