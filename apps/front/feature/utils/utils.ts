@@ -20,9 +20,10 @@ export const howLongAgo = (date: string | Date, format?: string) => {
 };
 
 export function getCommentArticleLink(comment: CommentEntity): string {
-  const path = comment.article.as
-    ? `/${comment.article.as}`
-    : '/article/detail/' + comment.articleId;
+  const path = getCommentArticleLinkWithoutAnchor(comment);
   const anchor = '_comment-' + comment.id;
   return `${path}#${anchor}`;
+}
+export function getCommentArticleLinkWithoutAnchor(comment: CommentEntity): string {
+  return comment.article.as ? `/${comment.article.as}` : '/article/detail/' + comment.articleId;
 }
