@@ -20,6 +20,7 @@ enum EntityAlias {
   reply = 'reply',
 }
 type AliasProp = `${EntityAlias.comment}.${keyof CommentEntity}`;
+type AticleProp = `${EntityAlias.article}.${keyof ArticleEntity}`;
 
 @Injectable()
 export class CommentService {
@@ -56,8 +57,23 @@ export class CommentService {
     return this.commentRepository.save(comment);
   }
 
-  findAll() {
-    return `This action returns all comment`;
+  async findAll(dto: PageDto): Promise<PageVo<CommentEntity>> {
+    const alias = 'comment';
+    const getComment = this.createFindAllBuilder('', 1);
+    const getCount = getComment.clone();
+    getComment
+      .orderBy(`${alias}.createAt`, 'DESC')
+      .limit(dto.pageSize)
+      .offset((dto.page - 1) * dto.pageSize)
+      .leftJoin('comment.article', 'article')
+      .addSelect(['article.id', 'article.as', 'article.title'] satisfies AticleProp[]);
+
+    const count = await getCount.getCount();
+    let list: CommentEntity[] = [];
+
+    if (count) list = this.handlerFindAllResult(await getComment.getRawAndEntities()).list;
+
+    return { list, count };
   }
 
   async findRecent(ip: string, userId = 0, limit = 10): Promise<CommentEntity[]> {
@@ -66,7 +82,7 @@ export class CommentService {
       .orderBy(`${alias}.createAt`, 'DESC')
       .limit(limit)
       .leftJoin('comment.article', 'article')
-      .addSelect(['article.id', 'article.as']);
+      .addSelect(['article.id', 'article.as'] satisfies AticleProp[]);
     const list = await getComment.getRawAndEntities();
 
     return this.handlerFindAllResult(list).list;

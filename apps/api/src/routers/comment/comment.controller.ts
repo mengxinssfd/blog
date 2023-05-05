@@ -23,6 +23,8 @@ import { PageDto } from '@blog/dtos/page.dto';
 import { CaslAbilityFactory } from '@/guards/policies/casl-ability.factory';
 import { Action } from '@blog/permission-rules';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
+import { CheckPolicies } from '@/guards/policies/policies.decorator';
+import { PoliciesGuard } from '@/guards/policies/policies.guard';
 
 @ApiTags('comment')
 @Controller('comment')
@@ -48,9 +50,12 @@ export class CommentController {
     return this.commentService.create(dto, comment);
   }
 
+  @CheckPolicies((ab) => ab.can(Action.Manage, CommentEntity.modelName))
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
   @Get()
-  findAll() {
-    return this.commentService.findAll();
+  findAll(@Query() dto: PageDto) {
+    return this.commentService.findAll(dto);
   }
 
   @Get('recent/:count')
