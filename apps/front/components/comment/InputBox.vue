@@ -88,6 +88,7 @@ const createComment = async () => {
     userId: user.value.id,
   });
   clearCommentInput();
+  await nextTick();
   emits('created');
 };
 </script>
