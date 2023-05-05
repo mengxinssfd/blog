@@ -30,6 +30,7 @@ const Contents = defineComponent({
   <Contents>
     <slot>
       <WidgetLoginUser />
+      <WidgetSentence />
       <WidgetClock />
       <WidgetCountdown />
       <WidgetRecentComments />
