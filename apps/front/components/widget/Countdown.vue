@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { getEndOfMonth, getTimePeriodConst } from '@tool-pack/basic';
 
-function getHoursAgo(date: Date): number {
-  return Number((date.getHours() / 24).toFixed(2));
-}
-
 const now = ref(new Date());
 const searchValue = '{ago}';
+const hourAgo = computed(() => Number((now.value.getHours() / 24).toFixed(2)));
 interface Item {
   template: string;
   percentage: number;
@@ -22,7 +19,7 @@ const list: Array<Item> = [
     text: '',
     result(now) {
       const ago = now.getHours() + Number((now.getMinutes() / 60).toFixed(2));
-      return { ago, percentage: Number(ago) / 24 };
+      return { ago, percentage: ago / 24 };
     },
   },
   {
@@ -31,8 +28,8 @@ const list: Array<Item> = [
     status: 'success',
     text: '',
     result(now) {
-      const ago = (now.getDay() || 7) - 1 + getHoursAgo(now);
-      return { ago, percentage: Number(ago) / 7 };
+      const ago = (now.getDay() || 7) - 1 + hourAgo.value;
+      return { ago, percentage: ago / 7 };
     },
   },
   {
@@ -42,8 +39,8 @@ const list: Array<Item> = [
     text: '',
     result(now) {
       const dateCount = getEndOfMonth(now).getDate();
-      const ago = now.getDate() - 1 + getHoursAgo(now);
-      return { ago, percentage: Number(ago) / dateCount };
+      const ago = now.getDate() - 1 + hourAgo.value;
+      return { ago, percentage: ago / dateCount };
     },
   },
   {
@@ -56,7 +53,8 @@ const list: Array<Item> = [
       const startOfNextYear = new Date(now.getFullYear() + 1, 0, 1);
       const yearDiff = startOfNextYear.getTime() - startOfYear.getTime();
       const dateCount = yearDiff / getTimePeriodConst().day;
-      const ago = (now.getTime() - startOfYear.getTime()) / getTimePeriodConst().day;
+      const ago =
+        ~~((now.getTime() - startOfYear.getTime()) / getTimePeriodConst().day) + hourAgo.value;
       return { ago, percentage: ago / dateCount };
     },
   },
