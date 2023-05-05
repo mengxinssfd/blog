@@ -2,6 +2,7 @@
 import { getRecentComment } from '@blog/apis';
 import { useRequest } from '@request-template/vue3-hooks';
 import { type CommentEntity } from '@blog/entities';
+import { getCommentArticleLink } from '~/feature/utils';
 // table of content
 const router = useRouter();
 const route = useRoute();
@@ -14,7 +15,7 @@ interface InnerComment extends CommentEntity {
 const list = computed(() => {
   const path = route.path;
   return data.value.map((item) => {
-    const link = item.article.as ? `/${item.article.as}` : '/article/detail/' + item.articleId;
+    const link = getCommentArticleLink(item);
     return { ...item, link, active: path === link };
   }) as InnerComment[];
 });
