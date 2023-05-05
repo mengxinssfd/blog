@@ -29,6 +29,11 @@ const tabs = reactive({
       icon: <Tickets />,
     },
     {
+      label: '评论',
+      name: 'comment',
+      icon: <i class="iconfont icon-huifu" />,
+    },
+    {
       label: '友链',
       name: 'friend-link',
       icon: <i class="iconfont icon-link" />,
