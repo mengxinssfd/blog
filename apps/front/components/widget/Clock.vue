@@ -32,17 +32,15 @@ const List = (props: { list: string[] }) => (
 </script>
 <template>
   <Widget remove-title>
-    <ClientOnly>
-      <div class="widget-content">
-        <div class="time">
-          <List :list="times" />
-        </div>
-        <div class="date _ flex-c">
-          <List :list="dates" />
-          {{ day }}
-        </div>
+    <div class="widget-content">
+      <div class="time">
+        <List :list="times" />
       </div>
-    </ClientOnly>
+      <div class="date _ flex-c">
+        <List :list="dates" />
+        {{ day }}
+      </div>
+    </div>
   </Widget>
 </template>
 
