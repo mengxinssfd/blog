@@ -291,5 +291,8 @@ onMounted(() => {
       cursor: zoom-in;
     }
   }
+  &.preview {
+    pointer-events: none;
+  }
 }
 </style>
