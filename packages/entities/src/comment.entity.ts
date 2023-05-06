@@ -67,6 +67,9 @@ export class CommentEntity extends BlogBaseEntity {
 
   @Column('varchar', { length: 24, comment: '游客名', nullable: true })
   touristName?: string;
+
+  @Column('varchar', { length: 500, comment: '游客邮箱', nullable: true, select: false })
+  touristEmail?: string;
   // ---------------- 游客 ----------------
 
   @OneToMany(() => CommentLikeEntity, (like) => like.comment, {
