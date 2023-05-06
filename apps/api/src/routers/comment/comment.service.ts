@@ -66,12 +66,15 @@ export class CommentService {
       .limit(dto.pageSize)
       .offset((dto.page - 1) * dto.pageSize)
       .leftJoin('comment.article', 'article')
+      .addSelect(['comment.touristEmail', 'comment.touristIp'] satisfies AliasProp[])
       .addSelect(['article.id', 'article.as', 'article.title'] satisfies AticleProp[]);
+
+    console.log(getComment.getQuery());
 
     const count = await getCount.getCount();
     let list: CommentEntity[] = [];
 
-    if (count) list = this.handlerFindAllResult(await getComment.getRawAndEntities()).list;
+    if (count) list = this.handlerFindAllResult(await getComment.getRawAndEntities(), false).list;
 
     return { list, count };
   }
@@ -129,10 +132,10 @@ export class CommentService {
     );
   }
 
-  handlerFindAllResult(list: { entities: CommentEntity[]; raw: any[] }) {
+  handlerFindAllResult(list: { entities: CommentEntity[]; raw: any[] }, removeIp = true) {
     list.entities.forEach((item: Partial<CommentEntity>, index) => {
       const rawItem = list.raw[index];
-      delete item.touristIp;
+      if (removeIp) delete item.touristIp;
       item.like = {
         checked: Number(rawItem.like_checked),
         count: Number(rawItem.like_count),

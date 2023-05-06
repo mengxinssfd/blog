@@ -4,7 +4,6 @@ import type { CommentEntity } from '@blog/entities';
 import { formatDate as formatDateKit } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import { getArticleCommentLink, getArticleLink } from '@blog/shared';
-import { useRouter } from '#app';
 import useUserStore from '~/store/user.store';
 import { useToggleState } from '~/feature/hooks';
 
@@ -59,7 +58,7 @@ watch(
   { immediate: true },
 );
 
-getData();
+onMounted(getData);
 </script>
 
 <template>
@@ -89,6 +88,16 @@ getData();
       <el-table-column label="创建日期" prop="createAt">
         <template #default="scope">
           {{ formatDate(scope.row.createAt) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="游客ip">
+        <template #default="scope">
+          {{ scope.row.touristIp || '--' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="游客邮箱">
+        <template #default="scope">
+          {{ scope.row.touristEmail || '--' }}
         </template>
       </el-table-column>
 

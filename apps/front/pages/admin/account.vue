@@ -162,6 +162,7 @@ export default defineComponent({
       </el-table-column>
       <el-table-column label="注册IP" prop="registerIp"></el-table-column>
       <el-table-column label="登录IP" prop="loginIp"></el-table-column>
+      <el-table-column label="邮箱" prop="email"></el-table-column>
       <el-table-column label="操作" width="60">
         <template #default="scope">
           <el-dropdown @command="handleCommand($event, scope.row)">
