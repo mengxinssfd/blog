@@ -25,6 +25,7 @@ import { Action } from '@blog/permission-rules';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
+import { MailService } from '@/modules/mail/mail.service';
 
 @ApiTags('comment')
 @Controller('comment')
@@ -34,6 +35,7 @@ export class CommentController {
     private readonly articleService: ArticleService,
     private readonly userService: UserService,
     private readonly casl: CaslAbilityFactory,
+    private readonly mailService: MailService,
   ) {}
 
   @UseGuards(ThrottlerBehindProxyGuard)
@@ -42,12 +44,15 @@ export class CommentController {
   @Post()
   async create(@Body() dto: CreateCommentDto, @User('id') userId: number, @ReqIp() ip: string) {
     const user = userId
-      ? await this.userService.findOne({ id: userId, addSelect: ['user.muted AS `user_muted`'] })
+      ? await this.userService.findOne({ id: userId, addSelect: ['user.muted'] })
       : null;
     const comment = await this._validCreate(dto, user, ip)
       .unless(user || new UserEntity())
       .can(Action.Create);
-    return this.commentService.create(dto, comment);
+    const res = await this.commentService.create(dto, comment);
+
+    this.commentService.findOneFull(res.id).then((c) => this.mailService.onCommentCreated(c));
+    return res;
   }
 
   @CheckPolicies((ab) => ab.can(Action.Manage, CommentEntity.modelName))
@@ -119,6 +124,7 @@ export class CommentController {
         if (count >= 5) throw new ForbiddenException('在该文章内评论次数过多,请注册登录后再评论');
         comment.touristIp = ip;
         comment.touristName = dto.touristName as string;
+        dto.touristEmail && (comment.touristEmail = dto.touristEmail);
       }
 
       return comment;

@@ -171,6 +171,33 @@ export class CommentService {
     return find;
   }
 
+  async findOneFull(id: number): Promise<CommentEntity> {
+    const rep = this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .addSelect(['comment.touristEmail'] satisfies `comment.${keyof CommentEntity}`[])
+      .addSelect(['user.email', 'user.role'] satisfies `user.${keyof UserEntity}`[]);
+
+    const find = await rep
+      .clone()
+      .leftJoinAndSelect('comment.article', 'article')
+      .addSelect(['article.as'] satisfies `article.${keyof ArticleEntity}`[])
+      .leftJoinAndSelect('article.author', 'author')
+      .addSelect(['author.email', 'author.role'] satisfies `author.${keyof UserEntity}`[])
+      .where({ id })
+      .getOne();
+
+    if (!find) throw new NotFoundException(`id:${id}不存在`);
+
+    if (find.parentId)
+      find.parent = (await rep.clone().where({ id: find.parentId }).getOne()) as CommentEntity;
+
+    if (find.replyId)
+      find.reply = (await rep.clone().where({ id: find.replyId }).getOne()) as CommentEntity;
+
+    return find;
+  }
+
   // 删除过的也查
   async findBaseOneWithDeleted(id: number): Promise<CommentEntity> {
     const find = await this.commentRepository
