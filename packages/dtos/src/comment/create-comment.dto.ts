@@ -1,14 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsEmail,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   MaxLength,
   Validate,
   ValidateIf,
 } from 'class-validator';
 import { WordValidate } from '../word.validate';
+import { IsOptional } from '../utils';
 
 export class CreateCommentDto {
   @ApiProperty({ description: '评论内容', example: '' })
@@ -56,4 +57,9 @@ export class CreateCommentDto {
   @MaxLength(24, { message: '游客名长度不能超过24' })
   @Validate(WordValidate)
   touristName?: string;
+
+  @ApiProperty({ description: '游客邮箱', example: '', required: false })
+  @IsOptional()
+  @IsEmail({}, { message: '邮箱格式不正确' })
+  touristEmail?: string;
 }
