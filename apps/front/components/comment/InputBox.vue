@@ -1,31 +1,35 @@
 <template>
   <div class="c-comment-input-box">
-    <div v-if="previewVisible" class="preview-block">
-      <MdViewer :content="form.content" is-md />
-    </div>
-    <el-input
-      v-else
-      v-model="form.content"
-      :placeholder="placeholder"
-      :rows="4"
-      :maxlength="800"
-      show-word-limit
-      type="textarea"></el-input>
-    <div class="btn-block">
-      <div v-if="!user.id" class="tourist-name">
+    <el-tabs v-model="activeTab">
+      <el-tab-pane label="编辑" name="edit">
+        <el-input
+          v-model="form.content"
+          :placeholder="placeholder"
+          :rows="4"
+          :maxlength="800"
+          show-word-limit
+          type="textarea"></el-input>
+      </el-tab-pane>
+      <el-tab-pane :disabled="!form.content" label="预览" name="preview">
+        <div v-if="activeTab === 'preview'" class="preview-block">
+          <MdViewer :content="form.content" is-md />
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+    <div v-if="!user.id" class="tourist">
+      <div class="tourist-name">
         <el-input v-model.trim="form.touristName" placeholder="游客昵称"></el-input>
       </div>
+      <div class="tourist-email">
+        <el-input
+          v-model.trim="form.touristEmail"
+          placeholder="邮箱，当评论有回复时会发送通知到该邮箱"></el-input>
+      </div>
+    </div>
+    <div class="btn-block">
       <!--      <el-button type="success" :disabled="!form.content" @click="previewVisible = !previewVisible">-->
       <!--        {{ previewVisible ? '编辑' : '预览' }}-->
       <!--      </el-button>-->
-      <el-switch
-        v-model="previewVisible"
-        :disabled="!form.content"
-        active-text="预览"
-        inactive-text="预览"
-        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-        size="large"
-        inline-prompt />
       <el-button type="info" :disabled="!form.content" @click="clearCommentInput"> 清空 </el-button>
 
       <el-button type="primary" :disabled="!form.content" @click="createComment"> 提交 </el-button>
@@ -56,23 +60,25 @@ const props = defineProps({
   },
 });
 
-type Form = Pick<CreateCommentDto, 'content' | 'touristName'>;
+type Form = Pick<CreateCommentDto, 'content' | 'touristName' | 'touristEmail'>;
 const inputCache = useStorageItem<Form>('input-cache', process.server ? null : localStorage);
 
 const emits = defineEmits(['created']);
 
 const user = computed(() => useUserStore().user);
-const form = reactive<Form>({ content: '', touristName: '' });
-const previewVisible = ref(false);
+const form = reactive<Form>({ content: '', touristName: '', touristEmail: '' });
+const activeTab = ref<'edit' | 'preview'>('edit');
 
 const clearCommentInput = () => {
   form.content = '';
-  previewVisible.value = false;
+  activeTab.value = 'edit';
 };
 
 onMounted(() => {
   const load = inputCache.get(form);
-  if (user.value.id) load.touristName = '';
+  if (user.value.id) {
+    load.touristName = load.touristEmail = '';
+  }
   Object.assign(form, load);
 });
 
@@ -94,25 +100,40 @@ const createComment = async () => {
 </script>
 <style lang="scss" scoped>
 .c-comment-input-box {
-  :deep(textarea) {
+  :deep(.el-tabs__nav) {
+    background: var(--link-hover-bg-color);
+    padding: 0 1rem;
+    border-radius: var(--board-radius) var(--board-radius) 0 0;
+  }
+  :deep(.el-tabs__header) {
+    margin: 0;
+  }
+  :deep(textarea),
+  :deep(.el-input__wrapper) {
     background: var(--link-hover-bg-color);
     border: 0;
     box-shadow: none;
+    --el-input-border-radius: var(--board-radius);
   }
-  .tourist-name {
-    width: 200px;
-    float: left;
+  :deep(textarea) {
+    border-top-left-radius: 0;
+  }
+  .tourist {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1rem;
+    margin-top: 10px;
+    @media (max-width: 750px) {
+      display: block;
+      .tourist-email {
+        margin-top: 10px;
+      }
+    }
   }
   .btn-block {
     text-align: right;
-    margin: 1rem 0;
-    .el-switch {
-      margin-right: 10px;
-    }
+    margin: 1rem 0 0;
     @media (max-width: 750px) {
-      .el-switch {
-        margin-right: 0;
-      }
       .tourist-name {
         float: none;
       }
@@ -127,6 +148,7 @@ const createComment = async () => {
   .preview-block {
     padding: 5px 11px;
     border-radius: var(--board-radius);
+    border-top-left-radius: 0;
     background-color: var(--link-hover-bg-color);
     .markdown-body {
       padding: 0;

@@ -116,7 +116,7 @@ const setDislike = async () => {
 </script>
 <style lang="scss" scoped>
 .c-comment {
-  padding: 16px 0;
+  padding: 1rem 0;
   .operate {
     font-size: 12px;
     color: var(--sec-text-color);
@@ -131,20 +131,24 @@ const setDislike = async () => {
       }
     }
   }
+  --padding: 1rem;
   .comm-children {
-    margin: 10px 0;
-    padding: 0 10px;
+    margin: var(--padding) 0;
+    padding: 0 var(--padding);
     background: var(--link-hover-bg-color);
     border-radius: 6px;
   }
   .reply-input-box {
-    margin-top: 10px;
-    padding: 10px;
+    margin-top: var(--padding);
+    padding: var(--padding);
     background: var(--board-bg-color);
     .box-bottom {
-      margin-top: 10px;
+      margin-top: var(--padding);
       text-align: right;
     }
+  }
+  @media (max-width: 750px) {
+    --padding: 10px;
   }
 }
 </style>
