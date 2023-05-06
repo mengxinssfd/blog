@@ -7,6 +7,25 @@ export const configLoader = () => {
   });
 
   return {
+    app: {
+      port: env.APP_PORT,
+      host: env.APP_HOST,
+      name: env.APP_NAME,
+    },
+    mail: {
+      transport: {
+        host: env.MAIL_HOST,
+        port: env.MAIL_PORT,
+        secure: env.MAIL_SECURE,
+        auth: {
+          user: env.MAIL_AUTH_USER,
+          pass: env.MAIL_AUTH_PASS,
+        },
+      },
+      defaults: {
+        from: `"${env.APP_NAME}" <${env.MAIL_AUTH_USER}>`,
+      },
+    },
     redis: {
       host: env.REDIS_HOST || 'localhost',
       port: env.REDIS_PORT || 6379,
@@ -27,6 +46,7 @@ export const configLoader = () => {
     admin: {
       username: env.ROOT_USERNAME,
       password: env.ROOT_PASSWORD,
+      email: env.ROOT_EMAIL,
     },
     database: {
       port: Number(env.MYSQL_PORT),

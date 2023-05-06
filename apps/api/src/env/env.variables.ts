@@ -2,7 +2,11 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class EnvironmentVariables {
   @IsNumber()
-  PORT!: number;
+  APP_PORT!: number;
+  @IsString()
+  APP_HOST!: string;
+  @IsString()
+  APP_NAME!: string;
 
   // mysql 配置
   @IsNumber()
@@ -21,6 +25,8 @@ export class EnvironmentVariables {
   ROOT_USERNAME!: string;
   @IsString()
   ROOT_PASSWORD!: string;
+  @IsString()
+  ROOT_EMAIL!: string;
 
   // 小程序登录配置
   @IsString()
@@ -56,4 +62,16 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsString()
   REDIS_PASSWORD!: string;
+
+  // mail配置
+  @IsString()
+  MAIL_HOST!: string;
+  @IsNumber()
+  MAIL_PORT!: number;
+  @IsBoolean()
+  MAIL_SECURE!: boolean;
+  @IsString()
+  MAIL_AUTH_USER!: string;
+  @IsString()
+  MAIL_AUTH_PASS!: string;
 }

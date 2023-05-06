@@ -2,9 +2,17 @@
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
+  "monorepo": true,
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": ["**/*.env*"]
+    "watchAssets": true,
+    "assets": [
+      "**/*.env*",
+      {
+        "include": "**/mail/templates/*",
+        "outDir": "./dist/"
+      }
+    ]
   },
   "projects": {
     "entities": {
@@ -32,6 +40,15 @@
       "sourceRoot": "../../packages/dtos/src",
       "compilerOptions": {
         "tsConfigPath": "../../packages/dtos/tsconfig.json"
+      }
+    },
+    "shared": {
+      "type": "library",
+      "root": "../../packages/shared",
+      "entryFile": "index",
+      "sourceRoot": "../../packages/shared/src",
+      "compilerOptions": {
+        "tsConfigPath": "../../packages/shared/tsconfig.json"
       }
     }
   }

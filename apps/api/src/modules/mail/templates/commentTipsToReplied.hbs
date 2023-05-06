@@ -1,0 +1,48 @@
+<div style='max-width: 600px;padding: 3rem 1rem 0;margin: auto;font-size: 14px;color: #444;'>
+  <style>
+    * { background: none !important } pre, code { white-space: pre-wrap !important } .button {
+    background-color: #36d1dc; background: -webkit-linear-gradient(45deg, rgb(54, 209, 220), rgb(91,
+    134, 229)) !important; background: linear-gradient(45deg, rgb(54, 209, 220), rgb(91, 134, 229))
+    !important; padding: .5rem 1rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 0 18px
+    rgb(159 198 255); color: white; font-size: 16px; text-decoration: none; display: block; width:
+    fit-content; }
+  </style>
+  <div style='display: flex;height: 80px;'>
+    <img
+      style='flex-basis:80px;border-radius: 25%;width: 80px;height: 80px;'
+      src='{{app_url}}/favicon.ico'
+      alt='{{app_url}}'
+    />
+    <div
+      style='display: flex;flex:1;flex-direction: column;justify-content: end;line-height: 1.7;margin-left: 1rem;'
+    >
+      <span style='font-size: 18px;white-space: nowrap;'>
+        你好,『&nbsp;<strong>{{usernameOfReplied}}</strong>&nbsp;』</span>
+      <span style='color: #555;'>你在本站的留言有新的回复。</span>
+    </div>
+  </div>
+  <div style='margin-top:30px;'>
+    <div style='margin-bottom: 30px;'>
+      <span style='display: flex;align-items: end;'>
+        {{username}}
+        <span style='font-size: 12px;color: #888;margin-left: .5rem;'>回复说：</span></span>
+      <div
+        style='display: flex;flex-direction: column;max-width: 100%;margin-top:5px;background: rgb(243 244 246 / 60%)!important;padding: 0 1.5rem;border-radius: 5px 25px 25px 25px;width: fit-content;'
+      >
+        <p>{{content}}</p>
+      </div>
+    </div>
+  </div>
+  <div>
+    <a class='button' href='{{url}}'>
+      查看详细内容
+    </a>
+    <p
+      style='margin: 5px!important;color: #888;font-size: 12px;'
+    >此邮件由系统自动发出，请勿直接回复</p>
+    <a
+      style='margin: 5px;color: #888;font-size: 12px;text-decoration: none;'
+      href='{{app_url}}'
+    >{{host}}</a>
+  </div>
+</div>
