@@ -44,8 +44,10 @@ await getData();
       <template v-if="article.author">
         <WidgetArticleOperator :article="article" @comment-lock-updated="onCommentLockUpdate" />
       </template>
-      <WidgetRecentArticle />
-      <WidgetArticleTOC v-if="article.id" v-sticky="'76px'" />
+      <WidgetStickyLayout>
+        <WidgetArticleTOC v-if="article.id" />
+        <WidgetRecentArticle />
+      </WidgetStickyLayout>
     </template>
     <div class="pg about _ flex-col">
       <div class="pg-content main-width">

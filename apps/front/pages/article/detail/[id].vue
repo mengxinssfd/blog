@@ -69,8 +69,10 @@
         <WidgetArticleAuthor :article="article" />
         <WidgetArticleOperator :article="article" @comment-lock-updated="onCommentLockUpdate" />
       </template>
-      <WidgetRecentArticle />
-      <WidgetArticleTOC v-if="article.id" v-sticky="'76px'" />
+      <WidgetStickyLayout>
+        <WidgetArticleTOC v-if="article.id" />
+        <WidgetRecentArticle />
+      </WidgetStickyLayout>
     </template>
     <div class="pg article-detail _ flex-col">
       <div class="pg-content main-width">
