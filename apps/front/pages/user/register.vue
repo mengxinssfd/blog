@@ -17,6 +17,7 @@ const form = reactive<RegisterDTO & { rePassword: string }>({
   nickname: '',
   rePassword: '',
   mobile: '',
+  email: '',
 });
 const [loading, toggleLoading] = useToggleState(false);
 const formRef = ref();
@@ -84,6 +85,10 @@ async function register() {
         </el-form-item>
         <el-form-item label="昵称" prop="nickname">
           <el-input v-model="form.nickname" size="large" name="nickname"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="form.email" size="large" name="email"></el-input>
+          接收博客推送
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" size="large" name="password" type="password"></el-input>
