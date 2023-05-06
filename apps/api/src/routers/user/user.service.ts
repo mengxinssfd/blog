@@ -52,7 +52,7 @@ export class UserService {
   }
 
   async register(requestBody: RegisterDTO, ip: string, loginUser?: UserEntity) {
-    const { username, nickname, password, mobile } = requestBody;
+    const { username, nickname, password, mobile, email } = requestBody;
     const user = await this.findOne({
       username,
       nickname,
@@ -88,7 +88,7 @@ export class UserService {
     _user.password = hashPwd;
     _user.salt = salt;
     mobile && (_user.mobile = mobile);
-    _user.email = '';
+    email && (_user.email = email);
     _user.registerIp = ip;
     loginUser && (_user.createBy = loginUser.id);
 
@@ -113,6 +113,8 @@ export class UserService {
         'user.createAt',
         'user.muted',
         'user.username',
+        'user.email',
+        'user.mobile',
       ] satisfies `user.${keyof UserEntity}`[])
       .withDeleted()
       .getManyAndCount();
@@ -147,19 +149,19 @@ export class UserService {
     nickname?: string;
     username?: string;
     mobile?: string | undefined;
-    addSelect?: `user.${keyof UserEntity} AS \`user_${keyof UserEntity}\``[];
+    addSelect?: `user.${keyof UserEntity}`[];
   }): Promise<UserEntity | null> {
     let rep = this.repository
       .createQueryBuilder('user')
       .addSelect([
-        'user.salt AS `user_salt`',
-        'user.password AS `user_password`',
-        'user.updateAt AS `user_updateAt`',
-        'user.mobile AS `user_mobile`',
-        'user.deletedAt AS `user_deletedAt`',
-        'user.role AS `user_role`',
+        'user.salt',
+        'user.password',
+        'user.updateAt',
+        'user.mobile',
+        'user.deletedAt',
+        'user.role',
         ...addSelect,
-      ])
+      ] satisfies `user.${keyof UserEntity}`[])
       .where({ username })
       .orWhere({ nickname })
       .orWhere({ id });
