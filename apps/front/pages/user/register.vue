@@ -126,6 +126,7 @@ async function register() {
   }
   .form-box {
     position: relative;
+    padding-bottom: 2rem;
     box-sizing: border-box;
     border-radius: var(--board-radius);
     background: var(--navbar-bg-color);
@@ -198,7 +199,7 @@ async function register() {
     .form-box {
       position: absolute;
       z-index: 5;
-      padding: 1rem;
+      padding: 1rem 1rem 2rem;
       border-radius: 0;
       left: 0;
       top: 0;
@@ -208,6 +209,7 @@ async function register() {
       transition: none;
       box-shadow: none;
       background-color: var(--navbar-bg-color);
+      overflow-y: auto;
       h1 {
         padding-top: 2rem;
         text-align: center;
@@ -225,6 +227,7 @@ async function register() {
       }
       &:before,
       &:after {
+        position: fixed;
         bottom: -300px;
       }
     }
