@@ -76,7 +76,7 @@
     "@types/markdown-it": "^12.2.3",
     "@types/markdown-it-attrs": "^4.1.0",
     "@types/marked": "^4.0.8",
-    "@types/node": "18.14.2",
+    "@types/node": "20.1.0",
     "@types/nodemailer": "^6.4.7",
     "@types/passport-jwt": "^3.0.8",
     "@types/passport-local": "^1.0.35",
