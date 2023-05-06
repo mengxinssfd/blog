@@ -1,4 +1,12 @@
-import { IsNotEmpty, IsMobilePhone, Matches, Length, Validate, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsMobilePhone,
+  Matches,
+  Length,
+  Validate,
+  IsString,
+  IsEmail,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { WordValidate } from '../word.validate';
 import { LoginDTO } from './login.dto';
@@ -21,4 +29,9 @@ export class RegisterDTO extends LoginDTO {
   @IsMobilePhone('zh-CN', { strictMode: false }, { message: '手机号码格式不正确' })
   @IsString({ message: '手机号码必须是字符串' })
   mobile?: string;
+
+  @ApiPropertyOptional({ example: '' })
+  @IsOptional()
+  @IsEmail(undefined, { message: '邮箱格式不正确' })
+  email?: string;
 }
