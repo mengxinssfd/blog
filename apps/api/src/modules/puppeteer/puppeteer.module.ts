@@ -8,7 +8,7 @@ import { FileHelperModule } from '@/modules/file-helper/file-helper.module';
     FileHelperModule,
     PuppeteerModule.forRoot({
       // pipe: true,
-      headless: true,
+      headless: 'new',
       // 在浏览器输入url：`chrome://flags/`可以看到所有args
       args: [
         '--disable-notifications',
