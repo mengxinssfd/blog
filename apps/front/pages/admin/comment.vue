@@ -3,10 +3,10 @@ import { deleteCommentOne, getCommentList } from '@blog/apis';
 import type { CommentEntity } from '@blog/entities';
 import { formatDate as formatDateKit } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
+import { getArticleCommentLink, getArticleLink } from '@blog/shared';
 import { useRouter } from '#app';
 import useUserStore from '~/store/user.store';
 import { useToggleState } from '~/feature/hooks';
-import { getCommentArticleLink, getCommentArticleLinkWithoutAnchor } from '~/feature/utils';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -74,14 +74,14 @@ getData();
       </el-table-column>
       <el-table-column label="内容">
         <template #default="scope">
-          <NuxtLink :to="getCommentArticleLink(scope.row)">
+          <NuxtLink :to="getArticleCommentLink(scope.row)">
             <MdViewer :content="scope.row.content" is-md is-preview />
           </NuxtLink>
         </template>
       </el-table-column>
       <el-table-column label="文章">
         <template #default="scope">
-          <NuxtLink :to="getCommentArticleLinkWithoutAnchor(scope.row)">
+          <NuxtLink :to="getArticleLink(scope.row)">
             {{ scope.row.article.title }}
           </NuxtLink>
         </template>

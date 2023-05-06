@@ -1,5 +1,4 @@
 import { howLongAgo as HowLongAgo, formatDate, inRange } from '@tool-pack/basic';
-import type { CommentEntity } from '@blog/entities';
 
 export const howLongAgo = (date: string | Date, format?: string) => {
   const _date = typeof date === 'string' ? new Date(date) : date;
@@ -18,12 +17,3 @@ export const howLongAgo = (date: string | Date, format?: string) => {
     },
   });
 };
-
-export function getCommentArticleLink(comment: CommentEntity): string {
-  const path = getCommentArticleLinkWithoutAnchor(comment);
-  const anchor = '_comment-' + comment.id;
-  return `${path}#${anchor}`;
-}
-export function getCommentArticleLinkWithoutAnchor(comment: CommentEntity): string {
-  return comment.article.as ? `/${comment.article.as}` : '/article/detail/' + comment.articleId;
-}
