@@ -49,9 +49,10 @@ export class FriendLinkController {
   @Patch('refresh/:id')
   async refresh(@Param('id', ParseIntPipe) id: number) {
     const link = await this.friendLinkService.findOne(id);
+    const url = new URL(link.link);
     const siteInfo = await this.puppeteerService.getSiteInfoWithScreenshotUrl(
       link.link,
-      `site_screenshot_${id}`,
+      `site_screenshot_${url.host.replace(/[.:]/g, '_')}`,
     );
     const fl = new FriendLinkEntity();
     Object.assign(fl, siteInfo, { id });
