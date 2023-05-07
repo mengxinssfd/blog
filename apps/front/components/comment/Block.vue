@@ -1,24 +1,10 @@
-<template>
-  <div class="c-comment-block main-width">
-    <h2>评论</h2>
-    <CommentInputBox :article-id="article.id" @created="getComment" />
-    <div class="total">全部评论({{ comment.count }})</div>
-    <div v-if="article.author" class="list">
-      <CommentTree
-        v-for="item in comment.list"
-        :key="item.id"
-        :item="item"
-        :author-id="article.author.id"
-        @update="onCommentUpdate"></CommentTree>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import * as Vue from 'vue';
-import { forEachRight } from '@tool-pack/basic';
+import { forEachRight, sleep } from '@tool-pack/basic';
 import { getCommentByArticle as getCommentByArticleApi } from '@blog/apis';
 import { type ArticleEntity } from '@blog/entities';
+import { RefreshRight } from '@element-plus/icons-vue';
+import { useRequest } from '@request-template/vue3-hooks';
 import type { CommentTreeType } from './tree.d';
 
 const route = useRoute();
@@ -29,26 +15,18 @@ const props = defineProps({
   },
 });
 
-const comment = reactive({
-  list: [] as CommentTreeType[],
-  count: 0,
+const { data, loading, request } = useRequest(() => getCommentByArticleApi(props.article.id), {
+  loadingThreshold: 500,
 });
 
-const scrollToAnchor = () => {
-  const anchor = route.hash;
-  if (!anchor) return;
-  document.querySelector(anchor)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-};
-
-const getComment = async () => {
-  const {
-    data: { list = [], count = 0 },
-  } = await getCommentByArticleApi(props.article.id);
+const list = computed<CommentTreeType[]>(() => {
+  const _list = data.value?.list;
+  if (!_list || !_list.length) return [];
 
   // 组装成二级树结构
   const finalList: any[] = [];
   const idMap: any = {};
-  const children = list.filter((item: any) => {
+  const children = _list.filter((item: any) => {
     idMap[item.id] = item;
     item.children = [];
     if (!item.parentId) {
@@ -75,18 +53,51 @@ const getComment = async () => {
 
   finalList.push(...orphans.reverse());
 
-  comment.list = finalList;
-  comment.count = count;
+  return finalList;
+});
 
-  await nextTick();
+const scrollToAnchor = async () => {
+  const anchor = route.hash;
+  if (!anchor || !/_comment-\d+/.test(anchor)) return;
+  await sleep(500);
+  document.querySelector(anchor)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+watch(data, (n) => {
+  if (!n) return;
   scrollToAnchor();
-};
-const onCommentUpdate = () => {
-  getComment();
-};
+});
 
-onMounted(getComment);
+onBeforeMount(request);
 </script>
+
+<template>
+  <div class="c-comment-block main-width">
+    <h2>评论</h2>
+    <CommentInputBox :article-id="article.id" @created="request" />
+    <div class="total _ flex-c">
+      <span>全部评论({{ data?.count }})</span>
+      <Space width="6px" />
+      <el-icon class="_ btn" :class="{ disabled: loading }" @click="request">
+        <RefreshRight />
+      </el-icon>
+    </div>
+    <div class="list">
+      <template v-if="!article.author || loading">
+        <el-skeleton v-for="i in data?.count || 2" :key="i" :rows="2" animated> </el-skeleton>
+      </template>
+      <template v-else>
+        <CommentTree
+          v-for="item in list"
+          :key="item.id"
+          :item="item"
+          :author-id="article.author.id"
+          @update="request"></CommentTree>
+      </template>
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .c-comment-block {
   h2 {
@@ -95,11 +106,16 @@ onMounted(getComment);
     font-weight: bold;
   }
   .total {
-    margin-top: 1rem;
+    margin: 1rem 0;
   }
   .comm-right {
     :deep(textarea) {
       background: var(--input-bg-color);
+    }
+  }
+  .list {
+    :deep(.el-skeleton) {
+      margin: 2rem 0;
     }
   }
 }

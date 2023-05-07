@@ -27,7 +27,7 @@
             title="确定删除？"
             @confirm="deleteComment">
             <template #reference>
-              <div class="btn del">删除</div>
+              <div class="btn del"><i class="iconfont icon-delete"></i><span>删除</span></div>
             </template>
           </el-popconfirm>
         </client-only>
@@ -122,9 +122,6 @@ const setDislike = async () => {
     color: var(--sec-text-color);
     > div {
       margin-right: 10px;
-      &:hover {
-        color: #409eff;
-      }
       i {
         margin-right: 2px;
         font-size: 1.2em;

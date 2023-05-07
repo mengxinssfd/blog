@@ -1,4 +1,4 @@
-@use '../../node_modules/element-plus/dist/index.css';
+@use 'element-plus/dist/index.css';
 
 @import 'https://cdn.staticfile.org/minireset.css/0.0.2/minireset.min.css';
 @import 'https://at.alicdn.com/t/font_2809722_7e52n21p5cq.css';
@@ -157,8 +157,16 @@ a {
     --board-padding: 5px;
   }
 }
-.btn:not(.disabled):not(.active) {
-  cursor: pointer;
+.btn {
+  &.disabled {
+    pointer-events: none;
+  }
+  &:not(.active) {
+    cursor: pointer;
+    &:hover {
+      color: var(--theme-color);
+    }
+  }
 }
 
 @keyframes heart-beat {
