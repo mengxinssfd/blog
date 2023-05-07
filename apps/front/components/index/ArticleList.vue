@@ -57,7 +57,7 @@ export default defineComponent({
           pageSize: 10,
         };
         const nullable = [undefined, NaN, null];
-        return filterObj(data, (v) => !nullable.includes(v));
+        return filterObj(data, (v) => !nullable.includes(v)) as ArticleListDto;
       },
     };
     const Data = {

@@ -10,7 +10,7 @@
               :closable="searchData.sort !== 3"
               disable-transitions
               @close="searchData.sort = 3">
-              {{ activeSort.label }}
+              {{ activeSort?.label }}
             </el-tag>
           </div>
           <template #dropdown>
@@ -34,7 +34,7 @@
               :closable="searchData.category !== 0"
               disable-transitions
               @close="searchData.category = 0">
-              {{ activeCate.name }}
+              {{ activeCate?.name }}
             </el-tag>
           </div>
           <template #dropdown>
@@ -60,7 +60,6 @@
                   v-for="tag in activeTags"
                   :key="tag.id"
                   :closable="getResultTagClosable(tag)"
-                  :round="!tag.type"
                   disable-transitions
                   @close="handleResultTagClick(tag)">
                   {{ tag.name }}

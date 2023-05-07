@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { deleteArticle, getAllArticleList, setArticleAs, restoreArticle } from '@blog/apis';
-import { type ArticleEntity, ARTICLE_STATE } from '@blog/entities';
+import { type ArticleEntity, ARTICLE_STATE, type TagEntity } from '@blog/entities';
 import { formatDate as formatDateKit } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
@@ -81,6 +81,10 @@ function toSearch() {
   page.page = 1;
 }
 
+function joinTags(tags: TagEntity[]) {
+  return tags.map((it) => it.name).join(',');
+}
+
 watch(
   () => page.page,
   () => {
@@ -138,7 +142,7 @@ getData();
       </el-table-column>
       <el-table-column label="标签">
         <template #default="scope">
-          {{ scope.row.tags.map((it) => it.name).join(',') }}
+          {{ joinTags(scope.row.tags) }}
         </template>
       </el-table-column>
       <el-table-column label="作者">

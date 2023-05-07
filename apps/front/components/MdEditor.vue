@@ -13,6 +13,7 @@ import '@toast-ui/editor/dist/i18n/zh-cn';
 import { Keymap } from '@tool-pack/keymap';
 import '~/styles/toastui-color-syntax.scss';
 import * as Prettier from 'prettier';
+// @ts-ignore
 import parserMD from 'prettier/esm/parser-markdown.mjs';
 import { sleep } from '@tool-pack/basic';
 import { uploadFile } from '@blog/apis';

@@ -2,7 +2,7 @@
 import { useRequest } from '@request-template/vue3-hooks';
 import type { ResType } from 'request-template';
 
-const TypeMatches = {
+const TypeMatches: Record<string, string> = {
   a: '动画',
   b: '漫画',
   c: '游戏',

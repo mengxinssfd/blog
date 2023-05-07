@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import type { FriendLinkEntity } from '@blog/entities';
+import type { FriendLinkEntity, ArticleEntity } from '@blog/entities';
 import {
   getResolveFriendLinkList,
   getRecentResolveFriendLink,
@@ -21,6 +21,7 @@ const bannerBg = computed(
   () => articleAs.value?.cover || 'https://bu.dusays.com/2022/12/04/638cb7ce7e3f6.jpg',
 );
 const pageTitle = computed(() => articleAs.value?.title || '友链');
+const asArticle = computed(() => ({ ...articleAs.value, author: { id: 1 } } as ArticleEntity));
 
 async function getData() {
   const { data } = await useAsyncData(() => getResolveFriendLinkList());
@@ -156,7 +157,7 @@ await getData();
         <el-empty v-else description="暂无友链"> </el-empty>
       </section>
       <section v-if="articleAs" class="board">
-        <CommentBlock :article="{ ...articleAs, author: { id: 1 } }"></CommentBlock>
+        <CommentBlock :article="asArticle"></CommentBlock>
       </section>
       <ClientOnly>
         <FriendLinkDialog v-model:show="dialogVisible" @success="onSuccess"></FriendLinkDialog>

@@ -71,7 +71,7 @@ const getNickname = (tree: CommentTreeType) => {
   return tree.user.nickname;
 };
 
-const getUserTag = (user: UserEntity) => {
+const getUserTag = (user?: UserEntity) => {
   if (props.independent) return undefined;
   if (!user)
     return (
