@@ -1,6 +1,7 @@
 <template>
   <Html :class="{ [theme]: isClient || themeMode !== ThemeMode.system }">
     <Body>
+      <NuxtLoadingIndicator :height="5" :duration="3000" :throttle="400" />
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>
