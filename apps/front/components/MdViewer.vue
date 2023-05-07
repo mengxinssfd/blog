@@ -88,6 +88,18 @@ const filterContent = computed(() => {
       img: [...baseAttrs, 'src'],
       a: [...baseAttrs, 'href'],
       input: [...baseAttrs, 'checked', 'disabled', 'type'],
+      iframe: [
+        ...baseAttrs,
+        'src',
+        'width',
+        'height',
+        'style',
+        'scrolling',
+        'border',
+        'frameborder',
+        'framespacing',
+        'allowfullscreen',
+      ],
     },
     /* onTag(tag, html) {
           // tag是当前的标签名称，比如<a>标签，则tag的值是'a'
