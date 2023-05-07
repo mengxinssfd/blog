@@ -8,7 +8,7 @@
           :rows="4"
           :maxlength="800"
           show-word-limit
-          type="textarea"></el-input>
+          type="textarea" />
       </el-tab-pane>
       <el-tab-pane :disabled="!form.content" label="预览" name="preview">
         <div v-if="activeTab === 'preview'" class="preview-block">
@@ -18,12 +18,14 @@
     </el-tabs>
     <div v-if="!user.id" class="tourist">
       <div class="tourist-name">
-        <el-input v-model.trim="form.touristName" placeholder="游客昵称"></el-input>
+        <el-input
+          v-model.trim="form.touristName"
+          placeholder="游客昵称，未登录时每个页面最多5个评论" />
       </div>
       <div class="tourist-email">
         <el-input
           v-model.trim="form.touristEmail"
-          placeholder="邮箱，当评论有回复时会发送通知到该邮箱"></el-input>
+          placeholder="邮箱，当评论有回复时会发送通知到该邮箱" />
       </div>
     </div>
     <div class="btn-block">
