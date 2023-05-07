@@ -16,6 +16,9 @@ const disabled = computed(() => ['/user/login', '/user/register'].includes(route
   right: 1.5rem;
   bottom: 8vh;
   z-index: 8;
+  @media (max-width: 750px) {
+    right: 0.5rem;
+  }
   .btn {
     width: 2.2rem;
     height: 2.2rem;
