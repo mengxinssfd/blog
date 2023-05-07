@@ -2,10 +2,17 @@
   <footer class="c-footer">
     <div class="f-content main-width _ flex-col-c-c">
       <div class="record">
-        Copyright © {{ year }} <a href="https://www.miitbeian.gov.cn/">{{ CASE_NUMBER }}</a>
+        Copyright © {{ year }}
+        <a href="https://www.miitbeian.gov.cn/" target="_blank" rel="noreferrer">
+          {{ CASE_NUMBER }}
+        </a>
       </div>
-      <div class="time">
-        ~~ 博客已平稳运行 <strong>{{ date }}</strong> 天 ~~
+      <div class="bottom _ flex-c">
+        <div class="time">
+          博客已平稳运行 <strong>{{ date }}</strong> 天，
+        </div>
+        <a href="/atom.xml" target="_blank">【RSS】</a>
+        <a href="/sitemap.xml" target="_blank">【SITEMAP】</a>
       </div>
     </div>
   </footer>
