@@ -42,9 +42,13 @@ const { data: applyData, request: reqApply } = useRequest(
   undefined,
   defaultData,
 );
-const { data: recentData, request: reqRecent } = useRequest(
+const {
+  data: recentData,
+  loading: recentDataLoading,
+  request: reqRecent,
+} = useRequest(
   getRecentResolveFriendLink,
-  undefined,
+  { loading: { immediate: true, threshold: 500 } },
   defaultData,
 );
 
@@ -73,16 +77,21 @@ await getData();
           <div class="_ pos-trans-c-c col"></div>
         </div>
       </Widget>
-      <Widget v-if="articleAs">
+      <Widget>
         <template #title>
           <div class="_ flex-c-between">
             <span>互链规则</span>
-            <NuxtLink v-if="userStore.isSuperAdmin" :to="`/article/create?id=${articleAs.id}`">
+            <NuxtLink
+              v-if="userStore.isSuperAdmin && articleAs"
+              :to="`/article/create?id=${articleAs.id}`">
               <i class="iconfont icon-edit _ btn"></i>
             </NuxtLink>
           </div>
         </template>
-        <div class="rules" v-html="articleAs.content"></div>
+        <div v-if="articleAs?.content" class="rules" v-html="articleAs.content"></div>
+        <div v-else class="rules">
+          <el-skeleton :rows="6" animated />
+        </div>
       </Widget>
       <Widget v-if="applyData.list.length" title="添加列表">
         <ul class="apply-list">
@@ -97,13 +106,32 @@ await getData();
       </Widget>
       <Widget title="最新添加">
         <ul class="recent-list">
-          <li v-for="item in recentData.list" :key="item.id" class="_ flex-c">
-            <el-image :src="item.avatar" />
-            <div class="texts _ flex-1">
-              <div class="name _ ellipsis-1">{{ item.name }}</div>
-              <div class="time">{{ howLongAgo(item.createAt) }}</div>
-            </div>
-          </li>
+          <template v-if="recentDataLoading">
+            <li v-for="i in recentData.list.length || 3" :key="i">
+              <el-skeleton animated>
+                <template #template>
+                  <div class="_ flex-c">
+                    <el-skeleton-item
+                      variant="image"
+                      style="margin-right: 10px; width: 40px; height: 40px" />
+                    <div class="_ flex-1 flex-col">
+                      <el-skeleton-item style="width: 130px" />
+                      <el-skeleton-item style="margin-top: 1rem; width: 60px" />
+                    </div>
+                  </div>
+                </template>
+              </el-skeleton>
+            </li>
+          </template>
+          <template v-else>
+            <li v-for="item in recentData.list" :key="item.id" class="_ flex-c">
+              <el-image :src="item.avatar" />
+              <div class="texts _ flex-1">
+                <div class="name _ ellipsis-1">{{ item.name }}</div>
+                <div class="time">{{ howLongAgo(item.createAt) }}</div>
+              </div>
+            </li>
+          </template>
         </ul>
       </Widget>
     </template>
