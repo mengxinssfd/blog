@@ -26,6 +26,7 @@ import { AppPuppeteerService } from '@/modules/puppeteer/puppeteer.service';
 import { ThrottlerBehindProxyGuard } from '@/guards/throttler-behind-proxy.guard';
 import { Throttle } from '@nestjs/throttler';
 import { PageDto } from '@blog/dtos/page.dto';
+import { MailService } from '@/modules/mail/mail.service';
 
 @ApiTags('friend-link')
 @Controller('friend-link')
@@ -34,6 +35,7 @@ export class FriendLinkController {
     private readonly friendLinkService: FriendLinkService,
     private readonly casl: CaslAbilityFactory,
     private readonly puppeteerService: AppPuppeteerService,
+    private readonly mailService: MailService,
   ) {}
 
   @ApiBearerAuth()
@@ -41,7 +43,9 @@ export class FriendLinkController {
   @Throttle(5, 60)
   @Post()
   async create(@Body() dto: CreateFriendLinkDto) {
-    return this.friendLinkService.create(dto);
+    const res = await this.friendLinkService.create(dto);
+    this.mailService.onApplyFriendLink(dto.link);
+    return res;
   }
 
   @ApiBearerAuth()

@@ -3,12 +3,16 @@ import { CommentEntity } from '@blog/entities';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Logger } from '@/utils/log4js';
 import { CommentTipsService } from '@/modules/mail/comment-tips.service';
+import { UserService } from '@/routers/user/user.service';
+import { AppConfigService } from '@/app.config.service';
 
 @Injectable()
 export class MailService {
   constructor(
     private readonly mailerService: MailerService,
     private readonly commentTipsService: CommentTipsService,
+    private readonly userService: UserService,
+    private readonly configService: AppConfigService,
   ) {}
 
   private _sendMail = async (subject: string, to: string, template: string, context: object) => {
@@ -33,6 +37,23 @@ export class MailService {
     }
     Logger.info('发送邮件成功\n');
   };
+
+  async onApplyFriendLink(friendLink: string) {
+    const { host, name } = this.configService.val('app');
+    const url = `https://${host}`;
+
+    const context = {
+      url: url + '/admin/friend-link',
+      appUrl: url,
+      content: friendLink,
+      title: '有新的友链申请。',
+    };
+
+    const admin = await this.userService.findOne({ id: 1, addSelect: ['user.email'] });
+    const to = admin?.email || '';
+    Logger.info('准备发送友链申请提示邮件给管理员');
+    this._sendMail(`『${name}』有新的友链申请。`, to, './commonTips', context);
+  }
 
   async onCommentCreated(comment: CommentEntity) {
     const handlers = [

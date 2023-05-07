@@ -1,0 +1,30 @@
+<div style='max-width: 600px;padding: 3rem 1rem 0;margin: auto;font-size: 14px;color: #444;'>
+  <style>
+    * { background: none !important } pre, code { white-space: pre-wrap !important } .button {
+    background-color: #36d1dc; background: -webkit-linear-gradient(45deg, rgb(54, 209, 220), rgb(91,
+    134, 229)) !important; background: linear-gradient(45deg, rgb(54, 209, 220), rgb(91, 134, 229))
+    !important; padding: .5rem 1rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 0 18px
+    rgb(159 198 255); color: white; font-size: 16px; text-decoration: none; display: block; width:
+    fit-content; }
+  </style>
+  <div style='display: flex;height: 80px;'>
+    <img
+      style='flex-basis:80px;border-radius: 25%;width: 80px;height: 80px;'
+      src='{{appUrl}}/favicon.ico'
+      alt='{{appUrl}}'
+    />
+    <div
+      style='display: flex;flex:1;flex-direction: column;justify-content: end;line-height: 1.7;margin-left: 1rem;'
+    >
+      <span style='color: #555;'>{{title}}</span>
+    </div>
+  </div>
+  <div style='margin:30px 0'>
+    {{content}}
+  </div>
+  <div>
+    <a class='button' href='{{url}}'>
+      查看详细内容
+    </a>
+  </div>
+</div>
