@@ -283,10 +283,7 @@ export default defineComponent({
     let articleId: number = route.query.id as any;
 
     onMounted(() => {
-      import('~/components/MdEditor.vue').then((res) => {
-        console.log('1111', res.default);
-        Data.editor.value = res.default;
-      });
+      import('~/components/MdEditor.vue').then((res) => (Data.editor.value = res.default));
       if (articleId) {
         _Methods.getArticle();
       } else {
