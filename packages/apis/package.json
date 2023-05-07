@@ -10,6 +10,6 @@
     "check:ts": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "request-template": "^2.2.0"
+    "request-template": "^2.2.1"
   }
 }
