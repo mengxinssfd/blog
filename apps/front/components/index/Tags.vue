@@ -4,6 +4,7 @@
       v-for="(item, index) in list"
       :key="item[valueKey]"
       :type="isActive(item) ? activeTagType : 'info'"
+      disable-transitions
       @click="clickTag(item, index)">
       {{ item[labelKey] }}
     </el-tag>

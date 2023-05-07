@@ -75,14 +75,19 @@ const getUserTag = (user: UserEntity) => {
   if (props.independent) return undefined;
   if (!user)
     return (
-      <el-tag size="small" type="info">
+      <el-tag size="small" type="info" disable-transitions>
         游客
       </el-tag>
     );
-  if (user.id === 1) return <el-tag size="small">博主</el-tag>;
+  if (user.id === 1)
+    return (
+      <el-tag size="small" disable-transitions>
+        博主
+      </el-tag>
+    );
   if (user.id === props.authorId)
     return (
-      <el-tag size="small" type="success">
+      <el-tag size="small" type="success" disable-transitions>
         作者
       </el-tag>
     );
