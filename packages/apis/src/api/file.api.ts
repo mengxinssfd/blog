@@ -6,7 +6,7 @@ import type { ID } from '../types';
 
 export const uploadUrl = '/api/file';
 
-export function uploadFile(file: File) {
+export function uploadFile(file: File | Blob) {
   const fd = new FormData();
   fd.append('file', file);
   return Post(uploadUrl, fd);
