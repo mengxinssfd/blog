@@ -16,7 +16,7 @@ const props = defineProps({
 });
 
 const { data, loading, request } = useRequest(() => getCommentByArticleApi(props.article.id), {
-  loadingThreshold: 500,
+  loading: { threshold: 500, immediate: true },
 });
 
 const list = computed<CommentTreeType[]>(() => {
@@ -83,8 +83,22 @@ onBeforeMount(request);
       </el-icon>
     </div>
     <div class="list">
-      <template v-if="!article.author || loading">
-        <el-skeleton v-for="i in data?.count || 2" :key="i" :rows="2" animated> </el-skeleton>
+      <template v-if="loading">
+        <el-skeleton v-for="i in data?.count || 2" :key="i" animated>
+          <template #template>
+            <div class="_ flex">
+              <el-skeleton-item
+                variant="image"
+                style="margin-right: 6px; width: 32px; height: 32px; border-radius: 50%" />
+              <div class="_ flex-1 flex-col">
+                <el-skeleton-item style="width: 20%" />
+                <el-skeleton-item style="margin-top: 10px" />
+                <el-skeleton-item style="margin-top: 10px" />
+                <el-skeleton-item style="margin-top: 10px; width: 30%" />
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
       </template>
       <template v-else>
         <CommentTree
