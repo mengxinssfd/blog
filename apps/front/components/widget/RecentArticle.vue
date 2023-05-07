@@ -5,7 +5,11 @@ import { type ArticleEntity } from '@blog/entities';
 import { howLongAgo } from '~/feature/utils';
 
 const route = useRoute();
-const { data, request } = useRequest(getArticleList, undefined, { list: [], count: 0 });
+const { data, loading, request } = useRequest(
+  getArticleList,
+  { loading: { threshold: 500, immediate: true } },
+  { list: [], count: 0 },
+);
 
 interface InnerEntity extends ArticleEntity {
   link: string;
@@ -26,19 +30,39 @@ onMounted(() => request({ page: 1, pageSize: 5, tags: [], sort: 1 }, !!process.c
   <Widget title="最新文章">
     <div class="widget-content">
       <ul>
-        <li v-for="item in list" :key="item.id" :class="{ active: item.active }">
-          <nuxt-link :to="item.link" class="_ flex">
-            <el-avatar
-              :src="item.cover"
-              :class="{ 'iconfont icon-view': item.active }"
-              size="large"
-              shape="square"></el-avatar>
-            <div class="texts _ flex-1">
-              <div class="title _ ellipsis-2">{{ item.title }}</div>
-              <div class="time">{{ item.createTime }}</div>
-            </div>
-          </nuxt-link>
-        </li>
+        <template v-if="loading">
+          <li v-for="i in list.length || 3" :key="i">
+            <el-skeleton animated>
+              <template #template>
+                <div class="_ flex-c">
+                  <el-skeleton-item
+                    variant="image"
+                    style="margin-right: 6px; width: 56px; height: 56px" />
+                  <div class="_ flex-1 flex-col">
+                    <el-skeleton-item />
+                    <el-skeleton-item style="margin-top: 8px; width: 130px" />
+                    <el-skeleton-item style="margin-top: 8px; width: 60px" />
+                  </div>
+                </div>
+              </template>
+            </el-skeleton>
+          </li>
+        </template>
+        <template v-else>
+          <li v-for="item in list" :key="item.id" :class="{ active: item.active }">
+            <nuxt-link :to="item.link" class="_ flex">
+              <el-avatar
+                :src="item.cover"
+                :class="{ 'iconfont icon-view': item.active }"
+                size="large"
+                shape="square"></el-avatar>
+              <div class="texts _ flex-1">
+                <div class="title _ ellipsis-2">{{ item.title }}</div>
+                <div class="time">{{ item.createTime }}</div>
+              </div>
+            </nuxt-link>
+          </li>
+        </template>
       </ul>
     </div>
   </Widget>
