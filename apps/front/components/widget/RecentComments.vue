@@ -6,7 +6,11 @@ import { getArticleCommentLink } from '@blog/shared';
 // table of content
 const router = useRouter();
 const route = useRoute();
-const { data, request } = useRequest(getRecentComment, undefined, []);
+const { data, loading, request } = useRequest(
+  getRecentComment,
+  { loading: { immediate: true, threshold: 500 } },
+  [],
+);
 
 interface InnerComment extends CommentEntity {
   link: string;
@@ -33,18 +37,42 @@ function toArticle(item: InnerComment) {
       <h5 class="widget-title">最新评论</h5>
     </template>
     <div class="widget-content">
-      <CommentBase
-        v-for="item in list"
-        :key="item.id"
-        :item="item"
-        :class="{ active: item.active }"
-        independent
-        @click-content="toArticle(item)"></CommentBase>
+      <template v-if="loading">
+        <el-skeleton v-for="i in list.length || 5" :key="i" animated>
+          <template #template>
+            <div class="_ flex">
+              <el-skeleton-item
+                variant="image"
+                style="margin-right: 6px; width: 32px; height: 32px; border-radius: 50%" />
+              <div class="_ flex-1 flex-col">
+                <el-skeleton-item style="width: 100px" />
+                <el-skeleton-item style="margin-top: 1.2rem" />
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
+      </template>
+      <template v-else>
+        <CommentBase
+          v-for="item in list"
+          :key="item.id"
+          :item="item"
+          :class="{ active: item.active }"
+          independent
+          @click-content="toArticle(item)" />
+      </template>
     </div>
   </Widget>
 </template>
 
 <style lang="scss" scoped>
+.widget-content {
+  :deep(.el-skeleton) {
+    + .el-skeleton {
+      margin-top: 1.2rem;
+    }
+  }
+}
 .c-comment {
   margin-bottom: 0.3rem;
   &:not(.active) {
