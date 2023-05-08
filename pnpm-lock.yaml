@@ -72,6 +72,7 @@ importers:
       '@liaoliaots/nestjs-redis': ^9.0.5
       '@mxssfd/nest-puppeteer': ^1.0.0
       '@nestjs-modules/mailer': ^1.8.1
+      '@nestjs/axios': ^2.0.0
       '@nestjs/cli': ^9.1.9
       '@nestjs/common': ^9.2.1
       '@nestjs/config': ^2.3.1
@@ -97,6 +98,7 @@ importers:
       '@types/puppeteer': ^7.0.4
       '@types/supertest': ^2.0.12
       ali-oss: ^6.17.1
+      axios: ^1.3.5
       class-transformer: ^0.5.1
       class-validator: ^0.14.0
       cross-env: ^7.0.3
@@ -117,7 +119,6 @@ importers:
       passport: ^0.6.0
       passport-jwt: ^4.0.1
       passport-local: ^1.0.0
-      prettier: ^2.8.4
       puppeteer: ^19.8.5
       reflect-metadata: ^0.1.13
       rxjs: ^7.8.0
@@ -136,6 +137,7 @@ importers:
       '@liaoliaots/nestjs-redis': 9.0.5_lj7xh7wby6zrdd4ynrpb2nlmtu
       '@mxssfd/nest-puppeteer': 1.0.0_z4qr5pektl6zuohhbupjtwo2yu
       '@nestjs-modules/mailer': 1.8.1_x5rh2wwt6qit6v327365jmvnye
+      '@nestjs/axios': 2.0.0_ylj5mlnv6p3ipmfcjfvwnyxjnu
       '@nestjs/common': 9.2.1_welcnyot5bzd5wa2aovbkxpi4i
       '@nestjs/config': 2.3.1_b4pxbpa7chblgbyake5iz5rdmu
       '@nestjs/core': 9.2.1_e6la6qvsclaae2becwjnmfvsuq
@@ -147,6 +149,7 @@ importers:
       '@nestjs/typeorm': 9.0.1_rq3e63xrdnihep2b3mxfcpnrny
       '@tool-pack/basic': 0.0.19
       ali-oss: 6.17.1
+      axios: 1.3.5
       class-transformer: 0.5.1
       class-validator: 0.14.0
       express: 4.18.2
@@ -165,7 +168,6 @@ importers:
       passport: 0.6.0
       passport-jwt: 4.0.1
       passport-local: 1.0.0
-      prettier: 2.8.4
       puppeteer: 19.8.5_typescript@4.9.5
       reflect-metadata: 0.1.13
       rxjs: 7.8.0
@@ -2818,6 +2820,23 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+    dev: false
+
+  /@nestjs/axios/2.0.0_ylj5mlnv6p3ipmfcjfvwnyxjnu:
+    resolution:
+      {
+        integrity: sha512-F6oceoQLEn031uun8NiommeMkRIojQqVryxQy/mK7fx0CI0KbgkJL3SloCQcsOD+agoEnqKJKXZpEvL6FNswJg==,
+      }
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0 || ^9.0.0
+      axios: ^1.3.1
+      reflect-metadata: ^0.1.12
+      rxjs: ^6.0.0 || ^7.0.0
+    dependencies:
+      '@nestjs/common': 9.2.1_welcnyot5bzd5wa2aovbkxpi4i
+      axios: 1.3.5
+      reflect-metadata: 0.1.13
+      rxjs: 7.8.0
     dev: false
 
   /@nestjs/cli/9.1.9:
