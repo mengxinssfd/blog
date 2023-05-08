@@ -7,6 +7,9 @@ export class EnvironmentVariables {
   APP_HOST!: string;
   @IsString()
   APP_NAME!: string;
+  @IsOptional()
+  @IsBoolean()
+  APP_EMAIL_ENABLE!: Boolean;
 
   // mysql 配置
   @IsNumber()

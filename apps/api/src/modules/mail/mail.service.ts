@@ -21,6 +21,12 @@ export class MailService {
       return;
     }
     Logger.info('即将发送邮件给：', to);
+
+    if (!this.configService.val('app.emailEnable')) {
+      Logger.info('`app.emailEnable`未开启，停止发送');
+      return;
+    }
+
     try {
       await this.mailerService.sendMail({
         // to: user.email,

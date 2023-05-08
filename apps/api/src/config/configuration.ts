@@ -11,6 +11,7 @@ export const configLoader = () => {
       port: env.APP_PORT,
       host: env.APP_HOST,
       name: env.APP_NAME,
+      emailEnable: env.APP_EMAIL_ENABLE,
     },
     mail: {
       transport: {
