@@ -1,7 +1,5 @@
 //获取ip（内网或外网）
 import { IncomingMessage } from 'http';
-import type { Buffer } from 'buffer';
-import * as https from 'https';
 
 export const getIp = function (http: IncomingMessage): string {
   const headers = http.headers;
@@ -46,32 +44,3 @@ export const ENV = {
     return env === 'test';
   },
 };
-
-export function httpsGet<T>(url: string): Promise<T> {
-  return new Promise<any>((resolve, reject) => {
-    https
-      .get(url, (res) => {
-        const bufferList: Buffer[] = [];
-        res.on('data', (d) => {
-          bufferList.push(d);
-        });
-        res.on('end', () => {
-          if (!res.complete) {
-            reject('The connection was terminated while the message was still being sent');
-            return;
-          }
-
-          let json = '';
-          try {
-            json = JSON.parse(bufferList.map((i) => i.toString()).join(''));
-          } catch (e) {
-            resolve(reject('数据不是json'));
-          }
-          resolve(resolve(json));
-        });
-      })
-      .on('error', (e) => {
-        reject(e.message);
-      });
-  });
-}
