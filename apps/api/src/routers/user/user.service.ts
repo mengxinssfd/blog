@@ -6,8 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ROLE, USER_STATE, UserEntity } from '@blog/entities';
 import { UpdatePasswordDto } from '@blog/dtos/user/update-password.dto';
-import { WxLoginDTO } from '@blog/dtos/user/wx-login.dto';
-import { createUUID } from '@tool-pack/basic';
 import FailedException from '@/exceptions/Failed.exception';
 
 @Injectable()
@@ -232,32 +230,5 @@ export class UserService {
       ])
       .where({ openid });
     return rep.getOne();
-  }
-
-  async registerWithMiniProgramUser(
-    // data: Awaited<
-    //   ReturnType<typeof UserService['prototype']['getMiniProgramUserinfo']>
-    // >,
-    data: WxLoginDTO & { session_key: string; openid: string },
-  ) {
-    const password = createUUID();
-    const salt = makeSalt(); // 制作密码盐
-    const hashPwd = encryptPassword(password, salt);
-
-    const user = new UserEntity();
-    user.username = (data.nickName + '_wwwwwwwwwwx').substring(0, 12);
-    user.nickname = data.nickName;
-    user.avatar = data.avatarUrl;
-    user.password = hashPwd;
-    user.salt = salt;
-    user.email = '';
-    user.openid = data.openid;
-
-    return await this.repository.save(user);
-  }
-  async updateMiniProgramUser(user: UserEntity, data: WxLoginDTO) {
-    user.nickname = data.nickName;
-    user.avatar = data.avatarUrl;
-    return await this.repository.save(user);
   }
 }

@@ -51,22 +51,23 @@ export class UserController {
   ) {}
 
   @Post('miniprogram-login')
-  async miniProgramLogin(@Body() data: WxLoginDTO) {
+  async miniProgramLogin(@Body() data: WxLoginDTO, @ReqIp() ip: string) {
     const userInfo = await this.miniProgramService.getUserinfo(data);
 
     let user = await this.userService.findOneByOpenId(userInfo.openid);
     if (!user) {
-      user = await this.userService.registerWithMiniProgramUser({
+      user = await this.miniProgramService.register({
         ...userInfo,
         ...data,
+        ip,
       });
     } else {
       // 更新用户昵称和头像
-      user = await this.userService.updateMiniProgramUser(user, data);
+      user = await this.miniProgramService.updateUser(user, data);
     }
 
     const token = this.authService.certificate(user);
-    this.userService.saveLoginInfo(user.id, 'xcx');
+    this.userService.saveLoginInfo(user.id, ip);
 
     throw new ResetTokenException({ token });
   }
