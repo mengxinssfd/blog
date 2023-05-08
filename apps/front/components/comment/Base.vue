@@ -145,7 +145,7 @@ defineExpose({ getNickname });
     }
   }
   &.active {
-    box-shadow: 0 0 15px 0 var(--theme-color);
+    border: 1px solid var(--theme-color);
     border-radius: var(--board-radius);
     padding-left: 7px !important;
     margin: 0 -7px;
