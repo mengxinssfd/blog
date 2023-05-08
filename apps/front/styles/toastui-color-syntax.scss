@@ -171,7 +171,6 @@
     height: 121px;
   }
 
-
   // 字体
   .toastui-editor-contents,
   .toastui-editor-defaultUI,
@@ -191,5 +190,15 @@
   }
   .toastui-editor-defaultUI-toolbar {
     border: 0;
+  }
+  @media only screen and (max-width: 480px) {
+    .toastui-editor-dropdown-toolbar {
+      max-width: 90vw;
+      overflow: auto;
+    }
+    .toastui-editor-popup {
+      margin-left: 0;
+      max-width: 340px;
+    }
   }
 }
