@@ -5,11 +5,13 @@ import { UserEntity } from '@blog/entities';
 import { UserController } from './user.controller';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { AppRedisModule } from '@/modules/redis/redis.module';
+import { HttpModule } from '@nestjs/axios';
+import { WechatMiniProgramService } from '@/routers/user/wechat-mini-program.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity]), AuthModule, AppRedisModule],
+  imports: [TypeOrmModule.forFeature([UserEntity]), AuthModule, AppRedisModule, HttpModule],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, WechatMiniProgramService],
   exports: [UserService],
 })
 export class UserModule {}

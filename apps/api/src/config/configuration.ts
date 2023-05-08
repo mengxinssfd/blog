@@ -13,6 +13,10 @@ export const configLoader = () => {
       name: env.APP_NAME,
       emailEnable: env.APP_EMAIL_ENABLE,
     },
+    wechatMiniProgram: {
+      appid: env.MINI_PROGRAM_APPID,
+      secret: env.MINI_PROGRAM_SECRET,
+    },
     mail: {
       transport: {
         host: env.MAIL_HOST,

@@ -37,6 +37,7 @@ import {
 import { RequestWithUser } from '@/types';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
 import { AppRedisService } from '@/modules/redis/redis.service';
+import { WechatMiniProgramService } from '@/routers/user/wechat-mini-program.service';
 
 @ApiTags('user')
 @Controller('user')
@@ -46,11 +47,12 @@ export class UserController {
     private readonly authService: AuthService,
     private readonly caslAbilityFactory: CaslAbilityFactory,
     private readonly redisService: AppRedisService,
+    private readonly miniProgramService: WechatMiniProgramService,
   ) {}
 
   @Post('miniprogram-login')
   async miniProgramLogin(@Body() data: WxLoginDTO) {
-    const userInfo = await this.userService.getMiniProgramUserinfo(data);
+    const userInfo = await this.miniProgramService.getUserinfo(data);
 
     let user = await this.userService.findOneByOpenId(userInfo.openid);
     if (!user) {
