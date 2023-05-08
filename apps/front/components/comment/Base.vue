@@ -1,5 +1,5 @@
 <template>
-  <div :id="anchor" class="c-comment" :class="{ active: isActive }">
+  <div :id="anchor" class="c-comment" :class="{ active: isActive, independent }">
     <div class="comm-left">
       <router-link v-if="item.user" :to="`/user/info/${item.user.id}`">
         <el-avatar :size="32" :src="item.user?.avatar || defaultAvatar"></el-avatar>
@@ -20,10 +20,7 @@
           <span class="time">{{ howLongAgo(item.createAt) }}</span>
         </div>
         <!--    回复内容    -->
-        <div
-          class="content"
-          :class="{ '_ ellipsis-2': independent }"
-          @click="emits('clickContent')">
+        <div class="content" @click="emits('clickContent')">
           <p><MdViewer class="custom" :content="item.content" :is-preview="independent" is-md /></p>
         </div>
         <!--    回复引用    -->
@@ -98,6 +95,7 @@ defineExpose({ getNickname });
 </script>
 
 <style lang="scss">
+@use 'locss';
 .c-comment {
   display: flex;
   align-items: flex-start;
@@ -149,6 +147,11 @@ defineExpose({ getNickname });
     border-radius: var(--board-radius);
     padding-left: 7px !important;
     margin: 0 -7px;
+  }
+  &.independent {
+    .content .markdown-body {
+      @extend ._, .ellipsis-2;
+    }
   }
 }
 </style>
