@@ -4,6 +4,7 @@ import { Folder, PieChart, Tickets } from '@element-plus/icons-vue';
 definePageMeta({
   middleware: 'admin',
   pageTransition: false,
+  redirect: '/admin/account',
 });
 
 const route = useRoute();
