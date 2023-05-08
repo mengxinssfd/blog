@@ -8,7 +8,5 @@
   <AsideMenu />
 </template>
 
-<script setup lang="ts">
-import Toolbar from '~/components/Toolbar.vue';
-</script>
+<script setup lang="ts"></script>
 <style lang="scss"></style>

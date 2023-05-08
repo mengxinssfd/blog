@@ -1,12 +1,8 @@
 <script setup lang="tsx">
-import { ROLE } from '@blog/entities';
 import { Folder, PieChart, Tickets } from '@element-plus/icons-vue';
 
 definePageMeta({
-  // middleware: ['admin'],
-  redirect: '/admin/account',
-  redirectBase: '/admin',
-  role: ROLE.superAdmin,
+  middleware: 'admin',
   pageTransition: false,
 });
 

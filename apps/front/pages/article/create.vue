@@ -138,7 +138,8 @@ import {
 import type { ArticleEntity, CategoryEntity, TagEntity } from '@blog/entities';
 import { useToggleState, useStorageItem } from '~/feature/hooks';
 
-definePageMeta({ authorized: true });
+definePageMeta({ middleware: 'auth' });
+
 export default defineComponent({
   components: {
     Plus,

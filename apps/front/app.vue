@@ -19,9 +19,11 @@ const theme = useState<Theme>(ThemeKeys.type);
 const themeMode = useState<ThemeMode>(ThemeKeys.mode);
 const isClient = process.client;
 
+const userStore = useUserStore();
+
 const handler = () => {
   if (document.hidden) return;
-  useUserStore().getSelfInfo();
+  userStore.getSelfInfo();
 };
 onMounted(() => {
   if (/(win|mac|android)/i.test(navigator.userAgent)) {
@@ -33,5 +35,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('visibilitychange', handler);
 });
 
-useUserStore().getSelfInfo({ enable: !process.server });
+// 服务端重定向后app会再加载一次，而且缓存被清空了
+await userStore.useUser();
 </script>
