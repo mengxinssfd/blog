@@ -8,7 +8,6 @@ import { Token } from './token';
 import { PrimaryCustomConfig, setRequestIns } from '@blog/apis';
 
 AxiosRequestTemplate.useAxios(axios);
-let uuid = '';
 
 export class PrimaryRequest<
   CC extends PrimaryCustomConfig = PrimaryCustomConfig,
@@ -96,12 +95,9 @@ export class PrimaryRequest<
 
   // 生成uuid
   private static getUUID() {
-    if (uuid) {
-      return uuid;
-    }
-    uuid = createUUID();
-    // localStorage.setItem('uuid', uuid);
-    return uuid;
+    const uuid = useCookie('uuid', { expires: new Date(2030, 1, 1) });
+    if (!uuid.value) uuid.value = createUUID();
+    return uuid.value;
   }
 
   // 处理config，添加uuid和token到headers

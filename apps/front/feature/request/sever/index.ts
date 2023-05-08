@@ -8,6 +8,7 @@ export class ServerRequest<
   CC extends PrimaryCustomConfig = PrimaryCustomConfig,
 > extends AxiosRequestTemplate<CC> {
   static ins = new ServerRequest();
+  private onceHeader: [name: string, value: string] | undefined;
 
   private constructor() {
     super({
@@ -18,10 +19,18 @@ export class ServerRequest<
     });
   }
 
+  addHeaderOnce(header: [name: string, value: string]) {
+    this.onceHeader = header;
+  }
+
   // 处理config，添加uuid和token到headers
   protected override handleRequestConfig(requestConfig: any) {
     if (!requestConfig.headers) requestConfig.headers = {};
     requestConfig.headers.Referer = 'from front server api';
+    if (this.onceHeader) {
+      requestConfig.headers[this.onceHeader[0]] = this.onceHeader[1];
+      this.onceHeader = undefined;
+    }
     return super.handleRequestConfig(requestConfig);
   }
 }
