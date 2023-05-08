@@ -113,16 +113,17 @@ export class CommentController {
       const comment = new CommentEntity();
       comment.article = article;
       comment.articleId = article.id;
+      comment.ip = ip;
       if (user?.id) {
         comment.user = user;
         comment.userId = user.id;
       } else {
         const count = await this.commentService.count({
-          touristIp: ip,
+          ip,
+          userId: null,
           articleId: dto.articleId,
         });
         if (count >= 5) throw new ForbiddenException('在该文章内评论次数过多,请注册登录后再评论');
-        comment.touristIp = ip;
         comment.touristName = dto.touristName as string;
         dto.touristEmail && (comment.touristEmail = dto.touristEmail);
       }

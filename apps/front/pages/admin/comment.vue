@@ -90,9 +90,9 @@ onMounted(getData);
           {{ formatDate(scope.row.createAt) }}
         </template>
       </el-table-column>
-      <el-table-column label="游客ip">
+      <el-table-column label="ip">
         <template #default="scope">
-          {{ scope.row.touristIp || '--' }}
+          {{ scope.row.ip }}
         </template>
       </el-table-column>
       <el-table-column label="游客邮箱">

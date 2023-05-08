@@ -54,17 +54,28 @@ export class CommentEntity extends BlogBaseEntity {
   @JoinColumn({ name: 'userId' })
   user?: UserEntity;
   @Column('int', { nullable: true, comment: '评论人id' })
-  userId?: number;
+  userId?: number | null;
   // ---------------- 注册用户 ----------------
 
-  // ---------------- 游客 ----------------
+  // 在MySQL数据库中，IPv4地址的最大长度为15个字符，
+  // IPv6地址的最大长度为39个字符。为了确保字段长度足够存储任何类型的IP地址，
+  // 可以将字段长度设置为45个字符。
+  /*
+    UPDATE comment c JOIN user u ON c.userId = u.id
+    SET c.touristIp = u.loginIp
+    WHERE c.userId IS NOT NULL;
+
+    ALTER TABLE comment
+    CHANGE COLUMN touristIp ip VARCHAR(45) NOT NULL;
+   */
   @Column('varchar', {
-    length: '255,255,255,255'.length,
-    comment: '游客ip',
+    length: 45,
+    comment: 'ip',
     nullable: true,
   })
-  touristIp?: string;
+  ip!: string | null;
 
+  // ---------------- 游客 ----------------
   @Column('varchar', { length: 24, comment: '游客名', nullable: true })
   touristName?: string;
 
