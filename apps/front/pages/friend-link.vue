@@ -5,7 +5,6 @@ import {
   getResolveFriendLinkList,
   getRecentResolveFriendLink,
   getApplyFriendLinkList,
-  getArticleAs,
 } from '@blog/apis';
 import { useRequest } from '@request-template/vue3-hooks';
 import { howLongAgo } from '~/feature/utils';
@@ -16,12 +15,7 @@ useHeaderStore().useTransparent();
 const userStore = useUserStore();
 const linkList = ref<FriendLinkEntity[]>([]);
 const dialogVisible = ref(false);
-const { data: articleAs, request: reqArticleAs } = useRequest(getArticleAs);
-const bannerBg = computed(
-  () => articleAs.value?.cover || 'https://bu.dusays.com/2022/12/04/638cb7ce7e3f6.jpg',
-);
-const pageTitle = computed(() => articleAs.value?.title || '友链');
-const asArticle = computed(() => ({ ...articleAs.value, author: { id: 1 } } as ArticleEntity));
+const articleAs = ref<ArticleEntity>();
 
 async function getData() {
   const { data } = await useAsyncData(() => getResolveFriendLinkList());
@@ -53,24 +47,15 @@ const {
   defaultData,
 );
 
-onMounted(() => {
+onBeforeMount(() => {
   reqApply();
   reqRecent();
-  reqArticleAs('friend-link');
 });
 await getData();
 </script>
 
 <template>
-  <Title>Nice's Blog - {{ pageTitle }}</Title>
-  <NuxtLayout name="page">
-    <template #banner>
-      <Banner :blur="false" height="55vh" :brightness="0.75" :bg-img="bannerBg">
-        <template #content>
-          <div class="title">{{ pageTitle }}</div>
-        </template>
-      </Banner></template
-    >
+  <ArticleAsPage as="friend-link" @data="articleAs = $event">
     <template #aside>
       <Widget title="添加">
         <div class="add-link" @click="showLinkApplyDialog">
@@ -136,34 +121,29 @@ await getData();
         </ul>
       </Widget>
     </template>
-    <div class="pg friend-link">
-      <section class="board main-width">
-        <div class="sort-desc _ pos-rel">
-          按友链申请时间排序
-          <div v-if="false" class="_ btn apply abs-r" @click="showLinkApplyDialog">
-            <ClientOnly>
-              <el-tooltip content="添加我的网站到友链" placement="top">
-                <i class="_ pos-trans-c-c iconfont icon-apply"></i>
-              </el-tooltip>
-            </ClientOnly>
-          </div>
+    <section class="board main-width">
+      <div class="sort-desc _ pos-rel">
+        按友链申请时间排序
+        <div v-if="false" class="_ btn apply abs-r" @click="showLinkApplyDialog">
+          <ClientOnly>
+            <el-tooltip content="添加我的网站到友链" placement="top">
+              <i class="_ pos-trans-c-c iconfont icon-apply"></i>
+            </el-tooltip>
+          </ClientOnly>
         </div>
-        <ul v-if="linkList.length" class="link-list">
-          <li v-for="link in linkList" :key="link.id">
-            <FriendLinkCard :item="link"></FriendLinkCard>
-          </li>
-        </ul>
+      </div>
+      <ul v-if="linkList.length" class="link-list">
+        <li v-for="link in linkList" :key="link.id">
+          <FriendLinkCard :item="link"></FriendLinkCard>
+        </li>
+      </ul>
 
-        <el-empty v-else description="暂无友链"> </el-empty>
-      </section>
-      <section v-if="articleAs" class="board">
-        <CommentBlock :article="asArticle"></CommentBlock>
-      </section>
-      <ClientOnly>
-        <FriendLinkDialog v-model:show="dialogVisible" @success="onSuccess"></FriendLinkDialog>
-      </ClientOnly>
-    </div>
-  </NuxtLayout>
+      <el-empty v-else description="暂无友链"> </el-empty>
+    </section>
+    <ClientOnly>
+      <FriendLinkDialog v-model:show="dialogVisible" @success="onSuccess"></FriendLinkDialog>
+    </ClientOnly>
+  </ArticleAsPage>
 </template>
 
 <style lang="scss" scoped>
@@ -220,50 +200,48 @@ await getData();
     transform: translate(-50%, -50%) rotate(90deg);
   }
 }
-.pg.friend-link {
-  .link-list {
-    display: grid;
+.link-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+  > li {
+    > div {
+      box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.05);
+    }
+    transition: transform 0.3s ease-in-out;
+    &:hover {
+      transform: translateY(-10px);
+    }
+  }
+  @media (max-width: 1000px) {
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 1rem;
-    > li {
-      > div {
-        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.05);
-      }
-      transition: transform 0.3s ease-in-out;
-      &:hover {
-        transform: translateY(-10px);
-      }
+  }
+  @media (max-width: 750px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 500px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+.board {
+  .btn.apply {
+    bottom: -10px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--text-color);
+    color: var(--board-bg-color);
+    i {
+      font-size: 30px;
     }
-    @media (max-width: 1000px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    @media (max-width: 750px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    @media (max-width: 500px) {
-      grid-template-columns: repeat(1, 1fr);
+    animation: heart-beat 1.3s both infinite;
+    &:hover {
+      animation-play-state: paused;
+      opacity: 1 !important;
     }
   }
-  .board {
-    .btn.apply {
-      bottom: -10px;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: var(--text-color);
-      color: var(--board-bg-color);
-      i {
-        font-size: 30px;
-      }
-      animation: heart-beat 1.3s both infinite;
-      &:hover {
-        animation-play-state: paused;
-        opacity: 1 !important;
-      }
-    }
-  }
-  .sort-desc {
-    margin-bottom: 1rem;
-  }
+}
+.sort-desc {
+  margin-bottom: 1rem;
 }
 </style>
