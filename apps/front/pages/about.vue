@@ -2,7 +2,7 @@
 import { useArticle } from '~/feature/hooks';
 
 const Art = useArticle();
-const { article, audioVisible } = Art.Data;
+const { article } = Art.Data;
 const { onCommentLockUpdate, getLikeCountData } = Art.Methods;
 
 const init = () => {
@@ -22,17 +22,12 @@ onMounted(init);
         <WidgetArticleOperator :article="article" @comment-lock-updated="onCommentLockUpdate" />
       </template>
       <WidgetStickyLayout>
-        <WidgetArticleTOC v-if="article.id" />
+        <ClientOnly>
+          <WidgetArticleTOC v-if="article.id" />
+        </ClientOnly>
         <WidgetRecentArticle />
       </WidgetStickyLayout>
     </template>
-    <audio
-      v-if="article.bgm && audioVisible"
-      controls
-      :src="article.bgm"
-      autoplay
-      loop
-      @error="audioVisible = false"></audio>
     <div class="board">
       <section class="article">
         <article v-if="!article.id">

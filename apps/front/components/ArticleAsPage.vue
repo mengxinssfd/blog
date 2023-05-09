@@ -14,6 +14,8 @@ const props = defineProps({
 
 const emit = defineEmits(['data']);
 
+const audioVisible = ref(true);
+
 const { data } = await useAsyncData(() => getArticleAs(props.as));
 const asArticle = computed(() => ({ ...data.value?.data, author: { id: 1 } } as ArticleEntity));
 watch(
@@ -37,6 +39,13 @@ watch(
         :content="asArticle.title" />
     </template>
     <template #aside><slot name="aside"></slot></template>
+    <audio
+      v-if="asArticle.bgm && audioVisible"
+      controls
+      :src="asArticle.bgm"
+      autoplay
+      loop
+      @error="audioVisible = false"></audio>
     <div class="pg">
       <slot></slot>
       <section v-if="asArticle.id" class="board">
