@@ -1,7 +1,7 @@
 <template>
   <CommentBase ref="baseRef" :item="item" :author-id="authorId">
     <template #operate>
-      <div class="msg-info _ flex-c">
+      <div class="device-info _ flex-c">
         <!-- 位置 -->
         <div v-if="item.region && item.region !== '--'" class="location _ flex-c">
           <el-icon><Promotion /></el-icon>
@@ -144,7 +144,7 @@ const setDislike = async () => {
       }
     }
   }
-  .msg-info {
+  .device-info {
     justify-content: flex-end;
     margin: 1rem 0;
     font-size: 12px;
@@ -155,6 +155,9 @@ const setDislike = async () => {
     }
     > div {
       margin-right: 1rem;
+    }
+    @media (min-width: 750px) {
+      margin-bottom: -1.1rem;
     }
   }
   --padding: 1rem;
