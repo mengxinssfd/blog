@@ -75,6 +75,13 @@ export class CommentEntity extends BlogBaseEntity {
   })
   ip!: string | null;
 
+  @Column('varchar', {
+    length: 100,
+    comment: '地区',
+    nullable: true,
+  })
+  region!: string | null;
+
   // ---------------- 游客 ----------------
   @Column('varchar', { length: 24, comment: '游客名', nullable: true })
   touristName?: string;

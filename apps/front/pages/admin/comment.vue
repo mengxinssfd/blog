@@ -95,6 +95,11 @@ onMounted(getData);
           {{ scope.row.ip }}
         </template>
       </el-table-column>
+      <el-table-column label="地区">
+        <template #default="scope">
+          {{ scope.row.region || '--' }}
+        </template>
+      </el-table-column>
       <el-table-column label="游客邮箱">
         <template #default="scope">
           {{ scope.row.touristEmail || '--' }}

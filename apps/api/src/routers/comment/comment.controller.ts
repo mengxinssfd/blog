@@ -26,6 +26,7 @@ import { JwtAuth } from '@/guards/auth/auth.decorator';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { MailService } from '@/modules/mail/mail.service';
+import { Ip2RegionService } from '@/modules/ip2region/ip2region.service';
 
 @ApiTags('comment')
 @Controller('comment')
@@ -36,6 +37,7 @@ export class CommentController {
     private readonly userService: UserService,
     private readonly casl: CaslAbilityFactory,
     private readonly mailService: MailService,
+    private readonly ip2RegionService: Ip2RegionService,
   ) {}
 
   @UseGuards(ThrottlerBehindProxyGuard)
@@ -114,6 +116,7 @@ export class CommentController {
       comment.article = article;
       comment.articleId = article.id;
       comment.ip = ip;
+      comment.region = this.ip2RegionService.searchRawRegion(ip);
       if (user?.id) {
         comment.user = user;
         comment.userId = user.id;

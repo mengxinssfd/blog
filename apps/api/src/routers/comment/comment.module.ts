@@ -12,10 +12,12 @@ import {
 import { ArticleService } from '../article/article.service';
 import { UserService } from '../user/user.service';
 import { MailModule } from '@/modules/mail/mail.module';
+import { Ip2RegionModule } from '@/modules/ip2region/ip2region.module';
 
 @Module({
   imports: [
     MailModule,
+    Ip2RegionModule,
     TypeOrmModule.forFeature([
       CommentLikeEntity,
       CommentDislikeEntity,
