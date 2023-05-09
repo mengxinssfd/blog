@@ -20,7 +20,7 @@ enum EntityAlias {
   reply = 'reply',
 }
 type AliasProp = `${EntityAlias.comment}.${keyof CommentEntity}`;
-type AticleProp = `${EntityAlias.article}.${keyof ArticleEntity}`;
+type ArticleProp = `${EntityAlias.article}.${keyof ArticleEntity}`;
 
 @Injectable()
 export class CommentService {
@@ -67,9 +67,7 @@ export class CommentService {
       .offset((dto.page - 1) * dto.pageSize)
       .leftJoin('comment.article', 'article')
       .addSelect(['comment.touristEmail', 'comment.ip'] satisfies AliasProp[])
-      .addSelect(['article.id', 'article.as', 'article.title'] satisfies AticleProp[]);
-
-    console.log(getComment.getQuery());
+      .addSelect(['article.id', 'article.as', 'article.title'] satisfies ArticleProp[]);
 
     const count = await getCount.getCount();
     let list: CommentEntity[] = [];
@@ -85,7 +83,7 @@ export class CommentService {
       .orderBy(`${alias}.createAt`, 'DESC')
       .limit(limit)
       .leftJoin('comment.article', 'article')
-      .addSelect(['article.id', 'article.as'] satisfies AticleProp[]);
+      .addSelect(['article.id', 'article.as'] satisfies ArticleProp[]);
     const list = await getComment.getRawAndEntities();
 
     return this.handlerFindAllResult(list).list;
