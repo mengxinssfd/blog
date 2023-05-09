@@ -1,9 +1,10 @@
 import { createParamDecorator } from '@nestjs/common';
 import { IncomingMessage, ServerResponse } from 'http';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '../modules/auth/constats';
+import { jwtConstants } from '@/modules/auth/constats';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { getIp } from './utils';
+import * as Bowser from 'bowser';
 
 export const User = createParamDecorator(
   (key: 'id' | 'username' | 'role', ctx: ExecutionContextHost) => {
@@ -36,4 +37,15 @@ export const IsFromWX = createParamDecorator((_data: unknown, ctx: ExecutionCont
   const im = ctx.switchToHttp().getRequest<IncomingMessage>();
   const referer = im.headers.referer;
   return Boolean(referer?.startsWith('https://servicewechat.com'));
+});
+
+export const Device = createParamDecorator((_data: unknown, ctx: ExecutionContextHost) => {
+  const sr: ServerResponse = ctx.switchToHttp().getResponse();
+  const { req } = sr;
+  const p = Bowser.parse(req.headers['user-agent'] || '');
+  const { browser, os } = p;
+  return {
+    browser: `${browser.name || ''} ${browser.version || ''}`.trim().slice(0, 50),
+    os: `${os.name || ''} ${os.versionName || os.version || ''}`.trim().slice(0, 50),
+  };
 });
