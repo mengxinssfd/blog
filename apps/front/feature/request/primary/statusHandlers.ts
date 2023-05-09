@@ -1,18 +1,21 @@
 import { HttpStatus, StatusHandler, StatusHandlers } from 'request-template';
 import { ElNotification } from 'element-plus';
 import { Token } from './token';
-// import Store from '@/store/index';
 import { PrimaryCustomConfig } from '@blog/apis';
 
 // 通用错误Handler
 const errorHandler: StatusHandler<PrimaryCustomConfig> = ({ customConfig }, res, data) => {
-  !process.server &&
+  if (process.client) {
     !customConfig.silent &&
-    ElNotification({
-      title: 'Error',
-      message: data.msg,
-      type: 'error',
-    });
+      ElNotification({
+        title: 'Error',
+        message: data.msg,
+        type: 'error',
+      });
+  } else {
+    import.meta.env.VITE_MODE_NAME === 'development' && console.error(data.msg);
+  }
+
   // throw data.data || new Error( `data: ${JSON.stringify(data)}`);
   return Promise.reject(customConfig.returnRes ? res : data);
 };
