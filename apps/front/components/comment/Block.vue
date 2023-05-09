@@ -5,6 +5,7 @@ import { getCommentByArticle as getCommentByArticleApi } from '@blog/apis';
 import { type ArticleEntity } from '@blog/entities';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useRequest } from '@request-template/vue3-hooks';
+import { getRegionLocation } from '@blog/shared';
 import type { CommentTreeType } from './tree.d';
 
 const route = useRoute();
@@ -20,14 +21,15 @@ const { data, loading, request } = useRequest(() => getCommentByArticleApi(props
 });
 
 const list = computed<CommentTreeType[]>(() => {
-  const _list = data.value?.list;
+  const _list = data.value?.list as CommentTreeType[];
   if (!_list || !_list.length) return [];
 
   // 组装成二级树结构
-  const finalList: any[] = [];
-  const idMap: any = {};
-  const children = _list.filter((item: any) => {
+  const finalList: CommentTreeType[] = [];
+  const idMap: Record<string, CommentTreeType> = {};
+  const children = _list.filter((item) => {
     idMap[item.id] = item;
+    item.region = getRegionLocation(item.region);
     item.children = [];
     if (!item.parentId) {
       finalList.push(item);
@@ -37,16 +39,17 @@ const list = computed<CommentTreeType[]>(() => {
   });
 
   const orphans: any[] = [];
-  forEachRight(children, (child: any) => {
-    const parent = idMap[child.parentId] || idMap[child.replyId];
+  forEachRight(children, (child: CommentTreeType) => {
+    const parent = idMap[child.parentId || ''] || idMap[child.replyId || ''];
     if (!parent) {
       child.isOrphan = true;
       orphans.push(child);
       return;
     }
+    if (!parent.children) parent.children = [];
     parent.children.push(child);
     child.parent = parent;
-    if (child.parentId !== child.replyId) {
+    if (child.replyId && child.parentId !== child.replyId) {
       child.reply = idMap[child.replyId];
     }
   });

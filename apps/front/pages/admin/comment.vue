@@ -63,22 +63,22 @@ onMounted(getData);
 
 <template>
   <div class="pg comment">
-    <el-table v-loading="loading" :data="fileList" empty-text="暂无评论" stripe>
-      <el-table-column type="index" label="序号" width="60" />
+    <el-table v-loading="loading" :data="fileList" empty-text="暂无评论" style="width: 100%" stripe>
+      <el-table-column type="index" label="序号" width="60" fixed />
       <el-table-column label="id" prop="id" width="60" />
       <el-table-column label="创建人">
         <template #default="scope">
           {{ scope.row.user?.nickname || scope.row.touristName + '【游客】' }}
         </template>
       </el-table-column>
-      <el-table-column label="内容">
+      <el-table-column label="内容" width="200">
         <template #default="scope">
           <NuxtLink :to="getArticleCommentLink(scope.row)">
             <MdViewer :content="scope.row.content" is-md is-preview />
           </NuxtLink>
         </template>
       </el-table-column>
-      <el-table-column label="文章">
+      <el-table-column label="文章" width="150">
         <template #default="scope">
           <NuxtLink :to="getArticleLink(scope.row)">
             {{ scope.row.article.title }}
@@ -90,7 +90,7 @@ onMounted(getData);
           {{ formatDate(scope.row.createAt) }}
         </template>
       </el-table-column>
-      <el-table-column label="ip">
+      <el-table-column label="ip" width="130">
         <template #default="scope">
           {{ scope.row.ip }}
         </template>
@@ -100,13 +100,10 @@ onMounted(getData);
           {{ scope.row.region || '--' }}
         </template>
       </el-table-column>
-      <el-table-column label="游客邮箱">
-        <template #default="scope">
-          {{ scope.row.touristEmail || '--' }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="操作" header-align="center" width="90">
+      <el-table-column label="系统" prop="os" />
+      <el-table-column label="浏览器" prop="browser" />
+      <el-table-column label="游客邮箱" prop="touristEmail" />
+      <el-table-column label="操作" header-align="center" width="90" fixed="right">
         <template #default="scope">
           <el-dropdown @command="handleCommand($event, scope.row)">
             <el-button type="primary" text><i class="iconfont icon-select"></i></el-button>

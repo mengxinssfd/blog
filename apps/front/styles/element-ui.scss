@@ -7,6 +7,9 @@
     --el-table-row-hover-bg-color: var(--hover-transparent-bg);
     --el-table-header-bg-color: var(--board-bg-color);
     --el-table-border-color: var(--hover-transparent-bg);
+    .cell:empty:after {
+      content: '--';
+    }
   }
   .el-tabs {
     --el-color-primary: var(--theme-color);

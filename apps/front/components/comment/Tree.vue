@@ -1,6 +1,21 @@
 <template>
   <CommentBase ref="baseRef" :item="item" :author-id="authorId">
     <template #operate>
+      <div class="msg-info _ flex-c">
+        <!-- 位置 -->
+        <div v-if="item.region && item.region !== '--'" class="location _ flex-c">
+          <el-icon><Promotion /></el-icon>
+          <span>{{ item.region }}</span>
+        </div>
+        <div v-if="item.os" class="location _ flex-c">
+          <el-icon><Platform /></el-icon>
+          <span>{{ item.os }}</span>
+        </div>
+        <div v-if="item.browser" class="location _ flex-c">
+          <el-icon><ChromeFilled /></el-icon>
+          <span>{{ item.browser }}</span>
+        </div>
+      </div>
       <!-- 操作 -->
       <div class="operate _ flex-c">
         <!-- 赞 -->
@@ -58,6 +73,7 @@ import * as Vue from 'vue';
 import { onceEvent } from '@tool-pack/dom';
 import { deleteCommentOne, setCommentDislike, setCommentLike } from '@blog/apis';
 import { ROLE } from '@blog/entities';
+import { Promotion, Platform, ChromeFilled } from '@element-plus/icons-vue';
 import type { CommentTreeType } from './tree.d';
 import type BaseComment from './Base.vue';
 import { useToggleState } from '~/feature/hooks';
@@ -126,6 +142,19 @@ const setDislike = async () => {
         margin-right: 2px;
         font-size: 1.2em;
       }
+    }
+  }
+  .msg-info {
+    justify-content: flex-end;
+    margin: 1rem 0;
+    font-size: 12px;
+    //font-family: system-ui;
+    color: var(--sec-text-color);
+    :deep(.el-icon) {
+      margin-right: 2px;
+    }
+    > div {
+      margin-right: 1rem;
     }
   }
   --padding: 1rem;
