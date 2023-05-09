@@ -104,6 +104,7 @@ importers:
       cross-env: ^7.0.3
       express: ^4.18.2
       ioredis: ^5.3.1
+      ip2region: ^2.3.0
       log4js: ^6.7.1
       markdown-it: ^13.0.1
       markdown-it-attrs: ^4.1.6
@@ -154,6 +155,7 @@ importers:
       class-validator: 0.14.0
       express: 4.18.2
       ioredis: 5.3.1
+      ip2region: 2.3.0_@types+node@18.14.2
       log4js: 6.7.1
       markdown-it: 13.0.1
       markdown-it-attrs: 4.1.6_markdown-it@13.0.1
@@ -11542,6 +11544,17 @@ packages:
       {
         integrity: sha512-WKa+XuLG1A1R0UWhl2+1XQSi+fZWMsYKffMZTTYsiZaUD8k2yDAj5atimTUD2TZkyCkNEeYE5NhFZmupOGtjYQ==,
       }
+
+  /ip2region/2.3.0_@types+node@18.14.2:
+    resolution:
+      {
+        integrity: sha512-zV5Xsadzrx9Ej6heoyhbXMsfGWWQ3C6bAIYStrHhw9kzLpGpVNlnAyRBxxPgxA1GNqr1Ti7oUxcWsMWNN3jZBg==,
+      }
+    peerDependencies:
+      '@types/node': '*'
+    dependencies:
+      '@types/node': 18.14.2
+    dev: false
 
   /ipaddr.js/1.9.1:
     resolution:
