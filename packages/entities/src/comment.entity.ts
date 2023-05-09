@@ -82,6 +82,20 @@ export class CommentEntity extends BlogBaseEntity {
   })
   region!: string | null;
 
+  @Column('varchar', {
+    length: 50,
+    comment: '浏览器',
+    nullable: true,
+  })
+  browser!: string | null;
+
+  @Column('varchar', {
+    length: 50,
+    comment: '系统',
+    nullable: true,
+  })
+  os!: string | null;
+
   // ---------------- 游客 ----------------
   @Column('varchar', { length: 24, comment: '游客名', nullable: true })
   touristName?: string;
