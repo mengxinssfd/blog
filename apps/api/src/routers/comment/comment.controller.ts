@@ -13,7 +13,7 @@ import {
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ReqIp, User } from '@/utils/decorator';
+import { Device, ReqIp, User } from '@/utils/decorator';
 import { ArticleService } from '../article/article.service';
 import { UserService } from '../user/user.service';
 import { CommentEntity, UserEntity } from '@blog/entities';
@@ -44,13 +44,23 @@ export class CommentController {
   // 可以在 60s 内向单个端点发出来自同一 IP 的 5 个请求
   @Throttle(5, 60)
   @Post()
-  async create(@Body() dto: CreateCommentDto, @User('id') userId: number, @ReqIp() ip: string) {
+  async create(
+    @Body() dto: CreateCommentDto,
+    @User('id') userId: number,
+    @ReqIp() ip: string,
+    @Device() device: { os: string; browser: string },
+  ) {
     const user = userId
       ? await this.userService.findOne({ id: userId, addSelect: ['user.muted'] })
       : null;
     const comment = await this._validCreate(dto, user, ip)
       .unless(user || new UserEntity())
       .can(Action.Create);
+
+    comment.region = this.ip2RegionService.searchRawRegion(ip);
+    comment.os = device.os;
+    comment.browser = device.browser;
+
     const res = await this.commentService.create(dto, comment);
 
     this.commentService.findOneFull(res.id).then((c) => this.mailService.onCommentCreated(c));
@@ -132,7 +142,6 @@ export class CommentController {
       comment.article = article;
       comment.articleId = article.id;
       comment.ip = ip;
-      comment.region = this.ip2RegionService.searchRawRegion(ip);
       if (user?.id) {
         comment.user = user;
         comment.userId = user.id;
