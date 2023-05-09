@@ -108,15 +108,17 @@ export class UserEntity extends PublicUser {
   @Column('int', { comment: '修改人ID', nullable: true, select: false })
   updateBy!: number;
 
+  // DESC user;
+  // ALTER TABLE user MODIFY COLUMN IP VARCHAR(45);
   @Column('varchar', {
-    length: '255,255,255,255'.length,
+    length: 45,
     comment: '账号登录时ip',
     nullable: true,
     select: false,
   })
   loginIp!: string;
   @Column('varchar', {
-    length: '255,255,255,255'.length,
+    length: 45,
     comment: '账号注册时ip',
     nullable: true,
     select: false,
