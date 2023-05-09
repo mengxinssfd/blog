@@ -8,10 +8,8 @@ import {
 } from '@blog/apis';
 import { useRequest } from '@request-template/vue3-hooks';
 import { howLongAgo } from '~/feature/utils';
-import useHeaderStore from '~/store/header.store';
 import useUserStore from '~/store/user.store';
 
-useHeaderStore().useTransparent();
 const userStore = useUserStore();
 const linkList = ref<FriendLinkEntity[]>([]);
 const dialogVisible = ref(false);
