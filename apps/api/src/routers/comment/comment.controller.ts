@@ -65,6 +65,22 @@ export class CommentController {
     return this.commentService.findAll(dto);
   }
 
+  @Get('region')
+  async updateRegions() {
+    try {
+      const list = await this.commentService.getAll();
+
+      for (const it of list) {
+        const entity = new CommentEntity();
+        entity.id = it.id;
+        entity.region = this.ip2RegionService.searchRawRegion(it.ip || '');
+        await entity.save();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   @Get('recent/:count')
   findRecent(
     @User('id') userId: number,

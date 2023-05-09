@@ -275,4 +275,8 @@ export class CommentService {
     // console.log(entities);
     return { count, list: entities };
   }
+
+  async getAll() {
+    return await this.commentRepository.createQueryBuilder('comment').getMany();
+  }
 }
