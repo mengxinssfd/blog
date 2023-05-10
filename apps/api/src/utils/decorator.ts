@@ -44,8 +44,18 @@ export const Device = createParamDecorator((_data: unknown, ctx: ExecutionContex
   const { req } = sr;
   const p = Bowser.parse(req.headers['user-agent'] || '');
   const { browser, os } = p;
+
+  function handler(v: string): string {
+    return (
+      v
+        .trim()
+        // 把前面的'|'后面的'|'中间的多个'|'清理掉
+        .replace(/^\|+|\|*(\|[^$])|\|+$/g, '$1')
+        .slice(0, 50)
+    );
+  }
   return {
-    browser: `${browser.name || ''} ${browser.version || ''}`.trim().slice(0, 50),
-    os: `${os.name || ''} ${os.versionName || os.version || ''}`.trim().slice(0, 50),
+    browser: handler(`${browser.name || ''}|${browser.version || ''}`),
+    os: handler(`${os.name || ''}|${os.version || ''}|${os.versionName || ''}`),
   };
 });
