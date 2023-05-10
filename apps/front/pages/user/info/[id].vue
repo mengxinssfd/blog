@@ -144,7 +144,7 @@ watch(
     <div class="pg user-info board">
       <section v-if="user.id" v-loading="userLoading" class="info _ flex-c">
         <div class="left img-box">
-          <img :src="user.avatar" alt="" />
+          <Avatar :user="user" disabled />
         </div>
         <div class="center">
           <div class="nickname">{{ user.nickname }}</div>
@@ -216,9 +216,9 @@ watch(
     &.info {
       display: flex;
       .left {
-        flex-basis: 90px;
-        width: 90px;
-        height: 90px;
+        flex-basis: 110px;
+        width: 110px;
+        height: 110px;
         img {
           border-radius: 50%;
         }

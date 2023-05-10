@@ -3,8 +3,6 @@ import { SwitchButton } from '@element-plus/icons-vue';
 import useUserStore from '~/store/user.store';
 
 const userStore = useUserStore();
-
-const link = computed(() => '/user/info/' + userStore.user.id);
 </script>
 <template>
   <Widget>
@@ -13,10 +11,10 @@ const link = computed(() => '/user/info/' + userStore.user.id);
     </template>
     <div class="widget-content">
       <template v-if="userStore.user?.id">
-        <nuxt-link :to="link" class="_ flex-col-c">
-          <el-avatar :src="userStore.user.avatar" size="large"></el-avatar>
-          <div class="title _ ellipsis-2">{{ userStore.user.nickname }}</div>
-        </nuxt-link>
+        <div class="_ flex-col-c">
+          <Avatar :user="userStore.user" />
+          <div class="nickname _ ellipsis-2">{{ userStore.user.nickname }}</div>
+        </div>
         <div class="btns _ flex-c-c">
           <NuxtLink to="/article/create">
             <el-button class="post" type="primary">
@@ -50,11 +48,12 @@ const link = computed(() => '/user/info/' + userStore.user.id);
 
 <style lang="scss" scoped>
 .widget-content {
-  .title {
-    margin-top: 10px;
+  .nickname {
+    margin: 10px 0;
     color: var(--text-color);
     font-weight: bold;
   }
+
   .btns {
     margin-top: 10px;
     .logout,
