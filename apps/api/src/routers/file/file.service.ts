@@ -34,12 +34,13 @@ export class FileService {
   }
 
   async findAll(page: PageDto): Promise<PageVo<FileEntity>> {
-    console.log(page);
+    type Props = `file.${keyof FileEntity}`;
     const rep = this.repository
       .createQueryBuilder('file')
       .leftJoinAndSelect('file.owner', 'owner')
       .addSelect('owner.username')
-      .addSelect(['file.createAt', 'file.updateAt'] satisfies `file.${keyof FileEntity}`[])
+      .addSelect(['file.createAt', 'file.updateAt'] satisfies Props[])
+      .orderBy('file.createAt' satisfies Props, 'DESC')
       .limit(page.pageSize)
       .offset((page.page - 1) * page.pageSize);
     const [list, count] = await rep.getManyAndCount();
