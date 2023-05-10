@@ -1,53 +1,16 @@
 <script setup lang="ts">
-import { useRequest } from '@request-template/vue3-hooks';
-import type { ResType } from 'request-template';
+import { useSentence, SentenceCates } from '~/feature/hooks/use-sentence.hook';
 
-const TypeMatches: Record<string, string> = {
-  a: '动画',
-  b: '漫画',
-  c: '游戏',
-  d: '文学',
-  e: '原创',
-  f: '来自网络',
-  g: '其他',
-  h: '影视',
-  i: '诗词',
-  j: '网易云',
-  k: '哲学',
-  l: '抖机灵',
-};
-
-interface Res {
-  commit_from: string;
-  created_at: string;
-  creator: string;
-  creator_uid: number;
-  from: string;
-  from_who: null;
-  hitokoto: string;
-  id: number;
-  length: number;
-  reviewer: number;
-  type: string;
-  uuid: string;
-}
-
-async function getData(): Promise<ResType<Res>> {
-  const response = await fetch('https://v1.hitokoto.cn');
-  return { code: 200, data: await response.json(), msg: 'success' };
-}
-const { data, request } = useRequest(getData);
-
-onMounted(request);
+const { sentence } = useSentence();
 </script>
 
 <template>
   <Widget remove-title>
-    <div v-if="data" class="widget-content">
+    <div v-if="sentence" class="widget-content">
       <div class="text">
-        {{ data.hitokoto }}
+        {{ sentence.hitokoto }}
       </div>
-      <div class="from">-- {{ TypeMatches[data.type] || '其他' }} {{ data.from }}</div>
+      <div class="from">-- {{ SentenceCates[sentence.type] || '其他' }} {{ sentence.from }}</div>
     </div>
     <div v-else class="widget-content">
       <el-skeleton animated>
