@@ -139,7 +139,7 @@ export default defineComponent({
       height: 100%;
       //min-height: 60px;
       width: 100px;
-      background: url('https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/1231112321%20(1).png')
+      background: url(https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/1683744195365.png)
         no-repeat center;
       background-size: contain;
       filter: invert(0.85) drop-shadow(2px 4px 6px white);
