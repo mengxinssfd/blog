@@ -1,7 +1,7 @@
 <template>
   <div :id="anchor" class="c-comment" :class="{ active: isActive, independent }">
     <div class="comm-left">
-      <router-link v-if="item.user" :to="`/user/info/${item.user.id}`">
+      <router-link v-if="item.user" class="user-link" :to="`/user/info/${item.user.id}`">
         <el-avatar :size="32" :src="item.user?.avatar || defaultAvatar"></el-avatar>
       </router-link>
       <el-avatar v-else :size="32" :src="defaultAvatar"></el-avatar>
@@ -60,7 +60,7 @@ const props = defineProps({
 const emits = defineEmits(['clickContent']);
 
 const defaultAvatar = 'https://pic1.zhimg.com/50/v2-6afa72220d29f045c15217aa6b275808_hd.jpg';
-const anchor = computed(() => `_comment-${props.item.id}`);
+const anchor = computed(() => `_comment-${props.independent ? 'ind-' : ''}${props.item.id}`);
 const isActive = computed(() => route.hash === '#' + anchor.value);
 
 const getNickname = (tree: CommentTreeType) => {
@@ -100,6 +100,10 @@ defineExpose({ getNickname });
   display: flex;
   align-items: flex-start;
   color: var(--text-color);
+  .user-link {
+    display: inline-block;
+    font-size: 0;
+  }
   .c-comment {
     padding: 8px 0;
   }
