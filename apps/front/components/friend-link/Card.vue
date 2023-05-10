@@ -7,6 +7,9 @@
       preview-teleported></el-image>
     <a class="link-info" :href="item.link" target="_blank" rel="noopener noreferrer">
       <div class="avatar-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 100 200">
+          <path d="M0 100C0 50-100 70-100 0-100-70-0-50-0-100Z" />
+        </svg>
         <el-avatar :src="item.avatar" :size="24" shape="circle"></el-avatar>
       </div>
       <div class="name _ flex-c">
@@ -57,14 +60,21 @@ defineProps({
     color: inherit;
     border-radius: 0 0 var(--radius) var(--radius);
     .avatar-wrapper {
+      position: relative;
       float: right;
-      margin: -60px -1rem 0 0;
-      width: 32px;
-      height: 32px;
-      padding: 4px;
-      background: var(--mask-bg-color);
-      border-radius: 16px 0 0 16px;
+      margin: -82px -1rem 0 0;
       pointer-events: none;
+      font-size: 0;
+      svg {
+        fill: var(--mask-bg-color);
+        width: 32px;
+      }
+      .el-avatar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
     &:hover {
       .name {
