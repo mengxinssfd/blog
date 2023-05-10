@@ -80,14 +80,14 @@
                 <el-tag
                   v-for="tag in filterTags"
                   :key="tag.id"
-                  :effect="searchData.tag.includes(tag.id) ? 'dark' : 'light'"
+                  :effect="searchData.tags.includes(tag.id) ? 'dark' : 'light'"
                   disable-transitions
                   @click="handleTagClick(tag)">
                   {{ tag.name }}
                 </el-tag>
               </div>
               <div class="pop-bottom">
-                <el-button text @click="searchData.tag = []">
+                <el-button text @click="searchData.tags = []">
                   <el-icon><RefreshLeft /></el-icon>重置
                 </el-button>
               </div>
@@ -170,7 +170,7 @@ export default defineComponent({
       tags: ref<TagEntity[]>([]),
       searchData: reactive({
         keyword: route.query.query || '',
-        tag: [] as TagEntity['id'][],
+        tags: [] as TagEntity['id'][],
         sort: 3,
         category: 0,
       }),
@@ -193,7 +193,7 @@ export default defineComponent({
         Data.categories.value.find((cate) => cate.id === Data.searchData.category),
       ),
       activeTags: computed(() => {
-        const selected = Data.searchData.tag;
+        const selected = Data.searchData.tags;
         const tagsMap = Data.tagsMap;
         const tags = Data.tags.value;
         if (!tags.length) return [];
@@ -220,7 +220,7 @@ export default defineComponent({
         data.keyword = q.query || '';
         data.sort = q.sort ? Number(q.sort) : 3;
         data.category = q.cate ? Number(q.cate) : 0;
-        data.tag = ((q.tag as string) || '').split(',').filter(Boolean).map(Number);
+        data.tags = ((q.tags || '') as string).split(',').filter(Boolean).map(Number);
       },
       async getTagList() {
         const res = await useAsyncData(() => getTags());
@@ -262,7 +262,7 @@ export default defineComponent({
         return true;
       },
       handleTagClick(tag: TagEntity) {
-        const selected = Data.searchData.tag;
+        const selected = Data.searchData.tags;
         const index = selected.indexOf(tag.id);
         if (index > -1) {
           selected.splice(index, 1);
@@ -279,20 +279,20 @@ export default defineComponent({
           Data.searchData.sort = 3;
           return;
         }
-        Data.searchData.tag.splice(Data.searchData.tag.indexOf(tag.id), 1);
+        Data.searchData.tags.splice(Data.searchData.tags.indexOf(tag.id), 1);
       },
     };
 
     onMounted(function init() {
       _Methods.initSearchData();
 
-      const handler = debounce((form) => {
-        const query: any = {
+      const handler = debounce((form: typeof Data.searchData) => {
+        const query = {
           ...route.query,
           query: form.keyword,
           cate: form.category,
           sort: form.sort,
-          tag: form.tag.join(','),
+          tags: form.tags.join(','),
           page: 1,
         };
         navigateTo(
@@ -320,11 +320,11 @@ export default defineComponent({
 .c-index-filters {
   padding: 0.5rem;
   .operation {
+    flex-wrap: wrap;
     font-size: 14px;
     > div {
       margin-right: 10px;
       border-radius: 4px;
-      text-align: center;
       color: var(--text-color);
       cursor: pointer;
       &:hover {
@@ -335,6 +335,11 @@ export default defineComponent({
         border: 0;
         outline: 0;
       }
+    }
+    @media (max-width: 750px) {
+      white-space: nowrap;
+      width: 100%;
+      overflow: auto;
     }
   }
 }

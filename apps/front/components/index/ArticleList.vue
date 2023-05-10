@@ -52,7 +52,7 @@ export default defineComponent({
           keyword: q.query as string,
           sort: q.sort ? Number(q.sort) : 3,
           category: Number(q.cate),
-          tags: ((q.tag as string) || '').split(',').filter(Boolean).map(Number),
+          tags: ((q.tag || q.tags || '') as string).split(',').filter(Boolean).map(Number),
           page: q.page ? Number(q.page) : 1,
           pageSize: 10,
         };
