@@ -107,7 +107,7 @@ export default defineComponent({
     img.bg {
       display: block;
       object-fit: cover;
-      transform: scale(1.3, 1.3);
+      //transform: scale(1.3, 1.3);
       transform-origin: center;
     }
     div.bg {
@@ -127,11 +127,32 @@ export default defineComponent({
   }
   .banner-content {
     margin-top: calc(var(--header-height) * 0.5);
-    width: 100%;
+    //width: 100%;
     color: var(--navbar-text-color);
     text-align: center;
     z-index: 2;
     transition: margin-top 0.2s linear;
+    &:before,
+    &:after {
+      position: absolute;
+      top: 50%;
+      height: 100%;
+      //min-height: 60px;
+      width: 100px;
+      background: url('https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/1231112321%20(1).png')
+        no-repeat center;
+      background-size: contain;
+      filter: invert(0.85) drop-shadow(2px 4px 6px white);
+      content: '';
+    }
+    &:before {
+      transform: translateY(-50%);
+      left: -80px;
+    }
+    &:after {
+      right: -80px;
+      transform: scaleX(-1) translateY(-50%);
+    }
     &.header-mode-transparent {
       margin-top: 0;
     }
@@ -144,8 +165,13 @@ export default defineComponent({
       left: 0;
       padding: 1rem;
       margin-top: 0;
+      width: 100%;
       transform: none;
       text-align: left;
+      &:before,
+      &:after {
+        display: none;
+      }
     }
   }
   &.no-bg {
@@ -169,12 +195,10 @@ export default defineComponent({
       content: '';
     }
   }
-}
-.theme-dark {
-  .c-banner.blur {
-    img.bg {
-      filter: blur(30px) brightness(0.7);
-    }
+  .page-title {
+    font-size: 40px;
+    font-weight: bolder;
+    word-break: keep-all;
   }
 }
 </style>
