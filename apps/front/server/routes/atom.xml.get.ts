@@ -47,6 +47,14 @@ async function buildRss() {
       contributor: [authorInfo],
       date: new Date(post.updateAt),
       image: post.cover,
+      published: new Date(post.createAt),
+      category: [
+        { term: post.category.name, scheme: `${hostname}?cate=${post.category.id}` },
+        ...post.tags.map((it) => ({
+          term: it.name,
+          scheme: `${hostname}?tags=${it.id}`,
+        })),
+      ],
     });
   });
   return feed.atom1();
