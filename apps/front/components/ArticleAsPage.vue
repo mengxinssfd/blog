@@ -31,12 +31,18 @@ watch(
   <Title>Nice's {{ asArticle.title }}</Title>
   <NuxtLayout name="page">
     <template #banner>
-      <Banner
-        :bg-img="asArticle.cover"
-        height="55vh"
-        :blur="false"
-        :brightness="0.75"
-        :content="asArticle.title" />
+      <Banner :bg-img="asArticle.cover" height="55vh" :blur="false" :brightness="0.75">
+        <template #content>
+          <slot name="banner-content">
+            <h1 class="page-title">
+              {{ asArticle.title }}
+            </h1>
+            <h2 v-if="asArticle.description && asArticle.description !== '无'" class="page-desc">
+              {{ asArticle.description }}
+            </h2>
+          </slot>
+        </template>
+      </Banner>
     </template>
     <template #aside><slot name="aside"></slot></template>
     <audio
@@ -55,4 +61,6 @@ watch(
   </NuxtLayout>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+
+</style>
