@@ -96,6 +96,14 @@ export class CommentEntity extends BlogBaseEntity {
   })
   os!: string | null;
 
+  @Column('varchar', {
+    length: 500,
+    comment: '浏览器的user-agent',
+    nullable: true,
+    select: false,
+  })
+  ua!: string | null;
+
   // ---------------- 游客 ----------------
   @Column('varchar', { length: 24, comment: '游客名', nullable: true })
   touristName?: string;
