@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from '@blog/dtos';
@@ -49,6 +50,7 @@ export class CommentController {
     @User('id') userId: number,
     @ReqIp() ip: string,
     @Device() device: { os: string; browser: string },
+    @Headers('user-agent') ua: string,
   ) {
     const user = userId
       ? await this.userService.findOne({ id: userId, addSelect: ['user.muted'] })
@@ -60,6 +62,7 @@ export class CommentController {
     comment.region = this.ip2RegionService.searchRawRegion(ip);
     comment.os = device.os;
     comment.browser = device.browser;
+    comment.ua = ua.slice(0, 500); // ua可能伪造，导致长度特别长
 
     const res = await this.commentService.create(dto, comment);
 
