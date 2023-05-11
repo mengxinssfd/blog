@@ -42,8 +42,8 @@ export class InitService implements OnApplicationBootstrap {
     });
 
     await this.articleService.findAsOrCreate({
-      description: '友链',
       title: '友链',
+      description: '友链',
       as: 'friend-link',
       tags: [blogTag.id],
       categoryId: blogCate.id,
@@ -58,12 +58,20 @@ export class InitService implements OnApplicationBootstrap {
 `.trim(),
     });
     await this.articleService.findAsOrCreate({
-      description: '关于页',
       title: '关于我',
+      description: '关于页',
       as: 'about',
       tags: [blogTag.id],
       categoryId: blogCate.id,
-      content: '',
+      content: '无',
+    });
+    await this.articleService.findAsOrCreate({
+      title: '图片格式转换压缩工具',
+      description: '个基于canvas的图片格式转换与压缩工具',
+      as: 'tools/transform-img-type',
+      tags: [blogTag.id],
+      categoryId: blogCate.id,
+      content: '无',
     });
   }
 }
