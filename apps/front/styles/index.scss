@@ -231,3 +231,15 @@ input:-webkit-autofill {
   box-shadow: inset 0 0 0 1000px var(--input-bg-color) !important; // 改变了背景色
   -webkit-text-fill-color: var(--text-color); // 改变了字体颜色
 }
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.align-right {
+  text-align: right;
+}
+.align-left {
+  text-align: left;
+}
+.align-center {
+  text-align: left;
+}
