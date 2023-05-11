@@ -22,7 +22,7 @@ const link = computed(() => '/user/info/' + props.user.id);
   display: inline-block;
   width: 110px;
   height: 110px;
-  background: url('https://gd-hbimg.huaban.com/dab5816cc966ba8c8d1b78b30853c34c170c6e36143eb-yOrYsm_fw1200webp')
+  background: url('https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/1683792228533.webp')
     no-repeat center;
   background-size: cover;
   .el-avatar {
