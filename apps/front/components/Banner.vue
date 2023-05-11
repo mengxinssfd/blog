@@ -96,11 +96,24 @@ export default defineComponent({
 .c-banner {
   margin-top: calc(var(--header-height) * -1);
   position: relative;
-  @media (max-width: 750px) {
-    height: 50vw !important;
+  .page-title {
+    font-size: 40px;
+    font-weight: bolder;
+    word-break: keep-all;
+    word-wrap: break-word;
   }
-  @media (max-width: 600px) {
-    height: 70vw !important;
+  @media (max-width: 750px) {
+    height: 100vw !important;
+    .banner-content {
+      top: initial !important;
+      left: 0 !important;
+      transform: initial !important;
+      bottom: 0;
+    }
+    .page-title {
+      word-break: break-all;
+      font-size: 26px;
+    }
   }
   .banner-bg {
     overflow: hidden;
@@ -194,11 +207,6 @@ export default defineComponent({
       z-index: 1;
       content: '';
     }
-  }
-  .page-title {
-    font-size: 40px;
-    font-weight: bolder;
-    word-break: keep-all;
   }
 }
 </style>
