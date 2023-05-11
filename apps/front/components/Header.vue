@@ -6,11 +6,33 @@
       <div class="left _ flex-c">
         <div class="btns _ flex-c">
           <template v-for="nav in menuStore.menu" :key="nav.path">
-            <div v-if="!nav.disabled">
-              <NuxtLink :to="nav.path">
-                <el-button :disabled="menuStore.isActive(nav.path)">{{ nav.title }}</el-button>
-              </NuxtLink>
-            </div>
+            <template v-if="!nav.children || !nav.children.length">
+              <div v-if="!nav.disabled">
+                <NuxtLink :to="nav.path">
+                  <el-button :disabled="menuStore.isActive(nav.path)">{{ nav.title }}</el-button>
+                </NuxtLink>
+              </div>
+            </template>
+            <template v-else>
+              <client-only>
+                <el-dropdown>
+                  <NuxtLink :to="nav.path">
+                    <el-button :disabled="menuStore.isActive(nav.path)">{{ nav.title }}</el-button>
+                  </NuxtLink>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <template v-for="child in nav.children" :key="child.path">
+                        <el-dropdown-item v-if="!child.disabled">
+                          <NuxtLink :to="child.path">
+                            {{ child.title }}
+                          </NuxtLink>
+                        </el-dropdown-item>
+                      </template>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </client-only>
+            </template>
           </template>
         </div>
         <MenuSwitcher v-model="menuStore.sideMenuVisible" />
@@ -115,6 +137,7 @@ const onSelect = (command: string) => {
   font-size: 14px;
   color: var(--text-color);
   transition: all 0.5s ease-in-out;
+  .el-dropdown,
   a,
   .el-button {
     color: inherit;
