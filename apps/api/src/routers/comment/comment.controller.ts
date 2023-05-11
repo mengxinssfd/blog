@@ -28,6 +28,7 @@ import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { MailService } from '@/modules/mail/mail.service';
 import { Ip2RegionService } from '@/modules/ip2region/ip2region.service';
+import { IsNull } from 'typeorm';
 
 @ApiTags('comment')
 @Controller('comment')
@@ -135,7 +136,7 @@ export class CommentController {
       } else {
         const count = await this.commentService.count({
           ip,
-          userId: null,
+          userId: IsNull(),
           articleId: dto.articleId,
         });
         if (count >= 5) throw new ForbiddenException('在该文章内评论次数过多,请注册登录后再评论');

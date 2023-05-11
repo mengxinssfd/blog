@@ -12,6 +12,7 @@ import {
 import { rawsToEntities } from '@/utils/assemblyEntity';
 import { PageVo } from '@blog/dtos/page.vo';
 import { CreateCommentDto } from '@blog/dtos';
+import { FindOperator } from 'typeorm/find-options/FindOperator';
 
 enum EntityAlias {
   comment = 'comment',
@@ -42,8 +43,14 @@ export class CommentService {
       .getRawOne();
   }
 
-  count(where: Partial<CommentEntity>) {
-    return this.commentRepository.createQueryBuilder('comment').where(where).getCount();
+  count(
+    where: Partial<{
+      [K in keyof CommentEntity]: CommentEntity[K] | FindOperator<CommentEntity[K]>;
+    }>,
+  ) {
+    const req = this.commentRepository.createQueryBuilder('comment').where(where);
+    console.log(req.getQueryAndParameters());
+    return req.getCount();
   }
 
   create(dto: CreateCommentDto, comment: CommentEntity) {
