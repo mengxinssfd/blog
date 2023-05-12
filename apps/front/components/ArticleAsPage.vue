@@ -18,6 +18,11 @@ const audioVisible = ref(true);
 
 const { data } = await useAsyncData(() => getArticleAs(props.as));
 const asArticle = computed(() => ({ ...data.value?.data, author: { id: 1 } } as ArticleEntity));
+
+const onCommentLockUpdate = () => {
+  data.value && (data.value.data.commentLock = !data.value.data.commentLock);
+};
+
 watch(
   data,
   (n) => {
@@ -44,7 +49,13 @@ watch(
         </template>
       </Banner>
     </template>
-    <template #aside><slot name="aside"></slot></template>
+    <template #aside>
+      <WidgetArticleOperator
+        :as="as"
+        :article="asArticle"
+        @comment-lock-updated="onCommentLockUpdate" />
+      <slot name="aside"></slot>
+    </template>
     <audio
       v-if="asArticle.bgm && audioVisible"
       controls
@@ -61,6 +72,4 @@ watch(
   </NuxtLayout>
 </template>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

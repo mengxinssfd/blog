@@ -3,7 +3,7 @@ import { useArticle } from '~/feature/hooks';
 
 const Art = useArticle();
 const { article } = Art.Data;
-const { onCommentLockUpdate, getLikeCountData } = Art.Methods;
+const { getLikeCountData } = Art.Methods;
 
 const init = () => {
   const article = Art.Data.article.value;
@@ -18,9 +18,6 @@ onMounted(init);
 <template>
   <ArticleAsPage as="about" @data="article = $event">
     <template #aside>
-      <template v-if="article?.author">
-        <WidgetArticleOperator :article="article" @comment-lock-updated="onCommentLockUpdate" />
-      </template>
       <WidgetStickyLayout>
         <ClientOnly>
           <WidgetArticleTOC v-if="article.id" />

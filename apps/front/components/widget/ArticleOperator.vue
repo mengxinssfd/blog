@@ -13,10 +13,12 @@ import useUserStore from '~/store/user.store';
 
 const props = defineProps({
   article: { required: true, type: Object as Vue.PropType<ArticleEntity> },
+  as: { type: String, default: '' },
 });
 const emits = defineEmits(['commentLockUpdated']);
 
-const user = ref(useUserStore().user);
+const userStore = useUserStore();
+const user = computed(() => userStore.user);
 const author = computed<UserEntity>(() => props.article.author || {});
 const router = useRouter();
 
@@ -68,14 +70,17 @@ async function setArticleCommentLock() {
                 @click="setArticleCommentLock"></i>
               <!--<el-switch v-model="commentLock" @change="setArticleCommentLock" />-->
             </div>
-            <div class="download">
+            <div v-show="!as" class="download">
               <i
                 class="_ btn iconfont icon-download shake-vertical"
                 title="下载"
                 @click="download"></i>
             </div>
           </template>
-          <div v-if="user.id === author.id || user.role === ROLE.superAdmin" class="del">
+          <div
+            v-if="user.id === author.id || user.role === ROLE.superAdmin"
+            v-show="!as"
+            class="del">
             <client-only>
               <el-popconfirm
                 confirm-button-text="是"
