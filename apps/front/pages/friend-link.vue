@@ -61,7 +61,7 @@ await getData();
       </h2>
     </template>
     <template #aside>
-      <Widget title="添加">
+      <Widget class="pre-bg-long-top-right" title="添加">
         <div class="add-link" @click="showLinkApplyDialog">
           <div class="_ pos-trans-c-c"></div>
           <div class="_ pos-trans-c-c col"></div>

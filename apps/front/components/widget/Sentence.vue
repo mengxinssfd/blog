@@ -5,7 +5,7 @@ const { sentence } = useSentence();
 </script>
 
 <template>
-  <Widget remove-title>
+  <Widget class="pre-bg-boat" remove-title>
     <div v-if="sentence" class="widget-content">
       <div class="text">
         {{ sentence.hitokoto }}

@@ -32,7 +32,7 @@ function toArticle(item: InnerComment) {
 }
 </script>
 <template>
-  <Widget>
+  <Widget class="pre-bg-scape">
     <template #title>
       <h5 class="widget-title">最新评论</h5>
     </template>

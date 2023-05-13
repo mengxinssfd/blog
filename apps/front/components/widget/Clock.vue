@@ -31,7 +31,7 @@ const List = (props: { list: string[] }) => (
 );
 </script>
 <template>
-  <Widget remove-title>
+  <Widget remove-title class="pre-bg-scape">
     <div class="widget-content">
       <div class="time">
         <List :list="times" />
