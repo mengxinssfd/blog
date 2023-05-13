@@ -6,6 +6,7 @@ import { type ArticleEntity } from '@blog/entities';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useRequest } from '@request-template/vue3-hooks';
 import { getRegionLocation } from '@blog/shared';
+import type { TupleM2N } from '@tool-pack/types';
 import type { CommentTreeType } from './tree.d';
 
 const route = useRoute();
@@ -20,6 +21,40 @@ const { data, loading, request } = useRequest(() => getCommentByArticleApi(props
   loading: { threshold: 500, immediate: true },
 });
 
+const osMatches = {
+  Android: '安卓',
+  Windows: 'win',
+};
+
+function filterOs(os: string | null): string {
+  if (!os) return '';
+  const split = os.split(/[|\s]/) as TupleM2N<string, 2, 3>;
+
+  const platform = split[0];
+
+  const tuple = [osMatches[platform as keyof typeof osMatches] || platform, split.at(-1)];
+
+  return [...new Set(tuple)].join(' ');
+}
+
+const browserMatches = {
+  'Microsoft Edge': 'Edge',
+};
+
+function filterBrowser(browser: string | null): string {
+  if (!browser) return '';
+  const split = browser.split(/[|\s]/) as [string, string];
+
+  const platform = split[0];
+
+  const tuple = [
+    browserMatches[platform as keyof typeof browserMatches] || platform,
+    split.at(-1)!.split('.')[0],
+  ];
+
+  return [...new Set(tuple)].join(' ');
+}
+
 const list = computed<CommentTreeType[]>(() => {
   const _list = data.value?.list as CommentTreeType[];
   if (!_list || !_list.length) return [];
@@ -29,7 +64,11 @@ const list = computed<CommentTreeType[]>(() => {
   const idMap: Record<string, CommentTreeType> = {};
   const children = _list.filter((item) => {
     idMap[item.id] = item;
+
     item.region = getRegionLocation(item.region);
+    item.os = filterOs(item.os);
+    item.browser = filterBrowser(item.browser);
+
     item.children = [];
     if (!item.parentId) {
       finalList.push(item);
