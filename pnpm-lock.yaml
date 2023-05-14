@@ -208,8 +208,8 @@ importers:
       '@element-plus/icons-vue': ^2.1.0
       '@mxssfd/img-zoom': ^1.2.6
       '@pinia/nuxt': ^0.4.7
-      '@request-template/axios': ^2.2.2
-      '@request-template/vue3-hooks': ^2.2.2
+      '@request-template/axios': ^2.2.3
+      '@request-template/vue3-hooks': ^2.2.3
       '@toast-ui/editor': ^3.2.2
       '@toast-ui/editor-plugin-code-syntax-highlight': ^3.1.0
       '@toast-ui/editor-plugin-color-syntax': ^3.1.0
@@ -236,7 +236,7 @@ importers:
       nuxt: ^3.1.0
       prettier: ^2.8.4
       prismjs: ^1.29.0
-      request-template: ^2.2.2
+      request-template: ^2.2.3
       sass: ^1.61.0
       sitemap: ^7.1.1
       vite-plugin-oss: ^1.2.13
@@ -246,8 +246,8 @@ importers:
       '@element-plus/icons-vue': 2.1.0_vue@3.2.47
       '@mxssfd/img-zoom': 1.2.6
       '@pinia/nuxt': 0.4.7_vue@3.2.47
-      '@request-template/axios': 2.2.2_2dgfv3gicythqplzthyhximu7m
-      '@request-template/vue3-hooks': 2.2.2_vue@3.2.47
+      '@request-template/axios': 2.2.3_azfr2z37qrxmnmddukgxbilatu
+      '@request-template/vue3-hooks': 2.2.3_vue@3.2.47
       '@toast-ui/editor': 3.2.2
       '@toast-ui/editor-plugin-code-syntax-highlight': 3.1.0
       '@toast-ui/editor-plugin-color-syntax': 3.1.0
@@ -269,7 +269,7 @@ importers:
       mermaid: 10.1.0
       prettier: 2.8.4
       prismjs: 1.29.0
-      request-template: 2.2.2
+      request-template: 2.2.3
       sitemap: 7.1.1
       vue: 3.2.47
       xss: 1.0.14
@@ -284,9 +284,9 @@ importers:
 
   packages/apis:
     specifiers:
-      request-template: ^2.2.2
+      request-template: ^2.2.3
     dependencies:
-      request-template: 2.2.2
+      request-template: 2.2.3
 
   packages/dtos:
     specifiers:
@@ -3643,23 +3643,23 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@request-template/axios/2.2.2_2dgfv3gicythqplzthyhximu7m:
+  /@request-template/axios/2.2.3_azfr2z37qrxmnmddukgxbilatu:
     resolution:
       {
-        integrity: sha512-LHPAG87/Yhzyb26Jv+3FESRHzrX0TEC3a6ew/KRGzd/QonhSN4AWNQQMWusifUGWeE5h3/C89otlZUClWM5Plw==,
+        integrity: sha512-Ytqz0/X6L+NRw8iGwlXfuJ6ceot/KxUej/vMa2hqHM1kifp+KXwI9a3ubt+snX2oIIzjNtFlMcTxqrZ38oRQcw==,
       }
     peerDependencies:
       axios: '>=0.26.1'
       request-template: '>=1.0.0'
     dependencies:
       axios: 1.3.5
-      request-template: 2.2.2
+      request-template: 2.2.3
     dev: false
 
-  /@request-template/vue3-hooks/2.2.2_vue@3.2.47:
+  /@request-template/vue3-hooks/2.2.3_vue@3.2.47:
     resolution:
       {
-        integrity: sha512-HpUARK8M0ukQjew/E9Wy+jws3Yko1CLDCmpNwNxfg0PmY28n/Y+wspwEou7JwNrc9MBmD+CZUu1wMvCTmShsUA==,
+        integrity: sha512-Uy9wJlcRJasvUd5bvuZqezmiAiyJX0EfXJgrtjxPO6SDNbbY18AkamWuPngh8LLGV+cmsUvQduqPo5HQvHrmWA==,
       }
     peerDependencies:
       vue: ^2.7.0 || >=3.0.0
@@ -17700,10 +17700,10 @@ packages:
     engines: { node: '>=8' }
     dev: true
 
-  /request-template/2.2.2:
+  /request-template/2.2.3:
     resolution:
       {
-        integrity: sha512-6pv6i4rfubhNH+TnWMNMwkyI3NhUEE5r+zxyXN6dx4AeqK0XsQTa9UfYu5EybDHGAQNFxZnUUJkYoglvLzDkag==,
+        integrity: sha512-1z4QnCONwdppiokMI77SYSk+Ti2qPG/ZKVmaicCZgQFPNHtnfrLLSEztzGTsr0OhRvjHaMw5UNPlUqH9F0v2Ow==,
       }
     dev: false
 
