@@ -9,3 +9,4 @@ export * from './article-like.entity';
 export * from './tag.entity';
 export * from './friend-link.entity';
 export * from './file.entity';
+export * from './project.entity';

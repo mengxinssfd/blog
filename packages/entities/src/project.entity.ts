@@ -26,8 +26,8 @@ export class ProjectEntity extends BlogBaseEntity {
   @Column('varchar', { length: 500, comment: '项目描述', nullable: true })
   desc?: string;
 
-  @Column('varchar', { length: 254, comment: '项目链接', unique: true })
-  link!: string;
+  @Column('varchar', { length: 254, comment: '项目链接', unique: true, nullable: true })
+  link?: string;
 
   @Column('varchar', { length: 500, comment: '项目封面' })
   cover!: string;
@@ -47,4 +47,10 @@ export class ProjectEntity extends BlogBaseEntity {
 
   @Column('int', { comment: '权重排序', default: 0 })
   weights?: number;
+
+  @Column('datetime', { comment: '开始时间', default: () => 'CURRENT_TIMESTAMP' })
+  startTime!: Date;
+
+  @Column('datetime', { comment: '结束时间', nullable: true })
+  endTime!: Date | null;
 }
