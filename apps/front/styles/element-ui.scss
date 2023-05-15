@@ -194,4 +194,10 @@
     --el-menu-active-color: var(--theme-color);
     --el-menu-border-color: var(--hover-transparent-bg);
   }
+  .el-button,
+  .el-tooltip__trigger {
+    &:focus-visible {
+      outline: 0;
+    }
+  }
 }
