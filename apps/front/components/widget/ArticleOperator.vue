@@ -8,6 +8,7 @@ import {
   setArticleCommentLock as setArticleCommentLockApi,
 } from '@blog/apis';
 import { UserEntity, ROLE, ArticleEntity } from '@blog/entities';
+import { Promotion } from '@element-plus/icons-vue';
 import { useRouter } from '#app';
 import useUserStore from '~/store/user.store';
 
@@ -40,6 +41,8 @@ async function setArticleCommentLock() {
   ElMessage({ type: 'success', message: res.msg });
   emits('commentLockUpdated');
 }
+
+const articlePath = computed(() => `/article/detail/${props.article.id}`);
 </script>
 <template>
   <Widget v-if="user.id === author.id">
@@ -69,6 +72,11 @@ async function setArticleCommentLock() {
                 title="评论锁"
                 @click="setArticleCommentLock"></i>
               <!--<el-switch v-model="commentLock" @change="setArticleCommentLock" />-->
+            </div>
+            <div v-show="as" class="lock">
+              <NuxtLink :to="articlePath">
+                <el-icon class="_ btn"><Promotion /></el-icon>
+              </NuxtLink>
             </div>
             <div v-show="!as" class="download">
               <i
