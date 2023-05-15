@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
-import { CreateArticleDto, UpdateArticleDto, ArticleListDto, ArticleSetAsDto } from '@blog/dtos';
+import { ArticleListDto, ArticleSetAsDto, CreateArticleDto, UpdateArticleDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
 import { CategoryService } from '../category/category.service';
@@ -22,7 +22,7 @@ import { IsFromWX, User } from '@/utils/decorator';
 import { TagService } from '../tag/tag.service';
 import { castArray } from '@tool-pack/basic';
 import { PageDto } from '@blog/dtos/page.dto';
-import { ArticleEntity, UserEntity } from '@blog/entities';
+import { ArticleEntity, ROLE, UserEntity } from '@blog/entities';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
@@ -172,10 +172,12 @@ export class ArticleController {
   }
 
   @Get('as/:as')
-  async getAs(@Param('as') as: string) {
+  async getAs(@Param('as') as: string, @User() user: UserEntity) {
     const res = await this.articleService.getAs(as);
-    res.viewCount++;
-    this.articleService.updateViewCount(res);
+    if (user.role !== ROLE.superAdmin) {
+      res.viewCount++;
+      this.articleService.updateViewCount(res);
+    }
     res.content = this.articleService.markdownToHtml(res.content);
     return res;
   }
