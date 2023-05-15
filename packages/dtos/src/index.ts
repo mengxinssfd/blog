@@ -6,3 +6,4 @@ export * from './openai';
 export * from './comment';
 export * from './friend-link';
 export * from './file';
+export * from './project';

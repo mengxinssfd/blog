@@ -19,3 +19,11 @@ export function IsOptional(validationOptions?: ValidationOptions) {
     return value !== null && value !== undefined && value !== '';
   }, validationOptions);
 }
+
+/**
+ * 获取数字类枚举值的值
+ * @param _enum
+ */
+export function getNumericEnumValues(_enum: object) {
+  return Object.values(_enum).filter((i: any) => typeof i === 'number');
+}
