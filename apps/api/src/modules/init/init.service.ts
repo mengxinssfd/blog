@@ -11,6 +11,6 @@ export class InitService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     await this.initUserService.registerRoot();
-    await this.initArticleService.iniArticleAs();
+    await this.initArticleService.initArticleAs();
   }
 }

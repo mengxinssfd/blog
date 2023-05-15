@@ -11,6 +11,14 @@ export class InitArticleService {
     private readonly tagService: TagService,
   ) {}
 
+  async initArticleAs() {
+    const [categoryId, tagId] = await Promise.all([this.initCate(), this.initTag()]);
+    await this.initFriendLink(categoryId, tagId);
+    await this.iniAbout(categoryId, tagId);
+    await this.initTransformImgType(categoryId, tagId);
+    await this.initProject(categoryId, tagId);
+  }
+
   private async initCate() {
     const cate = await this.categoryService.findOrCreate({
       name: '博客',
@@ -68,10 +76,14 @@ export class InitArticleService {
     });
   }
 
-  async iniArticleAs() {
-    const [categoryId, tagId] = await Promise.all([this.initCate(), this.initTag()]);
-    await this.initFriendLink(categoryId, tagId);
-    await this.iniAbout(categoryId, tagId);
-    await this.initTransformImgType(categoryId, tagId);
+  private initProject(categoryId: number, tagId: number) {
+    return this.articleService.findAsOrCreate({
+      title: '项目',
+      description: '个人业余时间写的一些项目',
+      content: '无',
+      as: 'project',
+      tags: [tagId],
+      categoryId,
+    });
   }
 }
