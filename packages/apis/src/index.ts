@@ -11,3 +11,4 @@ export * from './api/friend-link.api';
 export * from './api/file.api';
 export * from './api/daily-img.api';
 export * from './api/statistics.api';
+export * from './api/project.api';
