@@ -10,7 +10,7 @@ const useMenuStore = defineStore('menu', () => {
       return [
         { path: '/', title: `首页`, icon: 'icon-index' },
         { path: '/friend-link', title: `友链`, icon: 'icon-link' },
-        { path: '/project', title: `项目`, icon: 'icon-user', disabled: true },
+        { path: '/project', title: `项目`, icon: 'icon-user', disabled: false },
         {
           path: '/tools/transform-img-type',
           title: `小工具`,
