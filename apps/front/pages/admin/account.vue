@@ -1,7 +1,8 @@
-<script lang="ts">
+<script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { deleteUser, getUserAll, restoreUser, setMute, setRole } from '@blog/apis';
+import { deleteUser, getUserAll, restoreUser, setMute as setMuteApi, setRole } from '@blog/apis';
 import { ROLE, type UserEntity } from '@blog/entities';
+import { useRequest } from '@request-template/vue3-hooks';
 import { howLongAgo } from '~/feature/utils';
 
 type InnerUser = UserEntity & { muteLoading: boolean; registerIp: string; loginIp: string };
@@ -11,102 +12,84 @@ const RoleNames: Record<ROLE, string> = {
   [ROLE.dev]: '作者',
   [ROLE.commonUser]: '普通用户',
 };
-export default defineComponent({
-  setup() {
-    const Data = {
-      ROLE,
-      RoleNames,
-      roleList: [/* ROLE.superAdmin, */ ROLE.admin, ROLE.dev, ROLE.commonUser],
-      userList: ref<InnerUser[]>([]),
-      filter: reactive({
-        list: [
-          {
-            label: '全部',
-            value: '',
-          },
-        ],
-        value: '',
-      }),
-      updateData: reactive({
-        user: {} as UserEntity,
-        visible: false,
-      }),
-    };
-    const Methods = {
-      getRoleName(row: InnerUser) {
-        return RoleNames[row.role];
-      },
-      getFormattedDate(date: string | null) {
-        if (!date) return '--';
-        return howLongAgo(date);
-      },
-      async setMute(mute: boolean, user: InnerUser) {
-        user.muteLoading = true;
-        try {
-          await setMute(user.id, mute);
-          ElMessage({ type: 'success', message: '设置成功' });
-        } catch (e) {
-          user.muted = !mute;
-        } finally {
-          setTimeout(() => (user.muteLoading = false), 500);
-        }
-      },
-      async handleRoleCommand(ro: ROLE, user: InnerUser) {
-        const {
-          data: { role },
-        } = await setRole(user.id, ro);
-        ElMessage({ type: 'success', message: '设置成功' });
-        user.role = role;
-      },
-      async handleCommand(command: 'delete' | 'mute' | 'restore' | 'update', user: InnerUser) {
-        switch (command) {
-          case 'update':
-            Data.updateData.user = user;
-            Data.updateData.visible = true;
-            break;
-          case 'delete':
-            await ElMessageBox.confirm('确认要删除该账号?', 'Warning', {
-              confirmButtonText: '确认',
-              cancelButtonText: '取消',
-              type: 'warning',
-            });
-            await deleteUser(user.id);
-            ElMessage({ type: 'success', message: '删除成功' });
-            Methods.getData();
-            break;
-          case 'mute':
-            user.muted = !user.muted;
-            Methods.setMute(user.muted, user);
-            break;
-          case 'restore':
-            await restoreUser(user.id);
-            Methods.getData();
-            break;
-        }
-      },
-      async getData() {
-        const {
-          data: { list = [] },
-        } = await getUserAll(/* { status: Data.filter.value } */);
-        Data.userList.value = list.map((item) => ({ ...item, muteLoading: false } as any));
-      },
-    };
-    const init = () => {
-      Methods.getData();
-    };
 
-    init();
-    return {
-      ...Data,
-      ...Methods,
-    };
-  },
+const roleList = [/* ROLE.superAdmin, */ ROLE.admin, ROLE.dev, ROLE.commonUser];
+
+const { data, getData, loading } = useRequest(getUserAll, {
+  loading: { threshold: 500, immediate: true },
+  requestAlias: 'getData',
 });
+
+onMounted(getData);
+
+const userList = computed<InnerUser[]>(() =>
+  (data.value?.list || []).map((item) => ({ ...item, muteLoading: false } as InnerUser)),
+);
+
+const updateData = reactive({
+  user: {} as UserEntity,
+  visible: false,
+});
+
+const getRoleName = (row: InnerUser) => {
+  return RoleNames[row.role];
+};
+const getFormattedDate = (date: string | null) => {
+  if (!date) return '--';
+  return howLongAgo(date);
+};
+const setMute = async (mute: boolean, user: InnerUser) => {
+  user.muteLoading = true;
+  try {
+    await setMuteApi(user.id, mute);
+    ElMessage({ type: 'success', message: '设置成功' });
+  } catch (e) {
+    user.muted = !mute;
+  } finally {
+    setTimeout(() => (user.muteLoading = false), 500);
+  }
+};
+const handleRoleCommand = async (ro: ROLE, user: InnerUser) => {
+  const {
+    data: { role },
+  } = await setRole(user.id, ro);
+  ElMessage({ type: 'success', message: '设置成功' });
+  user.role = role;
+};
+const handleCommand = async (
+  command: 'delete' | 'mute' | 'restore' | 'update',
+  user: InnerUser,
+) => {
+  switch (command) {
+    case 'update':
+      updateData.user = user;
+      updateData.visible = true;
+      break;
+    case 'delete':
+      await ElMessageBox.confirm('确认要删除该账号?', 'Warning', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      });
+      await deleteUser(user.id);
+      ElMessage({ type: 'success', message: '删除成功' });
+      getData();
+      break;
+    case 'mute':
+      user.muted = !user.muted;
+      setMute(user.muted, user);
+      break;
+    case 'restore':
+      await restoreUser(user.id);
+      getData();
+      break;
+  }
+};
 </script>
 
 <template>
   <div class="pg admin-account">
-    <el-table :data="userList">
+    <el-table v-loading="loading" :data="userList">
       <el-table-column label="头像" width="60">
         <template #default="scope">
           <router-link :to="`/user/info/${scope.row.id}`">
