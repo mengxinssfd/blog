@@ -19,8 +19,11 @@ export class CommentEntity extends BlogBaseEntity {
   @ManyToOne(() => ArticleEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'articleId' })
   article!: ArticleEntity;
-  @Column('int', { comment: '文章id' })
-  articleId!: number;
+  @Column('int', { comment: '文章id', nullable: true })
+  articleId!: number | null;
+
+  @Column('varchar', { length: 255, comment: '所属范围(页面)', nullable: true })
+  scope!: string | null;
 
   @Column('boolean', { comment: '是否置顶', nullable: true })
   isTop!: boolean;
