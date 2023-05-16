@@ -109,3 +109,5 @@ dist
 
 .idea
 tmp/
+
+.DS_Store
