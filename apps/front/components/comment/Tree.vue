@@ -4,7 +4,7 @@
       <div class="device-info _ flex-c">
         <!-- 位置 -->
         <div v-if="item.region && item.region !== '--'" class="location _ flex-c">
-          <el-icon><Promotion /></el-icon>
+          <el-icon><LocationInformation /></el-icon>
           <span>{{ item.region }}</span>
         </div>
         <div v-if="item.os" class="location _ flex-c">
@@ -73,7 +73,7 @@ import * as Vue from 'vue';
 import { onceEvent } from '@tool-pack/dom';
 import { deleteCommentOne, setCommentDislike, setCommentLike } from '@blog/apis';
 import { ROLE } from '@blog/entities';
-import { Promotion, Platform, ChromeFilled } from '@element-plus/icons-vue';
+import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons-vue';
 import type { CommentTreeType } from './tree.d';
 import type BaseComment from './Base.vue';
 import { useToggleState } from '~/feature/hooks';
