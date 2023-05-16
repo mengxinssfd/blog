@@ -28,6 +28,8 @@
   --hover-transparent-bg: #d9ecff70;
   --text-color-disabled: #c0c4cc;
   --toolbar-btn-bg-color: var(--board-bg-color);
+  --frosted-glass-bg-color: rgba(255, 255, 255, 0.1);
+  --frosted-glass-text-color: white;
   &.dark {
     --color-mode: 'dark';
     --body-bg-color: #292a2d;
@@ -48,5 +50,7 @@
     --hover-transparent-bg: rgba(0, 0, 0, 0.5);
     --text-color-disabled: #9c9a9a;
     --toolbar-btn-bg-color: rgba(70, 70, 70, 0.4);
+    --frosted-glass-bg-color: rgba(66, 66, 66, 0.9);
+    --frosted-glass-text-color: #eee;
   }
 }

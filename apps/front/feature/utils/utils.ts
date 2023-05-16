@@ -1,4 +1,5 @@
 import { howLongAgo as HowLongAgo, formatDate, inRange } from '@tool-pack/basic';
+import { TupleM2N } from '@tool-pack/types';
 
 export const howLongAgo = (date: string | Date, format?: string) => {
   const _date = typeof date === 'string' ? new Date(date) : date;
@@ -17,3 +18,37 @@ export const howLongAgo = (date: string | Date, format?: string) => {
     },
   });
 };
+
+const osMatches = {
+  Android: '安卓',
+  Windows: 'win',
+};
+
+export function filterOs(os: string | null): string {
+  if (!os) return '';
+  const split = os.split(/[|\s]/) as TupleM2N<string, 2, 3>;
+
+  const platform = split[0];
+
+  const tuple = [osMatches[platform as keyof typeof osMatches] || platform, split.at(-1)];
+
+  return [...new Set(tuple)].join(' ');
+}
+
+const browserMatches = {
+  'Microsoft Edge': 'Edge',
+};
+
+export function filterBrowser(browser: string | null): string {
+  if (!browser) return '';
+  const split = browser.split(/[|\s]/) as [string, string];
+
+  const platform = split[0];
+
+  const tuple = [
+    browserMatches[platform as keyof typeof browserMatches] || platform,
+    split.at(-1)!.split('.')[0],
+  ];
+
+  return [...new Set(tuple)].join(' ');
+}

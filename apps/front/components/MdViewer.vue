@@ -306,5 +306,9 @@ onMounted(() => {
   &.preview {
     pointer-events: none;
   }
+  code[class*='language-'],
+  pre[class*='language-'] {
+    text-shadow: none;
+  }
 }
 </style>

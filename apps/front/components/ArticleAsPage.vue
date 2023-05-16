@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { getArticleAs } from '@blog/apis';
 import { ArticleEntity } from '@blog/entities';
 import useHeaderStore from '~/store/header.store';
@@ -9,6 +9,18 @@ const props = defineProps({
   as: {
     type: String,
     default: '',
+  },
+  layout: {
+    type: String,
+    default: 'page',
+  },
+  bannerHeight: {
+    type: String,
+    default: '55vh',
+  },
+  commentBlockVisible: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -30,21 +42,28 @@ watch(
   },
   { immediate: true },
 );
+
+const TitleBlock = () => (
+  <>
+    <h1 class="page-title">{asArticle.value.title}</h1>
+    {asArticle.value.description && asArticle.value.description !== '无' && (
+      <h2 class="page-desc">{asArticle.value.description}</h2>
+    )}
+  </>
+);
 </script>
 
 <template>
   <Title>Nice's {{ asArticle.title }}</Title>
-  <NuxtLayout name="page">
+  <NuxtLayout :name="layout">
+    <template #title>
+      <slot name="title"><TitleBlock /></slot>
+    </template>
     <template #banner>
-      <Banner :bg-img="asArticle.cover" height="55vh" :blur="false" :brightness="0.75">
+      <Banner :bg-img="asArticle.cover" :height="bannerHeight" :blur="false" :brightness="0.75">
         <template #content>
           <slot name="banner-content">
-            <h1 class="page-title">
-              {{ asArticle.title }}
-            </h1>
-            <h2 v-if="asArticle.description && asArticle.description !== '无'" class="page-desc">
-              {{ asArticle.description }}
-            </h2>
+            <TitleBlock />
           </slot>
         </template>
       </Banner>
@@ -65,7 +84,7 @@ watch(
       @error="audioVisible = false"></audio>
     <div class="pg">
       <slot></slot>
-      <section v-if="asArticle.id" class="board">
+      <section v-if="commentBlockVisible && asArticle.id" class="board">
         <CommentBlock :article="asArticle"></CommentBlock>
       </section>
     </div>

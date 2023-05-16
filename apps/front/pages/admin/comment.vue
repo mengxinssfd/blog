@@ -85,6 +85,7 @@ onMounted(getData);
           </NuxtLink>
         </template>
       </el-table-column>
+      <el-table-column label="scope" prop="scope" />
       <el-table-column label="创建日期" prop="createAt">
         <template #default="scope">
           {{ formatDate(scope.row.createAt) }}

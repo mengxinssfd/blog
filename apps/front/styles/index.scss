@@ -244,3 +244,8 @@ input:-webkit-autofill {
 .align-center {
   text-align: left;
 }
+.frosted-glass-bg {
+  background-color: var(--frosted-glass-bg-color);
+  color: var(--frosted-glass-text-color);
+  backdrop-filter: blur(10px);
+}

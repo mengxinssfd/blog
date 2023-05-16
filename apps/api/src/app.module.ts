@@ -59,7 +59,8 @@ import { ProjectModule } from './routers/project/project.module';
           ...configService.val('database'),
           type: 'mysql',
           entities: Object.values(Entities),
-          synchronize: ENV.isDev() || ENV.isTest(),
+          // synchronize: ENV.isDev() || ENV.isTest(),
+          synchronize: true,
         } as MysqlConnectionOptions;
       },
     }),

@@ -12,6 +12,11 @@ const useMenuStore = defineStore('menu', () => {
         { path: '/friend-link', title: `友链`, icon: 'icon-link' },
         { path: '/project', title: `项目`, icon: 'icon-user', disabled: false },
         {
+          path: '/says',
+          title: '说说',
+          icon: 'icon-user',
+        },
+        {
           path: '/tools/transform-img-type',
           title: `小工具`,
           icon: 'icon-moon',
@@ -20,8 +25,8 @@ const useMenuStore = defineStore('menu', () => {
               path: '/tools/transform-img-type',
               title: '图片格式转换工具',
               icon: 'icon-user',
-              disabled: false,
             },
+
             {
               path: '/tools/memory',
               title: '记忆小助手',
