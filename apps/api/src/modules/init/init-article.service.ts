@@ -17,6 +17,7 @@ export class InitArticleService {
     await this.iniAbout(categoryId, tagId);
     await this.initTransformImgType(categoryId, tagId);
     await this.initProject(categoryId, tagId);
+    await this.initSays(categoryId, tagId);
   }
 
   private async initCate() {
@@ -82,6 +83,16 @@ export class InitArticleService {
       description: '个人业余时间写的一些项目',
       content: '无',
       as: 'project',
+      tags: [tagId],
+      categoryId,
+    });
+  }
+  private initSays(categoryId: number, tagId: number) {
+    return this.articleService.findAsOrCreate({
+      title: '说说',
+      description: '我的生活、吐槽、闲话...',
+      content: '无',
+      as: 'says',
       tags: [tagId],
       categoryId,
     });
