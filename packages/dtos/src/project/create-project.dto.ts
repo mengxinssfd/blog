@@ -55,11 +55,12 @@ export class CreateProjectDto extends PartialType(ProjectEntity) {
   override weights?: number;
 
   @ApiPropertyOptional({ description: '开始时间', example: '2023/05/14 11:10:00' })
+  @IsNotEmpty({ message: '开始时间不能为空' })
   @Transform((v) => new Date(v.value))
   override startTime!: Date;
 
   @ApiPropertyOptional({ description: '结束时间', example: '2023/05/14 11:10:00' })
-  // @IsOptional()
+  @IsOptional()
   @Transform((v) => {
     return v.value ? new Date(v.value) : null;
   })
