@@ -122,8 +122,8 @@ export class Logger {
   }
 
   static error(...args: any[]) {
+    ENV.isDev() && console.error(args.at(-1));
     logger.error(Logger.getStackTrace(), ...args);
-    ENV.isDev() && console.error(...args);
   }
 
   static fatal(...args: any[]) {
