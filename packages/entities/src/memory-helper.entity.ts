@@ -3,8 +3,8 @@ import { BlogBaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
 
 export enum MEMORY_STATUS {
-  public,
-  private,
+  Public,
+  Private,
 }
 
 @Entity('memory_helper')
@@ -41,7 +41,7 @@ export class MemoryHelperEntity extends BlogBaseEntity {
 
   @Column('enum', {
     enum: MEMORY_STATUS,
-    default: MEMORY_STATUS.public,
+    default: MEMORY_STATUS.Public,
     comment: '状态：0：公开,1：只能自己看',
   })
   status!: MEMORY_STATUS;
