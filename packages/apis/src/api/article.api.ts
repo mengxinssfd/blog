@@ -61,5 +61,5 @@ export function setArticleAs(id: ID, dto: ArticleSetAsDto) {
   return Patch('/as/' + id, dto, { successMsg: '设置成功' });
 }
 export function getArticleAs(as: string) {
-  return Get<ArticleEntity>(`/as/${as}`);
+  return Get<ArticleEntity>(`/as/${encodeURIComponent(as)}`);
 }
