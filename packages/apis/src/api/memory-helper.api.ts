@@ -14,12 +14,15 @@ const [Get, Post, Patch, Delete] = methodsWithUrl(
 export function createMemory(data: CreateMemoryHelperDto) {
   return Post('', data, { showSuccessMsg: true, successMsg: '新增成功' });
 }
+
 export function updateMemory(id: ID, data: UpdateMemoryHelperDto) {
   return Patch(`/${id}`, data, { showSuccessMsg: true, successMsg: '修改成功' });
 }
+
 export function deleteMemory(id: ID) {
   return Delete(`/${id}`, {}, { showSuccessMsg: true, successMsg: '删除成功' });
 }
+
 export function getMemory(id: ID) {
   return Get<MemoryHelperEntity & { questionList: object[] }>(`/${id}`, {}, { loading: true }).then(
     (res) => {
@@ -29,6 +32,6 @@ export function getMemory(id: ID) {
   );
 }
 
-export function getMemoryList(data: MemoryListDTO) {
-  return Get<PageVo<MemoryHelperEntity>>(urlPrefix, data);
+export function getMemoryList(data: MemoryListDTO = {}) {
+  return Get<PageVo<MemoryHelperEntity>>('', data);
 }
