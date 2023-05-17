@@ -7,3 +7,4 @@ export * from './comment';
 export * from './friend-link';
 export * from './file';
 export * from './project';
+export * from './memory-help';
