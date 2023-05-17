@@ -27,6 +27,7 @@ import { StatisticsModule } from '@/routers/statistics/statistics.module';
 import { RedisModule, type RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { InitModule } from '@/modules/init/init.module';
 import { ProjectModule } from './routers/project/project.module';
+import { MemoryHelperModule } from '@/routers/memory-helper/memory-helper.module';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { ProjectModule } from './routers/project/project.module';
     StatisticsModule,
     InitModule,
     ProjectModule,
+    MemoryHelperModule,
   ],
 })
 export class AppModule {}
