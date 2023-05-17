@@ -79,5 +79,10 @@ export class InitArticleService {
       description: '我的生活、吐槽、闲话...',
       as: 'says',
     },
+    {
+      title: '记忆助手',
+      description: '帮助记忆信息的一个小工具',
+      as: 'tools/memory-helper',
+    },
   ];
 }
