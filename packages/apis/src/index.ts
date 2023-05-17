@@ -12,3 +12,4 @@ export * from './api/file.api';
 export * from './api/daily-img.api';
 export * from './api/statistics.api';
 export * from './api/project.api';
+export * from './api/memory-helper.api';
