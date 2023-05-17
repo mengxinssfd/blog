@@ -13,11 +13,14 @@ export class InitArticleService {
 
   async initArticleAs() {
     const [categoryId, tagId] = await Promise.all([this.initCate(), this.initTag()]);
-    await this.initFriendLink(categoryId, tagId);
-    await this.iniAbout(categoryId, tagId);
-    await this.initTransformImgType(categoryId, tagId);
-    await this.initProject(categoryId, tagId);
-    await this.initSays(categoryId, tagId);
+    for (const page of this.pageList) {
+      await this.articleService.findAsOrCreate({
+        ...page,
+        content: page.content || '无',
+        tags: [tagId],
+        categoryId,
+      });
+    }
   }
 
   private async initCate() {
@@ -36,13 +39,16 @@ export class InitArticleService {
     return tag.id;
   }
 
-  private initFriendLink(categoryId: number, tagId: number) {
-    return this.articleService.findAsOrCreate({
+  private readonly pageList: Array<{
+    title: string;
+    description: string;
+    as: string;
+    content?: string;
+  }> = [
+    {
       title: '友链',
       description: '友链',
       as: 'friend-link',
-      tags: [tagId],
-      categoryId,
       content: `
 1. 不添加广告网站和违法网站，博客网站最好在 5 篇文章以上。
 1. 若域名为公共（二级分发）、免费域名，视站点质量添加。
@@ -52,49 +58,26 @@ export class InitArticleService {
 1. 若站点长期失联（无法访问）将会删除友链。
 1. 申请友链之前请先添加本站链接。
 `.trim(),
-    });
-  }
-
-  private iniAbout(categoryId: number, tagId: number) {
-    return this.articleService.findAsOrCreate({
+    },
+    {
       title: '关于我',
       description: '关于页',
       as: 'about',
-      tags: [tagId],
-      categoryId,
-      content: '无',
-    });
-  }
-
-  private initTransformImgType(categoryId: number, tagId: number) {
-    return this.articleService.findAsOrCreate({
+    },
+    {
       title: '图片格式转换压缩工具',
       description: '个基于canvas的图片格式转换与压缩工具',
       as: 'tools/transform-img-type',
-      tags: [tagId],
-      categoryId,
-      content: '无',
-    });
-  }
-
-  private initProject(categoryId: number, tagId: number) {
-    return this.articleService.findAsOrCreate({
+    },
+    {
       title: '项目',
       description: '个人业余时间写的一些项目',
-      content: '无',
       as: 'project',
-      tags: [tagId],
-      categoryId,
-    });
-  }
-  private initSays(categoryId: number, tagId: number) {
-    return this.articleService.findAsOrCreate({
+    },
+    {
       title: '说说',
       description: '我的生活、吐槽、闲话...',
-      content: '无',
       as: 'says',
-      tags: [tagId],
-      categoryId,
-    });
-  }
+    },
+  ];
 }
