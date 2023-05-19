@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/mapped-types';
 import { IsEnum, IsNotEmpty, MaxLength } from 'class-validator';
 import { MEMORY_STATUS, MemoryHelperEntity } from '@blog/entities';
 import { getNumericEnumValues, IsOptional } from '../utils';
 
-export class CreateMemoryHelperDto extends MemoryHelperEntity {
+export class CreateMemoryHelperDto extends PartialType(MemoryHelperEntity) {
   @ApiProperty({ description: '标题', example: 'title hello world' })
   @MaxLength(100, { message: '标题最大长度为100' })
   @IsNotEmpty({ message: '标题不能为空' })
