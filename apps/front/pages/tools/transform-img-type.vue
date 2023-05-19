@@ -4,11 +4,12 @@ import { blobToBase64, base64ToBlob, download, loadImg, readFile } from '@tool-p
 import { formatBytes } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import useUserStore from '~/store/user.store';
+import { useFileSelector } from '~/feature/hooks';
 
 const userStore = useUserStore();
 const article = ref<ArticleEntity>({} as ArticleEntity);
 
-const fileRef = ref<HTMLInputElement>();
+const [files, triggerFileSelector] = useFileSelector('image/*');
 
 interface T {
   blob: null | Blob;
@@ -109,8 +110,8 @@ const transform = async () => {
   afterImg.height = img.naturalHeight;
 };
 
-const setFile = async (file?: Blob) => {
-  fileRef.value && (fileRef.value.value = '');
+const setFile = async (files?: ArrayLike<Blob>) => {
+  const file = files?.[0];
   if (!file || !/^image\/.+/.test(file.type)) return;
 
   beforeImg.blob = file;
@@ -129,15 +130,9 @@ const setFile = async (file?: Blob) => {
 
 const onDrop = (event: DragEvent) => {
   const dt = event.dataTransfer;
-  if (!dt || !dt.files.length) return;
-
-  setFile(dt.files[0]);
+  setFile(dt?.files);
 };
-
-const onFileSelected = (e: InputEvent) => {
-  const target = e.target as HTMLInputElement;
-  setFile(target.files?.[0]);
-};
+watch(files, setFile);
 
 const downloadImg = () => {
   const blob = afterImg.blob;
@@ -149,7 +144,7 @@ const downloadImg = () => {
 </script>
 
 <template>
-  <ArticleAsPage :as="encodeURIComponent('tools/transform-img-type')" @data="article = $event">
+  <ArticleAsPage as="tools/transform-img-type" @data="article = $event">
     <template #aside>
       <WidgetUpload v-if="userStore.user.role <= ROLE.dev" />
       <WidgetSentence />
@@ -161,14 +156,8 @@ const downloadImg = () => {
       @dragover.stop.prevent>
       <section>
         <div class="align-right">
-          <el-button type="primary" size="large" @click="() => fileRef.click()">选择文件</el-button>
+          <el-button type="primary" size="large" @click="triggerFileSelector">选择文件</el-button>
         </div>
-        <input
-          ref="fileRef"
-          class="file-selector"
-          type="file"
-          accept="image/*"
-          @change="onFileSelected" />
       </section>
       <section class="img-compare _ flex-c">
         <div class="before _ flex-col flex-1">
