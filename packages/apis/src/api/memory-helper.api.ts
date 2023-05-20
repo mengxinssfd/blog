@@ -3,6 +3,7 @@ import { methodsWithUrl } from '@blog/apis';
 import type { MemoryHelperEntity } from '@blog/entities';
 import type { PageVo } from '@blog/dtos/dist/dtos/src/page.vo';
 import type { CreateMemoryHelperDto, MemoryListDTO, UpdateMemoryHelperDto } from '@blog/dtos';
+import { MemoryHelperEntityResolved } from '@blog/entities';
 
 const urlPrefix = '/api/memory-helper';
 
@@ -24,12 +25,10 @@ export function deleteMemory(id: ID) {
 }
 
 export function getMemory(id: ID) {
-  return Get<MemoryHelperEntity & { questionList: object[] }>(`/${id}`, {}, { loading: true }).then(
-    (res) => {
-      res.data.questionList = JSON.parse(res.data.questionJson);
-      return res;
-    },
-  );
+  return Get<MemoryHelperEntityResolved>(`/${id}`, {}, { loading: true }).then((res) => {
+    res.data.questionList = JSON.parse(res.data.questionJson);
+    return res;
+  });
 }
 
 export function getMemoryList(data: MemoryListDTO = {}) {
