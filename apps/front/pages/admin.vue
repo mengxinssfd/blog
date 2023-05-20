@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { Folder, PieChart, Tickets, Briefcase } from '@element-plus/icons-vue';
+import { Folder, PieChart, Tickets, Briefcase, Memo } from '@element-plus/icons-vue';
 
 definePageMeta({
   middleware: 'admin',
@@ -39,6 +39,11 @@ const tabs = reactive({
       label: '项目',
       name: 'project',
       icon: <Briefcase />,
+    },
+    {
+      label: '记忆助手',
+      name: 'memory-helper',
+      icon: <Memo />,
     },
     {
       label: '文件',
