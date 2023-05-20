@@ -1,7 +1,35 @@
-<script setup lang="ts">
-import useMenuStore from '~/store/menu.store';
+<script setup lang="tsx">
+import { getClassNames } from '@tool-pack/basic';
+import useMenuStore, { MenuItem } from '~/store/menu.store';
 
 const menuStore = useMenuStore();
+
+const Item = (props: { item: MenuItem }) => {
+  const { item } = props;
+  if (item.children && item.children.length) {
+    return (
+      <>
+        {item.children.map((item) => (
+          <Item item={item} />
+        ))}
+      </>
+    );
+  }
+  return (
+    <>
+      {!item.disabled && (
+        <li
+          class={getClassNames({ active: menuStore.isActive(item.path) })}
+          onClick={() => menuStore.toggleSideMenuVisible()}>
+          <nuxt-link to={item.path}>
+            <el-icon size="1em">{item.icon}</el-icon>
+            <span>{item.title}</span>
+          </nuxt-link>
+        </li>
+      )}
+    </>
+  );
+};
 </script>
 <template>
   <Drawer
@@ -11,17 +39,7 @@ const menuStore = useMenuStore();
     size="80%"
     :z-index="9">
     <ul>
-      <template v-for="item in menuStore.menu" :key="item.path">
-        <li
-          v-if="!item.disabled"
-          :class="{ active: menuStore.isActive(item.path) }"
-          @click="menuStore.sideMenuVisible = false">
-          <NuxtLink :to="item.path">
-            <i class="iconfont" :class="item.icon"></i>
-            {{ item.title }}
-          </NuxtLink>
-        </li>
-      </template>
+      <Item v-for="item in menuStore.menu" :key="item.path" :item="item" />
     </ul>
   </Drawer>
 </template>
@@ -30,12 +48,14 @@ const menuStore = useMenuStore();
 .c-aside-menu {
   .el-drawer__body {
     padding: var(--header-height) 0 1rem;
+    font-family: system-ui;
     li {
       > a {
-        display: block;
+        display: flex;
+        align-items: center;
         padding: 1rem;
         color: inherit;
-        > .iconfont {
+        > .el-icon {
           margin-right: 6px;
         }
       }
