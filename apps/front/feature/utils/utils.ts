@@ -9,11 +9,17 @@ export const howLongAgo = (date: string | Date, format?: string) => {
     templates: {
       season: '~~',
       year: '~~',
+      month: '~~',
+      week: '~~',
     },
     filter(res, diff): string {
       if (inRange(diff, [0, 1000 * 10])) return '刚刚';
-      if (res.endsWith('天前')) return { 1: '昨天', 2: '前天' }[res.replace('天前', '')] || res;
-      if (res.endsWith('月前')) return formatDate(_date);
+      // if (res.endsWith('天前')) return { 1: '昨天', 2: '前天' }[res.replace('天前', '')] || res;
+      if (res.endsWith('天前')) {
+        const match = { '1天前': '昨天', '2天前': '前天' }[res];
+        if (match) return match + formatDate(_date, ' hh:mm');
+        return formatDate(_date);
+      }
       return res;
     },
   });
