@@ -46,3 +46,14 @@ export class MemoryHelperEntity extends BlogBaseEntity {
   })
   status!: MEMORY_STATUS;
 }
+
+export interface MemoryHelperQuestion {
+  question: string;
+  answer: string;
+  desc?: string;
+  isUnChecked?: boolean;
+  isMark?: boolean;
+}
+export class MemoryHelperEntityResolved extends MemoryHelperEntity {
+  questionList!: MemoryHelperQuestion[];
+}
