@@ -56,6 +56,7 @@ export class MemoryHelperService {
         // `${alias}.questionJson AS ${alias}_questionJson`,
         `${alias}.createAt`,
         `${alias}.updateAt`,
+        `${alias}.desc`,
       ] satisfies Prop[])
       .where(`${alias}.rowid between :start and :end`, {
         start: (page - 1) * pageSize + 1,
