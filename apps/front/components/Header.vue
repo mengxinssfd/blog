@@ -20,7 +20,7 @@
                     <el-button :disabled="menuStore.isActive(nav.path)">{{ nav.title }}</el-button>
                   </NuxtLink>
                   <template #dropdown>
-                    <el-dropdown-menu>
+                    <el-dropdown-menu class="nav-dropdown-menu">
                       <template v-for="child in nav.children" :key="child.path">
                         <el-dropdown-item v-if="!child.disabled">
                           <NuxtLink :to="child.path">
@@ -127,6 +127,15 @@ const onSelect = (command: string) => {
 };
 </script>
 <style lang="scss">
+.nav-dropdown-menu {
+  li {
+    padding: 0;
+    a {
+      padding: 10px;
+      width: 100%;
+    }
+  }
+}
 .c-header {
   height: var(--header-height);
   + * {
