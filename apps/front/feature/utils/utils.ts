@@ -46,14 +46,18 @@ const browserMatches = {
 };
 
 export function filterBrowser(browser: string | null): string {
-  if (!browser) return '';
-  const split = browser.split(/[|\s]/) as [string, string];
+  let _browser = browser || '';
+  if (!_browser) return '';
 
-  const platform = split[0];
+  Object.entries(browserMatches).forEach(([k, v]) => {
+    _browser = _browser.replace(k, v);
+  });
+
+  const [platform, version] = _browser.split(/[|\s]/) as [string, string];
 
   const tuple = [
     browserMatches[platform as keyof typeof browserMatches] || platform,
-    split.at(-1)!.split('.')[0],
+    version.split('.')[0],
   ];
 
   return [...new Set(tuple)].join(' ');
