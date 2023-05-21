@@ -1,10 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import {
-  UpdateFriendLinkDto,
-  AdjudgeFriendLinkDto,
-  FindAllFriendLinkDto,
-  CreateFriendLinkDto,
-} from '@blog/dtos';
+import { UpdateFriendLinkDto, AdjudgeFriendLinkDto, FindAllFriendLinkDto } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FriendLinkEntity, FriendLinkState } from '@blog/entities';
@@ -23,16 +18,12 @@ export class FriendLinkService {
     return await this.repository.findOne({ where: { link } });
   }
 
-  async create(dto: CreateFriendLinkDto) {
-    const fl = new FriendLinkEntity();
-    fl.link = dto.link;
-    fl.avatar = dto.link + '/favicon.ico';
-    fl.name = '';
-    const find = await this.findByLink(dto.link);
+  async create(entity: FriendLinkEntity) {
+    const find = await this.findByLink(entity.link);
     if (find) {
       throw new BadRequestException('网站链接已存在');
     }
-    return await this.repository.save(fl);
+    return await this.repository.save(entity);
   }
 
   async findAll(query: FindAllFriendLinkDto) {

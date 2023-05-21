@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   ParseIntPipe,
   Patch,
@@ -14,7 +15,7 @@ import { FriendLinkService } from './friend-link.service';
 import { CreateFriendLinkDto } from '@blog/dtos/friend-link/create-friend-link.dto';
 import { UpdateFriendLinkDto } from '@blog/dtos/friend-link/update-friend-link.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { User } from '@/utils/decorator';
+import { ReqIp, User } from '@/utils/decorator';
 import { FriendLinkEntity, UserEntity } from '@blog/entities';
 import { AdjudgeFriendLinkDto, FindAllFriendLinkDto } from '@blog/dtos';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
@@ -42,10 +43,21 @@ export class FriendLinkController {
   @UseGuards(ThrottlerBehindProxyGuard)
   @Throttle(5, 60)
   @Post()
-  async create(@Body() dto: CreateFriendLinkDto) {
-    const res = await this.friendLinkService.create(dto);
+  async create(
+    @Body() dto: CreateFriendLinkDto,
+    @ReqIp() ip: string,
+    @Headers('user-agent') ua: string,
+  ) {
+    const entity = new FriendLinkEntity();
+    Object.assign(entity, dto, {
+      ip,
+      ua,
+      name: '',
+      avatar: dto.link + '/favicon.ico',
+    } satisfies Partial<FriendLinkEntity>);
+
+    await this.friendLinkService.create(entity);
     this.mailService.onApplyFriendLink(dto.link);
-    return res;
   }
 
   @ApiBearerAuth()
