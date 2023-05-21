@@ -8,6 +8,7 @@ import { UserService } from '@/routers/user/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '@blog/entities';
 import { CommentTipsService } from '@/modules/mail/comment-tips.service';
+import { FriendLinkTipsService } from '@/modules/mail/frind-link-tips.service';
 
 // 参考文章 https://notiz.dev/blog/send-emails-with-nestjs
 
@@ -41,7 +42,7 @@ import { CommentTipsService } from '@/modules/mail/comment-tips.service';
       },
     }),
   ],
-  providers: [MailService, UserService, CommentTipsService],
+  providers: [MailService, UserService, CommentTipsService, FriendLinkTipsService],
   exports: [MailService],
 })
 export class MailModule {}

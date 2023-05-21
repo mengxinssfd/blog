@@ -139,7 +139,13 @@ export class FriendLinkController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity.modelName))
   @Patch('adjudge/:id')
-  adjudge(@Param('id', ParseIntPipe) id: number, @Body() data: AdjudgeFriendLinkDto) {
-    return this.friendLinkService.adjudge(id, data);
+  async adjudge(@Param('id', ParseIntPipe) id: number, @Body() data: AdjudgeFriendLinkDto) {
+    await this.friendLinkService.adjudge(id, data);
+
+    this.friendLinkService
+      .findOne(id, ['fl.email', 'fl.rejectReason', 'fl.status'])
+      .then((entity) => {
+        this.mailService.onFriendLinkStatusChange(entity);
+      });
   }
 }

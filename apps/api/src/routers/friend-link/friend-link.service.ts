@@ -35,7 +35,8 @@ export class FriendLinkService {
         'fl.rejectReason',
         'fl.updateAt',
         'fl.applyDesc',
-      ] satisfies K[]);
+      ] satisfies K[])
+      .orderBy('fl.updateAt' satisfies K, 'DESC');
     if (query.status) {
       sql.where({ status: query.status });
     }
@@ -76,8 +77,12 @@ export class FriendLinkService {
     return { list, count };
   }
 
-  async findOne(id: number) {
-    const res = await this.repository.findOne({ where: { id } });
+  async findOne(id: number, addSelect: K[] = []) {
+    const res = await this.repository
+      .createQueryBuilder('fl')
+      .addSelect(addSelect)
+      .where({ id })
+      .getOne();
 
     if (!res) throw new NotFoundException(`id(${id})不存在`);
 
