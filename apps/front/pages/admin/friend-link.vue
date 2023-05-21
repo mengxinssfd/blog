@@ -39,7 +39,7 @@ function showLinkApplyDialog() {
   dialogVisible.value = true;
 }
 function onSuccess() {
-  ElMessage({ type: 'success', message: '编辑成功，已改为待审状态' });
+  ElMessage({ type: 'success', message: '编辑成功' });
   getData();
 }
 async function handleCommand(
