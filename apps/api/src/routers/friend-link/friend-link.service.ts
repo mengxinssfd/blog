@@ -94,9 +94,7 @@ export class FriendLinkService {
   }
 
   async update(entity: FriendLinkEntity, dto: UpdateFriendLinkDto) {
-    // 编辑后改为待审状态
     Object.assign(entity, dto);
-    entity.status = FriendLinkState.padding;
     return await this.repository.save(entity);
   }
 
