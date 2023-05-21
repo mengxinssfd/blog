@@ -68,7 +68,6 @@ export class CommentController {
     const res = await this.commentService.create(dto, comment);
 
     this.commentService.findOneFull(res.id).then((c) => this.mailService.onCommentCreated(c));
-    return res;
   }
 
   @CheckPolicies((ab) => ab.can(Action.Manage, CommentEntity.modelName))
