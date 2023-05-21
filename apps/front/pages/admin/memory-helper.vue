@@ -2,7 +2,7 @@
 import { ElMessageBox } from 'element-plus';
 import { formatDate } from '@tool-pack/basic';
 import { deleteMemory, getMemoryList } from '@blog/apis';
-import { type MemoryHelperEntity } from '@blog/entities';
+import { MEMORY_STATUS, type MemoryHelperEntity } from '@blog/entities';
 import { useRequest } from '@request-template/vue3-hooks';
 
 const dialogVisible = ref(false);
@@ -50,6 +50,11 @@ onBeforeMount(request);
       <el-table-column label="id" prop="id" width="60" />
       <el-table-column label="名称" prop="title" width="130" />
       <el-table-column label="描述" prop="desc" />
+      <el-table-column label="状态">
+        <template #default="scope">
+          {{ MEMORY_STATUS[scope.row.status] }}
+        </template>
+      </el-table-column>
       <el-table-column label="创建人">
         <template #default="scope">
           {{ scope.row.creator.nickname }}

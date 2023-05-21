@@ -2,7 +2,9 @@
 import { type ArticleEntity, MemoryHelperEntityResolved } from '@blog/entities';
 import { getMemoryList } from '@blog/apis';
 import { howLongAgo } from '~/feature/utils';
+import useUserStore from '~/store/user.store';
 
+const userStore = useUserStore();
 const article = ref<ArticleEntity>({} as ArticleEntity);
 const settingDialogVisible = ref(false);
 const creatorState = reactive({ visible: false, id: 0 });
@@ -29,7 +31,10 @@ const showCreatorDialog = () => {
 <template>
   <ArticleAsPage as="tools/memory-helper" @data="article = $event">
     <template #aside>
-      <Widget class="pre-bg-long-top-right" title="添加">
+      <Widget
+        v-if="userStore.isRoleOfGreaterThanOrEqualDev"
+        class="pre-bg-long-top-right"
+        title="添加">
         <div class="add-link" @click="showCreatorDialog">
           <div class="_ pos-trans-c-c"></div>
           <div class="_ pos-trans-c-c col"></div>

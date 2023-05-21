@@ -9,6 +9,7 @@ const useUserStore = defineStore('user', () => {
   // const user = ref<UserEntity>({} as UserEntity);
   const user = useState<UserEntity>('user', () => ({} as UserEntity));
   const isSuperAdmin = computed(() => user.value.role === ROLE.superAdmin);
+  const isRoleOfGreaterThanOrEqualDev = computed(() => user.value.role < ROLE.dev);
 
   async function login(username: string, password: string) {
     const res = await loginApi({ username, password });
@@ -50,6 +51,7 @@ const useUserStore = defineStore('user', () => {
     login,
     getSelfInfo,
     isSuperAdmin,
+    isRoleOfGreaterThanOrEqualDev,
     isLogin,
     logout() {
       Token.clear();

@@ -50,7 +50,6 @@ const tempMemory = useStorageItem<Pick<typeof state, 'title' | 'questionList'>>(
 );
 
 const userStore = useUserStore();
-const route = useRoute();
 const [files, triggerFileSelector] = useFileSelector('application/json');
 
 watch(files, (f) => {

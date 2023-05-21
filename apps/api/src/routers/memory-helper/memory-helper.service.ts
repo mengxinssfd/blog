@@ -70,6 +70,7 @@ export class MemoryHelperService {
 
     if (role > ROLE.admin)
       countRep.where({ status: MEMORY_STATUS.Public }).orWhere({ creatorId: userId });
+    else rep.addSelect([`${alias}.status`] satisfies Prop[]);
 
     const [list, count] = await Promise.all([rep.getRawMany(), countRep.getCount()]);
 
