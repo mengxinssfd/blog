@@ -131,7 +131,7 @@ const onSelect = (command: string) => {
   li {
     padding: 0;
     a {
-      padding: 10px;
+      padding: 8px 10px;
       width: 100%;
     }
   }
