@@ -180,7 +180,9 @@ const formSubmit = async (e: any) => {
   if (!validate(title, questionList)) return;
 
   if (!userStore.isLogin()) {
-    navigateTo({ path: '/user/login', query: { fromPath: route.fullPath } });
+    // navigateTo({ path: '/user/login', query: { fromPath: route.fullPath } });
+    ElNotification({ type: 'error', title: '未登录' });
+    return;
   }
 
   try {
