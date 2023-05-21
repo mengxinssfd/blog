@@ -7,7 +7,7 @@ export class BaseLikeEntity extends BlogBaseEntity {
   @JoinColumn({ name: 'userId' })
   user!: UserEntity;
 
-  @Column('int', { select: false, comment: '点赞人id', nullable: true })
+  @Column('int', { comment: '点赞人id', nullable: true })
   userId!: number;
 
   // 更新次数

@@ -49,10 +49,27 @@ export class CommentDislikeService extends BaseLikeService<CommentDislikeEntity>
   }
 
   async setCommentDislike(userId: number, ip: string, commentId: number) {
-    const like = new CommentDislikeEntity();
-    like.commentId = commentId;
-    like.touristIp = ip;
-    like.userId = userId;
+    const rep = this.likeRepository
+      .createQueryBuilder('like')
+      .addSelect(['like.deletedAt'])
+      .where({ commentId })
+      .withDeleted();
+
+    if (userId) {
+      rep.andWhere({ userId });
+    } else {
+      rep.andWhere(`(touristIp = :ip AND userId IS NULL)`, { ip });
+    }
+
+    let like = await rep.getOne();
+
+    if (!like) {
+      like = new CommentDislikeEntity();
+      like.touristIp = ip;
+      like.userId = userId;
+      like.commentId = commentId;
+    }
+
     await this.setLike(like);
     return this.countByWhere(like, { commentId });
   }
