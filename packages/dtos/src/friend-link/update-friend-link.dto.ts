@@ -9,22 +9,22 @@ export class UpdateFriendLinkDto extends PartialType(CreateFriendLinkDto) {
   @IsOptional()
   @MaxLength(20, { message: '站名最大长度为20' })
   @IsNotEmpty()
-  name?: string;
+  override name?: string;
 
   @ApiProperty({ description: '描述', example: '描述' })
   @IsOptional()
   @MaxLength(254, { message: '描述最大长度为254' })
-  desc?: string;
+  override desc?: string;
 
   @ApiProperty({ description: '头像', example: '头像' })
   @IsOptional()
   @MaxLength(500, { message: '头像最大长度为500' })
   @IsUrl({}, { message: 'avatar必须是url' })
-  avatar?: string;
+  override avatar?: string;
 
   @ApiProperty({ description: '屏幕截图' })
   @IsOptional()
   @MaxLength(500, { message: '截图最大长度为500' })
   @IsUrl({}, { message: 'screenshot必须是url' })
-  screenshot?: string;
+  override screenshot?: string;
 }
