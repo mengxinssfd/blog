@@ -48,4 +48,28 @@ export class FriendLinkEntity extends BlogBaseEntity {
     select: false,
   })
   rejectReason?: string;
+
+  @Column('varchar', {
+    length: 45,
+    comment: 'ip',
+    nullable: true,
+    select: false,
+  })
+  ip!: string | null;
+
+  @Column('varchar', {
+    length: 500,
+    comment: '浏览器的user-agent',
+    nullable: true,
+    select: false,
+  })
+  ua!: string | null;
+
+  @Column('varchar', {
+    length: 500,
+    comment: '邮箱',
+    nullable: true,
+    select: false,
+  })
+  email?: string;
 }
