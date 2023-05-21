@@ -233,12 +233,8 @@ const questionListAdd = () => {
     desc: '',
   });
 };
-const questionListDelete = (e: any) => {
-  const { index } = e.target.dataset;
-  console.log(index);
-
-  const ml = state.questionList;
-  ml.splice(index, 1);
+const questionListDelete = (index: number) => {
+  state.questionList.splice(index, 1);
 };
 // 点击编辑
 const memoryImport = () => {
@@ -307,7 +303,10 @@ const confirm = () => {
             <section class="page-section">
               <div class="page-section-title">
                 问题{{ index + 1 }}
-                <div v-if="state.questionList.length > 1" class="del" @click="questionListDelete">
+                <div
+                  v-if="state.questionList.length > 1"
+                  class="del"
+                  @click="questionListDelete(index)">
                   <i class="iconfont icon-delete"></i>
                 </div>
               </div>
