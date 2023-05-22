@@ -24,7 +24,7 @@ describe('UserController (e2e): /api/register (Post)', function () {
       user.username = 'admin';
       return register(user)
         .expect(200)
-        .expect('{"code":400,"msg":"username(admin)包含禁用词!请修改后再提交"}');
+        .expect('{"code":400,"msg":"username包含敏感词([\\"admin\\"])!请修改后再提交"}');
     });
     describe('username', function () {
       it('用户名不能包含空格', () => {

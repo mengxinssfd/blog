@@ -314,7 +314,7 @@ export class ArticleService {
     return article;
   }
 
-  async findOne(id: number | string) {
+  async findOne(id: number | string, addSelect: AK[] = []) {
     const getArticle = this.articleRepository
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.author', 'user')
@@ -327,6 +327,7 @@ export class ArticleService {
         'article.updateAt',
         'article.authorId',
         'article.deletedAt',
+        ...addSelect,
       ] satisfies AK[])
       .addSelect(['tag.id', 'tag.name'])
       .addSelect(['category.id', 'category.name'])

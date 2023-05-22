@@ -39,16 +39,14 @@ describe('/comment 评论', () => {
           { articleId: ArticleIds.publicArticleId, userId: RoleUsers.dev.id, content: '你好呀' },
           RoleUsers.common.token,
         )
-        .expect(CommentApi.ResType.createdByUser);
+        .expect(CommentApi.ResType.created);
     });
 
     it('无账号评论，提交数据校验失败', () => {
       return api
         .create({ content: 'test', articleId: ArticleIds.publicArticleId })
         .expect(200)
-        .expect(
-          '{"code":400,"msg":"content(test)包含禁用词!请修改后再提交;游客名长度不能超过24;游客名不能为空"}',
-        );
+        .expect('{"code":400,"msg":"游客名长度不能超过24;游客名不能为空"}');
     });
     it('无账号评论', () => {
       return api
@@ -57,7 +55,7 @@ describe('/comment 评论', () => {
           articleId: ArticleIds.publicArticleId,
           touristName: '你好啊',
         })
-        .expect(CommentApi.ResType.createdByTourist);
+        .expect(CommentApi.ResType.created);
     });
     it('文章评论列表', () => {
       return api
@@ -65,7 +63,7 @@ describe('/comment 评论', () => {
         .expect(200)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":\\d+,"createAt":"${dateReg}","content":"hello world","articleId":${ArticleIds.publicArticleId},"isTop":null,"parentId":null,"replyId":null,"userId":null,"touristName":"你好啊","user":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}},\\{"id":1,"createAt":"${dateReg}","content":"你好呀","articleId":1,"isTop":null,"parentId":null,"replyId":null,"userId":${RoleUsers.common.id},"touristName":null,"user":\\{"id":${RoleUsers.common.id},"nickname":"${RoleUsers.common.nickname}","avatar":"${UserEntity.DEFAULT_AVATAR}"},"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}}],"count":2}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":\\d+,"createAt":"${dateReg}","content":"hello world","articleId":${ArticleIds.publicArticleId},"scope":null,"isTop":null,"parentId":null,"replyId":null,"userId":null,"region":"0\\|0\\|0\\|内网IP\\|内网IP","browser":"","os":"","touristName":"你好啊","user":null,"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}},\\{"id":1,"createAt":"${dateReg}","content":"你好呀","articleId":1,"scope":null,"isTop":null,"parentId":null,"replyId":null,"userId":${RoleUsers.common.id},"region":"0\\|0\\|0\\|内网IP\\|内网IP","browser":"","os":"","touristName":null,"user":\\{"id":${RoleUsers.common.id},"nickname":"${RoleUsers.common.nickname}","avatar":"${UserEntity.DEFAULT_AVATAR}"},"like":\\{"checked":0,"count":0},"dislike":\\{"checked":0,"count":0}}],"count":2}}`,
           ),
         );
     });
@@ -133,7 +131,7 @@ describe('/comment 评论', () => {
         )
         .set('X-Forwarded-For', '127.0.0.2')
         .expect(201)
-        .expect(CommentApi.ResType.createdByUser);
+        .expect(CommentApi.ResType.created);
     });
   });
   describe('回复', function () {
@@ -149,9 +147,7 @@ describe('/comment 评论', () => {
           },
           RoleUsers.dev.token,
         )
-        .expect(
-          /\{"code":201,"msg":"Success","data":\{"article":\{"id":\d+},"articleId":\d,"user":{"id":\d},"userId":\d,"content":"[^"]+","parentId":\d+,"replyId":\d+,"deletedAt":null,"isTop":null,"touristIp":null,"touristName":null,"id":\d,"createAt":"[^"]{24}","updateAt":"[^"]{24}"}}/,
-        );
+        .expect(CommentApi.ResType.created);
     });
     it('获取回复', () => {
       const articleReg = '\\{"id":1,"title":"测试一些","authorId":3}';
