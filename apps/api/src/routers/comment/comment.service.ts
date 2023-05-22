@@ -48,9 +48,7 @@ export class CommentService {
       [K in keyof CommentEntity]: CommentEntity[K] | FindOperator<CommentEntity[K]>;
     }>,
   ) {
-    const req = this.commentRepository.createQueryBuilder('comment').where(where);
-    console.log(req.getQueryAndParameters());
-    return req.getCount();
+    return this.commentRepository.createQueryBuilder('comment').where(where).getCount();
   }
 
   create(dto: CreateCommentDto, comment: CommentEntity) {
