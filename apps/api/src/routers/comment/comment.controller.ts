@@ -63,7 +63,7 @@ export class CommentController {
     comment.region = this.ip2RegionService.searchRawRegion(ip);
     comment.os = device.os;
     comment.browser = device.browser;
-    comment.ua = ua.slice(0, 500); // ua可能伪造，导致长度特别长
+    comment.ua = (ua || '').slice(0, 500); // ua可能伪造，导致长度特别长
 
     const res = await this.commentService.create(dto, comment);
 
@@ -123,7 +123,7 @@ export class CommentController {
 
   private _validCreate(dto: CreateCommentDto, user: UserEntity | null, ip: string) {
     return this.casl.find(async () => {
-      const article = await this.articleService.findOne(dto.articleId);
+      const article = await this.articleService.findOne(dto.articleId, ['article.as']);
 
       const comment = new CommentEntity();
       comment.article = article;
