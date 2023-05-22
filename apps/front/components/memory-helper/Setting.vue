@@ -11,15 +11,11 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  visible: {
-    type: Boolean,
-    default: false,
-  },
 });
 
-const emit = defineEmits(['edit', 'update:visible']);
+const visible = defineModel('visible', { local: true, type: Boolean, default: false });
 
-const show = computed({ get: () => props.visible, set: (v: Boolean) => emit('update:visible', v) });
+const emit = defineEmits(['edit']);
 
 enum PlayMode {
   // 容易
@@ -65,7 +61,7 @@ const getMemoryData = async () => {
 };
 
 watch(
-  () => props.visible,
+  visible,
   (n) => {
     n && getMemoryData();
   },
@@ -91,14 +87,14 @@ const onSelectorFinish = (list: MemoryHelperQuestion[]) => {
 };
 
 const onEdit = () => {
-  show.value = false;
+  visible.value = false;
   emit('edit', props.memoryId);
 };
 </script>
 
 <template>
   <ClientOnly>
-    <el-dialog v-model="show" append-to-body>
+    <el-dialog v-model="visible" append-to-body>
       <div class="c-setting">
         <MemoryHelperPlayer
           v-if="state.showPlay"

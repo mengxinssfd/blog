@@ -11,20 +11,16 @@ import { download, readFile } from '@tool-pack/dom';
 import { CreateMemoryHelperDto } from '@blog/dtos';
 import useUserStore from '~/store/user.store';
 
+const visible = defineModel('visible', { local: true, type: Boolean, default: false });
+
 const props = defineProps({
   memoryId: {
     type: Number,
     default: 0,
   },
-  visible: {
-    type: Boolean,
-    default: false,
-  },
 });
 
-const emit = defineEmits(['update', 'update:visible', 'success']);
-
-const show = computed({ get: () => props.visible, set: (v: Boolean) => emit('update:visible', v) });
+const emit = defineEmits(['update', 'success']);
 
 const [state, _setState] = useReactive({
   isImport: false,
@@ -74,21 +70,18 @@ const setState: typeof _setState = (state) => {
   _setState(state);
 };
 
-watch(
-  () => props.visible,
-  (n) => {
-    if (!n) return;
-    setState({ memoryId: props.memoryId, mode: props.memoryId ? 'edit' : 'create' });
-    console.log('--------');
-    // 判断是否编辑状态
-    if (state.mode === 'edit') {
-      // 改标题为编辑
-      getMemoryData();
-    } else {
-      getTempMemory();
-    }
-  },
-);
+watch(visible, (n) => {
+  if (!n) return;
+  setState({ memoryId: props.memoryId, mode: props.memoryId ? 'edit' : 'create' });
+  console.log('--------');
+  // 判断是否编辑状态
+  if (state.mode === 'edit') {
+    // 改标题为编辑
+    getMemoryData();
+  } else {
+    getTempMemory();
+  }
+});
 
 const getMemoryData = async () => {
   const { data } = await getMemory(props.memoryId);
@@ -197,7 +190,7 @@ const formSubmit = async (e: any) => {
     }
     tempMemory.remove();
     emit('success');
-    show.value = false;
+    visible.value = false;
   } catch (e) {
     console.log(e);
   }
@@ -271,7 +264,7 @@ const confirm = () => {
 <template>
   <ClientOnly>
     <el-dialog
-      v-model="show"
+      v-model="visible"
       class="c-memory-helper-create"
       :title="memoryId ? '编辑' : '新增'"
       append-to-body>

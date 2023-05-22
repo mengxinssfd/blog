@@ -63,5 +63,11 @@ export default defineNuxtConfig({
   sourcemap: !isBuild,
   vite: {
     esbuild: { drop: isBuild ? ['console', 'debugger'] : [] },
+    vue: {
+      script: {
+        defineModel: true,
+        propsDestructure: true,
+      },
+    },
   },
 });
