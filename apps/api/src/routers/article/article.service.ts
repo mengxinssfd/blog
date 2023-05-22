@@ -218,6 +218,7 @@ export class ArticleService {
       rawList: raws,
       valueToNumArr: ['like_count', 'like_checked', 'article_commentCount'],
       valueJoinToArr: ['tags'],
+      omitArr: ['rowid'],
     });
 
     return { list, count };
