@@ -5,7 +5,6 @@ import { Logger } from '@/utils/log4js';
 import { CommentTipsService } from '@/modules/mail/comment-tips.service';
 import { AppConfigService } from '@/app.config.service';
 import { FriendLinkTipsService } from '@/modules/mail/frind-link-tips.service';
-import { ENV } from '@/utils/utils';
 
 export type SendMailParams = [subject: string, to: string, template: string, context: object];
 
@@ -19,11 +18,6 @@ export class MailService {
   ) {}
 
   private _sendMail = async (subject: string, to: string, template: string, context: object) => {
-    if (ENV.isTest()) {
-      Logger.info('测试期间停止发送邮件');
-      return;
-    }
-
     if (!to) {
       Logger.info('发送邮件失败，邮件地址不能为空\n');
       return;
