@@ -140,7 +140,7 @@ describe('/article 文章', () => {
         )
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"title":"TS","categoryId":1,"tags":\\[\\{"id":1}],"id":1,"updateAt":"[^"]{24}","deletedAt":null,"version":2}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"title":"TS","categoryId":1,"tags":\\[\\{"id":1}],"id":1,"updateAt":"[^"]{24}","deletedAt":null,"as":null,"version":2}}`,
           ),
         );
       await api.get(privateArticleId).expect(ArticleApi.ResType.notFound);

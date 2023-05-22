@@ -120,7 +120,7 @@ describe('/article-like 文章👍', () => {
         .expect(200)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":\\d+,"version":\\d+,"touristIp":null,"user":\\{"id":\\d+,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"article":\\{"id":1,"status":1,"version":1,"title":"测试一些","description":"测试一下","viewCount":0,"cover":"${ArticleEntity.DEFAULT_COVER}","bgm":"","commentLock":false}}],"count":1}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":\\d+,"userId":${RoleUsers.common.id},"version":\\d+,"touristIp":null,"user":\\{"id":\\d+,"nickname":"hello_\\d+","avatar":"${UserEntity.DEFAULT_AVATAR}"},"article":\\{"id":1,"status":1,"version":1,"title":"测试一些","description":"测试一下","viewCount":0,"cover":"${ArticleEntity.DEFAULT_COVER}","bgm":"","commentLock":false}}],"count":1}}`,
           ),
         );
       await api
@@ -144,7 +144,7 @@ describe('/article-like 文章👍', () => {
         .expect(200)
         .expect(
           new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":1,"version":3,"touristIp":null,"user":\\{"id":2,"nickname":"hello_1","avatar":"${UserEntity.DEFAULT_AVATAR}"},"article":\\{"id":1,"title":"测试一些","description":"测试一下","category":\\{"id":1,"name":"Front Dev","description":"前端开发"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"author":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"}}},\\{"id":2,"version":1,"touristIp":"127.0.0.1","user":null,"article":\\{"id":1,"title":"测试一些","description":"测试一下","category":\\{"id":1,"name":"Front Dev","description":"前端开发"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"author":{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"}}}],"count":2}}`,
+            `\\{"code":200,"msg":"Success","data":\\{"list":\\[\\{"id":1,"userId":2,"version":3,"touristIp":null,"user":\\{"id":2,"nickname":"hello_1","avatar":"${UserEntity.DEFAULT_AVATAR}"},"article":\\{"id":1,"title":"测试一些","description":"测试一下","category":\\{"id":1,"name":"Front Dev","description":"前端开发"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"author":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"}}},\\{"id":2,"userId":null,"version":1,"touristIp":"127.0.0.1","user":null,"article":\\{"id":1,"title":"测试一些","description":"测试一下","category":\\{"id":1,"name":"Front Dev","description":"前端开发"},"tags":\\[\\{"id":1,"name":"Typescript","description":"Javascript超类"}],"author":{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"}}}],"count":2}}`,
           ),
         );
       await api
@@ -160,6 +160,14 @@ describe('/article-like 文章👍', () => {
       data: {
         list: [
           {
+            author: {
+              id: 3,
+              nickname: 'hello_2',
+              avatar:
+                'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg',
+            },
+            tags: [{ id: 1, name: 'Typescript', description: 'Javascript超类' }],
+            category: { id: 1, name: 'Front Dev', description: '前端开发' },
             id: 1,
             status: '1',
             version: 1,
@@ -170,16 +178,10 @@ describe('/article-like 文章👍', () => {
               'http://img.desktx.com/d/file/wallpaper/scenery/20170107/7cd0dae5f6adf31e51626333b9614bff.jpg',
             bgm: '',
             commentLock: 0,
-            category: { id: 1, name: 'Front Dev', description: '前端开发' },
-            author: {
-              id: 3,
-              nickname: 'hello_2',
-              avatar:
-                'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg',
-            },
-            tags: [{ id: 1, name: 'Typescript', description: 'Javascript超类' }],
             createAt: '(date)',
             updateAt: '(date)',
+            authorId: 3,
+            categoryId: 1,
             like: { count: 2, checked: 1111 },
             commentCount: 0,
           },
