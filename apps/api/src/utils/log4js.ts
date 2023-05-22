@@ -122,7 +122,7 @@ export class Logger {
   }
 
   static error(...args: any[]) {
-    ENV.isDev() && console.error(args.at(-1));
+    (ENV.isDev() || ENV.isTest()) && console.error(args.at(-1));
     logger.error(Logger.getStackTrace(), ...args);
   }
 
