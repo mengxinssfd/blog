@@ -27,7 +27,6 @@
 
 <script lang="ts">
 import { randomInt } from '@tool-pack/basic';
-import { useBanner } from '~/feature/hooks';
 import { TODAY_COVER_URL } from '@/config/constants';
 import useHeaderStore from '~/store/header.store';
 

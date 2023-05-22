@@ -9,7 +9,6 @@ import { createMemory, getMemory, updateMemory } from '@blog/apis';
 import { ElNotification } from 'element-plus';
 import { download, readFile } from '@tool-pack/dom';
 import { CreateMemoryHelperDto } from '@blog/dtos';
-import { useReactive, useStorageItem, useFileSelector } from '~/feature/hooks';
 import useUserStore from '~/store/user.store';
 
 const props = defineProps({

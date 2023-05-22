@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useArticle } from '~/feature/hooks';
-
 const Art = useArticle();
 const { article } = Art.Data;
 const { getLikeCountData } = Art.Methods;

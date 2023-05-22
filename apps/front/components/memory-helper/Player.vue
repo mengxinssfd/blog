@@ -4,7 +4,6 @@ import { dateDiff, randomInt } from '@tool-pack/basic';
 import { ElMessageBox, ElNotification } from 'element-plus';
 import type { MemoryHelperQuestion } from '@blog/entities';
 import type { PlaySetting } from './types.d';
-import { useReactive } from '~/feature/hooks';
 
 const props = defineProps({
   questionList: {

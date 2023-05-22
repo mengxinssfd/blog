@@ -5,7 +5,6 @@ import { formatDate as formatDateKit, formatBytes } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import { useRouter } from '#app';
 import useUserStore from '~/store/user.store';
-import { useToggleState } from '~/feature/hooks';
 
 const router = useRouter();
 const userStore = useUserStore();

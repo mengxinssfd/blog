@@ -66,7 +66,6 @@ import { ArrowRight, ArrowLeft } from '@element-plus/icons-vue';
 import { DailyImg, getDailyImg } from '@blog/apis';
 import { computed, defineComponent, onMounted, onUnmounted, reactive } from '#imports';
 import { useAsyncData } from '#app';
-import { useBanner } from '~/feature/hooks';
 import { TODAY_COVER_URL } from '~/config/constants';
 
 export default defineComponent({

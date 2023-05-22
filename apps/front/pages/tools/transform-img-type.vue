@@ -4,7 +4,6 @@ import { blobToBase64, base64ToBlob, download, loadImg, readFile } from '@tool-p
 import { formatBytes } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import useUserStore from '~/store/user.store';
-import { useFileSelector } from '~/feature/hooks';
 
 const userStore = useUserStore();
 const article = ref<ArticleEntity>({} as ArticleEntity);

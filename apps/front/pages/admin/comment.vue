@@ -5,7 +5,6 @@ import { formatDate as formatDateKit } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import { getArticleCommentLink, getArticleLink } from '@blog/shared';
 import useUserStore from '~/store/user.store';
-import { useToggleState } from '~/feature/hooks';
 
 const router = useRouter();
 const userStore = useUserStore();

@@ -4,7 +4,6 @@ import { type MemoryHelperQuestion, ROLE } from '@blog/entities';
 import { ElMessageBox } from 'element-plus';
 import { MemoryHelperEntity } from '@blog/entities';
 import type { PlaySetting } from './types.d';
-import { useReactive, useStorageItem } from '~/feature/hooks';
 import useUserStore from '~/store/user.store';
 
 const props = defineProps({

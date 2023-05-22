@@ -106,7 +106,6 @@ import { View } from '@element-plus/icons-vue';
 import { getArticleDetail } from '@blog/apis';
 import type { ArticleEntity } from '@blog/entities';
 import { useAsyncData, useRoute } from '#app';
-import { useArticle } from '~/feature/hooks';
 import { TODAY_COVER_URL } from '~/config/constants';
 import useHeaderStore from '~/store/header.store';
 // definePageMeta({

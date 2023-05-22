@@ -5,8 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import { useWindowScroll } from '~/feature/hooks';
-
 const { scrollTop, backTop } = useWindowScroll();
 </script>
 <style lang="scss" scoped>

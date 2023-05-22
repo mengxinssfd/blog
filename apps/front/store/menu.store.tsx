@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import useUserStore from '~/store/user.store';
-import { useToggleState } from '~/feature/hooks';
 import { Briefcase, Memo, Mic, PictureRounded, WindPower } from '@element-plus/icons-vue';
 
 export interface MenuItem {

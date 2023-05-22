@@ -44,7 +44,6 @@ import * as Vue from 'vue';
 import { createComment as createCommentApi } from '@blog/apis';
 import type { CreateCommentDto } from '@blog/dtos';
 import useUserStore from '~/store/user.store';
-import { useStorageItem } from '~/feature/hooks';
 import { onMounted } from '#imports';
 
 const props = defineProps({

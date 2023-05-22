@@ -11,7 +11,6 @@ import {
 } from '@blog/apis';
 import type { UserEntity, ArticleEntity } from '@blog/entities';
 import { useRoute } from '#app';
-import { useToggleState } from '~/feature/hooks';
 import useUserStore from '~/store/user.store';
 
 enum TabTypes {

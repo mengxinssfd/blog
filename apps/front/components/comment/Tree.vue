@@ -76,7 +76,6 @@ import { ROLE } from '@blog/entities';
 import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons-vue';
 import type { CommentTreeType } from './tree.d';
 import type BaseComment from './Base.vue';
-import { useToggleState } from '~/feature/hooks';
 import useUserStore from '~/store/user.store';
 
 const props = defineProps({

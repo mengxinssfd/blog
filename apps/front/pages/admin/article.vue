@@ -7,7 +7,6 @@ import { Search } from '@element-plus/icons-vue';
 import type { CustomCacheConfig } from 'request-template';
 import { useRouter } from '#app';
 import useUserStore from '~/store/user.store';
-import { useToggleState } from '~/feature/hooks';
 
 const router = useRouter();
 const userStore = useUserStore();
