@@ -13,10 +13,10 @@
     "test:cov": "jest --coverage"
   },
   "dependencies": {
-    "@casl/ability": "^6.3.3"
+    "@casl/ability": "^6.5.0"
   },
   "devDependencies": {
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.16"
   },
   "jest": {
     "moduleFileExtensions": [

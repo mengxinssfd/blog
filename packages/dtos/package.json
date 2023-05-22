@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "mint-filter": "^4.0.2"
+    "mint-filter": "^4.0.3"
   },
   "jest": {
     "moduleFileExtensions": [
