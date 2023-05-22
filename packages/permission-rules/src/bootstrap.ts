@@ -1,5 +1,4 @@
-import { UserEntity } from '@blog/entities';
-import { AnyMongoAbility, AbilityBuilder, InferSubjects } from '@casl/ability';
+import { InferSubjects } from '@casl/ability';
 import { BlogBaseEntity } from '@blog/entities/base.entity';
 import { RuleCreator } from './types';
 
@@ -18,8 +17,8 @@ export function bootstrap<T extends typeof BlogBaseEntity>(
   return {
     subjects,
     classMap,
-    ruleRegister(user: UserEntity, builder: AbilityBuilder<AnyMongoAbility>) {
+    ruleRegister: ((user, builder) => {
       ruleCreators.forEach((c) => c(user, builder));
-    },
+    }) as RuleCreator,
   };
 }

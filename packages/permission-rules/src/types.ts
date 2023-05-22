@@ -1,7 +1,5 @@
 import { UserEntity } from '@blog/entities';
-import { AbilityBuilder, AnyMongoAbility } from '@casl/ability';
-
-export type RuleCreator = (user: UserEntity, builder: AbilityBuilder<AnyMongoAbility>) => void;
+import { AbilityBuilder, MongoAbility } from '@casl/ability';
 
 export enum Action {
   Manage = 'manage',
@@ -10,3 +8,8 @@ export enum Action {
   Update = 'update',
   Delete = 'delete',
 }
+
+export type RuleCreator = (
+  user: UserEntity,
+  builder: AbilityBuilder<MongoAbility<[Action, any]>>,
+) => void;
