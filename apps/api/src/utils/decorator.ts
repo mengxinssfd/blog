@@ -42,7 +42,7 @@ export const IsFromWX = createParamDecorator((_data: unknown, ctx: ExecutionCont
 export const Device = createParamDecorator((_data: unknown, ctx: ExecutionContextHost) => {
   const sr: ServerResponse = ctx.switchToHttp().getResponse();
   const { req } = sr;
-  const p = Bowser.parse(req.headers['user-agent'] || '');
+  const p = Bowser.parse(req.headers['user-agent'] || 'default');
   const { browser, os } = p;
 
   function handler(v: string): string {
