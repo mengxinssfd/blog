@@ -8,9 +8,7 @@
         :brightness="0.75">
         <template #content>
           <h1 class="page-title">{{ sentence?.hitokoto }}</h1>
-          <h2 class="page-desc">
-            {{ SentenceCates[sentence?.type] || '其他' }} {{ sentence?.from }}
-          </h2>
+          <h2 class="page-desc">{{ SentenceCates[sentence?.type || '_'] }} {{ sentence?.from }}</h2>
         </template>
       </Banner>
     </template>

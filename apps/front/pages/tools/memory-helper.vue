@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ArticleEntity, MemoryHelperEntityResolved } from '@blog/entities';
+import { type ArticleEntity, MemoryHelperEntity, MemoryHelperEntityResolved } from '@blog/entities';
 import { getMemoryList } from '@blog/apis';
 import { howLongAgo } from '~/feature/utils';
 import useUserStore from '~/store/user.store';
@@ -13,8 +13,8 @@ const activeItem = ref<MemoryHelperEntityResolved>();
 const { data: _data } = await useAsyncData(() => getMemoryList());
 const list = computed(() => _data.value?.data.list || []);
 
-const handlerClickItem = (item: MemoryHelperEntityResolved) => {
-  activeItem.value = item;
+const handlerClickItem = (item: MemoryHelperEntity) => {
+  activeItem.value = item as MemoryHelperEntityResolved;
   settingDialogVisible.value = true;
 };
 

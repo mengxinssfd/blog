@@ -252,7 +252,7 @@ const downloadImg = () => {
                   <el-slider
                     v-model="options.sizeRate"
                     :disabled="options.sizeType !== 'rate'"
-                    :format-tooltip="(v) => v + '%'"
+                    :format-tooltip="(v:string) => v + '%'"
                     :min="1"
                     :max="100"
                     :step="1" />

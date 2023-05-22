@@ -64,7 +64,7 @@ const onBack = () => {
   emit('close');
 };
 
-const ReverseCheckbox = (props: { modelValue: boolean }, ctx: Vue.SetupContext) => {
+const ReverseCheckbox = (props: { modelValue?: boolean }, ctx: Vue.SetupContext) => {
   const checked = ref(!props.modelValue);
   // return <el-checkbox v-model={[checked,'modelValue']} />;
   return (

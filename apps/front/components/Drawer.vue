@@ -1,11 +1,3 @@
-<template>
-  <ClientOnly>
-    <el-drawer v-model="value" :with-header="false" class="c-drawer" append-to-body v-bind="$attrs">
-      <slot></slot>
-    </el-drawer>
-  </ClientOnly>
-</template>
-
 <script setup lang="ts">
 /**
  * 由于el-drawer的modelValue只支持boolean类型，
@@ -15,19 +7,19 @@
  * @see {@link https://element-plus.org/zh-CN/component/drawer.html}
  */
 
-const props = defineProps({
-  modelValue: {
-    type: [Boolean, Object],
-    default: false,
-  },
-});
-const emit = defineEmits(['update:modelValue']);
+// defineOptions({ inheritAttrs: true });
 
-const value = computed({
-  get: () => (isRef(props.modelValue) ? props.modelValue.value : props.modelValue) as boolean,
-  set: (v: boolean | Record<string, any>) => emit('update:modelValue', v),
-});
+const model = defineModel({ type: [Boolean, Object], default: false, local: true });
 </script>
+
+<template>
+  <ClientOnly>
+    <el-drawer v-model="model" :with-header="false" class="c-drawer" append-to-body v-bind="$attrs">
+      <slot></slot>
+    </el-drawer>
+  </ClientOnly>
+</template>
+
 <style lang="scss">
 .c-drawer {
 }

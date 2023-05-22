@@ -14,6 +14,7 @@ export const SentenceCates: Record<string, string> = {
   j: '网易云',
   k: '哲学',
   l: '抖机灵',
+  _: '其他',
 };
 
 interface Res {

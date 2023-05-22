@@ -1,5 +1,6 @@
 <script lang="tsx" setup>
-import Drawer from './Drawer.vue';
+import * as Vue from 'vue/dist/vue';
+
 const state = useState('aside.hiddenContent', () => false);
 const route = useRoute();
 
@@ -13,18 +14,16 @@ onMounted(() => {
   );
 });
 
-const Contents = defineComponent({
-  setup(_props, { slots }) {
-    return () => (
-      <>
-        <aside class="c-aside">{slots.default?.()}</aside>
-        <Drawer v-model={state.value} size="300px" z-index={11} direction="rtl">
-          {slots.default?.()}
-        </Drawer>
-      </>
-    );
-  },
-});
+const Contents = (_props: {}, { slots }: Vue.SetupContext) => {
+  return (
+    <>
+      <aside class="c-aside">{slots.default?.()}</aside>
+      <drawer v-model={state.value} size="300px" z-index={11} direction="rtl">
+        {slots.default?.()}
+      </drawer>
+    </>
+  );
+};
 </script>
 <template>
   <Contents>

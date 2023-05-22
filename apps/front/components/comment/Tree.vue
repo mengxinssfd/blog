@@ -51,6 +51,7 @@
     <!--   回复输入框   -->
     <div v-if="reply" class="reply-input-box" @click.stop>
       <CommentInputBox
+        v-if="item.articleId"
         :placeholder="'回复 ' + getNickname(item)"
         :article-id="item.articleId"
         :options="{ replyId: item.id, parentId: item.parent?.id ?? item.id }"

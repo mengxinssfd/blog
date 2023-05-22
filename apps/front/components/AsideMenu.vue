@@ -39,7 +39,9 @@ const Item = (props: { item: MenuItem }) => {
     size="80%"
     :z-index="9">
     <ul>
-      <Item v-for="item in menuStore.menu" :key="item.path" :item="item" />
+      <template v-for="item in menuStore.menu" :key="item.path">
+        <Item :item="item" />
+      </template>
     </ul>
   </Drawer>
 </template>

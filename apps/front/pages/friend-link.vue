@@ -55,7 +55,7 @@ await getData();
 <template>
   <ArticleAsPage as="friend-link" @data="articleAs = $event">
     <template #banner-content>
-      <h1 class="page-title">{{ articleAs.title }}</h1>
+      <h1 class="page-title">{{ articleAs?.title }}</h1>
       <h2 class="page-desc">
         ~~ 与 <strong>{{ linkList.length }}</strong> 位博主同行 ~~
       </h2>

@@ -68,8 +68,8 @@ const getNickname = (tree: CommentTreeType) => {
   return tree.user.nickname;
 };
 
-const getUserTag = (user?: UserEntity) => {
-  if (props.independent) return undefined;
+const getUserTag = (user?: UserEntity): never | JSX.Element => {
+  if (props.independent) return undefined as never;
   if (!user)
     return (
       <el-tag size="small" type="info" disable-transitions>
@@ -88,7 +88,8 @@ const getUserTag = (user?: UserEntity) => {
         作者
       </el-tag>
     );
-  return undefined;
+
+  return undefined as never;
 };
 
 defineExpose({ getNickname });
