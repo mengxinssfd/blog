@@ -45,6 +45,11 @@ const useUserStore = defineStore('user', () => {
     return user.value;
   }
 
+  function clear() {
+    Token.clear();
+    user.value = {} as UserEntity;
+  }
+
   return {
     user,
     useUser,
@@ -53,9 +58,9 @@ const useUserStore = defineStore('user', () => {
     isSuperAdmin,
     isRoleOfGreaterThanOrEqualDev,
     isLogin,
+    clear,
     logout() {
-      Token.clear();
-      user.value = {} as UserEntity;
+      clear();
     },
   };
 });

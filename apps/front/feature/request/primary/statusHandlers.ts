@@ -2,6 +2,7 @@ import { HttpStatus, StatusHandler, StatusHandlers } from 'request-template';
 import { ElNotification } from 'element-plus';
 import { Token } from './token';
 import { PrimaryCustomConfig } from '@blog/apis';
+import useUserStore from '~/store/user.store';
 
 // 通用错误Handler
 const errorHandler: StatusHandler<PrimaryCustomConfig> = ({ customConfig }, res, data) => {
@@ -26,6 +27,7 @@ export const statusHandlers: StatusHandlers<PrimaryCustomConfig> = {
     // sessionStorage.removeItem('user');
     // Store.commit('clearUser');
     Token.clear();
+    useUserStore().clear();
     return errorHandler(ctx, res, data);
   },
   207: (_, _2, data) => {
