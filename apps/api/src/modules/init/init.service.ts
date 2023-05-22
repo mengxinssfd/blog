@@ -1,6 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InitUserService } from '@/modules/init/init-user.service';
 import { InitArticleService } from '@/modules/init/init-article.service';
+import { ENV } from '@/utils/utils';
 
 @Injectable()
 export class InitService implements OnApplicationBootstrap {
@@ -11,6 +12,7 @@ export class InitService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     await this.initUserService.registerRoot();
+    if (ENV.isTest()) return;
     await this.initArticleService.initArticleAs();
   }
 }
