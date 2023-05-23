@@ -51,20 +51,4 @@ const onData = (data: ArticleEntity) => {
   <SaysCreator v-model="dialogVisible" @created="refresh" />
 </template>
 
-<style lang="scss" scoped>
-.says-list {
-  text-align: center;
-  .c-says-card {
-    display: inline-block;
-    min-width: 65vw;
-    text-align: center;
-    width: auto;
-  }
-  @media (max-width: 750px) {
-    .c-says-card {
-      display: block;
-      text-align: left;
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>
