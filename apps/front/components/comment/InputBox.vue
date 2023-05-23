@@ -48,7 +48,7 @@ import { onMounted } from '#imports';
 
 const props = defineProps({
   articleId: {
-    type: Number,
+    type: Number as Vue.PropType<number | null | undefined>,
     default: undefined,
   },
   api: {

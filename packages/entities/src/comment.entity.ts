@@ -55,7 +55,7 @@ export class CommentEntity extends BlogBaseEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
-  user?: UserEntity;
+  user!: UserEntity | null;
   @Column('int', { nullable: true, comment: '评论人id' })
   userId?: number | null;
   // ---------------- 注册用户 ----------------

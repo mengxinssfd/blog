@@ -24,7 +24,7 @@ export class CreateCommentDto extends PartialType(CommentEntity) {
   @ApiProperty({ description: '文章id', example: '' })
   @IsOptional()
   @IsNumber({}, { message: 'articleId必须是number' })
-  override articleId?: number;
+  override articleId?: number | null;
 
   // ---------------- 二级评论 ----------------
   @ApiProperty({ description: '被回复的评论的id', example: '', required: false })

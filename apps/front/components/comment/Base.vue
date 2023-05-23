@@ -68,7 +68,7 @@ const getNickname = (tree: CommentTreeType) => {
   return tree.user.nickname;
 };
 
-const getUserTag = (user?: UserEntity): never | JSX.Element => {
+const getUserTag = (user?: UserEntity | null): never | JSX.Element => {
   if (props.independent) return undefined as never;
   if (!user)
     return (
