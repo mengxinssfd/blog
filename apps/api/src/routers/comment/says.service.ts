@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PageDto } from '@blog/dtos/page.dto';
 import { CommentEntity } from '@blog/entities';
 import { PageVo } from '@blog/dtos/page.vo';
 import { CommentService } from '@/routers/comment/comment.service';
@@ -15,7 +14,7 @@ type AliasProp = `${EntityAlias.comment}.${keyof CommentEntity}`;
 export class SaysService {
   constructor(private readonly commentService: CommentService) {}
 
-  async findAll(dto: PageDto): Promise<PageVo<CommentEntity>> {
+  async findAll(): Promise<PageVo<CommentEntity>> {
     const alias = EntityAlias.comment;
     const getComment = this.commentService.createFindAllBuilder('', 1);
 
@@ -31,8 +30,8 @@ export class SaysService {
     const getCount = getComment.clone();
     getComment
       .orderBy(`${alias}.createAt` satisfies AliasProp, 'DESC')
-      .limit(dto.pageSize)
-      .offset((dto.page - 1) * dto.pageSize)
+      // .limit(dto.pageSize)
+      // .offset((dto.page - 1) * dto.pageSize)
       .addSelect(['comment.touristEmail', 'comment.ip'] satisfies AliasProp[]);
 
     const count = await getCount.getCount();

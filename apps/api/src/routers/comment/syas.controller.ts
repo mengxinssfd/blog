@@ -1,9 +1,8 @@
-import { Body, Controller, Get, Post, Query, UseGuards, Headers } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Headers } from '@nestjs/common';
 import { CreateCommentDto } from '@blog/dtos';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Device, ReqIp, User } from '@/utils/decorator';
 import { CommentEntity } from '@blog/entities';
-import { PageDto } from '@blog/dtos/page.dto';
 import { Action } from '@blog/permission-rules';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
@@ -47,7 +46,7 @@ export class SaysController {
   }
 
   @Get()
-  findAll(@Query() dto: PageDto) {
-    return this.saysService.findAll(dto);
+  findAll() {
+    return this.saysService.findAll();
   }
 }
