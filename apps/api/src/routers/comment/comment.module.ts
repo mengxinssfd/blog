@@ -13,6 +13,8 @@ import { ArticleService } from '../article/article.service';
 import { UserService } from '../user/user.service';
 import { MailModule } from '@/modules/mail/mail.module';
 import { Ip2RegionModule } from '@/modules/ip2region/ip2region.module';
+import { SaysController } from '@/routers/comment/syas.controller';
+import { SaysService } from '@/routers/comment/says.service';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { Ip2RegionModule } from '@/modules/ip2region/ip2region.module';
       UserEntity,
     ]),
   ],
-  controllers: [CommentController],
-  providers: [CommentService, ArticleService, UserService],
+  controllers: [CommentController, SaysController],
+  providers: [CommentService, SaysService, ArticleService, UserService],
 })
 export class CommentModule {}

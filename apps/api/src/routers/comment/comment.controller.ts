@@ -60,6 +60,7 @@ export class CommentController {
       .unless(user || new UserEntity())
       .can(Action.Create);
 
+    comment.scope = dto.scope || null;
     comment.region = this.ip2RegionService.searchRawRegion(ip);
     comment.os = device.os;
     comment.browser = device.browser;
@@ -123,12 +124,9 @@ export class CommentController {
 
   private _validCreate(dto: CreateCommentDto, user: UserEntity | null, ip: string) {
     return this.casl.find(async () => {
-      const article = await this.articleService.findOne(dto.articleId, ['article.as']);
-
       const comment = new CommentEntity();
-      comment.article = article;
-      comment.articleId = article.id;
       comment.ip = ip;
+
       if (user?.id) {
         comment.user = user;
         comment.userId = user.id;
@@ -136,11 +134,20 @@ export class CommentController {
         const count = await this.commentService.count({
           ip,
           userId: IsNull(),
-          articleId: dto.articleId,
+          articleId: dto.articleId || IsNull(),
+          scope: dto.scope || IsNull(),
         });
         if (count >= 5) throw new ForbiddenException('在该文章内评论次数过多,请注册登录后再评论');
         comment.touristName = dto.touristName as string;
         dto.touristEmail && (comment.touristEmail = dto.touristEmail);
+      }
+
+      if (dto.articleId) {
+        const article = await this.articleService.findOne(dto.articleId, ['article.as']);
+        comment.article = article;
+        comment.articleId = article.id;
+      } else {
+        comment.articleId = null;
       }
 
       return comment;

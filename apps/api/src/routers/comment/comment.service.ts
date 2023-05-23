@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PageDto } from '@blog/dtos/page.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import {
   ArticleEntity,
   CommentDislikeEntity,
@@ -55,7 +55,8 @@ export class CommentService {
     comment.content = dto.content;
     dto.parentId && (comment.parentId = dto.parentId);
     dto.replyId && (comment.replyId = dto.replyId);
-    comment.article = Object.assign(new ArticleEntity(), { id: comment.articleId });
+    comment.articleId &&
+      (comment.article = Object.assign(new ArticleEntity(), { id: comment.articleId }));
     if (comment.user) {
       comment.user = Object.assign(new UserEntity(), { id: comment.userId });
     }
@@ -88,6 +89,7 @@ export class CommentService {
       .orderBy(`${alias}.createAt`, 'DESC')
       .limit(limit)
       .leftJoin('comment.article', 'article')
+      .andWhere({ scope: IsNull() })
       .addSelect(['article.id', 'article.as'] satisfies ArticleProp[]);
     const list = await getComment.getRawMany();
 
