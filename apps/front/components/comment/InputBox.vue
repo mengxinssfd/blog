@@ -48,11 +48,15 @@ import { onMounted } from '#imports';
 
 const props = defineProps({
   articleId: {
-    required: true,
     type: Number,
+    default: undefined,
+  },
+  api: {
+    type: Function as Vue.PropType<typeof createCommentApi>,
+    default: createCommentApi,
   },
   options: {
-    type: Object as Vue.PropType<Pick<CreateCommentDto, 'replyId' | 'parentId'>>,
+    type: Object as Vue.PropType<Pick<CreateCommentDto, 'replyId' | 'parentId' | 'scope'>>,
     default: null,
   },
   placeholder: {
@@ -88,12 +92,14 @@ watch(form, (n) => {
 });
 
 const createComment = async () => {
-  await createCommentApi({
+  const dto: CreateCommentDto = {
     ...props.options,
     ...form,
     articleId: props.articleId,
     userId: user.value.id,
-  });
+  };
+
+  await props.api(dto);
   clearCommentInput();
   await nextTick();
   emits('created');

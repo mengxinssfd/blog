@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import * as Vue from 'vue';
-import { forEachRight, sleep } from '@tool-pack/basic';
+import { sleep } from '@tool-pack/basic';
 import { getCommentByArticle as getCommentByArticleApi } from '@blog/apis';
 import { type ArticleEntity } from '@blog/entities';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useRequest } from '@request-template/vue3-hooks';
-import { getRegionLocation } from '@blog/shared';
-import type { CommentTreeType } from './tree.d';
-import { filterBrowser, filterOs } from '~/feature/utils';
+import { CommentTreeType, handleCommentTree } from '~/feature/utils';
 
 const route = useRoute();
 const props = defineProps({
@@ -24,44 +22,7 @@ const { data, loading, request } = useRequest(() => getCommentByArticleApi(props
 const list = computed<CommentTreeType[]>(() => {
   const _list = data.value?.list as CommentTreeType[];
   if (!_list || !_list.length) return [];
-
-  // 组装成二级树结构
-  const finalList: CommentTreeType[] = [];
-  const idMap: Record<string, CommentTreeType> = {};
-  const children = _list.filter((item) => {
-    idMap[item.id] = item;
-
-    item.region = getRegionLocation(item.region);
-    item.os = filterOs(item.os);
-    item.browser = filterBrowser(item.browser);
-
-    item.children = [];
-    if (!item.parentId) {
-      finalList.push(item);
-      return false;
-    }
-    return true;
-  });
-
-  const orphans: any[] = [];
-  forEachRight(children, (child: CommentTreeType) => {
-    const parent = idMap[child.parentId || ''] || idMap[child.replyId || ''];
-    if (!parent) {
-      child.isOrphan = true;
-      orphans.push(child);
-      return;
-    }
-    if (!parent.children) parent.children = [];
-    parent.children.push(child);
-    child.parent = parent;
-    if (child.replyId && child.parentId !== child.replyId) {
-      child.reply = idMap[child.replyId];
-    }
-  });
-
-  finalList.push(...orphans.reverse());
-
-  return finalList;
+  return handleCommentTree(_list);
 });
 
 const scrollToAnchor = async () => {

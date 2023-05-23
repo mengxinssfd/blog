@@ -1,6 +1,6 @@
 <template>
   <div :id="anchor" class="c-comment" :class="{ active: isActive, independent }">
-    <div class="comm-left">
+    <div v-if="!isSays" class="comm-left">
       <router-link v-if="item.user" class="user-link" :to="`/user/info/${item.user.id}`">
         <el-avatar :size="32" :src="item.user?.avatar || defaultAvatar"></el-avatar>
       </router-link>
@@ -10,7 +10,7 @@
       <div class="comm-info">
         <!--    顶部信息    -->
         <div class="top">
-          <span class="nickname">{{ getNickname(item) }}</span>
+          <span v-if="!isSays" class="nickname">{{ getNickname(item) }}</span>
           <ClientOnly><component :is="getUserTag(item.user)" /></ClientOnly>
           <template v-if="item.reply">
             <span class="reply-text">回复</span>
@@ -43,8 +43,7 @@
 <script setup lang="tsx">
 import * as Vue from 'vue';
 import { type UserEntity } from '@blog/entities';
-import type { CommentTreeType } from './tree.d';
-import { howLongAgo } from '~/feature/utils';
+import { type CommentTreeType, howLongAgo } from '~/feature/utils';
 
 const route = useRoute();
 const props = defineProps({
@@ -56,6 +55,7 @@ const props = defineProps({
   authorId: { type: [Number, String], default: '' },
   // 独立使用
   independent: { type: Boolean, default: false },
+  isSays: { type: Boolean, default: false },
 });
 const emits = defineEmits(['clickContent']);
 

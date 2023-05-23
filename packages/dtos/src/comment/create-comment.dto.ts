@@ -10,30 +10,32 @@ import {
 } from 'class-validator';
 import { WordValidate } from '../word.validate';
 import { IsOptional } from '../utils';
+import { PartialType } from '@nestjs/mapped-types';
+import { CommentEntity } from '@blog/entities';
 
-export class CreateCommentDto {
+export class CreateCommentDto extends PartialType(CommentEntity) {
   @ApiProperty({ description: '评论内容', example: '' })
   @IsNotEmpty({ message: '评论内容不能为空' })
   @MaxLength(800, { message: '评论内容不能超过800' })
   @IsString({ message: '内容必须是字符串' })
   @Validate(WordValidate)
-  content!: string;
+  override content!: string;
 
   @ApiProperty({ description: '文章id', example: '' })
-  @IsNotEmpty({ message: '文章id不能为空' })
+  @IsOptional()
   @IsNumber({}, { message: 'articleId必须是number' })
-  articleId!: number;
+  override articleId?: number;
 
   // ---------------- 二级评论 ----------------
   @ApiProperty({ description: '被回复的评论的id', example: '', required: false })
   @IsOptional()
   @IsNumber({}, { message: 'parentId必须是数字' })
-  parentId?: number;
+  override parentId?: number;
 
   @ApiProperty({ description: '回复id', example: '', required: false })
   @IsOptional()
   @IsNumber({}, { message: 'replyId必须是数字' })
-  replyId?: number;
+  override replyId?: number;
   // ---------------- 二级评论 ----------------
 
   // ---------------- 注册用户 ----------------
@@ -41,7 +43,7 @@ export class CreateCommentDto {
   @ApiProperty({ description: '评论人id', example: '', required: false })
   @IsOptional()
   @IsNumber({}, { message: 'userId必须是数字' })
-  userId?: number;
+  override userId?: number;
   // ---------------- 注册用户 ----------------
 
   // ---------------- 游客 ----------------
@@ -56,10 +58,16 @@ export class CreateCommentDto {
   @IsNotEmpty({ message: '游客名不能为空' })
   @MaxLength(24, { message: '游客名长度不能超过24' })
   @Validate(WordValidate)
-  touristName?: string;
+  override touristName?: string;
 
   @ApiProperty({ description: '游客邮箱', example: '', required: false })
   @IsOptional()
   @IsEmail({}, { message: '邮箱格式不正确' })
-  touristEmail?: string;
+  override touristEmail?: string;
+
+  @ApiProperty({ description: 'scope', example: '', required: false })
+  @IsOptional()
+  @IsString({ message: 'scope必须时字符串' })
+  @MaxLength(255, { message: 'scope最大长度为255' })
+  override scope?: string;
 }

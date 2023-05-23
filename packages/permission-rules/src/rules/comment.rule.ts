@@ -42,12 +42,14 @@ export const createCommentRule: RuleCreator = (user, { can, cannot }) => {
     }).because('该文章禁止评论');
 
     cannot<FlatCE>([Action.Update, Action.Create], CommentEntity, {
+      articleId: { $ne: null },
       'article.status': ArticleEntity.STATE.private,
       'article.as': null,
     }).because('文章不存在');
 
     cannot<FlatCE>([Action.Update, Action.Create], CommentEntity, {
       'article.deletedAt': { $ne: null },
+      articleId: { $ne: null },
     }).because('不可添加或修改已删除文章的评论');
   }
 };

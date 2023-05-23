@@ -51,10 +51,9 @@
     <!--   回复输入框   -->
     <div v-if="reply" class="reply-input-box" @click.stop>
       <CommentInputBox
-        v-if="item.articleId"
         :placeholder="'回复 ' + getNickname(item)"
         :article-id="item.articleId"
-        :options="{ replyId: item.id, parentId: item.parent?.id ?? item.id }"
+        :options="{ replyId: item.id, parentId: item.parent?.id ?? item.id, scope }"
         @created="onCommentCreated"></CommentInputBox>
     </div>
     <!-- 子评论  -->
@@ -64,6 +63,7 @@
         :key="it.id"
         :item="it"
         :author-id="authorId"
+        :scope="scope"
         @update="$emit('update')"></CommentTree>
     </div>
   </CommentBase>
@@ -75,9 +75,9 @@ import { onceEvent } from '@tool-pack/dom';
 import { deleteCommentOne, setCommentDislike, setCommentLike } from '@blog/apis';
 import { ROLE } from '@blog/entities';
 import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons-vue';
-import type { CommentTreeType } from './tree.d';
 import type BaseComment from './Base.vue';
 import useUserStore from '~/store/user.store';
+import { type CommentTreeType } from '~/feature/utils';
 
 const props = defineProps({
   item: {
@@ -96,6 +96,7 @@ const props = defineProps({
       };
     },
   },
+  scope: { type: String, default: '' },
   authorId: { type: [Number, String], default: '' },
 });
 const emits = defineEmits(['update', 'likeUpdated']);

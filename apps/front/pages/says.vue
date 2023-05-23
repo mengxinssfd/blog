@@ -1,47 +1,54 @@
 <script setup lang="ts">
 import { type ArticleEntity } from '@blog/entities';
-import { useRequest } from '@request-template/vue3-hooks';
-import { getCommentByArticle } from '@blog/apis';
+import { getSaysList } from '@blog/apis';
 import useUserStore from '~/store/user.store';
+import { handleCommentTree } from '~/feature/utils';
 
-const route = useRoute();
 const userStore = useUserStore();
 const article = ref<ArticleEntity>({} as ArticleEntity);
 const dialogVisible = ref(false);
 
-const { data, request } = useRequest(() => getCommentByArticle(article.value.id), {
-  loading: { threshold: 500, immediate: true },
-});
+const { data, refresh } = useAsyncData(() => getSaysList());
 
-const says = computed(() => data.value?.list || []);
+await refresh();
+
+const says = computed(() => {
+  const list = data.value?.data.list || [];
+  if (!list.length) return [];
+  return handleCommentTree(list);
+});
 
 const onData = (data: ArticleEntity) => {
   article.value = data;
-  request().then(() => {
-    route.hash &&
-      document.querySelector(route.hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
 };
 </script>
 
 <template>
   <ArticleAsPage
-    layout="fixed-banner"
+    :layout="userStore.isSuperAdmin ? 'page' : 'fixed-banner'"
     as="says"
-    banner-height="100vh"
-    :comment-block-visible="userStore.isSuperAdmin"
+    :banner-height="userStore.isSuperAdmin ? '55vh' : '100vh'"
+    :comment-block-visible="false"
     @data="onData">
-    <template #banner-content><span></span></template>
+    <template #banner-content><span v-if="!userStore.isSuperAdmin"></span></template>
+    <template #aside>
+      <Widget title="添加">
+        <div class="widget-content">
+          <div class="widget-create-btn" @click="dialogVisible = true"></div>
+        </div>
+      </Widget>
+    </template>
     <section class="says-list-area">
-      <ul class="says-list">
-        <li v-for="say in says" :key="say.id">
-          <SaysCard :item="say" />
-        </li>
-      </ul>
+      <SaysCard
+        v-for="item in says"
+        :key="item.id"
+        :item="item"
+        :author-id="article.author.id"
+        @update="refresh" />
       <el-empty v-if="!says.length" description="暂无数据" />
     </section>
   </ArticleAsPage>
-  <ProjectFormDialog v-model:show="dialogVisible" />
+  <SaysCreator v-model="dialogVisible" @created="refresh" />
 </template>
 
 <style lang="scss" scoped>

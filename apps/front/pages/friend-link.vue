@@ -62,10 +62,7 @@ await getData();
     </template>
     <template #aside>
       <Widget class="pre-bg-long-top-right" title="添加">
-        <div class="add-link" @click="showLinkApplyDialog">
-          <div class="_ pos-trans-c-c"></div>
-          <div class="_ pos-trans-c-c col"></div>
-        </div>
+        <div class="widget-create-btn" @click="showLinkApplyDialog"></div>
       </Widget>
       <Widget>
         <template #title>
@@ -183,26 +180,6 @@ await getData();
 }
 .title {
   font-size: 36px;
-}
-.add-link {
-  position: relative;
-  border-radius: 10px;
-  cursor: pointer;
-  min-height: 60px;
-  &:hover {
-    > div {
-      background-color: var(--theme-color);
-    }
-  }
-  > div {
-    width: 30px;
-    height: 3px;
-    background-color: #dcdcdc;
-    transition: background-color 0.25ms;
-  }
-  .col {
-    transform: translate(-50%, -50%) rotate(90deg);
-  }
 }
 .link-list {
   display: grid;

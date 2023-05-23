@@ -1,7 +1,7 @@
 import type { Tuple } from '@tool-pack/types';
 
 export function getRegionLocation(addr: string | null): string {
-  if (!addr || addr === '0|0|0|内网IP|内网IP') return '--';
+  if (!addr || ['0|0|0|内网IP|内网IP', '--'].includes(addr)) return '--';
 
   // 中国|0|广东省|广州市|移动
   const [
@@ -20,5 +20,6 @@ export function getRegionLocation(addr: string | null): string {
     ...new Set([province, city].filter((i) => i !== '0').map((i) => i.replace(/[省市]/, ''))),
   ].join('-');
   if (pc) return pc;
+
   return country;
 }

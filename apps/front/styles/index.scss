@@ -249,3 +249,31 @@ input:-webkit-autofill {
   color: var(--frosted-glass-text-color);
   backdrop-filter: blur(10px);
 }
+
+.widget-create-btn {
+  position: relative;
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: 60px;
+  &:hover {
+    &:before,
+    &:after {
+      background-color: var(--theme-color);
+    }
+  }
+  &:before,
+  &:after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 3px;
+    background-color: #dcdcdc;
+    transition: background-color 0.25ms;
+    content: '';
+  }
+  &:after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+}
