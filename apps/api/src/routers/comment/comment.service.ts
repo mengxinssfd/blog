@@ -77,7 +77,7 @@ export class CommentService {
     const count = await getCount.getCount();
     let list: CommentEntity[] = [];
 
-    if (count) list = this.handlerFindAllResult(await getComment.getRawAndEntities(), false).list;
+    if (count) list = this.handlerFindAllResult(await getComment.getRawMany(), false).list;
 
     return { list, count };
   }
@@ -89,7 +89,7 @@ export class CommentService {
       .limit(limit)
       .leftJoin('comment.article', 'article')
       .addSelect(['article.id', 'article.as'] satisfies ArticleProp[]);
-    const list = await getComment.getRawAndEntities();
+    const list = await getComment.getRawMany();
 
     return this.handlerFindAllResult(list).list;
   }
@@ -135,22 +135,16 @@ export class CommentService {
     );
   }
 
-  handlerFindAllResult(list: { entities: CommentEntity[]; raw: any[] }, removeIp = true) {
-    list.entities.forEach((item: Partial<CommentEntity>, index) => {
-      const rawItem = list.raw[index];
-      if (removeIp) delete item.ip;
-      item.like = {
-        checked: Number(rawItem.like_checked),
-        count: Number(rawItem.like_count),
-      };
-      item.dislike = {
-        checked: Number(rawItem.dislike_checked),
-        count: Number(rawItem.dislike_count),
-      };
+  handlerFindAllResult(list: unknown[], removeIp = true) {
+    const arr = rawsToEntities<CommentEntity>({
+      omitArr: removeIp ? ['ip'] : [],
+      entityName: 'comment',
+      valueToNumArr: ['dislike_checked', 'dislike_count', 'like_checked', 'like_count'],
+      rawList: list,
     });
     return {
-      list: list.entities,
-      count: list.entities.length,
+      list: arr,
+      count: arr.length,
     } satisfies PageVo<CommentEntity>;
   }
 
@@ -165,7 +159,7 @@ export class CommentService {
       .where({ articleId })
       .orderBy(`${alias}.id`, 'DESC');
 
-    const list = await getComment.getRawAndEntities();
+    const list = await getComment.getRawMany();
     return this.handlerFindAllResult(list);
   }
 
