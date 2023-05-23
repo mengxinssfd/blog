@@ -208,6 +208,7 @@ importers:
       '@element-plus/icons-vue': ^2.1.0
       '@mxssfd/img-zoom': ^1.2.6
       '@pinia/nuxt': ^0.4.11
+      '@popperjs/core': npm:@sxzz/popperjs-es@^2.11.6
       '@request-template/axios': ^2.2.3
       '@request-template/vue3-hooks': ^2.2.3
       '@toast-ui/editor': ^3.2.2
@@ -246,6 +247,7 @@ importers:
       '@element-plus/icons-vue': 2.1.0_vue@3.3.4
       '@mxssfd/img-zoom': 1.2.6
       '@pinia/nuxt': 0.4.11_vue@3.3.4
+      '@popperjs/core': /@sxzz/popperjs-es/2.11.7
       '@request-template/axios': 2.2.3_5chpsopjfodkst5gy26bx5morm
       '@request-template/vue3-hooks': 2.2.3_vue@3.3.4
       '@toast-ui/editor': 3.2.2
