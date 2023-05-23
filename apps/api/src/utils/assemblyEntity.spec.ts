@@ -1,7 +1,7 @@
 import { rawToEntity, rawsToEntities, CommonParams } from './assemblyEntity';
 
 type Raws = Array<{
-  params: CommonParams & { raw: any };
+  params: CommonParams<any> & { raw: any };
   entity: any;
 }>;
 
@@ -9,6 +9,9 @@ const users: Raws = [
   {
     params: {
       entityName: 'user',
+      onAfterEach: (obj) => {
+        return obj.id === null ? null : obj;
+      },
       raw: { user_name: 'test', user_age: 18 },
     },
     entity: { name: 'test', age: 18 },
@@ -19,6 +22,16 @@ const users: Raws = [
       raw: { user_name: 'test', user_age: 18, user_id: 1 },
     },
     entity: { name: 'test', age: 18, id: 1 },
+  },
+  {
+    params: {
+      entityName: 'user',
+      onAfterEach: (obj) => {
+        return obj.id === null ? null : obj;
+      },
+      raw: { user_name: null, user_age: null, user_id: null },
+    },
+    entity: null,
   },
 ];
 const user_articles: Raws = [
@@ -158,7 +171,7 @@ describe('assemblyEntity', () => {
 
   it('rawsToEntities base', () => {
     const rawList = users.map((i) => i.params.raw);
-    const entityList = users.map((i) => i.entity);
+    const entityList = users.map((i) => i.entity).filter(Boolean);
     const params = { ...users[0]!.params };
     delete params.raw;
     const entities = rawsToEntities({ rawList, ...params });
