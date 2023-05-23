@@ -11,7 +11,7 @@ const onCreated = () => {
 </script>
 
 <template>
-  <el-dialog v-model="model">
+  <el-dialog v-model="model" append-to-body>
     <CommentInputBox :api="createSays" :options="{ scope: 'says' }" @created="onCreated" />
   </el-dialog>
 </template>
