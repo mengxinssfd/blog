@@ -3,6 +3,7 @@ import { TupleM2N } from '@tool-pack/types';
 
 export const howLongAgo = (date: string | Date, format?: string) => {
   const _date = typeof date === 'string' ? new Date(date) : date;
+  const now = new Date();
   return HowLongAgo(_date, {
     defaultFormat: format,
     def: '--',
@@ -18,7 +19,10 @@ export const howLongAgo = (date: string | Date, format?: string) => {
       if (res.endsWith('天前')) {
         const match = { '1天前': '昨天', '2天前': '前天' }[res];
         if (match) return match + formatDate(_date, ' hh:mm');
-        return formatDate(_date);
+        return formatDate(
+          _date,
+          now.getFullYear() === _date.getFullYear() ? 'MM-dd hh:mm:ss' : undefined,
+        );
       }
       return res;
     },
