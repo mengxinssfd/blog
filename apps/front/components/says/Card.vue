@@ -1,11 +1,5 @@
 <template>
-  <CommentBase
-    ref="baseRef"
-    class="board says-comment"
-    :item="item"
-    :author-id="authorId"
-    independent
-    is-says>
+  <CommentBase ref="baseRef" class="board says-comment" :item="item" :author-id="authorId" is-says>
     <template #operate>
       <div class="device-info _ flex-c">
         <!-- 位置 -->

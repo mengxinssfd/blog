@@ -69,7 +69,7 @@ const getNickname = (tree: CommentTreeType) => {
 };
 
 const getUserTag = (user?: UserEntity | null): never | JSX.Element => {
-  if (props.independent) return undefined as never;
+  if (props.independent || props.isSays) return undefined as never;
   if (!user)
     return (
       <el-tag size="small" type="info" disable-transitions>
