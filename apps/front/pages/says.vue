@@ -24,19 +24,15 @@ const onData = (data: ArticleEntity) => {
 </script>
 
 <template>
-  <ArticleAsPage
-    :layout="userStore.isSuperAdmin ? 'page' : 'fixed-banner'"
-    as="says"
-    :banner-height="userStore.isSuperAdmin ? '55vh' : '100vh'"
-    :comment-block-visible="false"
-    @data="onData">
-    <template #banner-content><span v-if="!userStore.isSuperAdmin"></span></template>
+  <ArticleAsPage as="says" :comment-block-visible="false" @data="onData">
     <template #aside>
-      <Widget title="添加">
+      <Widget v-if="userStore.isSuperAdmin" title="添加">
         <div class="widget-content">
           <div class="widget-create-btn" @click="dialogVisible = true"></div>
         </div>
       </Widget>
+      <WidgetClock />
+      <WidgetCountdown />
     </template>
     <section class="says-list-area">
       <SaysCard
