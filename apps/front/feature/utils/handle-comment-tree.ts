@@ -12,19 +12,21 @@ export function handleCommentTree(list: CommentEntity[]): CommentTreeType[] {
   // 组装成二级树结构
   const finalList: CommentTreeType[] = [];
   const idMap: Record<string, CommentTreeType> = {};
-  const children: CommentTreeType[] = list.filter((item: CommentTreeType) => {
+
+  const children: CommentTreeType[] = [];
+
+  list.forEach((item) => {
     idMap[item.id] = item;
+    const newItem = {
+      ...item,
+      region: getRegionLocation(item.region),
+      os: filterOs(item.os),
+      browser: filterBrowser(item.browser),
+      children: [] as CommentTreeType[],
+    } as CommentTreeType;
 
-    item.region = getRegionLocation(item.region);
-    item.os = filterOs(item.os);
-    item.browser = filterBrowser(item.browser);
-
-    item.children = [] as CommentTreeType[];
-    if (!item.parentId) {
-      finalList.push(item);
-      return false;
-    }
-    return true;
+    if (!item.parentId) finalList.push(newItem);
+    else children.push(newItem);
   });
 
   const orphans: any[] = [];
