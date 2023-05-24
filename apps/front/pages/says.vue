@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { type ArticleEntity } from '@blog/entities';
+import { type ArticleEntity, type CommentEntity } from '@blog/entities';
 import { getSaysList } from '@blog/apis';
+import { type PageVo } from '@blog/dtos/page.vo';
 import useUserStore from '~/store/user.store';
 import { handleCommentTree } from '~/feature/utils';
 
 const userStore = useUserStore();
 const article = ref<ArticleEntity>({} as ArticleEntity);
 const dialogVisible = ref(false);
+const data = ref<PageVo<CommentEntity>>();
 
-const { data, refresh } = useAsyncData(() => getSaysList());
+const getData = async () => {
+  const { data: _data } = await useAsyncData(() => getSaysList());
+  data.value = _data.value?.data;
+};
 
-await refresh();
+// await refresh();
 
 const says = computed(() => {
-  const list = data.value?.data.list || [];
+  const list = data.value?.list || [];
   if (!list.length) return [];
   return handleCommentTree(list);
 });
@@ -21,6 +26,8 @@ const says = computed(() => {
 const onData = (data: ArticleEntity) => {
   article.value = data;
 };
+
+await getData();
 </script>
 
 <template>
@@ -40,11 +47,11 @@ const onData = (data: ArticleEntity) => {
         :key="item.id"
         :item="item"
         :author-id="article.author.id"
-        @update="refresh" />
+        @update="getData" />
       <el-empty v-if="!says.length" description="暂无数据" />
     </section>
   </ArticleAsPage>
-  <SaysCreator v-model="dialogVisible" @created="refresh" />
+  <SaysCreator v-model="dialogVisible" @created="getData" />
 </template>
 
 <style lang="scss" scoped></style>
