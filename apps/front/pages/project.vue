@@ -32,5 +32,8 @@ const projectList = computed(() => _data.value?.data.list || []);
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: repeat(4, 1fr);
+  @media (max-width: 750px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 </style>
