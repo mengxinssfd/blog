@@ -37,8 +37,7 @@ export class SaysService {
     const count = await getCount.getCount();
     let list: CommentEntity[] = [];
 
-    if (count)
-      list = this.commentService.handlerFindAllResult(await getComment.getRawMany(), false).list;
+    if (count) list = this.commentService.handlerFindAllResult(await getComment.getRawMany()).list;
 
     return { list, count };
   }
