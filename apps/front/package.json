@@ -3,6 +3,7 @@
   "scripts": {
     "build": "nuxt build --dotenv .env.production",
     "build&oss": "npm run build && npm run upload:oss",
+    "build&preview": "npm run build && npm run preview",
     "dev": "nuxt dev --port 8080 --dotenv .env.local",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

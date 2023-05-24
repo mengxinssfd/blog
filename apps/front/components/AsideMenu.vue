@@ -1,5 +1,6 @@
 <script setup lang="tsx">
 import { getClassNames } from '@tool-pack/basic';
+import { ElLink, ElIcon } from 'element-plus';
 import useMenuStore, { MenuItem } from '~/store/menu.store';
 
 const menuStore = useMenuStore();
@@ -21,10 +22,10 @@ const Item = (props: { item: MenuItem }) => {
         <li
           class={getClassNames({ active: menuStore.isActive(item.path) })}
           onClick={() => menuStore.toggleSideMenuVisible()}>
-          <nuxt-link to={item.path}>
-            <el-icon size="1em">{item.icon}</el-icon>
+          <ElLink href={item.path} underline={false}>
+            <ElIcon size="1em">{item.icon}</ElIcon>
             <span>{item.title}</span>
-          </nuxt-link>
+          </ElLink>
         </li>
       )}
     </>
@@ -55,9 +56,10 @@ const Item = (props: { item: MenuItem }) => {
       > a {
         display: flex;
         align-items: center;
+        justify-content: flex-start;
         padding: 1rem;
         color: inherit;
-        > .el-icon {
+        .el-icon {
           margin-right: 6px;
         }
       }
