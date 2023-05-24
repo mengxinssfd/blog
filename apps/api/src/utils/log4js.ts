@@ -1,11 +1,10 @@
 import * as Log4js from 'log4js';
 import * as Util from 'util';
 // import * as Moment from 'moment';
-import Chalk from 'chalk';
+import * as Chalk from 'chalk';
 import config from '@/config/log4js';
 import * as StackTrace from 'stacktrace-js';
 import { formatDate } from '@tool-pack/basic';
-import { ENV } from '@/utils/utils';
 
 export enum LoggerLevel {
   ALL = 'ALL',
@@ -108,9 +107,7 @@ export class Logger {
 
   static info(...args: any[]) {
     // 没什么用，打包后全都是一个main.js
-    // const trace = Logger.getStackTrace();
-    logger.info('\n', ...args);
-    ENV.isDev() && console.log(...args);
+    logger.info(Logger.getStackTrace(), ...args);
   }
 
   static warn(...args: any[]) {
@@ -122,7 +119,6 @@ export class Logger {
   }
 
   static error(...args: any[]) {
-    (ENV.isDev() || ENV.isTest()) && console.error(args.at(-1));
     logger.error(Logger.getStackTrace(), ...args);
   }
 
