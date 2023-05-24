@@ -24,7 +24,7 @@
     "@toast-ui/editor-plugin-table-merged-cell": "^3.1.0",
     "@tool-pack/basic": "^0.0.19",
     "@tool-pack/bom": "0.0.1-beta.0",
-    "@tool-pack/dom": "0.0.1-beta.5",
+    "@tool-pack/dom": "^0.0.1",
     "@tool-pack/keymap": "^0.0.6",
     "axios": "^1.4.0",
     "dompurify": "^3.0.3",

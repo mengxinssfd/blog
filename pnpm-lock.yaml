@@ -208,7 +208,6 @@ importers:
       '@element-plus/icons-vue': ^2.1.0
       '@mxssfd/img-zoom': ^1.2.6
       '@pinia/nuxt': ^0.4.11
-      '@popperjs/core': npm:@sxzz/popperjs-es@^2.11.6
       '@request-template/axios': ^2.2.3
       '@request-template/vue3-hooks': ^2.2.3
       '@toast-ui/editor': ^3.2.2
@@ -217,7 +216,7 @@ importers:
       '@toast-ui/editor-plugin-table-merged-cell': ^3.1.0
       '@tool-pack/basic': ^0.0.19
       '@tool-pack/bom': 0.0.1-beta.0
-      '@tool-pack/dom': 0.0.1-beta.5
+      '@tool-pack/dom': ^0.0.1
       '@tool-pack/keymap': ^0.0.6
       '@tool-pack/types': ^0.0.2
       '@types/prismjs': ^1.26.0
@@ -247,7 +246,6 @@ importers:
       '@element-plus/icons-vue': 2.1.0_vue@3.3.4
       '@mxssfd/img-zoom': 1.2.6
       '@pinia/nuxt': 0.4.11_vue@3.3.4
-      '@popperjs/core': /@sxzz/popperjs-es/2.11.7
       '@request-template/axios': 2.2.3_5chpsopjfodkst5gy26bx5morm
       '@request-template/vue3-hooks': 2.2.3_vue@3.3.4
       '@toast-ui/editor': 3.2.2
@@ -256,7 +254,7 @@ importers:
       '@toast-ui/editor-plugin-table-merged-cell': 3.1.0
       '@tool-pack/basic': 0.0.19
       '@tool-pack/bom': 0.0.1-beta.0
-      '@tool-pack/dom': 0.0.1-beta.5
+      '@tool-pack/dom': 0.0.1
       '@tool-pack/keymap': 0.0.6
       axios: 1.4.0
       dompurify: 3.0.3
@@ -3277,6 +3275,16 @@ packages:
     dependencies:
       '@tool-pack/basic': 0.0.9
       '@tool-pack/dom': 0.0.1-beta.5
+    dev: false
+
+  /@tool-pack/dom/0.0.1:
+    resolution:
+      {
+        integrity: sha512-QNe3mR0VJRXEhV3ajGsrHjhsYAaIbOW4BD7TI39ua/mDMU7/GRXoiXfm0BWW6KVUBgnBx0s6F4nZWx3rugBydQ==,
+      }
+    dependencies:
+      '@tool-pack/basic': 0.0.9
+      '@tool-pack/types': 0.0.2
     dev: false
 
   /@tool-pack/dom/0.0.1-beta.5:
