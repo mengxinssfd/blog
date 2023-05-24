@@ -21,7 +21,7 @@ export class CommentTipsService {
   async sendCommentTipsToAppMaster(comment: CommentEntity): Promise<Res> {
     if (
       comment.reply?.user?.role === ROLE.superAdmin ||
-      comment.article.author.role === ROLE.superAdmin ||
+      comment.article?.author.role === ROLE.superAdmin ||
       comment.user?.role === ROLE.superAdmin
     )
       return Promise.reject();
@@ -35,7 +35,7 @@ export class CommentTipsService {
       app_url: url,
       host: host.toUpperCase(),
       content: comment.content,
-      article: comment.article.title,
+      article: comment.article?.title,
     };
 
     const admin = await this.userService.findOne({ id: 1, addSelect: ['user.email'] });
@@ -45,10 +45,10 @@ export class CommentTipsService {
   }
 
   async sendCommentTipsToAuthor(comment: CommentEntity): Promise<Res> {
-    const to = comment.article.author.email;
+    const to = comment.article?.author.email;
 
     // 作者回复自己
-    if (to === getEmail(comment)) return Promise.reject();
+    if (!to || to === getEmail(comment)) return Promise.reject();
 
     // 别人回复作者，已经在回复那接收过了
     const { parent, reply } = comment;
@@ -58,13 +58,13 @@ export class CommentTipsService {
     const url = `https://${this.configService.val('app.host')}`;
 
     const context = {
-      username: comment.article.author.nickname,
+      username: comment.article?.author.nickname,
       usernameOfComment: comment?.user?.nickname ?? comment?.touristName,
       url: url + getArticleCommentLink(comment),
       app_url: url,
       host: host.toUpperCase(),
       content: comment.content,
-      article: comment.article.title,
+      article: comment.article?.title,
     };
 
     Logger.info('准备发送评论提示邮件给作者');

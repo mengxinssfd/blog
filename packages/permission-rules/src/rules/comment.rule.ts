@@ -6,10 +6,10 @@ const Comment = [CommentEntity, CommentEntity.modelName];
 type RequiredCommentEntity = Required<CommentEntity>;
 
 type FlatCE = CommentEntity & {
-  'article.deletedAt': CommentEntity['article']['deletedAt'];
-  'article.as': CommentEntity['article']['as'];
-  'article.status': CommentEntity['article']['status'];
-  'article.commentLock': CommentEntity['article']['commentLock'];
+  'article.deletedAt': RequiredCommentEntity['article']['deletedAt'];
+  'article.as': RequiredCommentEntity['article']['as'];
+  'article.status': RequiredCommentEntity['article']['status'];
+  'article.commentLock': RequiredCommentEntity['article']['commentLock'];
   'reply.deletedAt': RequiredCommentEntity['reply']['deletedAt'];
 };
 

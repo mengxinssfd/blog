@@ -18,7 +18,7 @@ export class CommentEntity extends BlogBaseEntity {
 
   @ManyToOne(() => ArticleEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'articleId' })
-  article!: ArticleEntity;
+  article?: ArticleEntity;
   @Column('int', { comment: '文章id', nullable: true })
   articleId!: number | null;
 
