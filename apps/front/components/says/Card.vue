@@ -1,46 +1,43 @@
 <template>
   <CommentBase ref="baseRef" class="board says-comment" :item="item" :author-id="authorId" is-says>
     <template #operate>
-      <div class="device-info _ flex-c">
-        <!-- 位置 -->
-        <div v-if="item.region && item.region !== '--'" class="location _ flex-c">
-          <el-icon><LocationInformation /></el-icon>
-          <span>{{ item.region }}</span>
+      <div class="bottom _ flex-c">
+        <!-- 操作 -->
+        <div class="operate _ flex-c">
+          <div v-if="reply" class="btn reply cancel">
+            <i class="iconfont icon-huifu"></i><span>取消回复</span>
+          </div>
+          <div v-else class="btn reply" @click="showReply">
+            <i class="iconfont icon-huifu"></i><span>{{ item.children?.length || '回复' }}</span>
+          </div>
+          <client-only>
+            <el-popconfirm
+              v-if="(user.id && user.id === item.user?.id) || user.role === ROLE.superAdmin"
+              confirm-button-text="好的"
+              cancel-button-text="不用了"
+              title="确定删除？"
+              @confirm="deleteComment">
+              <template #reference>
+                <div class="btn del"><i class="iconfont icon-delete"></i><span>删除</span></div>
+              </template>
+            </el-popconfirm>
+          </client-only>
         </div>
-        <div v-if="item.os" class="location _ flex-c">
-          <el-icon><Platform /></el-icon>
-          <span>{{ item.os }}</span>
+        <div class="device-info _ flex-c">
+          <!-- 位置 -->
+          <div v-if="item.region && item.region !== '--'" class="location _ flex-c">
+            <el-icon><LocationInformation /></el-icon>
+            <span>{{ item.region }}</span>
+          </div>
+          <div v-if="item.os" class="location _ flex-c">
+            <el-icon><Platform /></el-icon>
+            <span>{{ item.os }}</span>
+          </div>
+          <div v-if="item.browser" class="location _ flex-c">
+            <el-icon><ChromeFilled /></el-icon>
+            <span>{{ item.browser }}</span>
+          </div>
         </div>
-        <div v-if="item.browser" class="location _ flex-c">
-          <el-icon><ChromeFilled /></el-icon>
-          <span>{{ item.browser }}</span>
-        </div>
-      </div>
-      <!-- 操作 -->
-      <div class="operate _ flex-c">
-        <!-- 赞 -->
-        <div class="btn like" @click="setLike">
-          <i class="iconfont" :class="item.like.checked ? 'icon-like2' : 'icon-like1'"></i
-          ><span>{{ item.like.count }}</span>
-        </div>
-        <div v-if="reply" class="btn reply cancel">
-          <i class="iconfont icon-huifu"></i><span>取消回复</span>
-        </div>
-        <div v-else class="btn reply" @click="showReply">
-          <i class="iconfont icon-huifu"></i><span>{{ item.children?.length || '回复' }}</span>
-        </div>
-        <client-only>
-          <el-popconfirm
-            v-if="(user.id && user.id === item.user?.id) || user.role === ROLE.superAdmin"
-            confirm-button-text="好的"
-            cancel-button-text="不用了"
-            title="确定删除？"
-            @confirm="deleteComment">
-            <template #reference>
-              <div class="btn del"><i class="iconfont icon-delete"></i><span>删除</span></div>
-            </template>
-          </el-popconfirm>
-        </client-only>
       </div>
     </template>
     <!--   回复输入框   -->
@@ -67,7 +64,7 @@
 <script setup lang="ts">
 import * as Vue from 'vue';
 import { onceEvent } from '@tool-pack/dom';
-import { deleteCommentOne, setCommentLike } from '@blog/apis';
+import { deleteCommentOne } from '@blog/apis';
 import { ROLE } from '@blog/entities';
 import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons-vue';
 import type BaseComment from './Base.vue';
@@ -102,9 +99,12 @@ const baseRef = ref<typeof BaseComment>();
 const getNickname = (tree: CommentTreeType) => {
   return baseRef.value?.getNickname(tree);
 };
+
+let cancelEvent: Function | undefined;
+
 const showReply = () => {
   toggleReply();
-  setTimeout(() => onceEvent(window, 'click', () => (reply.value = false)), 50);
+  setTimeout(() => (cancelEvent = onceEvent(window, 'click', () => (reply.value = false))), 50);
 };
 const deleteComment = async () => {
   await deleteCommentOne(props.item.id);
@@ -113,16 +113,15 @@ const deleteComment = async () => {
 const onCommentCreated = () => {
   toggleReply();
   emits('update');
-};
-const setLike = async () => {
-  const { data } = await setCommentLike(props.item.id);
-  toRefs(props).item.value.like = data;
-  // ctx.emit('likeUpdated',{,})
+  cancelEvent?.();
 };
 </script>
 <style lang="scss" scoped>
 .c-comment.says-comment {
   padding: 1rem;
+  .bottom {
+    justify-content: space-between;
+  }
   .operate {
     font-size: 12px;
     color: var(--sec-text-color);
@@ -135,8 +134,6 @@ const setLike = async () => {
     }
   }
   .device-info {
-    justify-content: flex-end;
-    margin: 1rem 0;
     font-size: 12px;
     //font-family: system-ui;
     color: var(--sec-text-color);
@@ -145,9 +142,6 @@ const setLike = async () => {
     }
     > div {
       margin-right: 1rem;
-    }
-    @media (min-width: 750px) {
-      margin-bottom: -1.1rem;
     }
   }
   --padding: 1rem;

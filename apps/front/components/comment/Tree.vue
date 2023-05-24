@@ -108,9 +108,12 @@ const baseRef = ref<typeof BaseComment>();
 const getNickname = (tree: CommentTreeType) => {
   return baseRef.value?.getNickname(tree);
 };
+
+let cancelEvent: undefined | Function;
+
 const showReply = () => {
   toggleReply();
-  setTimeout(() => onceEvent(window, 'click', () => (reply.value = false)), 50);
+  setTimeout(() => (cancelEvent = onceEvent(window, 'click', () => (reply.value = false))), 50);
 };
 const deleteComment = async () => {
   await deleteCommentOne(props.item.id);
@@ -119,6 +122,7 @@ const deleteComment = async () => {
 const onCommentCreated = () => {
   toggleReply();
   emits('update');
+  cancelEvent?.();
 };
 const setLike = async () => {
   const { data } = await setCommentLike(props.item.id);
