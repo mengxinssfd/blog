@@ -8,6 +8,7 @@ const log4jsConfig: Configuration = {
   disableClustering: false,
   // levels: undefined,
   appenders: {
+    out: { type: 'stdout', layout: { type: 'blog', separator: ',' } },
     console: {
       // type: 'console', // 会打印到控制台
       type: 'recording',
@@ -61,7 +62,7 @@ const log4jsConfig: Configuration = {
   },
   categories: {
     default: {
-      appenders: ['console', 'app', 'errors'],
+      appenders: ['console', 'app', 'errors', 'out'],
       level: 'DEBUG',
     },
     info: { appenders: ['console', 'app', 'errors'], level: 'info' },
