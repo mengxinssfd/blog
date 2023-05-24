@@ -16,7 +16,6 @@ export function handleCommentTree(list: CommentEntity[]): CommentTreeType[] {
   const children: CommentTreeType[] = [];
 
   list.forEach((item) => {
-    idMap[item.id] = item;
     const newItem = {
       ...item,
       region: getRegionLocation(item.region),
@@ -25,6 +24,7 @@ export function handleCommentTree(list: CommentEntity[]): CommentTreeType[] {
       children: [] as CommentTreeType[],
     } as CommentTreeType;
 
+    idMap[item.id] = newItem;
     if (!item.parentId) finalList.push(newItem);
     else children.push(newItem);
   });
