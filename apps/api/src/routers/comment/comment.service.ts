@@ -139,7 +139,7 @@ export class CommentService {
 
   handlerFindAllResult(list: unknown[], removeIp = true) {
     const arr = rawsToEntities<CommentEntity>({
-      omitArr: removeIp ? ['comment_ip'] : [],
+      omitArr: removeIp ? ['comment_ip', 'ip'] : [],
       entityName: 'comment',
       valueToNumArr: ['dislike_checked', 'dislike_count', 'like_checked', 'like_count'],
       rawList: list,

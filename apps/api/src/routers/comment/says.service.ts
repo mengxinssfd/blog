@@ -28,16 +28,13 @@ export class SaysService {
     });
 
     const getCount = getComment.clone();
-    getComment
-      .orderBy(`${alias}.createAt` satisfies AliasProp, 'DESC')
-      // .limit(dto.pageSize)
-      // .offset((dto.page - 1) * dto.pageSize)
-      .addSelect(['comment.touristEmail', 'comment.ip'] satisfies AliasProp[]);
+    getComment.orderBy(`${alias}.createAt` satisfies AliasProp, 'DESC');
 
     const count = await getCount.getCount();
     let list: CommentEntity[] = [];
 
     if (count) list = this.commentService.handlerFindAllResult(await getComment.getRawMany()).list;
+    // console.log('1111111', list);
 
     return { list, count };
   }
