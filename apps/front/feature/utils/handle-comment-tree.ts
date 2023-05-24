@@ -6,6 +6,7 @@ export interface CommentTreeType extends CommentEntity {
   children?: CommentTreeType[];
   parent?: CommentTreeType;
   isOrphan?: boolean;
+  replyCount: number;
 }
 
 export function handleCommentTree(list: CommentEntity[]): CommentTreeType[] {
@@ -22,6 +23,7 @@ export function handleCommentTree(list: CommentEntity[]): CommentTreeType[] {
       os: filterOs(item.os),
       browser: filterBrowser(item.browser),
       children: [] as CommentTreeType[],
+      replyCount: 0,
     } as CommentTreeType;
 
     idMap[item.id] = newItem;
@@ -37,6 +39,9 @@ export function handleCommentTree(list: CommentEntity[]): CommentTreeType[] {
       orphans.push(child);
       return;
     }
+
+    if (child.replyId && idMap[child.replyId]) idMap[child.replyId].replyCount++;
+
     if (!parent.children) parent.children = [];
     parent.children.push(child);
     child.parent = parent;

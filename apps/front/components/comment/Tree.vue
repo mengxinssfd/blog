@@ -32,7 +32,8 @@
           <i class="iconfont icon-huifu"></i><span>取消回复</span>
         </div>
         <div v-else class="btn reply" @click="showReply">
-          <i class="iconfont icon-huifu"></i><span>{{ item.children?.length || '回复' }}</span>
+          <i class="iconfont icon-huifu"></i>
+          <span>回复({{ item.children?.length || item.replyCount }})</span>
         </div>
         <client-only>
           <el-popconfirm
