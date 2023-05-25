@@ -20,6 +20,9 @@ export function setLike(articleId: number) {
 export function deleteCommentOne(id: ID) {
   return Delete(`/${id}`, undefined, { successMsg: '删除成功' });
 }
+export function hardDeleteCommentOne(id: ID) {
+  return Delete(`/delete/${id}`, undefined, { successMsg: '删除成功' });
+}
 
 export function getReplyMeList(_: unknown, data: PageDto) {
   return Get<PageVo<CommentEntity>>(`/reply`, data, { cache: true });

@@ -122,6 +122,14 @@ export class CommentController {
     return this.commentService.remove(+id);
   }
 
+  @ApiBearerAuth()
+  @JwtAuth()
+  @Delete('delete/:id')
+  async delete(@Param('id', ParseIntPipe) id: number, @User() user: UserEntity) {
+    await this._valid(id).unless(user).can(Action.Delete);
+    return this.commentService.hardDelete(+id);
+  }
+
   private _validCreate(dto: CreateCommentDto, user: UserEntity | null, ip: string) {
     return this.casl.find(async () => {
       const comment = new CommentEntity();

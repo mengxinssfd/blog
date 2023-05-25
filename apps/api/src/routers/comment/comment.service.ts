@@ -223,6 +223,11 @@ export class CommentService {
     return { affected: res.affected };
   }
 
+  async hardDelete(id: number) {
+    const res = await this.commentRepository.delete(id);
+    return { affected: res.affected };
+  }
+
   async findReplyMeAll(
     userId: number,
     { page, pageSize }: PageDto,

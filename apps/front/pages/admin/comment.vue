@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deleteCommentOne, getCommentList } from '@blog/apis';
+import { deleteCommentOne, getCommentList, hardDeleteCommentOne } from '@blog/apis';
 import type { CommentEntity } from '@blog/entities';
 import { formatDate as formatDateKit } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
@@ -25,20 +25,25 @@ async function getData() {
 
 const formatDate = (date: string) => formatDateKit(new Date(date));
 
-const deleteMsg = async (entity: CommentEntity) => {
-  await ElMessageBox.confirm(`是否删除【${entity.content}】?`);
+const deleteMsg = async (entity: CommentEntity, delFn: typeof deleteCommentOne) => {
   toggleLoading(true);
   try {
-    await deleteCommentOne(entity.id);
+    await delFn(entity.id);
     await getData();
   } finally {
     toggleLoading(false);
   }
 };
-function handleCommand(command: 'delete', entity: CommentEntity) {
+async function handleCommand(command: 'delete' | 'hardDelete', entity: CommentEntity) {
   switch (command) {
     case 'delete':
-      deleteMsg(entity);
+      await ElMessageBox.confirm(`是否删除【${entity.content}】?`);
+      deleteMsg(entity, deleteCommentOne);
+      break;
+    case 'hardDelete':
+      await ElMessageBox.confirm(`是否删除【${entity.content}】及其子评论?`);
+      deleteMsg(entity, hardDeleteCommentOne);
+      break;
   }
 }
 
@@ -65,6 +70,7 @@ onMounted(getData);
     <el-table v-loading="loading" :data="fileList" empty-text="暂无评论" style="width: 100%" stripe>
       <el-table-column type="index" label="序号" width="60" fixed />
       <el-table-column label="id" prop="id" width="60" />
+      <el-table-column label="parentId" prop="parentId" width="100" />
       <el-table-column label="创建人">
         <template #default="scope">
           {{ scope.row.user?.nickname || scope.row.touristName + '【游客】' }}
@@ -109,7 +115,8 @@ onMounted(getData);
             <el-button type="primary" text><i class="iconfont icon-select"></i></el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="delete">删除</el-dropdown-item>
+                <el-dropdown-item command="delete">软删除</el-dropdown-item>
+                <el-dropdown-item command="hardDelete">物理删除</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>

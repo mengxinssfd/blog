@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import * as Vue from 'vue';
 import { onceEvent } from '@tool-pack/dom';
-import { deleteCommentOne } from '@blog/apis';
+import { hardDeleteCommentOne } from '@blog/apis';
 import { ROLE } from '@blog/entities';
 import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons-vue';
 import type BaseComment from './Base.vue';
@@ -107,7 +107,7 @@ const showReply = () => {
   setTimeout(() => (cancelEvent = onceEvent(window, 'click', () => (reply.value = false))), 50);
 };
 const deleteComment = async () => {
-  await deleteCommentOne(props.item.id);
+  await hardDeleteCommentOne(props.item.id);
   emits('update');
 };
 const onCommentCreated = () => {
