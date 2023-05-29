@@ -111,3 +111,8 @@ dist
 tmp/
 
 .DS_Store
+
+/Dockerfile
+/docker-compose.yml
+
+deploy/nginx

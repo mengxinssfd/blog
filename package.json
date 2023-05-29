@@ -18,7 +18,12 @@
     "start:dev:api": "pnpm -C ./apps/api start:dev:hmr",
     "start:dev:front": "pnpm -C ./apps/front dev",
     "start:dev": "pnpm start:dev:front & pnpm start:dev:api:env && pnpm start:dev:api",
-    "build": "pnpm -F \"./apps/**\" build"
+    "create:confs": "tsx ./scripts/create-tmp-conf.ts",
+    "build": "pnpm -F \"./apps/**\" build",
+    "docker:build": "npm run build && npm run docker:build:before && docker-compose -f docker-compose.yml up -d",
+    "docker:build-n": "npm run docker:build:before && docker build . -t blog --no-cache",
+    "docker:build:before": "tsx deploy/scripts/before-docker-build.ts",
+    "postinstall": "npm run create:confs"
   },
   "lint-staged": {
     "*.{json,html,md,yaml}": [
@@ -49,7 +54,9 @@
     "@commitlint/config-conventional": "^17.6.3",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@tool-pack/types": "^0.0.2",
+    "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.5.1",
+    "@types/js-yaml": "^4.0.5",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "eslint": "^8.41.0",
@@ -58,8 +65,10 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.13.0",
     "esno": "^0.16.3",
+    "fs-extra": "^11.1.1",
     "husky": "^8.0.3",
     "jest": "^29.5.0",
+    "js-yaml": "^4.1.0",
     "lint-staged": "^13.2.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",

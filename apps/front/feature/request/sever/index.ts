@@ -12,7 +12,7 @@ export class ServerRequest<
 
   private constructor() {
     super({
-      requestConfig: { baseURL: import.meta.env.VITE_BASE_URL },
+      requestConfig: { baseURL: import.meta.env.VITE_BASE_URL_LOCAL },
       customConfig: {
         cache: { enable: false, timeout: 60 * 1000 },
       } as CC,

@@ -31,9 +31,8 @@ function copyDeps(originPath: string, name: string) {
  * build以后在dist生成package.json
  */
 function buildPkg() {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  delete originPkg.devDependencies;
+  originPkg.devDependencies = {} as any;
+  originPkg.scripts = {} as any;
 
   originPkg.scripts['start:prod'] = 'node main.js';
 

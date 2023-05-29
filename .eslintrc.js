@@ -73,7 +73,7 @@ module.exports = {
     },
     // node
     {
-      files: ['apps/api/webpack-hmr.config.js'],
+      files: ['deploy/**/**', 'apps/api/webpack-hmr.config.js'],
       rules: {
         '@typescript-eslint/no-var-requires': 'off',
       },

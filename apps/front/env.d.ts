@@ -1,9 +1,11 @@
 // 参考文档：https://cn.vitejs.dev/guide/env-and-mode.html
 
 export interface Env {
+  readonly NITRO_PORT: string;
   readonly VITE_MODE_NAME: 'production' | 'development';
   // axios的base url
   readonly VITE_BASE_URL: string;
+  readonly VITE_BASE_URL_LOCAL: string;
   // html lang
   readonly VITE_APP_LANG: string;
   // vite config的base
