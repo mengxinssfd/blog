@@ -100,10 +100,8 @@
             </el-form-item>
             <el-form-item label="文章:" prop="content">
               <div class="editor-wrapper">
-                <ClientOnly>
-                  <!--                  <ArticleCreateMdEditor v-model:value="form.content" @save="onSave" />-->
-                  <component :is="editor" v-model:value="form.content" />
-                </ClientOnly>
+                <!--                  <ArticleCreateMdEditor v-model:value="form.content" @save="onSave" />-->
+                <MdEditorAsync v-model="form.content" />
               </div>
             </el-form-item>
           </el-form>
@@ -186,7 +184,6 @@ export default defineComponent({
         categoryId: { required: true, message: '分类不能为空' },
       },
       autoSave: ref(autoSaveSI.get(true)),
-      editor: shallowRef(),
     };
     const Computed = {
       writeType: computed(() => {
@@ -283,7 +280,6 @@ export default defineComponent({
     let articleId: number = route.query.id as any;
 
     onMounted(() => {
-      import('~/components/MdEditor.vue').then((res) => (Data.editor.value = res.default));
       if (articleId) {
         _Methods.getArticle();
       } else {

@@ -277,6 +277,7 @@ onMounted(() => {
 .md-editor {
   position: relative;
   box-sizing: border-box;
+  width: 100%;
   .toastui-editor-defaultUI {
     border-radius: 0;
   }
