@@ -1,6 +1,6 @@
 <template>
   <div ref="rootDomRef" class="c-says board">
-    <SaysBase :item="item" :author-id="authorId" />
+    <SaysBase :item="item" />
     <div class="bottom _ flex-c">
       <!-- 操作 -->
       <div class="operate _ flex-c">
@@ -12,7 +12,7 @@
         </div>
         <client-only>
           <el-popconfirm
-            v-if="(user.id && user.id === item.user?.id) || user.role === ROLE.superAdmin"
+            v-if="useStore.isSuperAdmin"
             confirm-button-text="好的"
             cancel-button-text="不用了"
             title="确定删除？"
@@ -60,18 +60,18 @@
 import * as Vue from 'vue';
 import { onceEvent } from '@tool-pack/dom';
 import { deleteSays, getCommentListByScope } from '@blog/apis';
-import { ROLE } from '@blog/entities';
+import { type SaysEntity } from '@blog/entities';
 import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons-vue';
 import { useRequest } from '@request-template/vue3-hooks';
 import useUserStore from '~/store/user.store';
-import { type CommentTreeType, handleCommentTree } from '~/feature/utils';
+import { handleCommentTree } from '~/feature/utils';
 import { useVisibleObserver } from '~/composables/useVisibleObserver.hook';
 
 defineOptions({ name: 'SaysCard' });
 
 const props = defineProps({
   item: {
-    type: Object as Vue.PropType<CommentTreeType>,
+    type: Object as Vue.PropType<SaysEntity>,
     default: () => ({}),
   },
   authorId: { type: [Number, String], default: '' },
@@ -79,7 +79,7 @@ const props = defineProps({
 const emits = defineEmits(['update', 'likeUpdated']);
 
 const [reply, toggleReply] = useToggleState(false);
-const user = ref(useUserStore().user);
+const useStore = useUserStore();
 const rootDomRef = ref<HTMLDivElement>();
 
 const scope = computed(() => 'says/' + props.item.id);

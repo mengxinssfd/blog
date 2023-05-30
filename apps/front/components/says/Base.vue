@@ -9,15 +9,6 @@
       <div class="content" @click="emits('clickContent')">
         <p><MdViewer class="custom" :content="item.content" is-md /></p>
       </div>
-      <!--    回复引用    -->
-      <div
-        v-if="(item.parentId && item.parentId !== item.replyId) || item.isOrphan"
-        class="reply-content">
-        <p v-if="item.reply" class="_ ellipsis-1">
-          <MdViewer class="custom" :content="item.reply.content" is-md is-preview />
-        </p>
-        <p v-else>评论已删除</p>
-      </div>
       <slot name="operate"></slot>
     </div>
   </div>
