@@ -44,7 +44,7 @@ watch(
 
 onMounted(request);
 
-const formatDate = (date: string) => formatDateKit(new Date(date));
+const formatDate = (date: string) => (date ? formatDateKit(new Date(date)) : '--');
 
 async function handleCommand(command: 'delete' | 'edit', entity: CommentEntity) {
   switch (command) {
@@ -92,11 +92,13 @@ const createOne = () => {
           <span :class="getExpiresClass(scope.row)">
             {{ formatDate(scope.row.expires) }}
             ({{
-              howLongAgoKit(new Date(), {
-                now: scope.row.expires,
-                templates: { season: '~~' },
-                def: '',
-              }).replace('前', '后')
+              scope.row.expires
+                ? howLongAgoKit(new Date(), {
+                    now: scope.row.expires,
+                    templates: { season: '~~' },
+                    def: '',
+                  }).replace('前', '后')
+                : '--'
             }})
           </span>
         </template>
