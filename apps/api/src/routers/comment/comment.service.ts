@@ -255,6 +255,7 @@ export class CommentService {
             `${EntityAlias.comment}.createAt`,
             `${EntityAlias.comment}.deletedAt`,
             `${EntityAlias.comment}.touristName`,
+            `${EntityAlias.comment}.articleId`,
           ])
           .addSelect(
             `ROW_NUMBER() OVER (ORDER BY ${EntityAlias.comment}.createAt DESC, ${EntityAlias.comment}.id) AS rowId`,
