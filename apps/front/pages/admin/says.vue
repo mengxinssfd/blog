@@ -74,6 +74,16 @@ const createOne = () => {
   edit.data = undefined;
   edit.visible = true;
 };
+
+const getExpires = (item: SaysEntity) => {
+  return item.expires
+    ? howLongAgoKit(new Date(), {
+        now: item.expires,
+        templates: { season: '~~' },
+        def: '',
+      }).replace('前', '后')
+    : '--';
+};
 </script>
 
 <template>
@@ -91,23 +101,11 @@ const createOne = () => {
         <template #default="scope">
           <span :class="getExpiresClass(scope.row)">
             {{ formatDate(scope.row.expires) }}
-            ({{
-              scope.row.expires
-                ? howLongAgoKit(new Date(), {
-                    now: scope.row.expires,
-                    templates: { season: '~~' },
-                    def: '',
-                  }).replace('前', '后')
-                : '--'
-            }})
+            ({{ getExpires(scope.row) }})
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="内容" width="200">
-        <template #default="scope">
-          <MdViewer :content="scope.row.content" is-md is-preview />
-        </template>
-      </el-table-column>
+      <el-table-column label="内容" prop="content" width="200" />
       <el-table-column label="创建时间" prop="createAt">
         <template #default="scope">
           {{ howLongAgo(scope.row.createAt) }}
