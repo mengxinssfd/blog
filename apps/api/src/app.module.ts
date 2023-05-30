@@ -28,6 +28,7 @@ import { RedisModule, type RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { InitModule } from '@/modules/init/init.module';
 import { ProjectModule } from './routers/project/project.module';
 import { MemoryHelperModule } from '@/routers/memory-helper/memory-helper.module';
+import { SaysModule } from '@/routers/says/says.module';
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { MemoryHelperModule } from '@/routers/memory-helper/memory-helper.module
     InitModule,
     ProjectModule,
     MemoryHelperModule,
+    SaysModule,
   ],
 })
 export class AppModule {}

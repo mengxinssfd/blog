@@ -11,3 +11,4 @@ export * from './friend-link.entity';
 export * from './file.entity';
 export * from './project.entity';
 export * from './memory-helper.entity';
+export * from './says.entity';

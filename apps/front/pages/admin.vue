@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { Folder, PieChart, Tickets, Briefcase, Memo } from '@element-plus/icons-vue';
+import { Folder, PieChart, Tickets, Briefcase, Memo, Microphone } from '@element-plus/icons-vue';
 
 definePageMeta({
   middleware: 'admin',
@@ -24,6 +24,11 @@ const tabs = reactive({
       label: '文章',
       name: 'article',
       icon: <Tickets />,
+    },
+    {
+      label: '说说',
+      name: 'says',
+      icon: <Microphone />,
     },
     {
       label: '评论',

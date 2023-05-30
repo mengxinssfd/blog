@@ -103,7 +103,7 @@ async function submit() {
         <el-form-item label="权重" prop="weights">
           <el-input-number v-model="form.weights" />
         </el-form-item>
-        <el-form-item label="状态" prop="weights">
+        <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio-button :label="ProjectStatus.Developing">
               {{ ProjectStatus[ProjectStatus.Developing] }}

@@ -5,7 +5,7 @@ export * from './api/article-like.api';
 export * from './api/user.api';
 export * from './api/tag.api';
 export * from './api/comment.api';
-export * from './api/comment-says.api';
+export * from './api/says.api';
 export * from './api/comment-like.api';
 export * from './api/comment-dislike.api';
 export * from './api/friend-link.api';

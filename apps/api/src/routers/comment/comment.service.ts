@@ -169,6 +169,17 @@ export class CommentService {
     return this.handlerFindAllResult(list);
   }
 
+  async findAllByScope(scope: string, ip: string, userId = 0): Promise<PageVo<CommentEntity>> {
+    const alias = 'comment';
+
+    const getComment = this.createFindAllBuilder(ip, userId)
+      .where({ scope })
+      .orderBy(`${alias}.id`, 'DESC');
+
+    const list = await getComment.getRawMany();
+    return this.handlerFindAllResult(list);
+  }
+
   async findOne(id: number): Promise<CommentEntity> {
     const find = await this.commentRepository.createQueryBuilder('comment').where({ id }).getOne();
 

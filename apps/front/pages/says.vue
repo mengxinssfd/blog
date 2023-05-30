@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { type ArticleEntity, type CommentEntity } from '@blog/entities';
+import { type ArticleEntity, type SaysEntity } from '@blog/entities';
 import { getSaysList } from '@blog/apis';
 import { type PageVo } from '@blog/dtos/page.vo';
+import { getRegionLocation } from '@blog/shared';
 import useUserStore from '~/store/user.store';
-import { handleCommentTree } from '~/feature/utils';
+import { filterBrowser, filterOs, handleCommentTree } from '~/feature/utils';
 
 const userStore = useUserStore();
 const article = ref<ArticleEntity>({} as ArticleEntity);
 const dialogVisible = ref(false);
-const data = ref<PageVo<CommentEntity>>();
+const data = ref<PageVo<SaysEntity>>();
 
 const getData = async () => {
   const { data: _data } = await useAsyncData(() => getSaysList());
@@ -20,7 +21,16 @@ const getData = async () => {
 const says = computed(() => {
   const list = data.value?.list || [];
   if (!list.length) return [];
-  return handleCommentTree(list);
+  return list.map(
+    (item) =>
+      ({
+        ...item,
+        os: filterOs(item.os),
+        browser: filterBrowser(item.browser),
+        region: getRegionLocation(item.region),
+      } as SaysEntity),
+  );
+  // return handleCommentTree(list);
 });
 
 const onData = (data: ArticleEntity) => {
@@ -42,16 +52,12 @@ await getData();
       <WidgetCountdown />
     </template>
     <section class="says-list-area">
-      <SaysCard
-        v-for="item in says"
-        :key="item.id"
-        :item="item"
-        :author-id="article.author.id"
-        @update="getData" />
+      <SaysCard v-for="item in says" :key="item.id" :item="item" :author-id="article.author.id" />
       <el-empty v-if="!says.length" description="暂无数据" />
     </section>
   </ArticleAsPage>
-  <SaysCreator v-model="dialogVisible" @created="getData" />
+
+  <SaysCreator v-model="dialogVisible" @success="getData" />
 </template>
 
 <style lang="scss" scoped></style>

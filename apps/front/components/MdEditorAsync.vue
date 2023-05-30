@@ -5,6 +5,14 @@
 
 const model = defineModel({ type: String, required: true });
 const editor = shallowRef();
+
+defineProps({
+  height: {
+    type: String,
+    default: '600px',
+  },
+});
+
 onBeforeMount(() => {
   import('~/components/MdEditor.vue').then((res) => (editor.value = res.default));
 });
@@ -12,6 +20,6 @@ onBeforeMount(() => {
 
 <template>
   <ClientOnly>
-    <component :is="editor" v-model:value="model" />
+    <component :is="editor" v-model:value="model" :height="height" />
   </ClientOnly>
 </template>
