@@ -5,7 +5,7 @@ import { validate } from 'class-validator';
 describe('CreateSaysDto', () => {
   it('should validate correctly', async () => {
     const dto = new CreateSaysDto();
-    dto.status = '11' as any;
+    dto.visible = '11' as any;
     const date = new Date(2020, 1, 1);
     dto.expires = date.toISOString() as any;
 

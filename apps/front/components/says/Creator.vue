@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as Vue from 'vue';
 import { type CreateSaysDto } from '@blog/dtos';
-import { type SaysEntity, SaysStatus } from '@blog/entities';
+import { type SaysEntity, SaysVisibleStatus } from '@blog/entities';
 import { createSays, updateSays } from '@blog/apis';
 import { useRequest } from '@request-template/vue3-hooks';
 import { updateObj } from '@tool-pack/basic';
@@ -11,7 +11,7 @@ const model = defineModel({ type: Boolean, default: false, local: true });
 const emit = defineEmits(['success']);
 const props = defineProps({
   data: {
-    type: Object as Vue.PropType<SaysEntity>,
+    type: Object as Vue.PropType<Partial<SaysEntity>>,
     default: null,
   },
 });
@@ -36,7 +36,7 @@ const createFormData = () =>
   ({
     expires: month3,
     content: '',
-    status: SaysStatus.Public,
+    visible: SaysVisibleStatus.Public,
   } as CreateSaysDto);
 
 const form = ref(createFormData());
@@ -86,7 +86,7 @@ const shortcuts = [
 ];
 
 const { loading, request } = useRequest(
-  () => (props.data ? updateSays(props.data.id, form.value) : createSays(form.value)),
+  () => (props.data?.id ? updateSays(props.data.id, form.value) : createSays(form.value)),
   { loading: { threshold: 500 } },
 );
 
@@ -105,15 +105,15 @@ const confirm = async () => {
     <el-dialog v-model="model" append-to-body :title="data ? '编辑' : '新增'">
       <el-form ref="formRef" v-loading="loading" :model="form" label-width="70">
         <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio-button :label="SaysStatus.Public">
-              {{ SaysStatus[SaysStatus.Public] }}
+          <el-radio-group v-model="form.visible">
+            <el-radio-button :label="SaysVisibleStatus.Public">
+              {{ SaysVisibleStatus[SaysVisibleStatus.Public] }}
             </el-radio-button>
-            <el-radio-button :label="SaysStatus.Login">
-              {{ SaysStatus[SaysStatus.Login] }}
+            <el-radio-button :label="SaysVisibleStatus.Login">
+              {{ SaysVisibleStatus[SaysVisibleStatus.Login] }}
             </el-radio-button>
-            <el-radio-button :label="SaysStatus.Private">
-              {{ SaysStatus[SaysStatus.Private] }}
+            <el-radio-button :label="SaysVisibleStatus.Private">
+              {{ SaysVisibleStatus[SaysVisibleStatus.Private] }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>

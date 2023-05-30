@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { deleteSays, getSaysListByAdmin } from '@blog/apis';
-import { type CommentEntity, type SaysEntity, SaysStatus } from '@blog/entities';
+import { type SaysEntity, SaysVisibleStatus } from '@blog/entities';
 import { formatDate as formatDateKit, omit, howLongAgo as howLongAgoKit } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import { useRequest } from '@request-template/vue3-hooks';
@@ -11,7 +11,7 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const page = reactive({ page: 1, pageSize: 10, total: 1 });
-const edit = reactive<{ visible: Boolean; data?: CommentEntity }>({
+const edit = reactive<{ visible: Boolean; data?: SaysEntity }>({
   visible: false,
   data: undefined,
 });
@@ -46,7 +46,7 @@ onMounted(request);
 
 const formatDate = (date: string) => (date ? formatDateKit(new Date(date)) : '--');
 
-async function handleCommand(command: 'delete' | 'edit', entity: CommentEntity) {
+async function handleCommand(command: 'delete' | 'edit', entity: SaysEntity) {
   switch (command) {
     case 'delete':
       await ElMessageBox.confirm(`是否删除【${entity.content}】?`);
@@ -82,9 +82,9 @@ const createOne = () => {
     <el-table v-loading="loading" :data="list" empty-text="暂无评论" style="width: 100%" stripe>
       <el-table-column type="index" label="序号" width="60" fixed />
       <el-table-column label="id" prop="id" width="60" />
-      <el-table-column label="status" width="80">
+      <el-table-column label="visible" width="80">
         <template #default="scope">
-          {{ SaysStatus[scope.row.status] }}
+          {{ SaysVisibleStatus[scope.row.visible] }}
         </template>
       </el-table-column>
       <el-table-column label="过期时间">

@@ -1,7 +1,7 @@
 import { BlogBaseEntity } from './base.entity';
 import { Column, Entity } from 'typeorm';
 
-export enum SaysStatus {
+export enum SaysVisibleStatus {
   Public,
   Login,
   Private,
@@ -10,7 +10,7 @@ export enum SaysStatus {
 @Entity({ name: 'says' })
 export class SaysEntity extends BlogBaseEntity {
   static readonly modelName = 'SaysEntity' as const;
-  static readonly STATUS = SaysStatus;
+  static readonly VISIBLE_STATUS = SaysVisibleStatus;
 
   constructor(partial?: Partial<SaysEntity>) {
     super();
@@ -62,11 +62,11 @@ export class SaysEntity extends BlogBaseEntity {
   ua!: string | null;
 
   @Column('enum', {
-    enum: SaysStatus,
-    comment: `状态：${SaysStatus.Public} 公开，${SaysStatus.Login} 需要登录, ${SaysStatus.Private} 只能自己看`,
-    default: SaysStatus.Public,
+    enum: SaysVisibleStatus,
+    comment: `可见状态：${SaysVisibleStatus.Public} 公开，${SaysVisibleStatus.Login} 需要登录, ${SaysVisibleStatus.Private} 只能自己看`,
+    default: SaysVisibleStatus.Public,
   })
-  status!: SaysStatus;
+  visible!: SaysVisibleStatus;
 
   @Column('datetime', { nullable: true, comment: `过期时间` })
   expires!: Date | null;

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ROLE, SaysEntity, SaysStatus, UserEntity } from '@blog/entities';
+import { ROLE, SaysEntity, SaysVisibleStatus, UserEntity } from '@blog/entities';
 import { PageVo } from '@blog/dtos/page.vo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -49,10 +49,12 @@ export class SaysService {
 
     if (!user.id) {
       // 枚举在数据库中是字符串
-      getComment.andWhere({ status: String(SaysStatus.Public) });
+      getComment.andWhere({ visible: String(SaysVisibleStatus.Public) });
     } else if (user.role !== ROLE.superAdmin) {
       getComment.andWhere({
-        status: In(([SaysStatus.Login, SaysStatus.Public] as SaysStatus[]).map(String)),
+        visible: In(
+          ([SaysVisibleStatus.Login, SaysVisibleStatus.Public] as SaysVisibleStatus[]).map(String),
+        ),
       });
     }
 
