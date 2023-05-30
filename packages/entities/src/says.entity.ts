@@ -71,3 +71,68 @@ export class SaysEntity extends BlogBaseEntity {
   @Column('datetime', { nullable: true, comment: `过期时间` })
   expires!: Date | null;
 }
+
+/*
+
+-- 从评论表迁移到说说表
+
+-- 将数据插入到说说表中
+INSERT INTO says (content, ip, createAt, updateAt, region, browser, os, ua)
+SELECT content,
+       ip,
+       createAt,
+       updateAt,
+       region,
+       browser,
+       os,
+       ua
+FROM comment
+where scope = 'says'
+  and parentId is NULL
+  and replyId is NULL
+  and deletedAt is null;
+
+-- 更新子评论的 scope 字段，将其设置为 'says' + 说说表的 id，同时确保子评论的 parentId 与父评论的 id 匹配
+-- 替换scope
+UPDATE comment AS child
+    JOIN comment AS parent ON child.parentId = parent.id
+    JOIN says ON parent.content = says.content
+SET child.scope    = CONCAT('says/', says.id)
+WHERE child.parentId IS NOT NULL
+  and child.scope = 'says';
+
+-- 根元素移除parentId和replyId
+UPDATE comment AS child
+SET
+    child.parentId = null,
+    child.replyId  = null
+WHERE child.parentId IS NOT NULL
+  and child.parentId = child.replyId
+  and child.scope like 'says/%';
+
+-- 子评论
+UPDATE comment AS child
+    JOIN comment AS reply ON child.replyId = reply.id
+SET child.parentId    = child.replyId
+WHERE child.replyId IS NOT NULL
+  and reply.parentId is NULL
+  and child.scope like 'says/%';
+
+-- 回复
+UPDATE comment AS child
+    JOIN comment AS reply ON child.replyId = reply.id
+    JOIN comment AS parent ON child.parentId = parent.id
+SET child.parentId    = reply.parentId
+WHERE child.replyId IS NOT NULL
+  and parent.scope = 'says'
+  and child.scope like 'says/%';
+
+-- 删除已迁移的数据
+DELETE
+FROM comment
+WHERE scope = 'says'
+  and parentId is NULL
+  and replyId is NULL;
+
+ 
+*/
