@@ -8,7 +8,7 @@
           <i class="iconfont icon-huifu"></i><span>取消回复</span>
         </div>
         <div v-else class="btn reply" @click="showReply">
-          <i class="iconfont icon-huifu"></i><span>{{ comments.length || '回复' }}</span>
+          <i class="iconfont icon-huifu"></i><span>{{ res?.count || '回复' }}</span>
         </div>
         <client-only>
           <el-popconfirm
@@ -44,9 +44,9 @@
       <CommentInputBox placeholder="回复说说" :options="{ scope }" @created="onCommentCreated" />
     </div>
     <!-- 子评论  -->
-    <div v-if="comments.length" class="comm-children">
+    <div v-if="commentList.length" class="comm-children">
       <CommentTree
-        v-for="it in comments"
+        v-for="it in commentList"
         :key="it.id"
         :item="it"
         :author-id="1"
@@ -84,11 +84,9 @@ const rootDomRef = ref<HTMLDivElement>();
 
 const scope = computed(() => 'says/' + props.item.id);
 
-const { data: _comments, request: getComments } = useRequest(() =>
-  getCommentListByScope(scope.value),
-);
+const { data: res, request: getComments } = useRequest(() => getCommentListByScope(scope.value));
 
-const comments = computed(() => (_comments.value ? handleCommentTree(_comments.value.list) : []));
+const commentList = computed(() => (res.value ? handleCommentTree(res.value.list) : []));
 
 useVisibleObserver(getComments, rootDomRef, true);
 
