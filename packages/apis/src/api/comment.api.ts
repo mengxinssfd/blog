@@ -30,6 +30,9 @@ export function getReplyMeList(_: unknown, data: PageDto) {
 export function getCommentList(data: PageDto) {
   return Get<PageVo<CommentEntity>>('', data);
 }
+export function getCommentListByScope(scope: string) {
+  return Get<PageVo<CommentEntity>>('/scope/' + encodeURIComponent(scope));
+}
 
 export function getRecentComment(count = 6) {
   return Get<CommentEntity[]>(`/recent/${count}`, undefined, { cache: false });

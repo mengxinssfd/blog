@@ -65,4 +65,9 @@ export class CreateProjectDto extends PartialType(ProjectEntity) {
     return v.value ? new Date(v.value) : null;
   })
   override endTime?: Date | null;
+
+  @ApiPropertyOptional({ description: '分类id', example: 1 })
+  @IsOptional()
+  @IsNumber(undefined, { message: '分类id必须是数字' })
+  override categoryId?: number;
 }

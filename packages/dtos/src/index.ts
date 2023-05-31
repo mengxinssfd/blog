@@ -8,3 +8,5 @@ export * from './friend-link';
 export * from './file';
 export * from './project';
 export * from './memory-help';
+export * from './says';
+export * from './project-category';

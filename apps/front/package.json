@@ -22,7 +22,7 @@
     "@toast-ui/editor-plugin-code-syntax-highlight": "^3.1.0",
     "@toast-ui/editor-plugin-color-syntax": "^3.1.0",
     "@toast-ui/editor-plugin-table-merged-cell": "^3.1.0",
-    "@tool-pack/basic": "^0.0.19",
+    "@tool-pack/basic": "^0.0.20",
     "@tool-pack/bom": "0.0.1-beta.0",
     "@tool-pack/dom": "^0.0.1",
     "@tool-pack/keymap": "^0.0.6",

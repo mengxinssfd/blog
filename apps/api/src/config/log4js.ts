@@ -29,6 +29,8 @@ const log4jsConfig: Configuration = {
       alwaysIncludePattern: true,
       layout: {
         type: 'pattern',
+        // 格式化日期
+        // '{"date":"%d{yyyy-MM-dd hh:mm:ss}","level":"%p","category":"%c","host":"%h","pid":"%z","data":\'%m\'}\n',
         pattern:
           '{"date":"%d","level":"%p","category":"%c","host":"%h","pid":"%z","data":\'%m\'}\n',
       },

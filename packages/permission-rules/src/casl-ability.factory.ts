@@ -12,6 +12,8 @@ import {
   FileEntity,
   ProjectEntity,
   MemoryHelperEntity,
+  SaysEntity,
+  ProjectCategoryEntity,
 } from '@blog/entities';
 import {
   AbilityBuilder,
@@ -35,6 +37,8 @@ import { createFriendLinkRule } from './rules/friend-link.rule';
 import { createFileRule } from './rules/file.rule';
 import { createProjectRule } from './rules/project.rule';
 import { createMemoryHelpRule } from './rules/memory-help.rule';
+import { createSaysRule } from './rules/says.rule';
+import { createProjectCategoryRule } from './rules/project-category.rule';
 
 const { subjects, classMap, ruleRegister } = bootstrap(
   [
@@ -50,6 +54,8 @@ const { subjects, classMap, ruleRegister } = bootstrap(
     FileEntity,
     ProjectEntity,
     MemoryHelperEntity,
+    SaysEntity,
+    ProjectCategoryEntity,
   ],
   [
     createUserRule,
@@ -64,6 +70,8 @@ const { subjects, classMap, ruleRegister } = bootstrap(
     createFileRule,
     createProjectRule,
     createMemoryHelpRule,
+    createSaysRule,
+    createProjectCategoryRule,
   ],
 );
 

@@ -16,8 +16,9 @@ export class PrimaryRequest<
   private loading?: ReturnType<(typeof ElLoading)['service']>;
 
   private constructor() {
+    const env = import.meta.env;
     super({
-      requestConfig: { baseURL: import.meta.env.VITE_BASE_URL },
+      requestConfig: { baseURL: process.server ? env.VITE_BASE_URL_LOCAL : env.VITE_BASE_URL },
       customConfig: {
         statusHandlers,
         cache: { enable: false, timeout: 60 * 1000 },

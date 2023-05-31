@@ -23,7 +23,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json --runInBand --detectOpenHandles --forceExit",
     "check:deps": "ncu",
-    "check:ts": "tsc --noEmit -p ./tsconfig.json"
+    "check:ts": "tsc --noEmit -p ./tsconfig.json",
+    "postinstall": "tsx ../../scripts/create-tmp-conf.ts"
   },
   "dependencies": {
     "@casl/ability": "^6.5.0",
@@ -40,7 +41,7 @@
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/throttler": "^4.0.0",
     "@nestjs/typeorm": "^9.0.1",
-    "@tool-pack/basic": "^0.0.19",
+    "@tool-pack/basic": "^0.0.20",
     "ali-oss": "^6.17.1",
     "axios": "^1.4.0",
     "bowser": "^2.11.0",

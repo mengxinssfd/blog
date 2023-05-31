@@ -42,13 +42,13 @@
 
 <script setup lang="tsx">
 import * as Vue from 'vue';
-import { type UserEntity } from '@blog/entities';
+import { type CommentEntity, type UserEntity } from '@blog/entities';
 import { type CommentTreeType, howLongAgo } from '~/feature/utils';
 
 const route = useRoute();
 const props = defineProps({
   item: {
-    type: Object as Vue.PropType<CommentTreeType>,
+    type: Object as Vue.PropType<CommentEntity & Pick<CommentTreeType, 'isOrphan'>>,
     default: () => ({}),
   },
   // 判断是否是作者
@@ -63,7 +63,7 @@ const defaultAvatar = 'https://pic1.zhimg.com/50/v2-6afa72220d29f045c15217aa6b27
 const anchor = computed(() => `_comment-${props.independent ? 'ind-' : ''}${props.item.id}`);
 const isActive = computed(() => route.hash === '#' + anchor.value);
 
-const getNickname = (tree: CommentTreeType) => {
+const getNickname = (tree: CommentEntity) => {
   if (!tree.user) return tree.touristName;
   return tree.user.nickname;
 };

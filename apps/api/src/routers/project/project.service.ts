@@ -21,6 +21,7 @@ export class ProjectService {
   async findAll(): Promise<PageVo<ProjectEntity>> {
     const [list, count] = await this.rep
       .createQueryBuilder('project')
+      .leftJoinAndSelect('project.category' satisfies Prop, 'category')
       .orderBy('project.weights' satisfies Prop, 'DESC')
       .getManyAndCount();
     return { list, count };

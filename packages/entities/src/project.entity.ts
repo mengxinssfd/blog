@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BlogBaseEntity } from './base.entity';
+import { ProjectCategoryEntity } from './project-category.entity';
 
 // state和status的区别
 // state通常包含多类状态，内部可包含开发状态，维护状态等等；类似vue的reactive
@@ -53,4 +54,11 @@ export class ProjectEntity extends BlogBaseEntity {
 
   @Column('datetime', { comment: '结束时间', nullable: true })
   endTime!: Date | null;
+
+  @ManyToOne(() => ProjectCategoryEntity)
+  @JoinColumn({ name: 'categoryId' })
+  category!: ProjectCategoryEntity;
+
+  @Column('int', { comment: '分类id', nullable: true })
+  categoryId!: number | null;
 }

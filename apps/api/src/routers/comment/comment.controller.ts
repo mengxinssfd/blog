@@ -97,6 +97,11 @@ export class CommentController {
     return this.commentService.findAllByArticle(articleId, ip, userId);
   }
 
+  @Get('scope/:scope')
+  findAllByScope(@Param('scope') scope: string, @User('id') userId: number, @ReqIp() ip: string) {
+    return this.commentService.findAllByScope(scope, ip, userId);
+  }
+
   @ApiBearerAuth()
   @JwtAuth()
   @Get('reply')
@@ -145,7 +150,7 @@ export class CommentController {
           articleId: dto.articleId || IsNull(),
           scope: dto.scope || IsNull(),
         });
-        if (count >= 5) throw new ForbiddenException('在该文章内评论次数过多,请注册登录后再评论');
+        if (count >= 5) throw new ForbiddenException('在该区域内评论次数过多,请注册登录后再评论');
         comment.touristName = dto.touristName as string;
         dto.touristEmail && (comment.touristEmail = dto.touristEmail);
       }

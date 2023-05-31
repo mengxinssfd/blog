@@ -2,14 +2,12 @@
 import * as Vue from 'vue';
 import { getStartOfDate, updateObj } from '@tool-pack/basic';
 import { type ProjectEntity, ProjectStatus } from '@blog/entities';
-import { createProject, updateProject } from '@blog/apis';
+import { createProject, getProjectCategoryList, updateProject } from '@blog/apis';
 import type { CreateProjectDto } from '@blog/dtos';
+import { useRequest } from '@request-template/vue3-hooks';
 
+const visible = defineModel('show', { type: Boolean, default: false, local: true });
 const props = defineProps({
-  show: {
-    type: Boolean,
-    default: false,
-  },
   data: {
     type: Object as Vue.PropType<ProjectEntity | null>,
     default: () => null,
@@ -29,13 +27,11 @@ const createFormValue = (): CreateProjectDto => ({
   status: ProjectStatus.Developing,
   startTime: getStartOfDate(new Date()),
   endTime: null,
+  categoryId: undefined,
 });
 
 const elFormRef = ref();
-const visible = computed({
-  set: (value: boolean) => emits('update:show', value),
-  get: () => props.show,
-});
+
 const form = ref<CreateProjectDto>(createFormValue());
 const rules = {
   name: { required: true, message: '项目名称不能为空' },
@@ -51,6 +47,17 @@ watch(visible, (n) => {
   }
   if (props.data) updateObj(form.value, createFormValue(), props.data);
   elFormRef.value?.clearValidate();
+});
+
+const { data: category, request: getCategories } = useRequest(() =>
+  getProjectCategoryList({ pure: true }),
+);
+const categories = computed(() => category.value?.list || []);
+
+const unwatch = watch(visible, (n) => {
+  if (!n) return;
+  getCategories();
+  unwatch();
 });
 
 function hideDialog() {
@@ -83,6 +90,15 @@ async function submit() {
         <el-form-item label="项目名称" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
+        <el-form-item label="分类" prop="categoryId">
+          <el-select v-model="form.categoryId">
+            <el-option
+              v-for="cate in categories"
+              :key="cate.id"
+              :value="cate.id"
+              :label="cate.name" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="项目封面" prop="cover">
           <el-input v-model="form.cover" />
           <img v-if="form.cover" class="avatar-view" :src="form.cover" alt="" />
@@ -103,7 +119,7 @@ async function submit() {
         <el-form-item label="权重" prop="weights">
           <el-input-number v-model="form.weights" />
         </el-form-item>
-        <el-form-item label="状态" prop="weights">
+        <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio-button :label="ProjectStatus.Developing">
               {{ ProjectStatus[ProjectStatus.Developing] }}

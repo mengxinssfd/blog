@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { debounce, formatDate } from '@mxssfd/ts-utils';
+import { debounce, formatDate } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import {
   getArticleListByCommentUser,

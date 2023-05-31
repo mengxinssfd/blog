@@ -1,0 +1,57 @@
+version: '3'
+services:
+  apps:
+    build: ./
+    container_name: 'blog_apps'
+    networks:
+      - blog_net
+    ports:
+      - '3000:3000'
+    depends_on:
+      - redis
+      - mysql
+    command: pm2 start /apps/pm2.config.js --no-daemon
+  redis:
+    image: redis:7
+    container_name: blog_redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./tmp/redis/redis.conf:/etc/redis/redis.conf
+      - ./tmp/redis/data:/data
+    networks:
+      - blog_net
+    command: redis-server /etc/redis/redis.conf
+    # 当启动报错：failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: err or during container init: error mounting
+    # 可以用以下配置解决
+    # security_opt:
+    #   - seccomp:unconfined
+  mysql:
+    image: mysql:8
+    container_name: blog_mysql
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: '123456'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+      MYSQL_DATABASE: 'blog'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: '123456'
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./tmp/mysql/db:/var/lib/mysql
+      - ./tmp/mysql/conf/my.cnf:/etc/my.cnf
+      - ./tmp/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - blog_net
+    command: --default-authentication-plugin=mysql_native_password #解决外部无法访问
+  nginx:
+    build: ./deploy/nginx/
+    container_name: blog_nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    command: [nginx-debug, '-g', 'daemon off;']
+networks:
+  # 相当于 docker network create blog_net
+  blog_net: null

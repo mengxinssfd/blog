@@ -49,7 +49,14 @@ onBeforeMount(request);
     <el-table v-loading="loading" :data="projectList" empty-text="暂无项目" stripe>
       <el-table-column label="id" prop="id" width="60" />
       <el-table-column label="名称" prop="name" width="130" />
-      <el-table-column label="描述" prop="desc" />
+      <el-table-column label="分类" width="130">
+        <template #default="scope">
+          <el-tag v-if="scope.row.category">{{ scope.row.category.name }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="描述" prop="desc">
+        <template #default="scope"> {{ scope.row.desc.slice(0, 10) }}... </template>
+      </el-table-column>
       <el-table-column label="技术栈" prop="techStack" />
       <el-table-column label="转移到" prop="transferredTo" />
       <el-table-column label="权重" prop="weights" />
@@ -68,12 +75,12 @@ onBeforeMount(request);
             preview-teleported />
         </template>
       </el-table-column>
-      <el-table-column label="开始日期" prop="createAt">
+      <el-table-column label="开始日期">
         <template #default="scope">
           {{ formatTime(scope.row.startTime) }}
         </template>
       </el-table-column>
-      <el-table-column label="结束日期" prop="createAt">
+      <el-table-column label="结束日期">
         <template #default="scope">
           {{ formatTime(scope.row.endTime) }}
         </template>

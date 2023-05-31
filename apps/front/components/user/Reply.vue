@@ -1,5 +1,28 @@
+<script setup lang="ts">
+import * as Vue from 'vue';
+import type { CommentEntity } from '@blog/entities';
+import { getArticleCommentLink } from '@blog/shared';
+import { UserEntity } from '@blog/entities';
+import { howLongAgo } from '~/feature/utils';
+
+const props = defineProps({
+  item: {
+    type: Object as Vue.PropType<CommentEntity>,
+    default() {
+      return {};
+    },
+  },
+});
+
+const defaultAvatar = UserEntity.DEFAULT_AVATAR;
+
+const getNickname = (user: any) => {
+  if (!user.id) return props.item.touristName + '(游客)' || '匿名用户';
+  return user.nickname;
+};
+</script>
 <template>
-  <router-link class="c-reply" :to="`/article/detail/${item.article.id}`">
+  <router-link class="c-reply" :to="getArticleCommentLink(item)">
     <div class="comm-left">
       <router-link v-if="item.user?.id" :to="`/user/info/${item.user.id}`">
         <el-avatar :size="32" :src="item.user?.avatar || defaultAvatar"></el-avatar>
@@ -13,8 +36,8 @@
           <span class="nickname">{{ getNickname(item.user) }}</span>
           <span class="reply-text">回复于</span>
           <!--    文章标题    -->
-          <span class="replied-user">《{{ item.article.title }}》</span>
-          <span class="time">{{ formatDate(item.createAt) }}</span>
+          <span class="replied-user">《{{ item.article?.title }}》</span>
+          <span class="time">{{ howLongAgo(item.createAt) }}</span>
         </div>
         <!--    回复内容    -->
         <div class="content">
@@ -25,41 +48,6 @@
   </router-link>
 </template>
 
-<script lang="ts">
-import * as Vue from 'vue';
-import type { CommentEntity } from '@blog/entities';
-import { howLongAgo } from '~/feature/utils';
-
-export default defineComponent({
-  components: {},
-  props: {
-    item: {
-      type: Object as Vue.PropType<CommentEntity>,
-      default() {
-        return {};
-      },
-    },
-  },
-  setup(props: any) {
-    const Data = {
-      defaultAvatar: 'https://pic1.zhimg.com/50/v2-6afa72220d29f045c15217aa6b275808_hd.jpg',
-    };
-    const Methods = {
-      formatDate: howLongAgo,
-      getNickname(user: any) {
-        if (!user.id) return props.item.touristName + '(游客)' || '匿名用户';
-        if (user.id === props.authorId) return `${user.nickname}(作者)`;
-        return user.nickname;
-      },
-    };
-    // todo 未判断关于页面的跳转
-    return {
-      ...Data,
-      ...Methods,
-    };
-  },
-});
-</script>
 <style lang="scss">
 .c-reply {
   display: flex;
