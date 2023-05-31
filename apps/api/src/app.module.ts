@@ -29,6 +29,7 @@ import { InitModule } from '@/modules/init/init.module';
 import { ProjectModule } from './routers/project/project.module';
 import { MemoryHelperModule } from '@/routers/memory-helper/memory-helper.module';
 import { SaysModule } from '@/routers/says/says.module';
+import { ProjectCategoryModule } from './routers/project-category/project-category.module';
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { SaysModule } from '@/routers/says/says.module';
     ProjectModule,
     MemoryHelperModule,
     SaysModule,
+    ProjectCategoryModule,
   ],
 })
 export class AppModule {}

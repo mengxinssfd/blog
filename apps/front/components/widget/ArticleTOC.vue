@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import * as Vue from 'vue';
 import type { ElMenu } from 'element-plus';
 import { throttle } from '@tool-pack/basic';
 import { AnchorTree } from '~/components/article/detail/tree';
@@ -11,11 +12,25 @@ const headings = ref<HTMLHeadingElement[]>([]);
 const route = useRoute();
 const router = useRouter();
 
+const props = defineProps({
+  reference: {
+    type: [Object, String] as Vue.PropType<HTMLElement | string>,
+    default: '.article .markdown-body',
+  },
+});
+
+watch(
+  () => props.reference,
+  (n) => n && nextTick().then(parseTree),
+);
+
 function getHeads() {
-  const anchors =
-    document
-      .querySelector('.article .markdown-body')
-      ?.querySelectorAll<HTMLHeadingElement>('h1,h2,h3,h4,h5,h6') || [];
+  if (!props.reference) return [];
+
+  const reference =
+    typeof props.reference === 'string' ? document.querySelector(props.reference) : props.reference;
+
+  const anchors = reference?.querySelectorAll<HTMLHeadingElement>('h1,h2,h3,h4,h5,h6') || [];
   return Array.from(anchors).filter((title) => !!title.innerText.trim());
 }
 function getTree(heads: HTMLHeadingElement[]): AnchorTree[] {

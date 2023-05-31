@@ -41,6 +41,11 @@ const tabs = reactive({
       icon: <i class="iconfont icon-link" />,
     },
     {
+      label: '项目分类',
+      name: 'project-category',
+      icon: <Briefcase />,
+    },
+    {
       label: '项目',
       name: 'project',
       icon: <Briefcase />,

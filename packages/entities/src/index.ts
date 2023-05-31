@@ -12,3 +12,4 @@ export * from './file.entity';
 export * from './project.entity';
 export * from './memory-helper.entity';
 export * from './says.entity';
+export * from './project-category.entity';
