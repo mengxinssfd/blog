@@ -107,6 +107,7 @@ const formatTime = (v: Date | null) => {
       transition: transform 0.3s;
       transform-origin: center center;
       background: none;
+      object-fit: cover;
     }
   }
 
