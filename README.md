@@ -1,4 +1,4 @@
-# blog（开发中...）
+# blog
 
 博客 v2
 
@@ -34,6 +34,7 @@
 - NodeJs 18
 - Pnpm
 - Docker
+- 可转发邮件的邮箱
 
 ## 准备
 
@@ -95,6 +96,14 @@ REDIS_PASSWORD=
 
 ## 启动
 
+功能要求：
+
+1. 邮件发送需要配置邮箱
+2. 文件上传需要开通阿里云 oss 并添加配置
+3. 小程序登录需要配置小程序 appid 等
+
+如果这些配置不满足，则无法使用这部分功能
+
 ### 整体启动
 
 一个命令启动前后端项目
@@ -119,4 +128,15 @@ pnpm start:dev:front
 pnpm start:dev:api
 ```
 
-## 部署（TODO）
+## 部署
+
+目前有两种方式部署：1.直接 docker 部署；2.服务器分别安装各种环境；
+
+### docker 部署
+
+1. 服务器拉取代码，并安装好依赖
+2. 添加好各种服务配置
+   - 打包后需要的.env 文件是 .env.production
+3. https 需要 ssl 证书，按照域名命名
+   - 如我的域名是 xiaojiju.com,那么在项目的 deploy 目录下新增 ssl/xiaojiju.com.cer、ssl/xiaojiju.com.key、ssl/xiaojiju.com.pem 三个证书文件
+4. 安装好 docker，然后执行 npm run docker:build 即可，（重新安装时需要移除相应镜像）
