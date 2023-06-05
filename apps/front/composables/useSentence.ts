@@ -1,5 +1,6 @@
 import { useRequest } from '@request-template/vue3-hooks';
-import type { ResType } from 'request-template';
+import { PrimaryRequest } from '~/feature/request/primary';
+import { ResType } from 'request-template';
 
 export const SentenceCates: Record<string, string> = {
   a: '动画',
@@ -33,9 +34,20 @@ interface Res {
 }
 
 export function useSentence() {
-  async function getData(): Promise<ResType<Res>> {
-    const response = await fetch('https://v1.hitokoto.cn');
-    return { code: 200, data: await response.json(), msg: 'success' };
+  function getData(): Promise<ResType<Res>> {
+    return PrimaryRequest.ins.request(
+      {
+        url: 'https://v1.hitokoto.cn',
+        transformResponse: (r) => {
+          try {
+            return { code: 200, data: JSON.parse(r), msg: 'success' };
+          } catch (e) {
+            return { code: 0, msg: '一言获取失败' };
+          }
+        },
+      },
+      { cache: { enable: true, timeout: 1000 * 60 * 5 } },
+    );
   }
   const { data, request } = useRequest(getData);
 
