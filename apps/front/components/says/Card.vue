@@ -65,7 +65,6 @@ import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons
 import { useRequest } from '@request-template/vue3-hooks';
 import useUserStore from '~/store/user.store';
 import { handleCommentTree } from '~/feature/utils';
-import { useVisibleObserver } from '~/composables/useVisibleObserver.hook';
 
 defineOptions({ name: 'SaysCard' });
 

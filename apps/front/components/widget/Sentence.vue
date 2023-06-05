@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useSentence, SentenceCates } from '~/composables/use-sentence.hook';
-
 const { sentence } = useSentence();
 </script>
 

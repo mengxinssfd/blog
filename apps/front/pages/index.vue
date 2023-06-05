@@ -35,7 +35,6 @@
 import { TODAY_COVER_URL } from '~/config/constants';
 import '~/feature/request/primary/index';
 import useHeaderStore from '~/store/header.store';
-import { useSentence, SentenceCates } from '~/composables/use-sentence.hook';
 
 // https://gd-hbimg.huaban.com/3124b26222a416c147e0d810c21789f00ba73b3534944-fFJtR4_fw1200webp
 // https://gd-hbimg.huaban.com/1f7d7bbb45ea77f75aa5ec60e470d57226af16a2495e4-1Se9uJ_fw1200webp
