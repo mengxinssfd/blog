@@ -51,6 +51,13 @@ const formatTime = (v: Date | null) => {
   --radius: calc(var(--board-radius) * 1);
   border-radius: var(--radius);
   background: var(--mask-bg-color);
+  transition-property: box-shadow, transform;
+  transition-duration: 0.3s;
+
+  &:hover {
+    box-shadow: 0 0 20px 0 var(--text-color);
+    transform: translateY(-6px);
+  }
 
   .cover-block {
     position: relative;
