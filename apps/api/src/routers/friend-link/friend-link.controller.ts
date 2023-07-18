@@ -84,7 +84,7 @@ export class FriendLinkController {
     return this.friendLinkService.findAll(query);
   }
 
-  @Get('resolve/:active')
+  @Get('resolve/active/:active')
   findResolveAll(@Param('active') active: 'false' | 'true') {
     return this.friendLinkService.findResolveAll(active !== 'false');
   }

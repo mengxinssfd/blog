@@ -25,7 +25,7 @@ export function getResolveFriendLinkList(
   active = true,
   cache: CustomCacheConfig | boolean = false,
 ) {
-  return Get<PageVo<FriendLinkEntity>>(`/resolve/${active}`, undefined, { cache });
+  return Get<PageVo<FriendLinkEntity>>(`/resolve/active/${active}`, undefined, { cache });
 }
 
 export function createFriendLink(data: CreateFriendLinkDto) {
