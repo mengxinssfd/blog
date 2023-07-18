@@ -46,4 +46,19 @@ export class FriendLinkTipsService {
     Logger.info('准备发送友链状态更新提示邮件给申请者');
     return [`你在『${name}』的友链状态已更新。`, to, './commonTips', context];
   }
+  async getFriendLinkActiveChangeParams(entity: FriendLinkEntity): Promise<SendMailParams> {
+    const { host, name } = this.configService.val('app');
+    const url = `https://${host}`;
+
+    const context = {
+      url: url + '/friend-link',
+      appUrl: url,
+      content: entity.active ? '链接恢复访问，已恢复友链。' : `友链已不可访问，目前呈失联状态。`,
+      title: '友链可访问状态已更新。',
+    };
+
+    const to = entity.email || '';
+    Logger.info('准备发送友链有效状态变更提示邮件给申请者');
+    return [`你在『${name}』的友链可访问状态已更新。`, to, './commonTips', context];
+  }
 }

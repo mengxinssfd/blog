@@ -72,4 +72,10 @@ export class FriendLinkEntity extends BlogBaseEntity {
     select: false,
   })
   email?: string;
+
+  @Column('boolean', {
+    comment: '友链是否可访问',
+    default: true,
+  })
+  active!: boolean;
 }

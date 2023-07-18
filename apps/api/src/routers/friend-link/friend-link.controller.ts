@@ -17,7 +17,7 @@ import { UpdateFriendLinkDto } from '@blog/dtos/friend-link/update-friend-link.d
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ReqIp, User } from '@/utils/decorator';
 import { FriendLinkEntity, UserEntity } from '@blog/entities';
-import { AdjudgeFriendLinkDto, FindAllFriendLinkDto } from '@blog/dtos';
+import { ActiveFriendLinkDto, AdjudgeFriendLinkDto, FindAllFriendLinkDto } from '@blog/dtos';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
@@ -84,9 +84,9 @@ export class FriendLinkController {
     return this.friendLinkService.findAll(query);
   }
 
-  @Get('resolve')
-  findResolveAll() {
-    return this.friendLinkService.findResolveAll();
+  @Get('resolve/:active')
+  findResolveAll(@Param('active') active: 'false' | 'true') {
+    return this.friendLinkService.findResolveAll(active !== 'false');
   }
   @Get('resolve/recent')
   findRecentResolveAll(@Query() dto: PageDto) {
@@ -147,5 +147,17 @@ export class FriendLinkController {
       .then((entity) => {
         this.mailService.onFriendLinkStatusChange(entity);
       });
+  }
+
+  @ApiBearerAuth()
+  @JwtAuth()
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ab) => ab.can(Action.Manage, FriendLinkEntity.modelName))
+  @Patch('active/:id')
+  async active(@Param('id', ParseIntPipe) id: number, @Body() data: ActiveFriendLinkDto) {
+    await this.friendLinkService.setActive(id, data);
+    this.friendLinkService.findOne(id, ['fl.email', 'fl.active']).then((entity) => {
+      this.mailService.onFriendLinkActiveChange(entity);
+    });
   }
 }

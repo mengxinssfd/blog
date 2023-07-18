@@ -54,6 +54,10 @@ export class MailService {
     const params = await this.friendLinkTipsService.getFriendLinkStatusChangeParams(entity);
     this._sendMail(...params);
   }
+  async onFriendLinkActiveChange(entity: FriendLinkEntity) {
+    const params = await this.friendLinkTipsService.getFriendLinkActiveChangeParams(entity);
+    this._sendMail(...params);
+  }
 
   async onCommentCreated(comment: CommentEntity) {
     const handlers = [

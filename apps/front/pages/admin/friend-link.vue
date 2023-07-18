@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { ArrowDown } from '@element-plus/icons-vue';
 import { formatDate, updateObj } from '@tool-pack/basic';
 import {
   adjudgeFriendLink,
   deleteFriendLink,
   getFriendLinkList,
   refreshSiteInfo,
+  setFriendLinkActive,
 } from '@blog/apis';
 import { type FriendLinkEntity, FriendLinkState } from '@blog/entities';
 
@@ -105,6 +107,12 @@ async function updateSiteInfo(item: FriendLinkEntity) {
   }
 }
 
+async function handleActiveCommand(command: 'active' | 'inactive', link: FriendLinkEntity) {
+  await ElMessageBox.confirm(`是否设置为${command === 'active' ? '可访问' : '失联'}状态？`);
+  await setFriendLinkActive(link.id, { active: command === 'active' });
+  await getData();
+}
+
 getData();
 </script>
 
@@ -131,6 +139,28 @@ getData();
       <el-table-column label="描述" prop="desc" />
       <el-table-column label="邮箱" prop="email" />
       <el-table-column label="申请描述" prop="applyDesc" />
+      <el-table-column label="可访问状态" prop="active">
+        <template #default="scope">
+          <el-dropdown @command="handleActiveCommand($event, scope.row)">
+            <el-button :type="scope.row.active ? 'primary' : 'danger'" size="small" text>
+              {{ scope.row.active ? '可访问' : '失联' }}
+              <template #icon>
+                <el-icon class="el-icon--right"> <arrow-down /> </el-icon>
+              </template>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="active" :disabled="scope.row.active === true">
+                  可访问
+                </el-dropdown-item>
+                <el-dropdown-item command="inactive" :disabled="scope.row.active === false">
+                  失联
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template> </el-table-column
+      >>
       <el-table-column label="链接">
         <template #default="scope">
           <a :href="scope.row.link" target="_blank" rel="noreferrer noopener">

@@ -8,6 +8,8 @@ import type {
   UpdateFriendLinkDto,
 } from '@blog/dtos';
 import { PageDto } from '@blog/dtos/dist/dtos/src/page.dto';
+import { ActiveFriendLinkDto } from '@blog/dtos';
+import { CustomCacheConfig } from 'request-template';
 
 const urlPrefix = '/api/friend-link';
 const [Get, Post, Patch, Delete] = methodsWithUrl(
@@ -19,8 +21,11 @@ export function getFriendLinkList(data: FindAllFriendLinkDto) {
   return Get<PageVo<FriendLinkEntity>>(``, data);
 }
 
-export function getResolveFriendLinkList() {
-  return Get<PageVo<FriendLinkEntity>>(`/resolve`);
+export function getResolveFriendLinkList(
+  active = true,
+  cache: CustomCacheConfig | boolean = false,
+) {
+  return Get<PageVo<FriendLinkEntity>>(`/resolve/${active}`, undefined, { cache });
 }
 
 export function createFriendLink(data: CreateFriendLinkDto) {
@@ -38,6 +43,9 @@ export function refreshSiteInfo(id: number) {
 
 export function adjudgeFriendLink(id: number, data: AdjudgeFriendLinkDto) {
   return Patch('/adjudge/' + id, data, { successMsg: '设置成功' });
+}
+export function setFriendLinkActive(id: number, data: ActiveFriendLinkDto) {
+  return Patch('/active/' + id, data, { successMsg: '设置成功' });
 }
 
 export function getRecentResolveFriendLink(dto: PageDto = { page: 1, pageSize: 5 }) {

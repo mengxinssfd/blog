@@ -1,5 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateFriendLinkDto, AdjudgeFriendLinkDto, FindAllFriendLinkDto } from '@blog/dtos';
+import {
+  UpdateFriendLinkDto,
+  AdjudgeFriendLinkDto,
+  FindAllFriendLinkDto,
+  ActiveFriendLinkDto,
+} from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FriendLinkEntity, FriendLinkState } from '@blog/entities';
@@ -45,11 +50,11 @@ export class FriendLinkService {
     return { list, count };
   }
 
-  async findResolveAll() {
+  async findResolveAll(active = true) {
     const [list, count] = await this.repository
       .createQueryBuilder('fl')
       .addSelect(['fl.createAt'] satisfies K[])
-      .where({ status: String(FriendLinkState.resolve) })
+      .where({ status: String(FriendLinkState.resolve), active })
       .getManyAndCount();
     return { list, count };
   }
@@ -105,6 +110,12 @@ export class FriendLinkService {
       entity.rejectReason = '';
     }
     Object.assign(entity, data);
+    return await this.repository.save(entity);
+  }
+  async setActive(id: number, data: ActiveFriendLinkDto) {
+    const entity = new FriendLinkEntity();
+    entity.id = id;
+    entity.active = data.active;
     return await this.repository.save(entity);
   }
 }

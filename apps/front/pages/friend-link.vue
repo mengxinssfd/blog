@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
+import { ArrowRight } from '@element-plus/icons-vue';
 import type { FriendLinkEntity, ArticleEntity } from '@blog/entities';
 import {
   getResolveFriendLinkList,
@@ -44,10 +45,18 @@ const {
   { loading: { immediate: true, threshold: 500 } },
   defaultData,
 );
+const { data: inactiveData, request: reqInactive } = useRequest(
+  () => getResolveFriendLinkList(false, true),
+  { loading: { immediate: true, threshold: 500 } },
+  defaultData,
+);
+
+const inActiveVisible = ref(false);
 
 onBeforeMount(() => {
   reqApply();
   reqRecent();
+  reqInactive();
 });
 await getData();
 </script>
@@ -123,7 +132,7 @@ await getData();
       </Widget>
     </template>
     <section class="board main-width">
-      <div class="sort-desc _ pos-rel">
+      <div class="board-desc _ pos-rel">
         按友链申请时间排序
         <div v-if="false" class="_ btn apply abs-r" @click="showLinkApplyDialog">
           <ClientOnly>
@@ -135,11 +144,26 @@ await getData();
       </div>
       <ul v-if="linkList.length" class="link-list">
         <li v-for="link in linkList" :key="link.id">
-          <FriendLinkCard :item="link"></FriendLinkCard>
+          <FriendLinkCard :item="link" />
         </li>
       </ul>
 
       <el-empty v-else description="暂无友链"> </el-empty>
+    </section>
+    <section v-if="inactiveData.count" class="board main-width inactive-board">
+      <div class="board-desc _ flex-c-between" @click="inActiveVisible = !inActiveVisible">
+        已失联友链 ({{ inactiveData.count }})
+        <el-icon class="inactive-arrow-icon" :class="{ visible: inActiveVisible }">
+          <ArrowRight />
+        </el-icon>
+      </div>
+      <el-collapse-transition>
+        <ul v-show="inActiveVisible" class="link-list">
+          <li v-for="link in inactiveData.list" class="inactive" :key="link.id">
+            <FriendLinkCard :item="link" />
+          </li>
+        </ul>
+      </el-collapse-transition>
     </section>
     <ClientOnly>
       <FriendLinkDialog v-model:show="dialogVisible" @success="onSuccess"></FriendLinkDialog>
@@ -182,10 +206,15 @@ await getData();
   font-size: 36px;
 }
 .link-list {
+  margin-top: 1rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 1rem;
   > li {
+    &.inactive {
+      pointer-events: none;
+      filter: grayscale(1);
+    }
     > div {
       box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.05);
     }
@@ -222,7 +251,24 @@ await getData();
     }
   }
 }
-.sort-desc {
-  margin-bottom: 1rem;
+.inactive-board {
+  .board-desc {
+    cursor: pointer;
+  }
+}
+.inactive-arrow-icon {
+  transition: transform 0.3s linear;
+  &.visible {
+    transform: rotate(90deg);
+  }
+}
+
+.el-collapse-transition-leave-active,
+.el-collapse-transition-enter-active {
+  transition-property: all;
+}
+.el-collapse-transition-leave-to,
+.el-collapse-transition-enter-from {
+  margin-top: 0;
 }
 </style>
