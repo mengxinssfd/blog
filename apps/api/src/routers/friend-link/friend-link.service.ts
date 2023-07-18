@@ -35,6 +35,7 @@ export class FriendLinkService {
         'fl.rejectReason',
         'fl.updateAt',
         'fl.applyDesc',
+        'fl.email',
       ] satisfies K[])
       .orderBy('fl.updateAt' satisfies K, 'DESC');
     if (query.status) {

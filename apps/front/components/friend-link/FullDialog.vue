@@ -8,13 +8,21 @@
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
           <el-input v-model="form.avatar"></el-input>
-          <img v-if="form.avatar" class="avatar-view" :src="form.avatar" alt="" />
+          <img
+            v-if="form.avatar"
+            class="avatar-view"
+            style="max-width: 200px"
+            :src="form.avatar"
+            alt="" />
         </el-form-item>
         <el-form-item label="网站描述" prop="desc">
           <el-input v-model="form.desc" type="textarea" rows="5"></el-input>
         </el-form-item>
         <el-form-item label="网站链接" prop="link">
           <el-input v-model="form.link"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="form.email"></el-input>
         </el-form-item>
         <el-form-item label="网站截图" prop="screenshot">
           <el-input v-model="form.screenshot"></el-input>
@@ -35,7 +43,7 @@ import { updateObj } from '@tool-pack/basic';
 import type { FriendLinkEntity } from '@blog/entities';
 import { createFriendLink, updateFriendLink } from '@blog/apis';
 
-type Form = Pick<FriendLinkEntity, 'name' | 'desc' | 'link' | 'avatar' | 'screenshot'>;
+type Form = Pick<FriendLinkEntity, 'name' | 'desc' | 'link' | 'avatar' | 'screenshot' | 'email'>;
 
 const props = defineProps({
   show: {
@@ -50,7 +58,14 @@ const props = defineProps({
 
 const emits = defineEmits(['update:show', 'success']);
 
-const createFormValue = (): Form => ({ name: '', desc: '', link: '', avatar: '', screenshot: '' });
+const createFormValue = (): Form => ({
+  name: '',
+  desc: '',
+  link: '',
+  avatar: '',
+  screenshot: '',
+  email: '',
+});
 
 const elFormRef = ref();
 const visible = computed({

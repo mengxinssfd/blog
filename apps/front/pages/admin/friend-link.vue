@@ -129,6 +129,7 @@ getData();
       </el-table-column>
       <el-table-column label="网站名" prop="name" width="130" />
       <el-table-column label="描述" prop="desc" />
+      <el-table-column label="邮箱" prop="email" />
       <el-table-column label="申请描述" prop="applyDesc" />
       <el-table-column label="链接">
         <template #default="scope">
