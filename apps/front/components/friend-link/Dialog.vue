@@ -3,14 +3,20 @@ import { createFriendLink } from '@blog/apis';
 import type { CreateFriendLinkDto } from '@blog/dtos';
 import { isUrl } from '@tool-pack/basic';
 import { Validator } from '~/types';
+import useUserStore from '~/store/user.store';
 
 const props = defineProps({
   show: { type: Boolean, default: false },
 });
 
+const userStore = useUserStore();
+
 const emits = defineEmits(['update:show', 'success']);
 
-const createFormValue = (): CreateFriendLinkDto => ({ link: '', email: '' });
+const createFormValue = (): CreateFriendLinkDto => ({
+  link: '',
+  email: userStore.user.email || '',
+});
 
 const elFormRef = ref();
 const visible = computed({
