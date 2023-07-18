@@ -150,14 +150,80 @@ describe('/comment 评论', () => {
         .expect(CommentApi.ResType.created);
     });
     it('获取回复', () => {
-      const articleReg = '\\{"id":1,"title":"测试一些","authorId":3}';
-      return api
-        .getReplyMeAll(RoleUsers.dev.token)
-        .expect(
-          new RegExp(
-            `\\{"code":200,"msg":"Success","data":\\{"count":4,"list":\\[\\{"user":\\{"id":2,"nickname":"hello_1","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","touristName":null,"article":${articleReg},"id":1,"userId":2},\\{"user":\\{"id":null,"nickname":null,"avatar":null},"createAt":"${dateReg}","deletedAt":null,"content":"hello world","touristName":"你好啊","article":${articleReg},"id":2,"userId":null},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","touristName":null,"article":${articleReg},"id":3,"userId":3},\\{"user":\\{"id":3,"nickname":"hello_2","avatar":"${UserEntity.DEFAULT_AVATAR}"},"createAt":"${dateReg}","deletedAt":null,"content":"你好呀","touristName":null,"article":${articleReg},"id":4,"userId":3}]}}`,
-          ),
-        );
+      const res = {
+        code: 200,
+        msg: 'Success',
+        data: {
+          count: 4,
+          list: [
+            {
+              user: {
+                id: 2,
+                nickname: 'hello_1',
+                avatar:
+                  'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg',
+              },
+              createAt: '${timeRegExp}',
+              deletedAt: null,
+              content: '你好呀',
+              articleId: 1,
+              touristName: null,
+              article: { id: 1, title: '测试一些', authorId: 3 },
+              id: 1,
+              userId: 2,
+            },
+            {
+              user: { id: null, nickname: null, avatar: null },
+              createAt: '${timeRegExp}',
+              deletedAt: null,
+              content: 'hello world',
+              articleId: 1,
+              touristName: '你好啊',
+              article: { id: 1, title: '测试一些', authorId: 3 },
+              id: 2,
+              userId: null,
+            },
+            {
+              user: {
+                id: 3,
+                nickname: 'hello_2',
+                avatar:
+                  'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg',
+              },
+              createAt: '${timeRegExp}',
+              deletedAt: null,
+              content: '你好呀',
+              articleId: 1,
+              touristName: null,
+              article: { id: 1, title: '测试一些', authorId: 3 },
+              id: 3,
+              userId: 3,
+            },
+            {
+              user: {
+                id: 3,
+                nickname: 'hello_2',
+                avatar:
+                  'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg',
+              },
+              createAt: '${timeRegExp}',
+              deletedAt: null,
+              content: '你好呀',
+              articleId: 1,
+              touristName: null,
+              article: { id: 1, title: '测试一些', authorId: 3 },
+              id: 4,
+              userId: 3,
+            },
+          ],
+        },
+      };
+      const reg = new RegExp(
+        JSON.stringify(res)
+          .replace(/([{[])/g, `\\$1`)
+          .replace(/\$\\\{timeRegExp}/g, dateReg),
+      );
+      return api.getReplyMeAll(RoleUsers.dev.token).expect(reg);
     });
   });
 
