@@ -40,11 +40,10 @@ export class UserService {
   async getSelf(id: number) {
     const find = await this.repository.findOne({
       where: { id },
-      select: ['id', 'username', 'nickname', 'role', 'avatar'],
+      select: ['id', 'username', 'nickname', 'role', 'avatar', 'email'],
     });
-    if (!find) {
-      throw new NotFoundException('账号不存在');
-    }
+    if (!find) throw new NotFoundException('账号不存在');
+
     return find;
   }
 
