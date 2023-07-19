@@ -5,10 +5,19 @@ import { getProjectCategoryList } from '@blog/apis';
 const article = ref<ArticleEntity>({} as ArticleEntity);
 const dialogVisible = ref(false);
 const contentRef = ref<HTMLElement>();
+const collapseValue = ref<number[]>([]);
 
 const { data: _data } = await useAsyncData(() => getProjectCategoryList());
+
 const cateList = computed(() =>
   (_data.value?.data.list || []).filter((i) => Boolean(i.projectList?.length)),
+);
+watch(
+  cateList,
+  (c) => {
+    collapseValue.value = c.map((i) => i.id);
+  },
+  { immediate: true },
 );
 </script>
 
@@ -21,16 +30,18 @@ const cateList = computed(() =>
       </WidgetStickyLayout>
     </template>
     <section ref="contentRef" class="project-list-area board">
-      <ul class="cate-list">
-        <li v-for="cate in cateList" :key="cate.id">
-          <h1 :id="`project-cate-${cate.id}`" class="cate-name">{{ cate.name }}</h1>
+      <el-collapse v-model="collapseValue" class="cate-list">
+        <el-collapse-item v-for="cate in cateList" :key="cate.id" :name="cate.id">
+          <template #title>
+            <h1>{{ cate.name + ` (${cate.projectList.length})` }}</h1>
+          </template>
           <ul class="project-list">
             <li v-for="project in cate.projectList" :key="project.id">
               <ProjectCard :item="project" />
             </li>
           </ul>
-        </li>
-      </ul>
+        </el-collapse-item>
+      </el-collapse>
       <el-empty v-if="!cateList.length" description="暂无数据" />
     </section>
   </ArticleAsPage>
@@ -39,21 +50,30 @@ const cateList = computed(() =>
 
 <style lang="scss" scoped>
 .cate-list {
-  .cate-name {
-    position: relative;
-    margin-bottom: 1rem;
-    padding: 0 0 0 1rem;
-    font-size: 1.5rem;
-    font-weight: bolder;
-
-    &:before {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background-color: var(--theme-color);
-      content: '';
+  --el-collapse-border-color: rgba(0, 0, 0, 0);
+  :deep {
+    .el-collapse-item + .el-collapse-item {
+      margin-top: 1rem;
+    }
+    .el-collapse-item__header {
+      position: relative;
+      padding: 0 0 0 1rem;
+      height: 36px;
+      line-height: 36px;
+      font-size: 1.5rem;
+      font-weight: bolder;
+      &:before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: var(--theme-color);
+        content: '';
+      }
+    }
+    .el-collapse-item__content {
+      padding: 1rem 0;
     }
   }
 }
