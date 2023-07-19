@@ -6,7 +6,7 @@ const disabled = computed(() => [/^\/admin/].some((item) => new RegExp(item).tes
 <template>
   <div
     :class="{ disabled }"
-    class="aside-drawer-contents-switcher _ btn flex-c-c"
+    class="aside-drawer-contents-switcher _ btn"
     @click="asideContent = !asideContent">
     <i class="iconfont icon-category"></i>
   </div>
@@ -20,6 +20,8 @@ const disabled = computed(() => [/^\/admin/].some((item) => new RegExp(item).tes
 @media (max-width: $show-aside-on-screen-width) {
   .aside-drawer-contents-switcher:not(.disabled) {
     display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>
