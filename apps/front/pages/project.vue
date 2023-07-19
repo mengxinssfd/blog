@@ -33,7 +33,9 @@ watch(
       <el-collapse v-model="collapseValue" class="cate-list">
         <el-collapse-item v-for="cate in cateList" :key="cate.id" :name="cate.id">
           <template #title>
-            <h1>{{ cate.name + ` (${cate.projectList.length})` }}</h1>
+            <h1 :id="`project-cate-${cate.id}`">
+              {{ cate.name + ` (${cate.projectList.length})` }}
+            </h1>
           </template>
           <ul class="project-list">
             <li v-for="project in cate.projectList" :key="project.id">
