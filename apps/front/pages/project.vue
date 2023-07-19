@@ -34,8 +34,9 @@ watch(
         <el-collapse-item v-for="cate in cateList" :key="cate.id" :name="cate.id">
           <template #title>
             <h1 :id="`project-cate-${cate.id}`">
-              {{ cate.name + ` (${cate.projectList.length})` }}
+              {{ cate.name }}
             </h1>
+            <span>({{ cate.projectList.length }})</span>
           </template>
           <ul class="project-list">
             <li v-for="project in cate.projectList" :key="project.id">
@@ -60,10 +61,17 @@ watch(
     .el-collapse-item__header {
       position: relative;
       padding: 0 0 0 1rem;
-      height: 36px;
-      line-height: 36px;
-      font-size: 1.5rem;
-      font-weight: bolder;
+      $h: 30px;
+      height: $h;
+      line-height: $h;
+      font-size: 1.2rem;
+      h1 {
+        font-weight: bolder;
+        + span {
+          margin-left: 6px;
+          font-size: 1rem;
+        }
+      }
       &:before {
         position: absolute;
         left: 0;
@@ -83,6 +91,7 @@ watch(
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: repeat(4, 1fr);
+  padding: 0 0.5rem;
   @media (max-width: 750px) {
     grid-template-columns: repeat(1, 1fr);
   }
