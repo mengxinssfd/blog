@@ -36,7 +36,7 @@ watch(
             <h1 :id="`project-cate-${cate.id}`">
               {{ cate.name }}
             </h1>
-            <span>({{ cate.projectList.length }})</span>
+            <span>({{ cate.projectList?.length || 0 }})</span>
           </template>
           <ul class="project-list">
             <li v-for="project in cate.projectList" :key="project.id">

@@ -62,7 +62,7 @@ export default defineComponent({
   },
   setup(props) {
     const [bannerStyle, useBannerScrollWatch] = useBanner();
-    const headderStore = useHeaderStore();
+    const headerStore = useHeaderStore();
     const Data = {
       bgClass: 'color-' + randomInt(1, 4),
       bannerStyle,
@@ -74,7 +74,7 @@ export default defineComponent({
           ? `brightness(${props.brightness === true ? 0.35 : props.brightness})`
           : '',
       ),
-      headerMode: computed(() => headderStore.mode),
+      headerMode: computed(() => headerStore.mode),
     };
     const Methods = {};
 

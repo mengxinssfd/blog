@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ElDrawer } from 'element-plus';
 /**
  * 由于el-drawer的modelValue只支持boolean类型，
  * 在tsx组件中使用时传入ref()会报错，传boolean ref.value会丢失响应，
@@ -10,6 +11,7 @@
 // defineOptions({ inheritAttrs: true });
 
 const model = defineModel({ type: [Boolean, Object], default: false, local: true });
+defineProps({} as typeof ElDrawer);
 </script>
 
 <template>
