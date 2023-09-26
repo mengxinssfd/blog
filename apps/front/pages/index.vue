@@ -2,7 +2,7 @@
   <NuxtLayout name="page">
     <template #banner>
       <Banner
-        bg-img="https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/1683759631385.jpg"
+        bg-img="https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/1695725893245.webp"
         height="55vh"
         :blur="false"
         :brightness="0.75">
