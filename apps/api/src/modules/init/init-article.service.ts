@@ -46,6 +46,11 @@ export class InitArticleService {
     content?: string;
   }> = [
     {
+      title: '首页',
+      description: '首页',
+      as: 'index',
+    },
+    {
       title: '友链',
       description: '友链',
       as: 'friend-link',

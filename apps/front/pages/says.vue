@@ -4,7 +4,7 @@ import { getSaysList } from '@blog/apis';
 import { type PageVo } from '@blog/dtos/page.vo';
 import { getRegionLocation } from '@blog/shared';
 import useUserStore from '~/store/user.store';
-import { filterBrowser, filterOs, handleCommentTree } from '~/feature/utils';
+import { filterBrowser, filterOs } from '~/feature/utils';
 
 const userStore = useUserStore();
 const article = ref<ArticleEntity>({} as ArticleEntity);
