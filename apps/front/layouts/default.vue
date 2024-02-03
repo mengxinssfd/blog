@@ -1,4 +1,5 @@
 <template>
+  <Firework />
   <Header />
   <div class="page-wrapper _ flex-col">
     <slot></slot>
