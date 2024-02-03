@@ -1,4 +1,8 @@
 <template>
+  <Lantern style="left: 10px; top: 80px" content="春" />
+  <Lantern style="left: 150px" left content="节" />
+  <Lantern style="right: 150px" content="快" />
+  <Lantern style="right: 10px; top: 80px" content="乐" />
   <Firework />
   <Header />
   <div class="page-wrapper _ flex-col">
