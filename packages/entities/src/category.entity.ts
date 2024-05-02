@@ -6,7 +6,7 @@ import { UserEntity } from './user.entity';
 // 分类
 @Entity({ name: 'category' })
 export class CategoryEntity extends BlogBaseEntity {
-  static readonly modelName = 'CategoryEntity' as const;
+  static override readonly modelName = 'CategoryEntity' as const;
 
   @Column('varchar', { length: 24, comment: '分类名', unique: true })
   name!: string;

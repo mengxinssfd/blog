@@ -7,7 +7,7 @@ import { CommentDislikeEntity } from './comment-dislike.entity';
 
 @Entity({ name: 'comment' })
 export class CommentEntity extends BlogBaseEntity {
-  static readonly modelName = 'CommentEntity' as const;
+  static override readonly modelName = 'CommentEntity' as const;
 
   @Column({
     type: 'text',

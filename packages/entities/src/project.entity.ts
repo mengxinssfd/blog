@@ -19,7 +19,7 @@ export enum ProjectStatus {
 export class ProjectEntity extends BlogBaseEntity {
   static readonly STATUS = ProjectStatus;
 
-  static readonly modelName = 'ProjectEntity' as const;
+  static override readonly modelName = 'ProjectEntity' as const;
 
   @Column('varchar', { length: 100, comment: '项目名称' })
   name!: string;

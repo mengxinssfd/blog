@@ -9,7 +9,7 @@ export enum SaysVisibleStatus {
 
 @Entity({ name: 'says' })
 export class SaysEntity extends BlogBaseEntity {
-  static readonly modelName = 'SaysEntity' as const;
+  static override readonly modelName = 'SaysEntity' as const;
   static readonly VISIBLE_STATUS = SaysVisibleStatus;
 
   constructor(partial?: Partial<SaysEntity>) {
@@ -134,5 +134,5 @@ WHERE scope = 'says'
   and parentId is NULL
   and replyId is NULL;
 
- 
+
 */

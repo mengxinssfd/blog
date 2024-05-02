@@ -11,7 +11,7 @@ export enum FriendLinkState {
 @Entity('friend_link')
 export class FriendLinkEntity extends BlogBaseEntity {
   static readonly STATE = FriendLinkState;
-  static readonly modelName = 'FriendLinkEntity' as const;
+  static override readonly modelName = 'FriendLinkEntity' as const;
 
   @Column('varchar', { length: 100, comment: '站名' })
   name!: string;

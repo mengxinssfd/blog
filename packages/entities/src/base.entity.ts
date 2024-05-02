@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 
 export class BlogBaseEntity extends BaseEntity {
+  static readonly modelName: string;
+
   @PrimaryGeneratedColumn({ comment: 'id' })
   id!: number;
 

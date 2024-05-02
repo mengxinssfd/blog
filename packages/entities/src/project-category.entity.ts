@@ -4,7 +4,7 @@ import { BlogBaseEntity } from './base.entity';
 
 @Entity('project_category')
 export class ProjectCategoryEntity extends BlogBaseEntity {
-  static readonly modelName = 'ProjectCategoryEntity' as const;
+  static override readonly modelName = 'ProjectCategoryEntity' as const;
 
   constructor(partial?: Partial<ProjectCategoryEntity>) {
     super();

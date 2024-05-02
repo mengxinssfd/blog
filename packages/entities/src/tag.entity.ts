@@ -5,7 +5,7 @@ import { ArticleEntity } from './article.entity';
 
 @Entity('tag')
 export class TagEntity extends BlogBaseEntity {
-  static readonly modelName = 'TagEntity' as const;
+  static override readonly modelName = 'TagEntity' as const;
 
   @Column('varchar', { length: 24, comment: 'tag名', unique: true })
   name!: string;

@@ -26,7 +26,7 @@ export class ArticleEntity extends BlogBaseEntity {
 
   static readonly STATE = ARTICLE_STATE;
 
-  static readonly modelName = 'ArticleEntity' as const;
+  static override readonly modelName = 'ArticleEntity' as const;
 
   @Column('enum', {
     enum: ARTICLE_STATE,

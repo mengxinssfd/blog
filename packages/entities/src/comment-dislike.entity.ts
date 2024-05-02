@@ -4,7 +4,7 @@ import { CommentEntity } from './comment.entity';
 
 @Entity('comment_dislike')
 export class CommentDislikeEntity extends BaseLikeEntity {
-  static readonly modelName = 'CommentDislikeEntity' as const;
+  static override readonly modelName = 'CommentDislikeEntity' as const;
 
   @ManyToOne(() => CommentEntity, (comment) => comment.dislike)
   @JoinColumn({ name: 'commentId' })

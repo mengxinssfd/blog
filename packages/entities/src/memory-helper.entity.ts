@@ -10,7 +10,7 @@ export enum MEMORY_STATUS {
 @Entity('memory_helper')
 export class MemoryHelperEntity extends BlogBaseEntity {
   static readonly STATUS = MEMORY_STATUS;
-  static readonly modelName = 'MemoryHelperEntity' as const;
+  static override readonly modelName = 'MemoryHelperEntity' as const;
 
   @Column('varchar', {
     length: 100,

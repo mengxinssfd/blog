@@ -4,7 +4,7 @@ import { UserEntity } from './user.entity';
 
 @Entity('file')
 export class FileEntity extends BlogBaseEntity {
-  static readonly modelName = 'FileEntity' as const;
+  static override readonly modelName = 'FileEntity' as const;
 
   @Column('varchar', { comment: 'oss链接', length: 500 })
   url!: string;
