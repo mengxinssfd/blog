@@ -1,5 +1,5 @@
-import { UserEntity } from '@blog/entities';
-import { AbilityBuilder, MongoAbility } from '@casl/ability';
+import type { UserEntity } from '@blog/entities';
+import type { AbilityBuilder, MongoAbility } from '@casl/ability';
 
 export enum Action {
   Manage = 'manage',

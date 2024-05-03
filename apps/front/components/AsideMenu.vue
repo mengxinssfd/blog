@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { getClassNames } from '@tool-pack/basic';
 import { ElLink, ElIcon } from 'element-plus';
-import useMenuStore, { MenuItem } from '~/store/menu.store';
+import useMenuStore, { type MenuItem } from '~/store/menu.store';
 
 const menuStore = useMenuStore();
 

@@ -1,5 +1,5 @@
 import type { Transform } from 'class-transformer';
-import { ValidateIf, ValidationOptions } from 'class-validator';
+import { ValidateIf, type ValidationOptions } from 'class-validator';
 
 export const strToNum: Parameters<typeof Transform>[0] = (params) => {
   if (params.value) params.value = Number(params.value);

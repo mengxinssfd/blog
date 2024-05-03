@@ -41,7 +41,7 @@ function buildPkg() {
     .filter((v) => v[0].startsWith('@blog/'))
     .forEach(([k, v]) => {
       const name = k.replace('@blog/', '');
-      originPkg.dependencies[k] = './' + name;
+      originPkg.dependencies[k as keyof typeof originPkg.dependencies] = './' + name;
       copyDeps(v, name);
     });
 

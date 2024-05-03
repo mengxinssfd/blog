@@ -6,7 +6,7 @@ import { createProject, getProjectCategoryList, updateProject } from '@blog/apis
 import type { CreateProjectDto } from '@blog/dtos';
 import { useRequest } from '@request-template/vue3-hooks';
 
-const visible = defineModel('show', { type: Boolean, default: false, local: true });
+const visible = defineModel<boolean>('show', { type: Boolean, default: false, local: true });
 const props = defineProps({
   data: {
     type: Object as Vue.PropType<ProjectEntity | null>,

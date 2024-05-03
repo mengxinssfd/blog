@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import * as Vue from 'vue/dist/vue';
+import * as Vue from 'vue';
 import Drawer from '~/components/Drawer.vue';
 
 const state = useState('aside.hiddenContent', () => false);

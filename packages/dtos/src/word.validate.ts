@@ -1,7 +1,7 @@
 import {
   ValidatorConstraint,
-  ValidatorConstraintInterface,
-  ValidationArguments,
+  type ValidatorConstraintInterface,
+  type ValidationArguments,
 } from 'class-validator';
 import Mint from 'mint-filter';
 import { keywords } from './keywords.json';

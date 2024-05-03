@@ -1,6 +1,6 @@
 import { AxiosRequestTemplate } from '@request-template/axios';
 import axios from 'axios';
-import { PrimaryCustomConfig } from '@blog/apis';
+import { type PrimaryCustomConfig } from '@blog/apis';
 
 AxiosRequestTemplate.useAxios(axios);
 

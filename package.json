@@ -53,7 +53,7 @@
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
-    "@tool-pack/types": "^0.2.1",
+    "@tool-pack/types": "^0.2.2-beta.1",
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.5.1",
     "@types/js-yaml": "^4.0.5",
@@ -76,7 +76,7 @@
     "run-script-webpack-plugin": "^0.2.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.4.5",
-    "vue-tsc": "^1.6.5",
+    "vue-tsc": "^2.0.16",
     "webpack": "^5.83.1",
     "webpack-node-externals": "^3.0.0"
   },

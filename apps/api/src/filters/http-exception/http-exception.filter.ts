@@ -14,11 +14,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
 
-    const body = exception.getResponse();
+    type Resp = string | Record<string, any>;
+    const body = exception.getResponse() as Resp;
 
     const msg = typeof body === 'string' ? body : castArray(body['message']).join(';');
     const newJson = { code: status, msg };
-    const data = exception.getResponse();
+    const data = exception.getResponse() as Resp;
 
     if (typeof data === 'string') {
       if (data !== msg) Object.assign(newJson, { data });

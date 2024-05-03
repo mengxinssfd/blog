@@ -1,5 +1,5 @@
 import { ProjectEntity } from '@blog/entities';
-import { Action, RuleCreator } from '../types';
+import { Action, type RuleCreator } from '../types';
 
 const Project = [ProjectEntity, ProjectEntity.modelName];
 

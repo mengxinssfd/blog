@@ -1,8 +1,8 @@
 import { methodsWithUrl } from '../request';
-import { PageVo } from '@blog/dtos/src/page.vo';
+import type { PageVo } from '@blog/dtos/src/page.vo';
 import type { SaysEntity } from '@blog/entities';
-import { PageDto } from '@blog/dtos/src/page.dto';
-import { ID } from '../types';
+import type { PageDto } from '@blog/dtos/src/page.dto';
+import type { ID } from '../types';
 import type { CreateSaysDto, UpdateSaysDto } from '@blog/dtos';
 
 const urlPrefix = '/api/says';

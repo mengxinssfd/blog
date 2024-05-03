@@ -29,7 +29,7 @@ import * as Vue from 'vue';
 import { updateObj } from '@tool-pack/basic';
 import { updateUserInfo, updateUserInfoByAdmin } from '@blog/apis';
 import type { UserEntity } from '@blog/entities';
-import { Validator } from '~/types';
+import type { Validator } from '~/types';
 
 const emit = defineEmits(['updated', 'update:show']);
 

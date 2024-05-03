@@ -1,7 +1,7 @@
-import { HttpStatus, StatusHandler, StatusHandlers } from 'request-template';
+import { HttpStatus, type StatusHandler, type StatusHandlers } from 'request-template';
 import { ElNotification } from 'element-plus';
 import { Token } from './token';
-import { PrimaryCustomConfig } from '@blog/apis';
+import { type PrimaryCustomConfig } from '@blog/apis';
 import useUserStore from '~/store/user.store';
 
 // 通用错误Handler

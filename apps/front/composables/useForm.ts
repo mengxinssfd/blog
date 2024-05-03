@@ -1,7 +1,7 @@
 import * as Vue from 'vue';
 import { updateObj } from '@tool-pack/basic';
 import type { BlogBaseEntity } from '@blog/entities/base.entity';
-import { Ref } from 'vue';
+import type { Ref } from 'vue';
 
 export function useForm<Entity extends BlogBaseEntity, CFV extends () => any>({
   createFormValue,
@@ -16,7 +16,7 @@ export function useForm<Entity extends BlogBaseEntity, CFV extends () => any>({
   submit: () => Promise<void>;
   props: any;
 } {
-  const visible = defineModel({ type: Boolean, default: false, local: true });
+  const visible = defineModel<boolean>('visible', { type: Boolean, default: false, local: true });
   const props = defineProps({
     data: {
       type: Object as Vue.PropType<Entity | null>,

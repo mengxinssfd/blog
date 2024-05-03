@@ -1,6 +1,6 @@
 import { useRequest } from '@request-template/vue3-hooks';
 import { PrimaryRequest } from '~/feature/request/primary';
-import { ResType } from 'request-template';
+import { type ResType } from 'request-template';
 
 export const SentenceCates: Record<string, string> = {
   a: '动画',

@@ -4,7 +4,7 @@ import {
   inRange,
   getTimePeriodConst,
 } from '@tool-pack/basic';
-import { TupleM2N } from '@tool-pack/types';
+import type { TupleM2N } from '@tool-pack/types';
 
 export const howLongAgo = (date: string | Date, format?: string) => {
   const _date = typeof date === 'string' ? new Date(date) : date;

@@ -5,7 +5,7 @@ import { ElLoading } from 'element-plus';
 import axios from 'axios';
 import { statusHandlers } from './statusHandlers';
 import { Token } from './token';
-import { PrimaryCustomConfig, setRequestIns } from '@blog/apis';
+import { type PrimaryCustomConfig, setRequestIns } from '@blog/apis';
 
 AxiosRequestTemplate.useAxios(axios);
 

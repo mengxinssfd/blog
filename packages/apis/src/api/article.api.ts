@@ -1,11 +1,11 @@
 import { methodsWithUrl } from '../request';
 import type { ArticleEntity } from '@blog/entities';
 import type { ArticleListDto, CreateArticleDto, UpdateArticleDto } from '@blog/dtos';
-import { ID } from '../types';
-import { PageDto } from '@blog/dtos/src/page.dto';
-import { PageVo } from '@blog/dtos/src/page.vo';
-import { type CustomCacheConfig } from 'request-template';
-import { ArticleSetAsDto } from '@blog/dtos';
+import type { ID } from '../types';
+import type { PageDto } from '@blog/dtos/src/page.dto';
+import type { PageVo } from '@blog/dtos/src/page.vo';
+import type { CustomCacheConfig } from 'request-template';
+import type { ArticleSetAsDto } from '@blog/dtos';
 
 export type GetArticleListRes = PageVo<ArticleEntity>;
 

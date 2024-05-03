@@ -7,9 +7,9 @@ import type {
   FindAllFriendLinkDto,
   UpdateFriendLinkDto,
 } from '@blog/dtos';
-import { PageDto } from '@blog/dtos/dist/dtos/src/page.dto';
-import { ActiveFriendLinkDto } from '@blog/dtos';
-import { CustomCacheConfig } from 'request-template';
+import type { PageDto } from '@blog/dtos/dist/dtos/src/page.dto';
+import type { ActiveFriendLinkDto } from '@blog/dtos';
+import type { CustomCacheConfig } from 'request-template';
 
 const urlPrefix = '/api/friend-link';
 const [Get, Post, Patch, Delete] = methodsWithUrl(

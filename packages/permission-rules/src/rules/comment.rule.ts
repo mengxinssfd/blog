@@ -1,5 +1,5 @@
 import { ArticleEntity, CommentEntity, UserEntity } from '@blog/entities';
-import { Action, RuleCreator } from '../types';
+import { Action, type RuleCreator } from '../types';
 
 const Comment = [CommentEntity, CommentEntity.modelName];
 

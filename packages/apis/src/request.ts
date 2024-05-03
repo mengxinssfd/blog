@@ -1,6 +1,6 @@
 import type { Method } from 'axios';
 import type { CustomConfig, DynamicCustomConfig, RequestTemplate } from 'request-template';
-import { Tuple } from '@tool-pack/types';
+import type { Tuple } from '@tool-pack/types';
 
 export interface PrimaryCustomConfig extends CustomConfig {
   showSuccessMsg?: boolean;

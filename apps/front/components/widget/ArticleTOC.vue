@@ -2,7 +2,7 @@
 import * as Vue from 'vue';
 import type { ElMenu } from 'element-plus';
 import { throttle } from '@tool-pack/basic';
-import { AnchorTree } from '~/components/article/detail/tree';
+import { type AnchorTree } from '~/components/article/detail/tree';
 
 const tree = ref<AnchorTree[]>([]);
 const menuRef = ref<typeof ElMenu>();

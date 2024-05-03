@@ -1,11 +1,15 @@
-import { InferSubjects } from '@casl/ability';
-import { BlogBaseEntity } from '@blog/entities/base.entity';
-import { RuleCreator } from './types';
+import { type InferSubjects } from '@casl/ability';
+import { type BlogBaseEntity } from '@blog/entities/base.entity';
+import type { RuleCreator } from './types';
 
 export function bootstrap<T extends typeof BlogBaseEntity>(
   entities: T[],
   ruleCreators: RuleCreator[],
-) {
+): {
+  subjects: InferSubjects<T, true> | 'all';
+  classMap: Record<string, T>;
+  ruleRegister: RuleCreator;
+} {
   type Subjects = InferSubjects<T, true> | 'all';
   const subjects: Subjects = '' as any;
 
@@ -17,8 +21,8 @@ export function bootstrap<T extends typeof BlogBaseEntity>(
   return {
     subjects,
     classMap,
-    ruleRegister: ((user, builder) => {
+    ruleRegister: (user, builder) => {
       ruleCreators.forEach((c) => c(user, builder));
-    }) as RuleCreator,
+    },
   };
 }

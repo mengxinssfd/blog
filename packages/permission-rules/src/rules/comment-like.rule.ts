@@ -1,5 +1,5 @@
 import { CommentLikeEntity, ROLE } from '@blog/entities';
-import { Action, RuleCreator } from '../types';
+import { Action, type RuleCreator } from '../types';
 
 const Like = [CommentLikeEntity, CommentLikeEntity.modelName];
 

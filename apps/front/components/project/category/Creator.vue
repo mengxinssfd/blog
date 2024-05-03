@@ -7,7 +7,7 @@ import type { CreateProjectCategoryDto } from '@blog/dtos';
 
 defineOptions({ name: 'ProjectCategoryCreator' });
 
-const visible = defineModel({ type: Boolean, default: false, local: true });
+const visible = defineModel<boolean>({ type: Boolean, default: false, local: true });
 const props = defineProps({
   data: {
     type: Object as Vue.PropType<ProjectCategoryEntity | null>,

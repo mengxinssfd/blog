@@ -1,9 +1,9 @@
 import { methodsWithUrl } from '../request';
 import type { CreateCommentDto } from '@blog/dtos';
-import { PageVo } from '@blog/dtos/src/page.vo';
+import type { PageVo } from '@blog/dtos/src/page.vo';
 import type { CommentEntity } from '@blog/entities';
 import type { ID } from '../types';
-import { PageDto } from '@blog/dtos/src/page.dto';
+import type { PageDto } from '@blog/dtos/src/page.dto';
 
 const urlPrefix = '/api/comment';
 

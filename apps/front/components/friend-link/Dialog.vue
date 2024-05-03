@@ -2,7 +2,7 @@
 import { createFriendLink } from '@blog/apis';
 import type { CreateFriendLinkDto } from '@blog/dtos';
 import { isUrl } from '@tool-pack/basic';
-import { Validator } from '~/types';
+import type { Validator } from '~/types';
 import useUserStore from '~/store/user.store';
 
 const props = defineProps({

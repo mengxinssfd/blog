@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus';
 import { register as registerApi } from '@blog/apis';
 import type { RegisterDTO } from '@blog/dtos';
 import { useRouter } from '#app';
-import { Validator } from '~/types';
+import type { Validator } from '~/types';
 
 definePageMeta({
   layout: false,

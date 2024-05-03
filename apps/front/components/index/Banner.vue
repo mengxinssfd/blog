@@ -63,7 +63,7 @@
 <script lang="ts">
 import { randomInt } from '@tool-pack/basic';
 import { ArrowRight, ArrowLeft } from '@element-plus/icons-vue';
-import { DailyImg, getDailyImg } from '@blog/apis';
+import { type DailyImg, getDailyImg } from '@blog/apis';
 import { computed, defineComponent, onMounted, onUnmounted, reactive } from '#imports';
 import { useAsyncData } from '#app';
 import { TODAY_COVER_URL } from '~/config/constants';

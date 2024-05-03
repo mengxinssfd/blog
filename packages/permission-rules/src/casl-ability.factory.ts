@@ -17,11 +17,11 @@ import {
 } from '@blog/entities';
 import {
   AbilityBuilder,
-  AbilityOptionsOf,
+  type AbilityOptionsOf,
   createMongoAbility,
-  ExtractSubjectType,
+  type ExtractSubjectType,
   ForbiddenError,
-  MongoAbility,
+  type MongoAbility,
 } from '@casl/ability';
 import { bootstrap } from './bootstrap';
 import { Action } from './types';
@@ -83,10 +83,15 @@ export class CaslAbilityFactory {
     // 参考文档：https://casl.js.org/v6/en/guide/restricting-fields
     const options: AbilityOptionsOf<AppAbility> = {
       detectSubjectType: (subject) => {
+        console.log('sssssssss', subject);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const matched = classMap[subject['__caslSubjectType__']];
         if (matched) {
           // 非class实例转成实例
           const ext = Object.assign(new matched(), subject);
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           delete ext['__caslSubjectType__'];
           subject = ext;
         }

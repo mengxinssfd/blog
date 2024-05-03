@@ -3,7 +3,7 @@ import { methodsWithUrl } from '@blog/apis';
 import type { MemoryHelperEntity } from '@blog/entities';
 import type { PageVo } from '@blog/dtos/dist/dtos/src/page.vo';
 import type { CreateMemoryHelperDto, MemoryListDTO, UpdateMemoryHelperDto } from '@blog/dtos';
-import { MemoryHelperEntityResolved } from '@blog/entities';
+import type { MemoryHelperEntityResolved } from '@blog/entities';
 
 const urlPrefix = '/api/memory-helper';
 

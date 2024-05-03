@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getStatisticsTotal as getStatisticsTotalApi, StatisticsTotal } from '@blog/apis';
+import { getStatisticsTotal as getStatisticsTotalApi, type StatisticsTotal } from '@blog/apis';
 import { useRouter } from '#app';
 import useUserStore from '~/store/user.store';
 

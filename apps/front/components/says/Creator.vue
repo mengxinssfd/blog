@@ -7,7 +7,7 @@ import { useRequest } from '@request-template/vue3-hooks';
 import { updateObj } from '@tool-pack/basic';
 import MdEditorAsync from '~/components/MdEditorAsync.vue';
 
-const model = defineModel({ type: Boolean, default: false, local: true });
+const model = defineModel<boolean>({ type: Boolean, default: false, local: true });
 const emit = defineEmits(['success']);
 const props = defineProps({
   data: {

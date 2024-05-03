@@ -5,7 +5,7 @@ import { getCommentByArticle as getCommentByArticleApi } from '@blog/apis';
 import { type ArticleEntity } from '@blog/entities';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useRequest } from '@request-template/vue3-hooks';
-import { CommentTreeType, handleCommentTree } from '~/feature/utils';
+import { type CommentTreeType, handleCommentTree } from '~/feature/utils';
 
 const route = useRoute();
 const props = defineProps({

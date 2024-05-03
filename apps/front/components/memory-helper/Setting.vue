@@ -13,7 +13,7 @@ const props = defineProps({
   },
 });
 
-const visible = defineModel('visible', { local: true, type: Boolean, default: false });
+const visible = defineModel<boolean>('visible', { local: true, type: Boolean, default: false });
 
 const emit = defineEmits(['edit']);
 

@@ -2,7 +2,7 @@ import { methodsWithUrl } from '../request';
 import type { PageVo } from '@blog/dtos/src/page.vo';
 import type { CreateProjectDto } from '@blog/dtos';
 import type { ProjectEntity } from '@blog/entities';
-import { UpdateProjectDto } from '@blog/dtos';
+import type { UpdateProjectDto } from '@blog/dtos';
 
 const urlPrefix = '/api/project';
 const [Get, Post, Patch, Delete] = methodsWithUrl(

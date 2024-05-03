@@ -11,7 +11,7 @@ import { download, readFile } from '@tool-pack/dom';
 import { CreateMemoryHelperDto } from '@blog/dtos';
 import useUserStore from '~/store/user.store';
 
-const visible = defineModel('visible', { local: true, type: Boolean, default: false });
+const visible = defineModel<boolean>('visible', { local: true, type: Boolean, default: false });
 
 const props = defineProps({
   memoryId: {

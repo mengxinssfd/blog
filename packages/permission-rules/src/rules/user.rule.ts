@@ -1,5 +1,5 @@
 import { ROLE, UserEntity } from '@blog/entities';
-import { Action, RuleCreator } from '../types';
+import { Action, type RuleCreator } from '../types';
 
 export const createUserRule: RuleCreator = (user, { can, cannot }) => {
   can(Action.Create, UserEntity);

@@ -4,10 +4,10 @@ import type {
   ListProjectCategoryDto,
   UpdateProjectCategoryDto,
 } from '@blog/dtos';
-import { ProjectCategoryEntity } from '@blog/entities';
-import { ID } from '../types';
-import { PageVo } from '@blog/dtos/dist/dtos/src/page.vo';
-import { PageDto } from '@blog/dtos/dist/dtos/src/page.dto';
+import type { ProjectCategoryEntity } from '@blog/entities';
+import type { ID } from '../types';
+import type { PageVo } from '@blog/dtos/dist/dtos/src/page.vo';
+import type { PageDto } from '@blog/dtos/dist/dtos/src/page.dto';
 
 const urlPrefix = '/api/project-category';
 

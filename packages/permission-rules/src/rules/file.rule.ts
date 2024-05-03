@@ -1,5 +1,5 @@
 import { ROLE, FileEntity } from '@blog/entities';
-import { Action, RuleCreator } from '../types';
+import { Action, type RuleCreator } from '../types';
 
 const File = [FileEntity, FileEntity.modelName] as const;
 
