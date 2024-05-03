@@ -6,8 +6,8 @@ import type {
 } from '@blog/dtos';
 import type { ProjectCategoryEntity } from '@blog/entities';
 import type { ID } from '../types';
-import type { PageVo } from '@blog/dtos/dist/dtos/src/page.vo';
-import type { PageDto } from '@blog/dtos/dist/dtos/src/page.dto';
+import type { PageVo } from '@blog/dtos/src/page.vo';
+import type { PageDto } from '@blog/dtos/src/page.dto';
 
 const urlPrefix = '/api/project-category';
 

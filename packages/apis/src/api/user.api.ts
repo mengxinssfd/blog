@@ -1,5 +1,5 @@
 import { methodsWithUrl } from '../request';
-import type { ROLE, UserEntity } from '@blog/entities';
+import type { USER_ROLE, UserEntity } from '@blog/entities';
 import type { PageVo } from '@blog/dtos/src/page.vo';
 import type {
   LoginDTO,
@@ -50,6 +50,6 @@ export function updatePassword(userId: ID, data: UpdatePasswordDto) {
 export function setMute(userId: ID, mute: boolean) {
   return Patch('/mute/' + userId, { mute });
 }
-export function setRole(userId: ID, role: ROLE) {
-  return Patch<{ role: ROLE }>('/role/' + userId, { role });
+export function setRole(userId: ID, role: USER_ROLE) {
+  return Patch<{ role: USER_ROLE }>('/role/' + userId, { role });
 }

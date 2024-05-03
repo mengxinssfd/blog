@@ -1,7 +1,7 @@
 import type { ID } from '../types';
 import { methodsWithUrl } from '@blog/apis';
 import type { MemoryHelperEntity } from '@blog/entities';
-import type { PageVo } from '@blog/dtos/dist/dtos/src/page.vo';
+import type { PageVo } from '@blog/dtos/src/page.vo';
 import type { CreateMemoryHelperDto, MemoryListDTO, UpdateMemoryHelperDto } from '@blog/dtos';
 import type { MemoryHelperEntityResolved } from '@blog/entities';
 

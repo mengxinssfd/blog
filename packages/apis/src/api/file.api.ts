@@ -1,6 +1,6 @@
 import { Get, Post, Delete } from '../request';
-import type { PageDto } from '@blog/dtos/dist/dtos/src/page.dto';
-import type { PageVo } from '@blog/dtos/dist/dtos/src/page.vo';
+import type { PageDto } from '@blog/dtos/src/page.dto';
+import type { PageVo } from '@blog/dtos/src/page.vo';
 import type { FileEntity } from '@blog/entities';
 import type { ID } from '../types';
 

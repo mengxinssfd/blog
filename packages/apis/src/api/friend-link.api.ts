@@ -7,7 +7,7 @@ import type {
   FindAllFriendLinkDto,
   UpdateFriendLinkDto,
 } from '@blog/dtos';
-import type { PageDto } from '@blog/dtos/dist/dtos/src/page.dto';
+import type { PageDto } from '@blog/dtos/src/page.dto';
 import type { ActiveFriendLinkDto } from '@blog/dtos';
 import type { CustomCacheConfig } from 'request-template';
 
