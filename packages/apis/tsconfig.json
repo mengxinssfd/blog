@@ -2,10 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "verbatimModuleSyntax": true, // 导入 type only 时必须加上 type 关键字
+    "target": "ES2019",
+    "module": "CommonJS",
     "baseUrl": "./",
     "outDir": "./dist",
     "declarationDir": "./dist",
@@ -13,6 +11,5 @@
       "@blog/*": ["../../packages/*/src"]
     }
   },
-  "include": ["src"],
   "exclude": ["dist"]
 }

@@ -2,9 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "target": "ES2019",
+    "module": "CommonJS",
     "baseUrl": "./",
     "outDir": "./dist",
     "declarationDir": "./dist"

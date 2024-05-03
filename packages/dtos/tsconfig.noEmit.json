@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "declaration": false,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "verbatimModuleSyntax": true, // 导入 type only 时必须加上 type 关键字
+    "baseUrl": "./",
+    "paths": {
+      "@blog/*": ["../../packages/*/src"]
+    }
+  },
+  "exclude": ["dist"]
+}

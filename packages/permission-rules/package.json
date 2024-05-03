@@ -7,7 +7,7 @@
     "rm:dist": "rimraf ./dist",
     "build:this": "tsc -p ./tsconfig.build.json",
     "build": "pnpm rm:dist && pnpm build:this",
-    "check:ts": "tsc --noEmit -p ./tsconfig.json",
+    "check:ts": "tsc --noEmit -p ./tsconfig.noEmit.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage"
