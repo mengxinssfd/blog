@@ -1,4 +1,4 @@
-import { ROLE, TagEntity } from '@blog/entities';
+import { USER_ROLE, TagEntity } from '@blog/entities';
 import { Action, type RuleCreator } from '../types';
 
 const Tag = [TagEntity, TagEntity.modelName];
@@ -8,12 +8,12 @@ export const createTagRule: RuleCreator = (user, { can, cannot }) => {
   can(Action.Read, Tag);
 
   // dev及以上权限可新增tag
-  if ([ROLE.admin, ROLE.dev].includes(user.role)) {
+  if ([USER_ROLE.admin, USER_ROLE.dev].includes(user.role)) {
     can(Action.Create, Tag);
   }
 
   // dev权限只能删改自己的
-  if ([ROLE.dev].includes(user.role)) {
+  if ([USER_ROLE.dev].includes(user.role)) {
     can(Action.Update, TagEntity.modelName);
     can(Action.Delete, TagEntity.modelName);
 
@@ -27,7 +27,7 @@ export const createTagRule: RuleCreator = (user, { can, cannot }) => {
   }
 
   // admin及以上权限可删改所有
-  if ([ROLE.admin, ROLE.superAdmin].includes(user.role)) {
+  if ([USER_ROLE.admin, USER_ROLE.superAdmin].includes(user.role)) {
     can([Action.Update, Action.Delete], Tag);
   }
   // 当该tag下有文章时，不被可删除

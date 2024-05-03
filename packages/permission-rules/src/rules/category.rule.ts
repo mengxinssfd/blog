@@ -1,4 +1,4 @@
-import { CategoryEntity, ROLE } from '@blog/entities';
+import { CategoryEntity, USER_ROLE } from '@blog/entities';
 import { Action, type RuleCreator } from '../types';
 
 const Category = [CategoryEntity, CategoryEntity.modelName];
@@ -8,12 +8,12 @@ export const createCategoryRule: RuleCreator = (user, { can, cannot }) => {
   can(Action.Read, Category);
 
   // dev及以上权限可新增cate
-  if ([ROLE.admin, ROLE.dev].includes(user.role)) {
+  if ([USER_ROLE.admin, USER_ROLE.dev].includes(user.role)) {
     can(Action.Create, Category);
   }
 
   // dev权限只能删改自己的
-  if ([ROLE.dev].includes(user.role)) {
+  if ([USER_ROLE.dev].includes(user.role)) {
     // modelName与class的区别：
     // - modelName：有没有权限更新或删除分类？--有；
     // - class：有没有权限更新或删除分类？--有，但前提是自己创建的
@@ -32,7 +32,7 @@ export const createCategoryRule: RuleCreator = (user, { can, cannot }) => {
   }
 
   // admin及以上权限可删改所有
-  if ([ROLE.admin, ROLE.superAdmin].includes(user.role)) {
+  if ([USER_ROLE.admin, USER_ROLE.superAdmin].includes(user.role)) {
     can([Action.Update, Action.Delete], Category);
   }
   // 当该分类下有文章时，所有人都不可删除该分类

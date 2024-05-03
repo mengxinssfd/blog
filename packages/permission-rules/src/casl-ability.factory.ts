@@ -1,5 +1,5 @@
 import {
-  ROLE,
+  USER_ROLE,
   UserEntity,
   CategoryEntity,
   TagEntity,
@@ -103,7 +103,7 @@ export class CaslAbilityFactory {
 
     const { can, rules } = builder;
 
-    if (user.role === ROLE.superAdmin) {
+    if (user.role === USER_ROLE.superAdmin) {
       can(Action.Manage, 'all'); // read-write access to everything
     }
 

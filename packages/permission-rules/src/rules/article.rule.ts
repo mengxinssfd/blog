@@ -1,4 +1,4 @@
-import { ArticleEntity, ROLE } from '@blog/entities';
+import { ArticleEntity, USER_ROLE } from '@blog/entities';
 import { Action, type RuleCreator } from '../types';
 
 const Article = [ArticleEntity, ArticleEntity.modelName];
@@ -8,11 +8,11 @@ export const createArticleRule: RuleCreator = (user, { can, cannot }) => {
   can(Action.Read, Article);
 
   // dev及以上权限可新增
-  if ([ROLE.admin, ROLE.dev].includes(user.role)) {
+  if ([USER_ROLE.admin, USER_ROLE.dev].includes(user.role)) {
     can(Action.Create, Article);
   }
 
-  if ([ROLE.dev, ROLE.commonUser, undefined].includes(user.role)) {
+  if ([USER_ROLE.dev, USER_ROLE.commonUser, undefined].includes(user.role)) {
     // 非管理员非作者不可查看未发布文章
     cannot(Action.Read, ArticleEntity, {
       status: ArticleEntity.STATE.private,
@@ -27,7 +27,7 @@ export const createArticleRule: RuleCreator = (user, { can, cannot }) => {
   }
 
   // dev权限只能删改自己的
-  if ([ROLE.dev].includes(user.role)) {
+  if ([USER_ROLE.dev].includes(user.role)) {
     can(Action.Delete, Article);
     can(Action.Update, Article);
 
@@ -41,7 +41,7 @@ export const createArticleRule: RuleCreator = (user, { can, cannot }) => {
   }
 
   // admin及以上权限可删改所有
-  if ([ROLE.admin, ROLE.superAdmin].includes(user.role)) {
+  if ([USER_ROLE.admin, USER_ROLE.superAdmin].includes(user.role)) {
     can([Action.Update, Action.Delete], Article);
   }
 };
