@@ -3,7 +3,7 @@ import { IsEnum, IsNotEmpty, IsString, Validate } from 'class-validator';
 import { WordValidate } from '../word.validate';
 import { getNumericEnumValues, IsOptional } from '../utils';
 import { PartialType } from '@nestjs/mapped-types';
-import { SaysEntity, SaysVisibleStatus } from '@blog/entities';
+import { SaysEntity, SAYS_VISIBLE_STATUS } from '@blog/entities';
 import { Type } from 'class-transformer';
 
 export class CreateSaysDto extends PartialType(SaysEntity) {
@@ -14,11 +14,11 @@ export class CreateSaysDto extends PartialType(SaysEntity) {
 
   @ApiProperty({ description: '评论内容', example: '' })
   @IsOptional()
-  @IsEnum(SaysVisibleStatus, {
-    message: '状态必须是' + getNumericEnumValues(SaysVisibleStatus) + '其中之一',
+  @IsEnum(SAYS_VISIBLE_STATUS, {
+    message: '状态必须是' + getNumericEnumValues(SAYS_VISIBLE_STATUS) + '其中之一',
   })
   @Validate(WordValidate)
-  override visible?: SaysVisibleStatus;
+  override visible?: SAYS_VISIBLE_STATUS;
 
   @ApiProperty({ description: '评论内容', example: '' })
   @IsOptional()

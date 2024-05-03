@@ -1,6 +1,6 @@
 import { IsNotEmpty, MaxLength, IsUrl, IsString, IsEnum, IsNumber } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ProjectEntity, ProjectStatus } from '@blog/entities';
+import { ProjectEntity, PROJECT_STATUS } from '@blog/entities';
 import { PartialType } from '@nestjs/mapped-types';
 import { getNumericEnumValues, IsOptional } from '../utils';
 import { Transform } from 'class-transformer';
@@ -35,7 +35,7 @@ export class CreateProjectDto extends PartialType(ProjectEntity) {
     message: `项目状态必须是[${getNumericEnumValues(ProjectEntity.STATUS).join(',')}]之一`,
   })
   @IsNotEmpty()
-  override status!: ProjectStatus;
+  override status!: PROJECT_STATUS;
 
   @ApiPropertyOptional({ description: '项目转移处', example: '项目转移处' })
   @IsOptional()

@@ -1,7 +1,7 @@
 import { SetRoleDto } from './set-role.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { ROLE } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities';
 
 describe('SetRoleDto', () => {
   it('should be defined', () => {
@@ -26,7 +26,7 @@ describe('SetRoleDto', () => {
     ]);
   });
   it('should validate correctly', async () => {
-    const dto = new SetRoleDto({ role: ROLE[ROLE.admin] as any });
+    const dto = new SetRoleDto({ role: USER_ROLE[USER_ROLE.admin] as any });
     const ins = plainToInstance(SetRoleDto, dto);
     const errors = await validate(ins);
     expect(errors).toEqual([

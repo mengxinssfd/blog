@@ -1,7 +1,7 @@
 import { CreateProjectDto } from './create-project.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { ProjectStatus } from '@blog/entities';
+import { PROJECT_STATUS } from '@blog/entities';
 
 describe('CreateProjectDto', function () {
   const dto = new CreateProjectDto();
@@ -10,7 +10,7 @@ describe('CreateProjectDto', function () {
   dto.cover = 'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/1683786635532.webp';
   dto.link = 'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com';
   dto.name = 'test';
-  dto.status = ProjectStatus.Completed;
+  dto.status = PROJECT_STATUS.Completed;
   dto.startTime = date.toString() as any;
 
   const ins = plainToInstance(CreateProjectDto, dto);
