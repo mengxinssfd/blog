@@ -159,7 +159,7 @@ await getData();
       </div>
       <el-collapse-transition>
         <ul v-show="inActiveVisible" class="link-list">
-          <li v-for="link in inactiveData.list" class="inactive" :key="link.id">
+          <li v-for="link in inactiveData.list" :key="link.id" class="inactive">
             <FriendLinkCard :item="link" />
           </li>
         </ul>

@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import * as Vue from 'vue';
 import { getStartOfDate, updateObj } from '@tool-pack/basic';
-import { type ProjectEntity, ProjectStatus } from '@blog/entities';
+import type { ProjectEntity } from '@blog/entities';
+import { PROJECT_STATUS } from '@blog/entities/constant';
 import { createProject, getProjectCategoryList, updateProject } from '@blog/apis';
 import type { CreateProjectDto } from '@blog/dtos';
 import { useRequest } from '@request-template/vue3-hooks';
 
-const visible = defineModel<boolean>('show', { type: Boolean, default: false, local: true });
+const visible = defineModel<boolean>('show', { type: Boolean, default: false });
 const props = defineProps({
   data: {
     type: Object as Vue.PropType<ProjectEntity | null>,
@@ -24,7 +25,7 @@ const createFormValue = (): CreateProjectDto => ({
   techStack: '',
   transferredTo: '',
   weights: 0,
-  status: ProjectStatus.Developing,
+  status: PROJECT_STATUS.Developing,
   startTime: getStartOfDate(new Date()),
   endTime: null,
   categoryId: undefined,
@@ -121,14 +122,14 @@ async function submit() {
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio-button :label="ProjectStatus.Developing">
-              {{ ProjectStatus[ProjectStatus.Developing] }}
+            <el-radio-button :label="PROJECT_STATUS.Developing">
+              {{ PROJECT_STATUS[PROJECT_STATUS.Developing] }}
             </el-radio-button>
-            <el-radio-button :label="ProjectStatus.Transferred">
-              {{ ProjectStatus[ProjectStatus.Transferred] }}
+            <el-radio-button :label="PROJECT_STATUS.Transferred">
+              {{ PROJECT_STATUS[PROJECT_STATUS.Transferred] }}
             </el-radio-button>
-            <el-radio-button :label="ProjectStatus.Completed">
-              {{ ProjectStatus[ProjectStatus.Completed] }}
+            <el-radio-button :label="PROJECT_STATUS.Completed">
+              {{ PROJECT_STATUS[PROJECT_STATUS.Completed] }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>

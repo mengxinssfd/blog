@@ -2,7 +2,8 @@
 import { ElMessageBox } from 'element-plus';
 import { formatDate } from '@tool-pack/basic';
 import { deleteMemory, getMemoryList } from '@blog/apis';
-import { MEMORY_STATUS, type MemoryHelperEntity } from '@blog/entities';
+import type { MemoryHelperEntity } from '@blog/entities';
+import { MEMORY_STATUS } from '@blog/entities/constant';
 import { useRequest } from '@request-template/vue3-hooks';
 
 const dialogVisible = ref(false);

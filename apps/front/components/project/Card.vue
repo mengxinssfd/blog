@@ -6,7 +6,7 @@
         <i class="iconfont icon-update-at"></i>
         {{ formatTime(item.startTime) }} 至 {{ formatTime(item.endTime) }}
       </div>
-      <div class="status" :class="ProjectStatus[item.status].toLowerCase()">
+      <div class="status" :class="PROJECT_STATUS[item.status].toLowerCase()">
         {{ StatusTextMatches[item.status] }}
       </div>
     </div>
@@ -25,7 +25,7 @@
 import * as Vue from 'vue';
 import type { ProjectEntity } from '@blog/entities';
 import { formatDate } from '@tool-pack/basic';
-import { ProjectStatus } from '@blog/entities';
+import { PROJECT_STATUS } from '@blog/entities/constant';
 
 defineProps({
   item: {
@@ -34,10 +34,10 @@ defineProps({
   },
 });
 
-const StatusTextMatches: Record<ProjectStatus, string> = {
-  [ProjectStatus.Developing]: '开发中',
-  [ProjectStatus.Completed]: '已完成',
-  [ProjectStatus.Transferred]: '已转移',
+const StatusTextMatches: Record<PROJECT_STATUS, string> = {
+  [PROJECT_STATUS.Developing]: '开发中',
+  [PROJECT_STATUS.Completed]: '已完成',
+  [PROJECT_STATUS.Transferred]: '已转移',
 };
 
 const formatTime = (v: Date | null) => {

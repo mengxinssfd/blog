@@ -11,12 +11,12 @@ export function useForm<Entity extends BlogBaseEntity, CFV extends () => any>({
   onSubmit: Function;
 }): {
   elFormRef: Ref<any>;
-  form: ReturnType<CFV>;
+  form: Ref<ReturnType<CFV>>;
   visible: Ref<boolean>;
   submit: () => Promise<void>;
   props: any;
 } {
-  const visible = defineModel<boolean>('visible', { type: Boolean, default: false, local: true });
+  const visible = defineModel<boolean>('modelValue', { type: Boolean, default: false });
   const props = defineProps({
     data: {
       type: Object as Vue.PropType<Entity | null>,
@@ -48,5 +48,5 @@ export function useForm<Entity extends BlogBaseEntity, CFV extends () => any>({
     }
   }
 
-  return { elFormRef, form, visible, submit, props };
+  return { elFormRef, form: form, visible, submit, props };
 }

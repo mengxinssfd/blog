@@ -2,7 +2,7 @@
 import * as Vue from 'vue';
 import type { CommentEntity } from '@blog/entities';
 import { getArticleCommentLink } from '@blog/shared';
-import { UserEntity } from '@blog/entities';
+import { USER_DEFAULT_AVATAR } from '@blog/entities/constant';
 import { howLongAgo } from '~/feature/utils';
 
 const props = defineProps({
@@ -14,8 +14,6 @@ const props = defineProps({
   },
 });
 
-const defaultAvatar = UserEntity.DEFAULT_AVATAR;
-
 const getNickname = (user: any) => {
   if (!user.id) return props.item.touristName + '(游客)' || '匿名用户';
   return user.nickname;
@@ -25,9 +23,9 @@ const getNickname = (user: any) => {
   <router-link class="c-reply" :to="getArticleCommentLink(item)">
     <div class="comm-left">
       <router-link v-if="item.user?.id" :to="`/user/info/${item.user.id}`">
-        <el-avatar :size="32" :src="item.user?.avatar || defaultAvatar"></el-avatar>
+        <el-avatar :size="32" :src="item.user?.avatar || USER_DEFAULT_AVATAR"></el-avatar>
       </router-link>
-      <el-avatar v-else :size="32" :src="defaultAvatar"></el-avatar>
+      <el-avatar v-else :size="32" :src="USER_DEFAULT_AVATAR"></el-avatar>
     </div>
     <div class="comm-right">
       <div class="comm-info">

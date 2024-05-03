@@ -95,7 +95,7 @@ const editUserInfo = async () => {
     emit('updated');
     visible.value = false;
   } catch (e) {
-    console.log(e);
+    console.error(e);
   } finally {
     form.loading = false;
   }

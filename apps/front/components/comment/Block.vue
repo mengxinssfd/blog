@@ -2,7 +2,7 @@
 import * as Vue from 'vue';
 import { sleep } from '@tool-pack/basic';
 import { getCommentByArticle as getCommentByArticleApi } from '@blog/apis';
-import { type ArticleEntity } from '@blog/entities';
+import type { ArticleEntity } from '@blog/entities';
 import { RefreshRight } from '@element-plus/icons-vue';
 import { useRequest } from '@request-template/vue3-hooks';
 import { type CommentTreeType, handleCommentTree } from '~/feature/utils';

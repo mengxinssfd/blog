@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { deleteMemory, getMemory } from '@blog/apis';
-import { type MemoryHelperQuestion, ROLE } from '@blog/entities';
+import type { MemoryHelperQuestion, MemoryHelperEntity } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities/constant';
 import { ElMessageBox } from 'element-plus';
-import { MemoryHelperEntity } from '@blog/entities';
 import type { PlaySetting } from './types.d';
 import useUserStore from '~/store/user.store';
 
@@ -13,7 +13,7 @@ const props = defineProps({
   },
 });
 
-const visible = defineModel<boolean>('visible', { local: true, type: Boolean, default: false });
+const visible = defineModel<boolean>('visible', { type: Boolean, default: false });
 
 const emit = defineEmits(['edit']);
 
@@ -146,7 +146,7 @@ const onEdit = () => {
           :disabled="
             !(
               state.memory.creator &&
-              (user.id === state.memory.creatorId || user.role <= ROLE.admin)
+              (user.id === state.memory.creatorId || user.role <= USER_ROLE.admin)
             )
           "
           @click="onDelete">

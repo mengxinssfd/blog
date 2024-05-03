@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import * as Vue from 'vue';
 import type { ElMenu } from 'element-plus';
 import { throttle } from '@tool-pack/basic';
 import { type AnchorTree } from '~/components/article/detail/tree';
+import type { PropType } from '#imports';
 
 const tree = ref<AnchorTree[]>([]);
 const menuRef = ref<typeof ElMenu>();
@@ -14,7 +14,7 @@ const router = useRouter();
 
 const props = defineProps({
   reference: {
-    type: [Object, String] as Vue.PropType<HTMLElement | string>,
+    type: [Object, String] as PropType<HTMLElement | string>,
     default: '.article .markdown-body',
   },
 });

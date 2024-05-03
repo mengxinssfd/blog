@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia';
 import useUserStore from '~/store/user.store';
 import { Briefcase, Memo, Mic, PictureRounded, WindPower } from '@element-plus/icons-vue';
+import type { VNode } from '#imports';
 
 export interface MenuItem {
-  icon: JSX.Element;
+  icon: VNode;
   path: string;
   title: string;
   disabled?: boolean;

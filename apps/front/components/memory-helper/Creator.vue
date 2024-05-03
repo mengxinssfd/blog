@@ -8,10 +8,10 @@ import { debounce, pickByKeys } from '@tool-pack/basic';
 import { createMemory, getMemory, updateMemory } from '@blog/apis';
 import { ElNotification } from 'element-plus';
 import { download, readFile } from '@tool-pack/dom';
-import { CreateMemoryHelperDto } from '@blog/dtos';
+import type { CreateMemoryHelperDto } from '@blog/dtos';
 import useUserStore from '~/store/user.store';
 
-const visible = defineModel<boolean>('visible', { local: true, type: Boolean, default: false });
+const visible = defineModel<boolean>('visible', { type: Boolean, default: false });
 
 const props = defineProps({
   memoryId: {
@@ -66,14 +66,14 @@ watch(files, (f) => {
 
 const setState: typeof _setState = (state) => {
   saveTempMemory();
-  console.log('setData...');
+  // console.log('setData...');
   _setState(state);
 };
 
 watch(visible, (n) => {
   if (!n) return;
   setState({ memoryId: props.memoryId, mode: props.memoryId ? 'edit' : 'create' });
-  console.log('--------');
+  // console.log('--------');
   // 判断是否编辑状态
   if (state.mode === 'edit') {
     // 改标题为编辑
@@ -85,7 +85,7 @@ watch(visible, (n) => {
 
 const getMemoryData = async () => {
   const { data } = await getMemory(props.memoryId);
-  console.log(data);
+  // console.log(data);
   const obj = pickByKeys(data, ['title', 'desc', 'questionList', 'questionJson']);
   setState(obj);
 };
@@ -109,7 +109,7 @@ const getFormatStr = (content: string | object = state.questionJson) => {
 };
 
 const saveTempMemory = debounce(() => {
-  console.log('缓存表单...');
+  // console.log('缓存表单...');
   const title = state.title;
   const questionList = state.questionList;
   tempMemory.set({ title, questionList });
@@ -140,7 +140,7 @@ const getTempMemory = () => {
     }
     setState({ title: temp.title, questionList });
   } catch (e) {
-    console.log('getTempMemory error', e);
+    // console.log('getTempMemory error', e);
   }
 };
 
@@ -164,8 +164,8 @@ const validate = (title: string, questionList: MemoryHelperQuestion[]): boolean 
   }
   return true;
 };
-const formSubmit = async (e: any) => {
-  console.log('form发生了submit事件，携带数据为：', e.detail.value);
+const formSubmit = async (_e: any) => {
+  // console.log('form发生了submit事件，携带数据为：', e.detail.value);
   const { title, questionList, mode, desc, memoryId } = state;
 
   if (!validate(title, questionList)) return;
@@ -192,13 +192,13 @@ const formSubmit = async (e: any) => {
     emit('success');
     visible.value = false;
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 };
 
 // 重置
-const formReset = (e: any) => {
-  console.log('form发生了reset事件，携带数据为：', e.detail.value);
+const formReset = (_e: any) => {
+  // console.log('form发生了reset事件，携带数据为：', e.detail.value);
   const questionList = [
     {
       question: '',
@@ -256,7 +256,7 @@ const confirm = () => {
       setState({ isImport: false, ...obj });
     }
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 };
 </script>

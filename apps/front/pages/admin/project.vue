@@ -2,7 +2,8 @@
 import { ElMessageBox } from 'element-plus';
 import { formatDate } from '@tool-pack/basic';
 import { deleteProject, getProjectList } from '@blog/apis';
-import { type ProjectEntity, ProjectStatus } from '@blog/entities';
+import type { ProjectEntity } from '@blog/entities';
+import { PROJECT_STATUS } from '@blog/entities/constant';
 import { useRequest } from '@request-template/vue3-hooks';
 
 const dialogVisible = ref(false);
@@ -87,8 +88,8 @@ onBeforeMount(request);
       </el-table-column>
       <el-table-column label="状态" width="100">
         <template #default="scope">
-          <span class="status" :class="ProjectStatus[scope.row.status].toLowerCase()">
-            {{ ProjectStatus[scope.row.status] }}
+          <span class="status" :class="PROJECT_STATUS[scope.row.status].toLowerCase()">
+            {{ PROJECT_STATUS[scope.row.status] }}
           </span>
         </template>
       </el-table-column>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { type ArticleEntity, type SaysEntity } from '@blog/entities';
+import type { ArticleEntity, SaysEntity } from '@blog/entities';
 import { getSaysList } from '@blog/apis';
-import { type PageVo } from '@blog/dtos/page.vo';
+import type { PageVo } from '@blog/dtos/page.vo';
 import { getRegionLocation } from '@blog/shared';
 import useUserStore from '~/store/user.store';
 import { filterBrowser, filterOs } from '~/feature/utils';

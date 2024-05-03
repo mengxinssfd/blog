@@ -16,7 +16,7 @@
 
 <script setup lang="tsx">
 import * as Vue from 'vue';
-import { type SaysEntity } from '@blog/entities';
+import type { SaysEntity } from '@blog/entities';
 import { howLongAgo } from '~/feature/utils';
 
 defineOptions({ name: 'SaysBase' });

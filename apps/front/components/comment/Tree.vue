@@ -37,7 +37,7 @@
         </div>
         <client-only>
           <el-popconfirm
-            v-if="(user.id && user.id === item.user?.id) || user.role === ROLE.superAdmin"
+            v-if="(user.id && user.id === item.user?.id) || user.role === USER_ROLE.superAdmin"
             confirm-button-text="好的"
             cancel-button-text="不用了"
             title="确定删除？"
@@ -74,7 +74,7 @@
 import * as Vue from 'vue';
 import { onceEvent } from '@tool-pack/dom';
 import { deleteCommentOne, setCommentDislike, setCommentLike } from '@blog/apis';
-import { ROLE } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities/constant';
 import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons-vue';
 import type BaseComment from './Base.vue';
 import useUserStore from '~/store/user.store';

@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import * as Vue from 'vue';
 import { updateObj } from '@tool-pack/basic';
-import { type ProjectCategoryEntity } from '@blog/entities';
+import type { ProjectCategoryEntity } from '@blog/entities';
 import { createProjectCategory, updateProjectCategory } from '@blog/apis';
 import type { CreateProjectCategoryDto } from '@blog/dtos';
 
 defineOptions({ name: 'ProjectCategoryCreator' });
 
-const visible = defineModel<boolean>({ type: Boolean, default: false, local: true });
+const visible = defineModel<boolean>({ type: Boolean, default: false });
 const props = defineProps({
   data: {
     type: Object as Vue.PropType<ProjectCategoryEntity | null>,

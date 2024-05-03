@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { useAsyncData } from '#app';
-import { type UserEntity, ROLE } from '@blog/entities';
+import type { UserEntity } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities/constant';
 import { getSelfInfo as getSelfInfoApi, login as loginApi } from '@blog/apis';
 import { Token } from '~/feature/request/primary/token';
 import type { CustomCacheConfig } from 'request-template';
@@ -8,8 +9,8 @@ import type { CustomCacheConfig } from 'request-template';
 const useUserStore = defineStore('user', () => {
   // const user = ref<UserEntity>({} as UserEntity);
   const user = useState<UserEntity>('user', () => ({} as UserEntity));
-  const isSuperAdmin = computed(() => user.value.role === ROLE.superAdmin);
-  const isRoleOfGreaterThanOrEqualDev = computed(() => user.value.role < ROLE.dev);
+  const isSuperAdmin = computed(() => user.value.role === USER_ROLE.superAdmin);
+  const isRoleOfGreaterThanOrEqualDev = computed(() => user.value.role < USER_ROLE.dev);
 
   async function login(username: string, password: string) {
     const res = await loginApi({ username, password });

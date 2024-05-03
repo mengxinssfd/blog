@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getArticleList } from '@blog/apis';
 import { useRequest } from '@request-template/vue3-hooks';
-import { type ArticleEntity } from '@blog/entities';
+import type { ArticleEntity } from '@blog/entities';
 import { howLongAgo } from '~/feature/utils';
 
 const route = useRoute();

@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import * as Vue from 'vue';
-import { type CreateSaysDto } from '@blog/dtos';
-import { type SaysEntity, SaysVisibleStatus } from '@blog/entities';
+import type { CreateSaysDto } from '@blog/dtos';
+import type { SaysEntity } from '@blog/entities';
+import { SAYS_VISIBLE_STATUS } from '@blog/entities/constant';
 import { createSays, updateSays } from '@blog/apis';
 import { useRequest } from '@request-template/vue3-hooks';
 import { updateObj } from '@tool-pack/basic';
 import MdEditorAsync from '~/components/MdEditorAsync.vue';
 
-const model = defineModel<boolean>({ type: Boolean, default: false, local: true });
+const model = defineModel<boolean>({ type: Boolean, default: false });
 const emit = defineEmits(['success']);
 const props = defineProps({
   data: {
@@ -36,7 +37,7 @@ const createFormData = () =>
   ({
     expires: month3,
     content: '',
-    visible: SaysVisibleStatus.Public,
+    visible: SAYS_VISIBLE_STATUS.Public,
   } as CreateSaysDto);
 
 const form = ref(createFormData());
@@ -106,14 +107,14 @@ const confirm = async () => {
       <el-form ref="formRef" v-loading="loading" :model="form" label-width="70">
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.visible">
-            <el-radio-button :label="SaysVisibleStatus.Public">
-              {{ SaysVisibleStatus[SaysVisibleStatus.Public] }}
+            <el-radio-button :label="SAYS_VISIBLE_STATUS.Public">
+              {{ SAYS_VISIBLE_STATUS[SAYS_VISIBLE_STATUS.Public] }}
             </el-radio-button>
-            <el-radio-button :label="SaysVisibleStatus.Login">
-              {{ SaysVisibleStatus[SaysVisibleStatus.Login] }}
+            <el-radio-button :label="SAYS_VISIBLE_STATUS.Login">
+              {{ SAYS_VISIBLE_STATUS[SAYS_VISIBLE_STATUS.Login] }}
             </el-radio-button>
-            <el-radio-button :label="SaysVisibleStatus.Private">
-              {{ SaysVisibleStatus[SaysVisibleStatus.Private] }}
+            <el-radio-button :label="SAYS_VISIBLE_STATUS.Private">
+              {{ SAYS_VISIBLE_STATUS[SAYS_VISIBLE_STATUS.Private] }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>

@@ -1,6 +1,7 @@
 import { formatDate } from '@tool-pack/basic';
 import { getArticleLikeCount, setArticleLike } from '@blog/apis';
-import { ROLE, ArticleEntity } from '@blog/entities';
+import { type ArticleEntity } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities/constant';
 import useUserStore from '~/store/user.store';
 
 export function useArticle() {
@@ -9,7 +10,7 @@ export function useArticle() {
   let articleId: any = '';
   const store = useUserStore();
   const Data = {
-    ROLE,
+    ROLE: USER_ROLE,
     previewRef,
     audioVisible: ref(true),
     user: computed(() => store.user),

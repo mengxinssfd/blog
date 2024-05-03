@@ -1,5 +1,3 @@
-import type { CommentEntity } from '@blog/entities';
-
 export interface AnchorTree {
   parent?: AnchorTree;
   children: AnchorTree[];

@@ -1,6 +1,5 @@
 import { SitemapStream } from 'sitemap';
 import { getArticles } from '~/server/utils';
-import { type Stream } from 'stream';
 
 const hostname = import.meta.env.VITE_BASE_URL;
 
@@ -34,7 +33,7 @@ function buildSitemap() {
 }
 
 export default defineEventHandler(async (event) => {
-  const stream: Stream = buildSitemap();
+  const stream = buildSitemap();
   setResponseHeaders(event, {
     'Content-Type': 'application/xml',
     'Content-Disposition': 'inline; filename="sitemap.xml"',

@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { deleteUser, getUserAll, restoreUser, setMute as setMuteApi, setRole } from '@blog/apis';
-import { ROLE, type UserEntity } from '@blog/entities';
+import type { UserEntity } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities/constant';
 import { useRequest } from '@request-template/vue3-hooks';
 import { howLongAgo } from '~/feature/utils';
 
 type InnerUser = UserEntity & { muteLoading: boolean; registerIp: string; loginIp: string };
-const RoleNames: Record<ROLE, string> = {
-  [ROLE.superAdmin]: '超级管理员',
-  [ROLE.admin]: '管理员',
-  [ROLE.dev]: '作者',
-  [ROLE.commonUser]: '普通用户',
+const RoleNames: Record<USER_ROLE, string> = {
+  [USER_ROLE.superAdmin]: '超级管理员',
+  [USER_ROLE.admin]: '管理员',
+  [USER_ROLE.dev]: '作者',
+  [USER_ROLE.commonUser]: '普通用户',
 };
 
-const roleList = [/* ROLE.superAdmin, */ ROLE.admin, ROLE.dev, ROLE.commonUser];
+const roleList = [/* ROLE.superAdmin, */ USER_ROLE.admin, USER_ROLE.dev, USER_ROLE.commonUser];
 
 const { data, getData, loading } = useRequest(getUserAll, {
   loading: { threshold: 500, immediate: true },
@@ -49,7 +50,7 @@ const setMute = async (mute: boolean, user: InnerUser) => {
     setTimeout(() => (user.muteLoading = false), 500);
   }
 };
-const handleRoleCommand = async (ro: ROLE, user: InnerUser) => {
+const handleRoleCommand = async (ro: USER_ROLE, user: InnerUser) => {
   const {
     data: { role },
   } = await setRole(user.id, ro);
@@ -116,7 +117,7 @@ const handleCommand = async (
       <el-table-column label="role">
         <template #default="scope">
           <el-dropdown
-            :disabled="ROLE.superAdmin === scope.row.role"
+            :disabled="USER_ROLE.superAdmin === scope.row.role"
             @command="handleRoleCommand($event, scope.row)">
             <el-button type="primary" text class="role">
               <i class="iconfont icon-user"></i>{{ getRoleName(scope.row) }}
@@ -154,10 +155,10 @@ const handleCommand = async (
               <el-dropdown-menu>
                 <template v-if="!scope.row.deletedAt">
                   <el-dropdown-item command="update">编辑</el-dropdown-item>
-                  <el-dropdown-item v-if="ROLE.superAdmin !== scope.row.role" command="delete">
+                  <el-dropdown-item v-if="USER_ROLE.superAdmin !== scope.row.role" command="delete">
                     删除
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="ROLE.superAdmin !== scope.row.role" command="mute">
+                  <el-dropdown-item v-if="USER_ROLE.superAdmin !== scope.row.role" command="mute">
                     {{ scope.row.muted ? '解除禁言' : '禁言' }}
                   </el-dropdown-item>
                 </template>

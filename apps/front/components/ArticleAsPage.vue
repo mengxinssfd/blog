@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { getArticleAs } from '@blog/apis';
-import { ArticleEntity } from '@blog/entities';
+import type { ArticleEntity } from '@blog/entities';
 import useHeaderStore from '~/store/header.store';
 
 useHeaderStore().useTransparent();
@@ -11,7 +11,7 @@ const props = defineProps({
     default: '',
   },
   layout: {
-    type: String,
+    type: String as PropType<'default' | 'page' | 'fixed-banner'>,
     default: 'page',
   },
   bannerHeight: {

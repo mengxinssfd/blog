@@ -60,7 +60,7 @@
 import * as Vue from 'vue';
 import { onceEvent } from '@tool-pack/dom';
 import { deleteSays, getCommentListByScope } from '@blog/apis';
-import { type SaysEntity } from '@blog/entities';
+import type { SaysEntity } from '@blog/entities';
 import { LocationInformation, Platform, ChromeFilled } from '@element-plus/icons-vue';
 import { useRequest } from '@request-template/vue3-hooks';
 import useUserStore from '~/store/user.store';

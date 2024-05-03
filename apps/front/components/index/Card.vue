@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import { RGB } from '@tool-pack/basic';
-import { ArticleEntity } from '@blog/entities';
+import type { ArticleEntity } from '@blog/entities';
 import { setArticleLike } from '@blog/apis';
 import type * as Vue from 'vue';
 import { useRouter } from '#app';

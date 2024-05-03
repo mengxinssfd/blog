@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getRecentComment } from '@blog/apis';
 import { useRequest } from '@request-template/vue3-hooks';
-import { type CommentEntity } from '@blog/entities';
+import type { CommentEntity } from '@blog/entities';
 import { getArticleCommentLink } from '@blog/shared';
 // table of content
 const router = useRouter();

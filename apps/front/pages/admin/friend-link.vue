@@ -9,7 +9,8 @@ import {
   refreshSiteInfo,
   setFriendLinkActive,
 } from '@blog/apis';
-import { type FriendLinkEntity, FriendLinkState } from '@blog/entities';
+import type { FriendLinkEntity } from '@blog/entities';
+import { FRIEND_LINK_STATE } from '@blog/entities/constant';
 
 const dialogVisible = ref(false);
 const linkList = ref<FriendLinkEntity[]>([]);
@@ -21,15 +22,15 @@ const filter = reactive({
     },
     {
       label: '未审核',
-      value: String(FriendLinkState.padding),
+      value: String(FRIEND_LINK_STATE.padding),
     },
     {
       label: '已通过',
-      value: String(FriendLinkState.resolve),
+      value: String(FRIEND_LINK_STATE.resolve),
     },
     {
       label: '已拒绝',
-      value: String(FriendLinkState.reject),
+      value: String(FRIEND_LINK_STATE.reject),
     },
   ],
   value: '',
@@ -48,8 +49,8 @@ async function handleCommand(
   command: 'resolve' | 'reject' | 'edit' | 'refresh-site' | 'delete',
   link: FriendLinkEntity,
 ) {
-  const data: { status: FriendLinkState; rejectReason?: string } = {
-    status: FriendLinkState.resolve,
+  const data: { status: FRIEND_LINK_STATE; rejectReason?: string } = {
+    status: FRIEND_LINK_STATE.resolve,
   };
   switch (command) {
     case 'refresh-site':
@@ -75,7 +76,7 @@ async function handleCommand(
       ).value;
     // eslint-disable-next-line no-fallthrough
     case 'resolve':
-      data.status = FriendLinkState[command];
+      data.status = FRIEND_LINK_STATE[command];
       await adjudgeFriendLink(link.id, data);
       getData();
   }
@@ -186,8 +187,8 @@ getData();
       </el-table-column>
       <el-table-column label="审核状态" width="100">
         <template #default="scope">
-          <span class="status" :class="FriendLinkState[scope.row.status]">
-            {{ FriendLinkState[scope.row.status] }}
+          <span class="status" :class="FRIEND_LINK_STATE[scope.row.status]">
+            {{ FRIEND_LINK_STATE[scope.row.status] }}
           </span>
         </template>
       </el-table-column>

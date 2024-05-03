@@ -1,5 +1,6 @@
 <script setup lang="tsx">
-import { type ArticleEntity, ROLE } from '@blog/entities';
+import type { ArticleEntity } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities/constant';
 import { blobToBase64, base64ToBlob, download, loadImg, readFile } from '@tool-pack/dom';
 import { formatBytes } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
@@ -145,7 +146,7 @@ const downloadImg = () => {
 <template>
   <ArticleAsPage as="tools/transform-img-type" @data="article = $event">
     <template #aside>
-      <WidgetUpload v-if="userStore.user.role <= ROLE.dev" />
+      <WidgetUpload v-if="userStore.user.role <= USER_ROLE.dev" />
       <WidgetSentence />
       <WidgetCountdown />
     </template>

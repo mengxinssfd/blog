@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { deleteArticle, getAllArticleList, setArticleAs, restoreArticle } from '@blog/apis';
-import { type ArticleEntity, ARTICLE_STATE, type TagEntity } from '@blog/entities';
+import type { ArticleEntity, TagEntity } from '@blog/entities';
+import { ARTICLE_STATE } from '@blog/entities/constant';
 import { formatDate as formatDateKit } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';

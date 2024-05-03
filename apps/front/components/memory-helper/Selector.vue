@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import * as Vue from 'vue';
-import { type MemoryHelperQuestion } from '@blog/entities';
+import type { MemoryHelperQuestion } from '@blog/entities';
 
 const props = defineProps({
   questionList: {

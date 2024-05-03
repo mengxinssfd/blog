@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { deleteSays, getSaysListByAdmin } from '@blog/apis';
-import { type SaysEntity, SaysVisibleStatus } from '@blog/entities';
+import type { SaysEntity } from '@blog/entities';
+import { SAYS_VISIBLE_STATUS } from '@blog/entities/constant';
 import { formatDate as formatDateKit, omit, howLongAgo as howLongAgoKit } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import { useRequest } from '@request-template/vue3-hooks';
@@ -11,7 +12,7 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const page = reactive({ page: 1, pageSize: 10, total: 1 });
-const edit = reactive<{ visible: Boolean; data?: SaysEntity }>({
+const edit = reactive<{ visible: boolean; data?: SaysEntity }>({
   visible: false,
   data: undefined,
 });
@@ -94,7 +95,7 @@ const getExpires = (item: SaysEntity) => {
       <el-table-column label="id" prop="id" width="60" />
       <el-table-column label="visible" width="80">
         <template #default="scope">
-          {{ SaysVisibleStatus[scope.row.visible] }}
+          {{ SAYS_VISIBLE_STATUS[scope.row.visible] }}
         </template>
       </el-table-column>
       <el-table-column label="过期时间">

@@ -10,7 +10,7 @@ import type { ElDrawer } from 'element-plus';
 
 // defineOptions({ inheritAttrs: true });
 
-const model = defineModel({ type: [Boolean, Object], default: false, local: true });
+const model = defineModel({ type: [Boolean, Object], default: false });
 defineProps({} as typeof ElDrawer);
 </script>
 

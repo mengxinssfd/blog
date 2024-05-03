@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ArticleEntity, MemoryHelperEntity, MemoryHelperEntityResolved } from '@blog/entities';
+import type { ArticleEntity, MemoryHelperEntity, MemoryHelperEntityResolved } from '@blog/entities';
 import { getMemoryList } from '@blog/apis';
 import { howLongAgo } from '~/feature/utils';
 import useUserStore from '~/store/user.store';

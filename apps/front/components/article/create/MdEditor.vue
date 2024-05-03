@@ -1,10 +1,11 @@
 <script lang="tsx">
-import MdEditor, { Themes } from 'md-editor-v3';
+import { MdEditor, type Themes } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import { uploadFile } from '@blog/apis';
 
 export default defineComponent({
-  name: 'MdEditor',
+  name: 'MyMdEditor',
+  components: { MdEditor },
   props: {
     value: {
       type: String,

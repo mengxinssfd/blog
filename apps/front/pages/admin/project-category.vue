@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ElMessageBox } from 'element-plus';
 import { formatDate } from '@tool-pack/basic';
-import { deleteProjectCategory, getProjectCategoryListByAdmin, restoreProjectCategory } from '@blog/apis';
-import { type ProjectCategoryEntity } from '@blog/entities';
+import {
+  deleteProjectCategory,
+  getProjectCategoryListByAdmin,
+  restoreProjectCategory,
+} from '@blog/apis';
+import type { ProjectCategoryEntity } from '@blog/entities';
 import { useRequest } from '@request-template/vue3-hooks';
 
 const dialogVisible = ref(false);

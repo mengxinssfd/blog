@@ -103,7 +103,7 @@
 import { Search, RefreshLeft } from '@element-plus/icons-vue';
 import { debounce } from '@tool-pack/basic';
 import { getTags, getCategoryList } from '@blog/apis';
-import { CategoryEntity, TagEntity } from '@blog/entities';
+import type { CategoryEntity, TagEntity } from '@blog/entities';
 import * as Vue from 'vue';
 
 interface ResultTag {

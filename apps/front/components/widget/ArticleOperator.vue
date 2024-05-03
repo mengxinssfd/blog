@@ -7,7 +7,8 @@ import {
   getRawArticleDetail as getRawArticleDetailApi,
   setArticleCommentLock as setArticleCommentLockApi,
 } from '@blog/apis';
-import { UserEntity, ROLE, ArticleEntity } from '@blog/entities';
+import type { UserEntity, ArticleEntity } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities/constant';
 import { Promotion } from '@element-plus/icons-vue';
 import { useRouter } from '#app';
 import useUserStore from '~/store/user.store';
@@ -86,7 +87,7 @@ const articlePath = computed(() => `/article/detail/${props.article.id}`);
             </div>
           </template>
           <div
-            v-if="user.id === author.id || user.role === ROLE.superAdmin"
+            v-if="user.id === author.id || user.role === USER_ROLE.superAdmin"
             v-show="!as"
             class="del">
             <client-only>

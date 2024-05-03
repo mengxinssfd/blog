@@ -41,14 +41,14 @@
 </template>
 
 <script setup lang="tsx">
-import * as Vue from 'vue';
-import { type CommentEntity, type UserEntity } from '@blog/entities';
+import type { CommentEntity, UserEntity } from '@blog/entities';
 import { type CommentTreeType, howLongAgo } from '~/feature/utils';
+import type { VNode, PropType } from '#imports';
 
 const route = useRoute();
 const props = defineProps({
   item: {
-    type: Object as Vue.PropType<CommentEntity & Pick<CommentTreeType, 'isOrphan'>>,
+    type: Object as PropType<CommentEntity & Pick<CommentTreeType, 'isOrphan'>>,
     default: () => ({}),
   },
   // 判断是否是作者
@@ -68,7 +68,7 @@ const getNickname = (tree: CommentEntity) => {
   return tree.user.nickname;
 };
 
-const getUserTag = (user?: UserEntity | null): never | JSX.Element => {
+const getUserTag = (user?: UserEntity | null): never | VNode => {
   if (props.independent || props.isSays) return undefined as never;
   if (!user)
     return (
