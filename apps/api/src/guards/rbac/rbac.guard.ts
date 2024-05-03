@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ROLE } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities';
 
 @Injectable()
 export class RbacGuard implements CanActivate {
@@ -8,7 +8,7 @@ export class RbacGuard implements CanActivate {
   constructor(private readonly role: number) {}
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user = request.user || { role: ROLE.commonUser };
+    const user = request.user || { role: USER_ROLE.commonUser };
     if (user.role === undefined || user.role > this.role) {
       throw new ForbiddenException('对不起，您无权操作');
     }

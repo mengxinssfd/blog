@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { rawsToEntities } from '@/utils/assemblyEntity';
-import { MemoryHelperEntity, ROLE, UserEntity, MEMORY_STATUS } from '@blog/entities';
+import { MemoryHelperEntity, USER_ROLE, UserEntity, MEMORY_STATUS } from '@blog/entities';
 import { CreateMemoryHelperDto, MemoryListDTO, UpdateMemoryHelperDto } from '@blog/dtos';
 import { PageVo } from '@blog/dtos/page.vo';
 
@@ -24,7 +24,7 @@ export class MemoryHelperService {
 
   async findAll(
     { page = 1, pageSize = 10 }: MemoryListDTO,
-    { id: userId = 0, role = ROLE.commonUser }: UserEntity = {} as UserEntity,
+    { id: userId = 0, role = USER_ROLE.commonUser }: UserEntity = {} as UserEntity,
   ): Promise<PageVo<MemoryHelperEntity>> {
     const alias = 'memory';
     const sort = { sort: `${alias}.updateAt`, order: 'DESC' };
@@ -37,7 +37,7 @@ export class MemoryHelperService {
           '*',
           `ROW_NUMBER() OVER (ORDER BY ${sort.sort} ${sort.order}, ${alias}.id) AS rowid`,
         ]).from(MemoryHelperEntity, alias);
-        if (role > ROLE.admin) {
+        if (role > USER_ROLE.admin) {
           qb.where({ status: String(MEMORY_STATUS.Public) }).orWhere({
             creatorId: userId,
           });
@@ -68,7 +68,7 @@ export class MemoryHelperService {
 
     const countRep = this.repository.createQueryBuilder(alias);
 
-    if (role > ROLE.admin)
+    if (role > USER_ROLE.admin)
       countRep.where({ status: MEMORY_STATUS.Public }).orWhere({ creatorId: userId });
     else rep.addSelect([`${alias}.status`] satisfies Prop[]);
 

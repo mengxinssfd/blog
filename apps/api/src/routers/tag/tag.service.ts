@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateTagDto, UpdateTagDto } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { ROLE, TagEntity, UserEntity } from '@blog/entities';
+import { USER_ROLE, TagEntity, UserEntity } from '@blog/entities';
 import { Logger } from '@/utils/log4js';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class TagService {
     if (find) throw new ForbiddenException(`标签'${createTagDto.name}'已存在`);
 
     // 非superAdmin每分钟最多只能创建5个
-    if (loginUser.role !== ROLE.superAdmin) {
+    if (loginUser.role !== USER_ROLE.superAdmin) {
       const [[latest], count] = await this.tagRepository
         .createQueryBuilder('tag')
         .where({ createById: loginUser.id })

@@ -7,7 +7,7 @@ import {
 } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { FriendLinkEntity, FriendLinkState } from '@blog/entities';
+import { FriendLinkEntity, FRIEND_LINK_STATE } from '@blog/entities';
 import { PageDto } from '@blog/dtos/page.dto';
 
 type K = `fl.${keyof FriendLinkEntity}`;
@@ -54,7 +54,7 @@ export class FriendLinkService {
     const [list, count] = await this.repository
       .createQueryBuilder('fl')
       .addSelect(['fl.createAt'] satisfies K[])
-      .where({ status: String(FriendLinkState.resolve), active })
+      .where({ status: String(FRIEND_LINK_STATE.resolve), active })
       .getManyAndCount();
     return { list, count };
   }
@@ -63,7 +63,7 @@ export class FriendLinkService {
     const [list, count] = await this.repository
       .createQueryBuilder('fl')
       .addSelect(['fl.createAt'] satisfies K[])
-      .where({ status: String(FriendLinkState.resolve) })
+      .where({ status: String(FRIEND_LINK_STATE.resolve) })
       .offset((page - 1) * pageSize)
       .limit(pageSize)
       .orderBy('fl.createAt' satisfies K, 'DESC')
@@ -75,7 +75,7 @@ export class FriendLinkService {
     const [list, count] = await this.repository
       .createQueryBuilder('fl')
       .addSelect(['fl.applyDesc', 'fl.createAt'] satisfies K[])
-      .where({ status: String(FriendLinkState.padding) })
+      .where({ status: String(FRIEND_LINK_STATE.padding) })
       .offset((page - 1) * pageSize)
       .limit(pageSize)
       .orderBy('fl.createAt' satisfies K, 'DESC')
@@ -106,7 +106,7 @@ export class FriendLinkService {
   async adjudge(id: number, data: AdjudgeFriendLinkDto) {
     const entity = new FriendLinkEntity();
     entity.id = id;
-    if (data.status !== FriendLinkState.reject) {
+    if (data.status !== FRIEND_LINK_STATE.reject) {
       entity.rejectReason = '';
     }
     Object.assign(entity, data);

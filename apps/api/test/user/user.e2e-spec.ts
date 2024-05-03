@@ -1,5 +1,5 @@
 import { buildApp, clearAllTables } from '../utils';
-import { ROLE, UserEntity } from '@blog/entities';
+import { USER_ROLE, UserEntity } from '@blog/entities';
 import { sleep } from '@tool-pack/basic';
 import { buildRegisterData, ipGen, ResTypes } from './utils';
 import { userApi, prefix } from './api';
@@ -101,7 +101,7 @@ describe('UserController (e2e): /api/user', () => {
   describe('/role/:id (Patch) 设置role', () => {
     it('numeric string is expected', async () => {
       const admin = await createAdmin();
-      return setRole('test' as any, admin.token, ROLE.admin).expect(
+      return setRole('test' as any, admin.token, USER_ROLE.admin).expect(
         '{"code":400,"msg":"Validation failed (numeric string is expected)"}',
       );
     });
@@ -111,26 +111,26 @@ describe('UserController (e2e): /api/user', () => {
         body: {
           data: { role },
         },
-      } = await setRole(commonUser.id, admin.token, ROLE.admin).expect(ResTypes.setRole);
-      expect(role).toBe(ROLE.admin);
+      } = await setRole(commonUser.id, admin.token, USER_ROLE.admin).expect(ResTypes.setRole);
+      expect(role).toBe(USER_ROLE.admin);
       // superAdmin => commonUser
-      await setRole(admin.id, admin.token, ROLE.commonUser).expect(ResTypes.setRole);
+      await setRole(admin.id, admin.token, USER_ROLE.commonUser).expect(ResTypes.setRole);
       const {
         body: {
           data: { token },
         },
       } = await login(admin);
       // 新token无权操作
-      await setRole(commonUser.id, token, ROLE.commonUser).expect(ResTypes['403']);
+      await setRole(commonUser.id, token, USER_ROLE.commonUser).expect(ResTypes['403']);
       // 原token已不能使用 使用redis把旧的token踢下线
-      await setRole(commonUser.id, admin.token, ROLE.commonUser).expect(
+      await setRole(commonUser.id, admin.token, USER_ROLE.commonUser).expect(
         '{"code":401,"msg":"已在其他地方登录"}',
       );
     });
     it('普通用户无权限操作', async () => {
       const { admin, commonUser } = await createUsers();
-      await setRole(commonUser.id, commonUser.token, ROLE.admin).expect(ResTypes['403']);
-      await setRole(admin.id, commonUser.token, ROLE.admin).expect(ResTypes['403']);
+      await setRole(commonUser.id, commonUser.token, USER_ROLE.admin).expect(ResTypes['403']);
+      await setRole(admin.id, commonUser.token, USER_ROLE.admin).expect(ResTypes['403']);
     });
   });
   describe('/restore/:id (Patch) 恢复被软删除的账号', () => {

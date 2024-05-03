@@ -1,6 +1,6 @@
 import { pick } from '@tool-pack/basic';
 import { MuteDto, UpdatePasswordDto } from '@blog/dtos';
-import { ROLE } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities';
 import { buildRegisterData, ipGen, ResTypes } from './utils';
 import { SuperTest, Test } from 'supertest';
 import { clearAllTables } from '../utils';
@@ -56,7 +56,7 @@ export function userApi(request: () => SuperTest<Test>) {
       .delete(prefix + '/' + id)
       .set('authorization', 'Bearer ' + token);
   }
-  function setRole(id: number, token: string, role: ROLE) {
+  function setRole(id: number, token: string, role: USER_ROLE) {
     return request()
       .patch(prefix + '/role/' + id)
       .set('authorization', 'Bearer ' + token)
@@ -95,7 +95,7 @@ export function userApi(request: () => SuperTest<Test>) {
     };
   }
 
-  async function registerAndSetRole(token: string, role: ROLE) {
+  async function registerAndSetRole(token: string, role: USER_ROLE) {
     const user = buildRegisterData();
     const [id /* devToken */ /* 该token的role仍然是commonUser */] = await registerLogin(user);
     await setRole(id, token, role).expect(ResTypes.setRole);
@@ -108,11 +108,11 @@ export function userApi(request: () => SuperTest<Test>) {
   async function createAllRoleUsers() {
     const { admin: superAdmin, commonUser: common } = await createUsers();
 
-    const dev = await registerAndSetRole(superAdmin.token, ROLE.dev);
+    const dev = await registerAndSetRole(superAdmin.token, USER_ROLE.dev);
 
-    const dev2 = await registerAndSetRole(superAdmin.token, ROLE.dev);
+    const dev2 = await registerAndSetRole(superAdmin.token, USER_ROLE.dev);
 
-    const admin = await registerAndSetRole(superAdmin.token, ROLE.admin);
+    const admin = await registerAndSetRole(superAdmin.token, USER_ROLE.admin);
 
     return { superAdmin, common, dev, dev2, admin };
   }

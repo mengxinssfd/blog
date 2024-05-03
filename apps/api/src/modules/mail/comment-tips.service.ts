@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CommentEntity, ROLE } from '@blog/entities';
+import { CommentEntity, USER_ROLE } from '@blog/entities';
 import { Logger } from '@/utils/log4js';
 import { AppConfigService } from '@/app.config.service';
 import { getArticleCommentLink } from '@blog/shared';
@@ -20,9 +20,9 @@ export class CommentTipsService {
 
   async sendCommentTipsToAppMaster(comment: CommentEntity): Promise<Res> {
     if (
-      comment.reply?.user?.role === ROLE.superAdmin ||
-      comment.article?.author.role === ROLE.superAdmin ||
-      comment.user?.role === ROLE.superAdmin
+      comment.reply?.user?.role === USER_ROLE.superAdmin ||
+      comment.article?.author.role === USER_ROLE.superAdmin ||
+      comment.user?.role === USER_ROLE.superAdmin
     )
       return Promise.reject();
 

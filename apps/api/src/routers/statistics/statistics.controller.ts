@@ -5,7 +5,7 @@ import { CommentService } from '@/routers/comment/comment.service';
 import { ArticleLikeService } from '@/routers/article-like/article-like.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RbacGuard } from '@/guards/rbac/rbac.guard';
-import { ROLE } from '@blog/entities';
+import { USER_ROLE } from '@blog/entities';
 import { JwtAuth } from '@/guards/auth/auth.decorator';
 
 @ApiTags('statistics')
@@ -20,7 +20,7 @@ export class StatisticsController {
 
   @ApiBearerAuth()
   @JwtAuth()
-  @UseGuards(new RbacGuard(ROLE.superAdmin))
+  @UseGuards(new RbacGuard(USER_ROLE.superAdmin))
   @Get()
   async getStatistics() {
     const article = await this.articleService.getTotal();

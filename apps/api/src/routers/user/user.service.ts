@@ -4,7 +4,7 @@ import { encryptPassword, makeSalt } from '@/utils/cryptogram';
 import { RegisterDTO } from '@blog/dtos/user/register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ROLE, USER_STATE, UserEntity } from '@blog/entities';
+import { USER_ROLE, USER_STATE, UserEntity } from '@blog/entities';
 import { UpdatePasswordDto } from '@blog/dtos/user/update-password.dto';
 import FailedException from '@/exceptions/Failed.exception';
 
@@ -66,7 +66,7 @@ export class UserService {
       throw new FailedException(msg);
     }
 
-    if (!loginUser || loginUser.role !== ROLE.superAdmin) {
+    if (!loginUser || loginUser.role !== USER_ROLE.superAdmin) {
       const ipCount = await this.repository.count({
         where: { registerIp: ip },
       });
@@ -91,7 +91,7 @@ export class UserService {
     const entity = await this.repository.save(_user);
 
     if (entity.id === 1) {
-      entity.role = ROLE.superAdmin;
+      entity.role = USER_ROLE.superAdmin;
       await this.repository.save(entity);
     }
     return { id: entity.id };
@@ -197,7 +197,7 @@ export class UserService {
     await this.repository.softDelete(id);
   }
 
-  async setRole(id: number | string, role: ROLE) {
+  async setRole(id: number | string, role: USER_ROLE) {
     const user = new UserEntity();
     user.id = +id;
     user.role = role;

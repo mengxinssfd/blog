@@ -1,7 +1,13 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto, UpdateCategoryDto } from '@blog/dtos';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ARTICLE_STATE, ArticleEntity, CategoryEntity, ROLE, UserEntity } from '@blog/entities';
+import {
+  ARTICLE_STATE,
+  ArticleEntity,
+  CategoryEntity,
+  USER_ROLE,
+  UserEntity,
+} from '@blog/entities';
 import { Repository } from 'typeorm';
 import { rawsToEntities } from '@/utils/assemblyEntity';
 import FailedException from '@/exceptions/Failed.exception';
@@ -20,7 +26,7 @@ export class CategoryService {
     if (find) throw new ForbiddenException(`分类'${createCategoryDto.name}'已存在`);
 
     // 非superAdmin每分钟最多只能创建5个
-    if (loginUser.role !== ROLE.superAdmin) {
+    if (loginUser.role !== USER_ROLE.superAdmin) {
       const [[latest], count] = await this.categoryRepository
         .createQueryBuilder('cate')
         .where({ createById: loginUser.id })

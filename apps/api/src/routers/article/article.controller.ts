@@ -22,7 +22,7 @@ import { IsFromWX, User } from '@/utils/decorator';
 import { TagService } from '../tag/tag.service';
 import { castArray } from '@tool-pack/basic';
 import { PageDto } from '@blog/dtos/page.dto';
-import { ArticleEntity, ROLE, UserEntity } from '@blog/entities';
+import { ArticleEntity, USER_ROLE, UserEntity } from '@blog/entities';
 import { PoliciesGuard } from '@/guards/policies/policies.guard';
 import { CheckPolicies } from '@/guards/policies/policies.decorator';
 import { Action } from '@blog/permission-rules';
@@ -174,7 +174,7 @@ export class ArticleController {
   @Get('as/:as')
   async getAs(@Param('as') as: string, @User() user: UserEntity) {
     const res = await this.articleService.getAs(as);
-    if (user.role !== ROLE.superAdmin) {
+    if (user.role !== USER_ROLE.superAdmin) {
       res.viewCount++;
       this.articleService.updateViewCount(res);
     }

@@ -3,7 +3,7 @@ import { Logger } from '@/utils/log4js';
 import { UserService } from '@/routers/user/user.service';
 import { AppConfigService } from '@/app.config.service';
 import type { SendMailParams } from '@/modules/mail/mail.service';
-import { FriendLinkEntity, FriendLinkState } from '@blog/entities';
+import { FriendLinkEntity, FRIEND_LINK_STATE } from '@blog/entities';
 
 @Injectable()
 export class FriendLinkTipsService {
@@ -36,7 +36,7 @@ export class FriendLinkTipsService {
       url: url + '/friend-link',
       appUrl: url,
       content:
-        entity.status === FriendLinkState.resolve
+        entity.status === FRIEND_LINK_STATE.resolve
           ? '友链审核已通过'
           : `友链审核未通过，原因：'${entity.rejectReason}'`,
       title: '友链状态已更新。',
