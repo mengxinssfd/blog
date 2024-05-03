@@ -14,11 +14,8 @@ import { CategoryEntity } from './category.entity';
 import { ArticleLikeEntity } from './article-like.entity';
 import { CommentEntity } from './comment.entity';
 import { TagEntity } from './tag.entity';
+import { ARTICLE_STATE } from './constant';
 
-export enum ARTICLE_STATE {
-  private,
-  public,
-}
 @Entity({ name: 'article' })
 export class ArticleEntity extends BlogBaseEntity {
   static readonly DEFAULT_COVER =

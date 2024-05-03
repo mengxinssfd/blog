@@ -1,16 +1,11 @@
 import { Column, Entity } from 'typeorm';
 import { BlogBaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
-
-export enum FriendLinkState {
-  padding,
-  reject,
-  resolve,
-}
+import { FRIEND_LINK_STATE } from './constant';
 
 @Entity('friend_link')
 export class FriendLinkEntity extends BlogBaseEntity {
-  static readonly STATE = FriendLinkState;
+  static readonly STATE = FRIEND_LINK_STATE;
   static override readonly modelName = 'FriendLinkEntity' as const;
 
   @Column('varchar', { length: 100, comment: '站名' })
@@ -34,12 +29,12 @@ export class FriendLinkEntity extends BlogBaseEntity {
   avatar!: string;
 
   @Column('enum', {
-    enum: FriendLinkState,
+    enum: FRIEND_LINK_STATE,
     comment: '审核状态padding,reject,resolve,',
-    default: FriendLinkState.padding,
+    default: FRIEND_LINK_STATE.padding,
     select: false,
   })
-  status!: FriendLinkState;
+  status!: FRIEND_LINK_STATE;
 
   @Column('varchar', {
     length: 200,

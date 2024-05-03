@@ -1,11 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BlogBaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
-
-export enum MEMORY_STATUS {
-  Public,
-  Private,
-}
+import { MEMORY_STATUS } from './constant';
 
 @Entity('memory_helper')
 export class MemoryHelperEntity extends BlogBaseEntity {

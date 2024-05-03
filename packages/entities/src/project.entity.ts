@@ -1,23 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BlogBaseEntity } from './base.entity';
 import { ProjectCategoryEntity } from './project-category.entity';
-
-// state和status的区别
-// state通常包含多类状态，内部可包含开发状态，维护状态等等；类似vue的reactive
-// status则代表单一状态，像下面的项目状态就是单一的
-
-export enum ProjectStatus {
-  // 开发中
-  Developing,
-  // 已完成
-  Completed,
-  // 已转移
-  Transferred,
-}
+import { PROJECT_STATUS } from './constant';
 
 @Entity('project')
 export class ProjectEntity extends BlogBaseEntity {
-  static readonly STATUS = ProjectStatus;
+  static readonly STATUS = PROJECT_STATUS;
 
   static override readonly modelName = 'ProjectEntity' as const;
 
@@ -34,11 +22,11 @@ export class ProjectEntity extends BlogBaseEntity {
   cover!: string;
 
   @Column('enum', {
-    enum: ProjectStatus,
+    enum: PROJECT_STATUS,
     comment: '项目状态Developing,Completed,Transferred,',
-    default: ProjectStatus.Developing,
+    default: PROJECT_STATUS.Developing,
   })
-  status!: ProjectStatus;
+  status!: PROJECT_STATUS;
 
   @Column('varchar', { length: 500, comment: '转移到', nullable: true })
   transferredTo?: string;

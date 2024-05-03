@@ -1,23 +1,10 @@
 import { Column, Entity, Index } from 'typeorm';
 import { BlogBaseEntity } from './base.entity';
-
-const DefaultAvatar =
-  'https://my-blog-store.oss-cn-guangzhou.aliyuncs.com/store/20201103002944_c9ed4.jpeg';
-
-export enum ROLE {
-  superAdmin,
-  admin,
-  dev, // 开发运营测试
-  commonUser,
-}
-export enum USER_STATE {
-  invalid,
-  valid,
-}
+import { USER_DEFAULT_AVATAR, USER_ROLE, USER_STATE } from './constant';
 
 export class PublicUser extends BlogBaseEntity {
-  static readonly DEFAULT_AVATAR = DefaultAvatar;
-  static readonly ROLE = ROLE;
+  static readonly DEFAULT_AVATAR = USER_DEFAULT_AVATAR;
+  static readonly ROLE = USER_ROLE;
   static readonly USER_STATE = USER_STATE;
 
   static override readonly modelName = 'UserEntity' as const;
@@ -44,7 +31,7 @@ export class PublicUser extends BlogBaseEntity {
   @Column('varchar', {
     length: 500,
     comment: 'avatar',
-    default: DefaultAvatar,
+    default: USER_DEFAULT_AVATAR,
   })
   avatar!: string;
 
@@ -59,11 +46,11 @@ export class PublicUser extends BlogBaseEntity {
 
   @Column('enum', {
     comment: '用户角色：0-超级管理员|1-管理员|2-开发&测试&运营|3-普通用户（只能查看）',
-    enum: ROLE,
-    default: ROLE.commonUser,
+    enum: USER_ROLE,
+    default: USER_ROLE.commonUser,
     select: false,
   })
-  role!: ROLE;
+  role!: USER_ROLE;
 
   @Column('enum', {
     comment: '状态：0-失效|1-有效|2-删除',
