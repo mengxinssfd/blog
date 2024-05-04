@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia';
 import useUserStore from '~/store/user.store';
-import { Briefcase, Memo, Mic, PictureRounded, WindPower } from '@element-plus/icons-vue';
+import {
+  Briefcase,
+  VideoCameraFilled,
+  Memo,
+  Mic,
+  PictureRounded,
+  WindPower,
+} from '@element-plus/icons-vue';
 import type { VNode } from '#imports';
 
 export interface MenuItem {
@@ -34,11 +41,16 @@ const useMenuStore = defineStore('menu', () => {
             title: '图片格式转换工具',
             icon: <PictureRounded />,
           },
-
           {
             path: '/tools/memory-helper',
             title: '记忆助手',
             icon: <Memo />,
+            disabled: false,
+          },
+          {
+            path: '/tools/record',
+            title: '录屏工具',
+            icon: <VideoCameraFilled />,
             disabled: false,
           },
         ],

@@ -89,5 +89,10 @@ export class InitArticleService {
       description: '帮助记忆信息的一个小工具',
       as: 'tools/memory-helper',
     },
+    {
+      title: '录屏工具',
+      description: 'PC 录屏工具',
+      as: 'tools/record',
+    },
   ];
 }
