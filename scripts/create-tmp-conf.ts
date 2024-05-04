@@ -9,6 +9,7 @@ const files = ['tmp/mysql/conf/my.cnf', 'tmp/redis/redis.conf'].map((item) =>
 );
 
 files.forEach((item) => {
+  if (FSE.existsSync(item)) return;
   console.log(Chalk.green('创建文件 ' + item));
   FSE.createFileSync(item);
 });
