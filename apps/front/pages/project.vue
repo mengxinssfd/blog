@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ArticleEntity } from '@blog/entities';
+import type { ArticleEntity } from '@blog/entities';
 import { getProjectCategoryList } from '@blog/apis';
 
 const article = ref<ArticleEntity>({} as ArticleEntity);

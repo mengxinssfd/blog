@@ -83,7 +83,6 @@ export class CaslAbilityFactory {
     // 参考文档：https://casl.js.org/v6/en/guide/restricting-fields
     const options: AbilityOptionsOf<AppAbility> = {
       detectSubjectType: (subject) => {
-        console.log('sssssssss', subject);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const matched = classMap[subject['__caslSubjectType__']];

@@ -224,7 +224,7 @@ importers:
       '@toast-ui/editor-plugin-table-merged-cell': ^3.1.0
       '@tool-pack/basic': ^0.7.6
       '@tool-pack/bom': ^0.0.1
-      '@tool-pack/dom': ^0.2.3
+      '@tool-pack/dom': ^0.2.4
       '@tool-pack/keymap': ^0.0.7
       '@tool-pack/types': ^0.2.2
       '@types/prismjs': ^1.26.0
@@ -262,7 +262,7 @@ importers:
       '@toast-ui/editor-plugin-table-merged-cell': 3.1.0
       '@tool-pack/basic': 0.7.6
       '@tool-pack/bom': 0.0.1
-      '@tool-pack/dom': 0.2.3
+      '@tool-pack/dom': 0.2.4
       '@tool-pack/keymap': 0.0.7
       axios: 1.4.0
       dompurify: 3.0.3
@@ -5213,13 +5213,13 @@ packages:
       }
     dependencies:
       '@tool-pack/basic': 0.7.6
-      '@tool-pack/dom': 0.2.3
+      '@tool-pack/dom': 0.2.4
     dev: false
 
-  /@tool-pack/dom/0.2.3:
+  /@tool-pack/dom/0.2.4:
     resolution:
       {
-        integrity: sha512-Y9VixFiaGoN/1qli11vpQVrgsR+v5Z+3Qh1Jql6DIiK/3/+vHF8fdRTdM5daV1NZXRl8wa9A3EyiEyYwk7/yYA==,
+        integrity: sha512-XmvdsHMH3JMWp//eZJ2vnjRVwJycxtV0eL+L1o27FImYz96eNsQLGAZL5FxscE3fiv1EmS2YDlmcGh66p/XXeg==,
       }
     dependencies:
       '@tool-pack/basic': 0.7.6
