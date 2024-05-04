@@ -45,7 +45,7 @@
     "xss": "^1.0.14"
   },
   "devDependencies": {
-    "@tool-pack/types": "^0.2.2-beta.1",
+    "@tool-pack/types": "^0.2.2",
     "@types/prismjs": "^1.26.0",
     "dotenv": "^16.0.3",
     "locss": "^1.0.2",
