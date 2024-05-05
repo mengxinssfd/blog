@@ -2,6 +2,7 @@
 import { download, recordMedia } from '@tool-pack/dom';
 import { formatMilliseconds } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
+import type { ArticleEntity } from '@blog/entities';
 
 const chunksRef = ref<Blob[]>([]);
 const urlsRef = ref<string[]>([]);
@@ -14,6 +15,7 @@ const state = reactive({
   recordingTime: 0,
   recordTimer: null as null | ReturnType<typeof setInterval>,
 });
+const articleAs = ref<ArticleEntity>();
 
 watch(
   () => state.recordAt,
@@ -121,22 +123,16 @@ function downloadVideo(filename = 'record', blob: Blob): void {
 </script>
 
 <template>
-  <ArticleAsPage as="tools/record">
+  <ArticleAsPage as="tools/record" @data="articleAs = $event">
     <template #aside>
-      <Widget>
-        <template #title>
-          <div class="_ flex-c-between">
-            <span>操作步骤</span>
-          </div>
-        </template>
-        <ul>
-          <li>1. 点击开启屏幕共享，然后在弹起的窗口选择要录屏的区域；</li>
-          <li>2. 点击开启录制;</li>
-          <li>3. 点击停止录制将会获得一个录制视频;</li>
-          <li>4. 可以点击关闭共享关闭屏幕共享，也可以点击浮窗上的按钮关闭屏幕共享。</li>
-        </ul>
-        <el-divider />
-        <p>⚠️注意：记得随时保存录屏为文件，刷新或离开此页面后会丢失录制的视频！</p>
+      <Widget class="record-widget">
+        <div
+          v-if="articleAs?.content"
+          class="record-widget-content"
+          v-html="articleAs.content"></div>
+        <div v-else class="rules">
+          <el-skeleton :rows="6" animated />
+        </div>
       </Widget>
     </template>
     <section class="tools-record board">
@@ -193,6 +189,12 @@ function downloadVideo(filename = 'record', blob: Blob): void {
 </template>
 
 <style lang="scss" scoped>
+:deep(.record-widget-content) {
+  ol {
+    padding-left: 1rem;
+  }
+}
+
 .tools-record {
   h2 {
     margin-bottom: 1rem;
