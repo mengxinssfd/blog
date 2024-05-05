@@ -4,6 +4,7 @@ import * as Fs from 'fs';
 import type { Env } from './env';
 
 const pkgs = Fs.readdirSync(Path.resolve(__dirname, '../../packages'));
+// const tsconfig = Fs.readFileSync(Path.resolve(__dirname, 'tsconfig.json'), 'utf-8');
 
 const env = (process as any).env as Env;
 
@@ -62,7 +63,11 @@ export default defineNuxtConfig({
   },
   sourcemap: !isBuild,
   vite: {
-    esbuild: { drop: isBuild ? ['console', 'debugger'] : [] },
+    esbuild: {
+      drop: isBuild ? ['console', 'debugger'] : [],
+      // tsconfigRaw: tsconfig,
+      tsconfigRaw: {}, // 只要不是 '{}' 或者 undefined 就行，不然会不识别 ts 的装饰器
+    },
     vue: {
       script: {
         defineModel: true,
