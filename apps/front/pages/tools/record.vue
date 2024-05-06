@@ -3,6 +3,7 @@ import { download, recordMedia } from '@tool-pack/dom';
 import { formatMilliseconds } from '@tool-pack/basic';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ArticleEntity } from '@blog/entities';
+import type { FN } from '@tool-pack/types';
 import type { RecordDialogFormInterface } from '~/components/record/dialog-form-interface';
 
 const chunksRef = ref<Blob[]>([]);
@@ -65,6 +66,7 @@ async function onStartShare(form: RecordDialogFormInterface) {
   try {
     mediaRef.value = await queryMedia(form);
     state.sharing = true;
+    addStreamStopListener(mediaRef.value, onStopShare);
   } catch (e) {
     // 弹起了分享窗口，但是点击了取消
     if (e instanceof DOMException) {
@@ -168,6 +170,14 @@ function blobToFile(blob: Blob, filename?: string): Blob {
 function downloadVideo(filename = 'record', blob: Blob): void {
   const _filename = filename + '.' + fileInfo.value.fileExtension;
   download(_filename, blobToFile(blob, _filename));
+}
+function addStreamStopListener(stream: MediaStream, callback: FN) {
+  stream.addEventListener('ended', callback);
+  stream.addEventListener('inactive', callback);
+  stream.getTracks().forEach(function (track) {
+    track.addEventListener('ended', callback);
+    track.addEventListener('inactive', callback);
+  });
 }
 </script>
 
