@@ -3,6 +3,7 @@ import { download, recordMedia } from '@tool-pack/dom';
 import { formatMilliseconds } from '@tool-pack/basic';
 import { ElMessageBox } from 'element-plus';
 import type { ArticleEntity } from '@blog/entities';
+import type { RecordDialogFormInterface } from '~/components/record/dialog-form-interface';
 
 const chunksRef = ref<Blob[]>([]);
 const urlsRef = ref<string[]>([]);
@@ -16,6 +17,7 @@ const state = reactive({
   recordTimer: null as null | ReturnType<typeof setInterval>,
 });
 const articleAs = ref<ArticleEntity>();
+const dialogVisible = ref(false);
 
 watch(
   () => state.recordAt,
@@ -35,8 +37,8 @@ onBeforeRouteLeave(() => {
   onStopShare();
 });
 
-async function onStartShare() {
-  mediaRef.value = await queryMedia();
+async function onStartShare(form: RecordDialogFormInterface) {
+  mediaRef.value = await queryMedia(form);
   state.sharing = true;
 }
 function onStartRecord() {
@@ -91,18 +93,21 @@ function onClearAll() {
   urlsRef.value.length = 0;
 }
 
-function queryMedia(): Promise<MediaStream> {
-  return navigator.mediaDevices.getDisplayMedia({
-    audio: true,
+async function queryMedia(form: RecordDialogFormInterface): Promise<MediaStream> {
+  const media = await navigator.mediaDevices.getDisplayMedia({
+    audio: form.audio,
     video: {
-      width: window.screen.width,
-      height: window.screen.height,
-      // frameRate: {
-      //   ideal: 100,
-      //   max: 160,
-      // },
+      displaySurface: 'monitor',
+      width: form.width,
+      height: form.height,
+      frameRate: form.frameRate,
     },
   });
+  if (form.microphone) {
+    const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+    media.addTrack(mic.getTracks()[0]);
+  }
+  return media;
 }
 
 function record() {
@@ -139,31 +144,33 @@ function downloadVideo(filename = 'record', blob: Blob): void {
       <section>
         <h2>操作</h2>
         <el-space>
-          <el-button type="primary" :disabled="state.sharing" @click="onStartShare">
+          <el-button v-if="!state.sharing" type="primary" @click="dialogVisible = true">
             开启共享
           </el-button>
-          <el-button
-            type="success"
-            :disabled="!(state.sharing && !state.recording)"
-            @click="onStartRecord">
-            <span v-if="!state.recording">开始录制</span>
-            <span v-else>
-              录制中({{
-                state.recordingTime > 0
-                  ? formatMilliseconds(state.recordingTime).replace('0天00时', '')
-                  : '0'
-              }})
-            </span>
-          </el-button>
-          <el-button
-            type="warning"
-            :disabled="!(state.sharing && state.recording)"
-            @click="onStopRecord">
-            停止录制
-          </el-button>
-          <el-button type="danger" :disabled="!state.sharing" @click="onStopShare">
-            关闭共享
-          </el-button>
+          <template v-else>
+            <el-button
+              type="primary"
+              :disabled="!(state.sharing && !state.recording)"
+              @click="onStartRecord">
+              <span v-if="!state.recording">开始录制</span>
+              <span v-else>
+                录制中({{
+                  state.recordingTime > 0
+                    ? formatMilliseconds(state.recordingTime).replace('0天00时', '')
+                    : '0'
+                }})
+              </span>
+            </el-button>
+            <el-button
+              type="warning"
+              :disabled="!(state.sharing && state.recording)"
+              @click="onStopRecord">
+              停止录制
+            </el-button>
+            <el-button type="danger" :disabled="!state.sharing" @click="onStopShare">
+              关闭共享
+            </el-button>
+          </template>
         </el-space>
       </section>
       <section v-if="urlsRef.length" class="records">
@@ -186,6 +193,7 @@ function downloadVideo(filename = 'record', blob: Blob): void {
       </section>
     </section>
   </ArticleAsPage>
+  <RecordDialog v-model="dialogVisible" @confirm="onStartShare" />
 </template>
 
 <style lang="scss" scoped>
