@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { download, recordMedia } from '@tool-pack/dom';
 import { formatMilliseconds } from '@tool-pack/basic';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ArticleEntity } from '@blog/entities';
 import type { RecordDialogFormInterface } from '~/components/record/dialog-form-interface';
 
@@ -10,6 +10,7 @@ const urlsRef = ref<string[]>([]);
 const mediaRef = ref<MediaStream | null>(null);
 const recorderRef = ref<MediaRecorder | null>(null);
 const state = reactive({
+  notSupportShare: false,
   sharing: false,
   recording: false,
   recordAt: null as null | number,
@@ -38,8 +39,26 @@ onBeforeRouteLeave(() => {
 });
 
 async function onStartShare(form: RecordDialogFormInterface) {
-  mediaRef.value = await queryMedia(form);
-  state.sharing = true;
+  try {
+    mediaRef.value = await queryMedia(form);
+    state.sharing = true;
+  } catch (e) {
+    // 弹起了分享窗口，但是点击了取消
+    if (e instanceof DOMException) {
+      switch (e.message) {
+        case 'Permission denied':
+          ElMessage.error('取消了分享');
+          break;
+        case 'Permission denied by system':
+          ElMessage.error('需要系统开启该浏览器录屏权限');
+          break;
+      }
+      return;
+    }
+
+    state.notSupportShare = true;
+    ElMessage.error('该设备不支持屏幕录制');
+  }
 }
 function onStartRecord() {
   record();
@@ -144,12 +163,16 @@ function downloadVideo(filename = 'record', blob: Blob): void {
       <section>
         <h2>操作</h2>
         <el-space>
-          <el-button v-if="!state.sharing" type="primary" @click="dialogVisible = true">
+          <el-button
+            v-if="!state.sharing"
+            :disabled="state.notSupportShare"
+            type="primary"
+            @click="dialogVisible = true">
             开启共享
           </el-button>
           <template v-else>
             <el-button
-              type="primary"
+              type="success"
               :disabled="!(state.sharing && !state.recording)"
               @click="onStartRecord">
               <span v-if="!state.recording">开始录制</span>
