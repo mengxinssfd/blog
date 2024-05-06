@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { download, recordMedia } from '@tool-pack/dom';
-import { formatMilliseconds } from '@tool-pack/basic';
+import { formatMilliseconds, formatBytes } from '@tool-pack/basic';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ArticleEntity } from '@blog/entities';
 import type { FN } from '@tool-pack/types';
 import type { RecordDialogFormInterface } from '~/components/record/dialog-form-interface';
 
 const chunksRef = ref<Blob[]>([]);
-const urlsRef = ref<string[]>([]);
+const urlsRef = ref<{ url: string; blob: Blob }[]>([]);
 const mediaRef = ref<MediaStream | null>(null);
 const recorderRef = ref<MediaRecorder | null>(null);
 const state = reactive({
@@ -158,7 +158,7 @@ function record() {
   if (!mediaRef.value) return;
   [recorderRef.value] = recordMedia(mediaRef.value, (chunk) => {
     chunksRef.value.push(chunk);
-    urlsRef.value.push(URL.createObjectURL(blobToFile(chunk)));
+    urlsRef.value.push({ blob: chunk, url: URL.createObjectURL(blobToFile(chunk)) });
   });
   recorderRef.value.onstop = onStopRecord;
   recorderRef.value.start();
@@ -234,8 +234,9 @@ function addStreamStopListener(stream: MediaStream, callback: FN) {
       <section v-if="urlsRef.length" class="records">
         <h2>录屏列表</h2>
         <ul>
-          <li v-for="(item, index) in urlsRef" :key="item">
-            <video :src="item" controls />
+          <li v-for="(item, index) in urlsRef" :key="item.url">
+            <video :src="item.url" controls />
+            <div>Size: {{ formatBytes(item.blob.size) }}</div>
             <el-space>
               <el-button type="danger" size="small" @click="onDelItem(index)">删除</el-button>
               <el-button type="primary" size="small" @click="onDownloadItem(index)">下载</el-button>
