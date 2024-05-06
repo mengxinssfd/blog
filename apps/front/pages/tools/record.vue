@@ -19,6 +19,7 @@ const state = reactive({
 });
 const articleAs = ref<ArticleEntity>();
 const dialogVisible = ref(false);
+const formRef = ref<RecordDialogFormInterface | null>(null);
 
 watch(
   () => state.recordAt,
@@ -38,7 +39,29 @@ onBeforeRouteLeave(() => {
   onStopShare();
 });
 
+const fileInfo = computed((): { fileExtension: string; mimeType: string } => {
+  const result = { fileExtension: 'webm', mimeType: 'video/webm' };
+  if (!formRef.value) return result;
+
+  const codec = formRef.value.codec;
+  if (codec === 'gif') {
+    result.mimeType = 'image/gif';
+    result.fileExtension = 'gif';
+  }
+  if (codec === 'default') {
+    result.mimeType = 'video/webm';
+    result.fileExtension = 'webm';
+  }
+  return result;
+});
+
+// function isMimeTypeSupported(mimeType: string): boolean {
+//   if (typeof MediaRecorder === 'undefined') return false;
+//   if (typeof MediaRecorder.isTypeSupported !== 'function') return true;
+//   return MediaRecorder.isTypeSupported(mimeType);
+// }
 async function onStartShare(form: RecordDialogFormInterface) {
+  formRef.value = Object.assign({}, form);
   try {
     mediaRef.value = await queryMedia(form);
     state.sharing = true;
@@ -133,16 +156,18 @@ function record() {
   if (!mediaRef.value) return;
   [recorderRef.value] = recordMedia(mediaRef.value, (chunk) => {
     chunksRef.value.push(chunk);
-    urlsRef.value.push(URL.createObjectURL(blobToWEBM(chunk)));
+    urlsRef.value.push(URL.createObjectURL(blobToFile(chunk)));
   });
   recorderRef.value.onstop = onStopRecord;
   recorderRef.value.start();
 }
-function blobToWEBM(blob: Blob): Blob {
-  return new Blob([blob], { type: 'video/webm' });
+function blobToFile(blob: Blob, filename?: string): Blob {
+  if (!filename) return new Blob([blob], { type: fileInfo.value.mimeType });
+  return new File([blob], filename, { type: fileInfo.value.mimeType });
 }
 function downloadVideo(filename = 'record', blob: Blob): void {
-  download(filename.trim() + '.webm', blobToWEBM(blob));
+  const _filename = filename + '.' + fileInfo.value.fileExtension;
+  download(_filename, blobToFile(blob, _filename));
 }
 </script>
 

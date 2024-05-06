@@ -87,7 +87,7 @@ function supportsSetCodecPreferences(): boolean {
         <el-form-item label="视频帧率" prop="frameRate">
           <el-input-number v-model="form.frameRate" :min="1" />
         </el-form-item>
-        <el-form-item label="视频格式" prop="codec">
+        <el-form-item v-if="false" label="视频格式" prop="codec">
           <el-select v-model="form.codec">
             <el-option v-for="opt in codecs" :key="opt.label" :value="opt.value">
               {{ opt.label }}
