@@ -53,6 +53,12 @@ const useMenuStore = defineStore('menu', () => {
             icon: <VideoCameraFilled />,
             disabled: false,
           },
+          {
+            path: '/tools/rtc',
+            title: 'WebRTC 工具',
+            icon: <VideoCameraFilled />,
+            disabled: false,
+          },
         ],
       },
       { path: '/about', title: `关于`, icon: <WindPower /> },

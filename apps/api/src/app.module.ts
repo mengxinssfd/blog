@@ -30,6 +30,7 @@ import { ProjectModule } from './routers/project/project.module';
 import { MemoryHelperModule } from '@/routers/memory-helper/memory-helper.module';
 import { SaysModule } from '@/routers/says/says.module';
 import { ProjectCategoryModule } from './routers/project-category/project-category.module';
+import { RtcModule } from './routers/rtc/rtc.module';
 
 @Module({
   imports: [
@@ -92,6 +93,7 @@ import { ProjectCategoryModule } from './routers/project-category/project-catego
     MemoryHelperModule,
     SaysModule,
     ProjectCategoryModule,
+    RtcModule,
   ],
 })
 export class AppModule {}

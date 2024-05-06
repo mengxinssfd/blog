@@ -106,5 +106,10 @@ export class InitArticleService {
 ⚠️注意：记得随时保存录屏为文件，刷新或离开此页面后会丢失录制的视频！
 `.trim(),
     },
+    {
+      title: 'WebRTC 工具',
+      description: 'WebRTC 工具',
+      as: 'tools/rtc',
+    },
   ];
 }
