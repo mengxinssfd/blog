@@ -3,6 +3,10 @@ import type { RecordDialogFormInterface } from './dialog-form-interface';
 
 const model = defineModel({ type: Boolean, default: false });
 const emits = defineEmits(['confirm']);
+const tempFormSI = useStorageItem<RecordDialogFormInterface>(
+  'tempRecordSave',
+  process.client ? localStorage : null,
+);
 
 const createFormValue = (): RecordDialogFormInterface => {
   const s = process.client ? window.screen : { width: 0, height: 0 };
@@ -20,7 +24,7 @@ const codecs: ReturnType<typeof getCodecs> = [{ label: 'default', value: 'defaul
 );
 
 const elFormRef = ref();
-const form = ref<RecordDialogFormInterface>(createFormValue());
+const form = ref<RecordDialogFormInterface>(tempFormSI.get() || createFormValue());
 const rules: Partial<Record<keyof RecordDialogFormInterface, any>> = {
   width: { required: true, message: '宽度不能为空' },
   height: { required: true, message: '高度不能为空' },
@@ -34,6 +38,7 @@ async function submit() {
   try {
     await elFormRef.value.validate();
     hideDialog();
+    tempFormSI.set(form.value);
     emits('confirm', form.value);
   } catch {}
 }
