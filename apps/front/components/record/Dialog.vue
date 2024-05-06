@@ -31,6 +31,12 @@ const rules: Partial<Record<keyof RecordDialogFormInterface, any>> = {
   frameRate: { required: true, message: '帧率不能为空' },
 };
 
+function setWidthByScreen() {
+  form.value.width = screen.width;
+}
+function setHeightByScreen() {
+  form.value.height = screen.height;
+}
 function hideDialog() {
   model.value = false;
 }
@@ -79,10 +85,16 @@ function supportsSetCodecPreferences(): boolean {
         @submit.stop.prevent
         @keydown.enter="submit">
         <el-form-item label="视频宽度" prop="width">
-          <el-input-number v-model="form.width" :min="1" />
+          <el-space>
+            <el-input-number v-model="form.width" :min="1" />
+            <el-button type="primary" size="small" @click="setWidthByScreen">屏幕宽度</el-button>
+          </el-space>
         </el-form-item>
         <el-form-item label="视频高度" prop="height">
-          <el-input-number v-model="form.height" :min="1" />
+          <el-space>
+            <el-input-number v-model="form.height" :min="1" />
+            <el-button type="primary" size="small" @click="setHeightByScreen">屏幕高度</el-button>
+          </el-space>
         </el-form-item>
         <el-form-item label="视频帧率" prop="frameRate">
           <el-input-number v-model="form.frameRate" :min="1" />
