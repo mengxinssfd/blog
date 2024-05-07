@@ -60,6 +60,7 @@ const baseWhiteList = (
     'span',
     'hr',
     'section',
+    'video',
   ] satisfies (keyof HTMLElementTagNameMap)[]
 ).reduce(
   // eslint-disable-next-line no-sequences
@@ -88,6 +89,7 @@ const filterContent = computed(() => {
       img: [...baseAttrs, 'src'],
       a: [...baseAttrs, 'href'],
       input: [...baseAttrs, 'checked', 'disabled', 'type'],
+      video: ['src', 'width', 'height', 'controls'],
       iframe: [
         ...baseAttrs,
         'src',
