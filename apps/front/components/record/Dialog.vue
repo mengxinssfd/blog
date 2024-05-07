@@ -8,17 +8,7 @@ const tempFormSI = useStorageItem<RecordDialogFormInterface>(
   process.client ? localStorage : null,
 );
 
-const createFormValue = (): RecordDialogFormInterface => {
-  const s = process.client ? window.screen : { width: 0, height: 0 };
-  return {
-    width: s.width,
-    height: s.height,
-    audio: true,
-    microphone: true,
-    frameRate: 60,
-    codec: 'default',
-  };
-};
+const screenSize = process.client ? screen : { width: 0, height: 0 };
 const codecs: ReturnType<typeof getCodecs> = [{ label: 'default', value: 'default' }].concat(
   process.client ? getCodecs() : [],
 );
@@ -31,11 +21,21 @@ const rules: Partial<Record<keyof RecordDialogFormInterface, any>> = {
   frameRate: { required: true, message: '帧率不能为空' },
 };
 
+function createFormValue(): RecordDialogFormInterface {
+  return {
+    width: screenSize.width,
+    height: screenSize.height,
+    audio: true,
+    microphone: true,
+    frameRate: 60,
+    codec: 'default',
+  };
+}
 function setWidthByScreen() {
-  form.value.width = screen.width;
+  form.value.width = screenSize.width;
 }
 function setHeightByScreen() {
-  form.value.height = screen.height;
+  form.value.height = screenSize.height;
 }
 function hideDialog() {
   model.value = false;
@@ -87,13 +87,25 @@ function supportsSetCodecPreferences(): boolean {
         <el-form-item label="视频宽度" prop="width">
           <el-space>
             <el-input-number v-model="form.width" :min="1" />
-            <el-button type="primary" size="small" @click="setWidthByScreen">屏幕宽度</el-button>
+            <el-button
+              v-if="form.width !== screenSize.width"
+              type="primary"
+              size="small"
+              @click="setWidthByScreen">
+              屏幕宽度
+            </el-button>
           </el-space>
         </el-form-item>
         <el-form-item label="视频高度" prop="height">
           <el-space>
             <el-input-number v-model="form.height" :min="1" />
-            <el-button type="primary" size="small" @click="setHeightByScreen">屏幕高度</el-button>
+            <el-button
+              v-if="form.height !== screenSize.height"
+              type="primary"
+              size="small"
+              @click="setHeightByScreen">
+              屏幕高度
+            </el-button>
           </el-space>
         </el-form-item>
         <el-form-item label="视频帧率" prop="frameRate">
