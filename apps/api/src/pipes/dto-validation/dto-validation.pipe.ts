@@ -21,7 +21,7 @@ export class DtoValidationPipe implements PipeTransform {
       excludeExtraneousValues: true,
     });
     // console.log('DtoValidationPipe object:', object);
-    // console.log('\n-------------DtoValidationPipe transform end-------------\n');
+    // console.log('\n-------------DtoValidationPipe transform progress-------------\n');
     const errors = (await validate(object)) as [ValidationError];
     if (errors.length > 0) {
       // 只需要取第一个错误信息并返回即可

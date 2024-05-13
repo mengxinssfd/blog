@@ -110,6 +110,18 @@ export class InitArticleService {
       title: 'WebRTC 工具',
       description: 'WebRTC 工具',
       as: 'tools/rtc',
+      content: `
+操作步骤：
+<br>
+1. 在发送端选择\`发送\`选项
+2. 填写口令并创建
+3. 在接收端点击 \`接收\` 选项
+4. 填写在发送端创建的口令并连接
+5. 回到发送端，点击\`检查连接状态\`
+6. 选择文件
+7. 发送文件
+8. 在接收端选择文件下载      
+      `.trim(),
     },
   ];
 }

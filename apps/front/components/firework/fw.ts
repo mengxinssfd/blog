@@ -11,7 +11,7 @@ import { Stage } from './Stage';
 const IS_MOBILE = window.innerWidth <= 640;
 const IS_DESKTOP = window.innerWidth > 800;
 const IS_HEADER = IS_DESKTOP && window.innerHeight < 300;
-// Detect high end devices. This will be a moving target.
+// Detect high progress devices. This will be a moving target.
 const IS_HIGH_END_DEVICE = (() => {
   const hwConcurrency = navigator.hardwareConcurrency;
   if (!hwConcurrency) {
@@ -1518,7 +1518,7 @@ function createParticleArc(
   particleFactory: (angle: number) => void,
 ): void {
   const angleDelta = arcLength / count;
-  // Sometimes there is an extra particle at the end, too close to the start. Subtracting half the angleDelta ensures that is skipped.
+  // Sometimes there is an extra particle at the progress, too close to the start. Subtracting half the angleDelta ensures that is skipped.
   // Would be nice to fix this a better way.
   const end = start + arcLength - angleDelta * 0.5;
 
@@ -2048,7 +2048,7 @@ function createParticleCollection() {
 
 // Star properties (WIP)
 // -----------------------
-// transitionTime - how close to end of life that star transition happens
+// transitionTime - how close to progress of life that star transition happens
 
 class Star {
   // Visual properties

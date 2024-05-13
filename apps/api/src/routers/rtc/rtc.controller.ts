@@ -6,18 +6,27 @@ import { CreateRtcDto } from '@blog/dtos';
 
 @Controller('rtc')
 export class RtcController {
-  constructor(private readonly fileExpressService: RtcService) {}
+  constructor(private readonly rtcService: RtcService) {}
 
   @UseGuards(ThrottlerBehindProxyGuard)
   // 可以在 60s 内向单个端点发出来自同一 IP 的 5 个请求
   @Throttle(5, 60)
-  @Post()
-  create(@Body() createFileExpressDto: CreateRtcDto) {
-    return this.fileExpressService.create(createFileExpressDto);
+  @Post('offer')
+  createOfferDesc(@Body() dto: CreateRtcDto) {
+    return this.rtcService.createOfferDesc(dto);
   }
 
-  @Get(':token')
-  findOne(@Param('token') token: string) {
-    return this.fileExpressService.findOne(token);
+  @Get('offer/:token')
+  findOffer(@Param('token') token: string) {
+    return this.rtcService.findOffer(token);
+  }
+
+  @Post('answer')
+  createAnswer(@Body() dto: CreateRtcDto) {
+    return this.rtcService.createAnswer(dto);
+  }
+  @Get('answer/:token')
+  getAnswer(@Param('token') token: string) {
+    return this.rtcService.findAnswer(token);
   }
 }
