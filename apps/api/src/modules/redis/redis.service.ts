@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 import { UserEntity } from '@blog/entities';
-import { getTimePeriodConst } from '@tool-pack/basic';
+import { getTimePeriodConst, dateAdd } from '@tool-pack/basic';
 import { Logger } from '@/utils/log4js';
+import type { CreateRtcDto } from '@blog/dtos';
 
 type BaseUser = Pick<UserEntity, 'id'>;
 
@@ -40,5 +41,22 @@ export class AppRedisService {
   }
   getDailyImg() {
     return this.redis.get('dailyImg');
+  }
+
+  setRTC({ token, candidates, description }: CreateRtcDto, type: 'offer' | 'answer' = 'offer') {
+    // 5 分钟后过期
+    const now = new Date();
+    const end = dateAdd(now, { minutes: 5 });
+    const seconds = ~~((end.getTime() - now.getTime()) / 1000);
+    Logger.info(`保存 WebRTC ${type} token(${token}) seconds(${seconds}) :`, candidates);
+    return this.redis.set(
+      `rtc:${type}:${token}`,
+      JSON.stringify({ candidates, description }),
+      'EX',
+      seconds,
+    );
+  }
+  getRTC(token: string, type: 'offer' | 'answer' = 'offer') {
+    return this.redis.get(`rtc:${type}:${token}`);
   }
 }
