@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { createHiddenHtmlElement, download, sliceBlob } from '@tool-pack/dom';
+import { createHiddenHtmlElement, download, sliceBlobAsync } from '@tool-pack/dom';
 import { ElMessage } from 'element-plus';
 import type { ArticleEntity } from '@blog/entities';
 import { getRTCAnswer, getRTCOffer, setRTCAnswer, setRTCOffer } from '@blog/apis';
 import {
-  arrayBufferToString,
   debounce,
   decodeArrayBufferToObject,
   encodeObjectToArrayBuffer,
   formatBytes,
   sleep,
-  stringToArrayBuffer,
 } from '@tool-pack/basic';
 
 const debSetRTCAnswer = debounce(setRTCAnswer, 500);
@@ -45,16 +43,11 @@ interface ReceiveState {
   files: ReceiveFile[];
 }
 interface TransportFormat {
-  isNew?: boolean;
-  progress: number;
   size: number;
-  /**
-   * 由 ArrayBuffer 转成的字符串，需要转回去
-   */
-  data: string;
   filename: string;
 }
 
+const ChunkSize = 1024 * 16;
 // 信令服务器
 const iceServers = [{ urls: 'stun:stun.l.google.com:19302' }];
 const binaryType: BinaryType = 'arraybuffer';
@@ -78,6 +71,7 @@ onBeforeRouteLeave(() => {
 });
 
 async function onClickCreate() {
+  if (!token.value) return;
   try {
     // 创建RTCPeerConnection对象
     const pc = (sendState.RTCConn = new RTCPeerConnection({ iceServers }));
@@ -147,24 +141,33 @@ async function onClickSend() {
 
   for (const fileObj of files) {
     const { file } = fileObj;
-    await new Promise<void>((resolve) => {
-      sliceBlob(
-        file,
-        (slice, start, end) => {
-          fileObj.progress = end;
-          const fm = buildTransportFormat(file, slice, start, end);
-          dataChannel.send(encodeObjectToArrayBuffer(fm));
-          if (end === file.size) resolve();
-          if (dataChannel.bufferedAmount >= dataChannel.bufferedAmountLowThreshold)
-            return sleep(10);
-        },
-        1024 * 64,
-      );
+    // 先发一个信息提示这是个新文件;
+    // 主要是 ArrayBuffer 序列化有各种问题，要么中文乱码，要么 Blob slice 一个单数长度的 ArrayBuffer 导致 Uint16Array报错
+    // 还是提示归提示，文件流归文件流，也省的每个都要 encode、decode
+    const data = encodeObjectToArrayBuffer({
+      filename: file.name,
+      size: file.size,
+    });
+    dataChannel.send(data);
+    // 分片传输
+    await sliceBlobAsync({
+      blob: file,
+      chunkSize: ChunkSize,
+      cb: async (slice, _start, end) => {
+        fileObj.progress = end;
+        dataChannel.send(slice);
+        // 如果缓冲的数据大于 5 倍分片大小，则暂停并等待数据发送，
+        // 否则如果 send 停止太久浏览器会停止发送数据
+        while (dataChannel.bufferedAmount > ChunkSize * 5) {
+          await sleep(10);
+        }
+      },
     });
   }
 }
 
 async function onClickReceive() {
+  if (!token.value) return;
   // 创建RTCPeerConnection对象
   const pc = (receiveState.RTCConn = new RTCPeerConnection({ iceServers }));
 
@@ -173,24 +176,22 @@ async function onClickReceive() {
     receiveChannel.binaryType = binaryType;
 
     receiveChannel.onmessage = (event) => {
-      const tf = decodeArrayBufferToObject<TransportFormat>(event.data);
-      if (!tf) return;
-
-      const f: ReceiveFile = tf.isNew
-        ? {
-            filename: tf.filename,
-            progress: tf.progress,
-            size: tf.size,
-            chunks: [],
-          }
-        : receiveState.files[receiveState.files.length - 1];
-
-      f.progress = tf.progress;
-      f.chunks.push(stringToArrayBuffer(tf.data, 8));
-      if (tf.progress === tf.size) {
-        f.file = new File(f.chunks, tf.filename);
+      const tf = parseChannelData(event.data);
+      if (tf instanceof ArrayBuffer) {
+        const fileObj = receiveState.files[receiveState.files.length - 1];
+        fileObj.chunks.push(tf);
+        fileObj.progress += tf.byteLength;
+        if (fileObj.progress === fileObj.size) {
+          fileObj.file = new File(fileObj.chunks, fileObj.filename);
+        }
+      } else {
+        receiveState.files.push({
+          filename: tf.filename,
+          progress: 0,
+          size: tf.size,
+          chunks: [],
+        });
       }
-      tf.isNew && receiveState.files.push(f);
     };
   });
 
@@ -223,20 +224,19 @@ async function onClickReceive() {
   await pc.setLocalDescription(answer);
 }
 
-function buildTransportFormat(
-  blob: Blob,
-  slice: ArrayBuffer,
-  start: number,
-  end: number,
-): TransportFormat {
-  return {
-    isNew: start === 0,
-    filename: blob.name,
-    progress: end,
-    size: blob.size,
-    data: arrayBufferToString(slice, 8), // 用 uint8 是因为切片时可能会有单数 len 情况发生，单数 len uint16 会报错
-  };
+function parseChannelData(data: ArrayBuffer): TransportFormat | ArrayBuffer {
+  if (data.byteLength < ChunkSize) {
+    try {
+      const tf = decodeArrayBufferToObject<TransportFormat>(data);
+      if (!tf) return data;
+      return tf;
+    } catch {
+      return data;
+    }
+  }
+  return data;
 }
+
 function downloadFile(file: File) {
   download(file.name, file);
 }
@@ -274,7 +274,11 @@ function downloadAll() {
           <h2>发送文件</h2>
           <el-space>
             <template v-if="sendState.status === 'padding'">
-              <el-input v-model.trim="token" placeholder="口令" autofocus />
+              <el-input
+                v-model.trim="token"
+                placeholder="口令"
+                autofocus
+                @keydown.enter="onClickCreate" />
               <el-button type="primary" :disabled="!token" @click="onClickCreate">创建</el-button>
             </template>
             <el-button v-else-if="sendState.status === 'wait'" @click="onClickCheckSendConn">
@@ -319,7 +323,11 @@ function downloadAll() {
         <section v-if="receiveState.RTCConn?.signalingState !== 'stable'">
           <h2>接收文件</h2>
           <el-space>
-            <el-input v-model.trim="token" placeholder="口令" autofocus />
+            <el-input
+              v-model.trim="token"
+              placeholder="口令"
+              autofocus
+              @keydown.enter="onClickReceive" />
             <el-button type="primary" :disabled="!token" @click="onClickReceive">连接</el-button>
           </el-space>
         </section>
