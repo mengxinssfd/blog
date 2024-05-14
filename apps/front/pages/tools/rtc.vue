@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { createHiddenHtmlElement, download, sliceBlobAsync } from '@tool-pack/dom';
 import { ElMessage } from 'element-plus';
 import type { ArticleEntity } from '@blog/entities';
@@ -35,6 +35,7 @@ interface ReceiveFile {
   size: number;
   file?: File;
   chunks: ArrayBuffer[];
+  type: string;
 }
 interface ReceiveState {
   files: ReceiveFile[];
@@ -42,6 +43,7 @@ interface ReceiveState {
 interface TransportFormat {
   size: number;
   filename: string;
+  type: string;
 }
 
 const ChunkSize = 1024 * 16;
@@ -66,6 +68,18 @@ const conn = reactive<{
   RTCConn: null,
   connectionState: '',
   signalingState: '',
+});
+const speedState = reactive({
+  progress: 0,
+  time: 0,
+  lastTime: 0,
+  lastProgress: 0,
+});
+const speed = computed(() => {
+  if (!speedState.progress) return '0K';
+  const time = (speedState.time - speedState.lastTime) / 1000;
+  const progress = speedState.progress - speedState.lastProgress;
+  return customFormatBytes(progress / time);
 });
 
 onBeforeRouteLeave(disconnection);
@@ -172,7 +186,8 @@ async function sendFile(fileObj: SendFile) {
   const data = encodeObjectToArrayBuffer({
     filename: file.name,
     size: file.size,
-  });
+    type: file.type,
+  } as TransportFormat);
   dc.send(data);
   // 分片传输
   await sliceBlobAsync({
@@ -241,19 +256,32 @@ function initDataChannel() {
   dataChannel.binaryType = 'arraybuffer';
   dataChannel.onmessage = (event: MessageEvent) => {
     const tf = parseChannelData(event.data);
+
     if (tf instanceof ArrayBuffer) {
       const fileObj = receiveState.files[receiveState.files.length - 1];
       fileObj.chunks.push(tf);
       fileObj.progress += tf.byteLength;
+
+      const now = Date.now();
+      if (now - speedState.time > 1000) {
+        speedState.lastTime = speedState.time;
+        speedState.time = Date.now();
+        speedState.lastProgress = speedState.progress;
+        speedState.progress = fileObj.progress;
+      }
       if (fileObj.progress === fileObj.size) {
-        fileObj.file = new File(fileObj.chunks, fileObj.filename);
+        fileObj.file = new File(fileObj.chunks, fileObj.filename, { type: fileObj.type });
+        speedState.progress = 0;
       }
     } else {
+      speedState.progress = 0;
+      speedState.time = Date.now();
       receiveState.files.push({
         filename: tf.filename,
         progress: 0,
         size: tf.size,
         chunks: [],
+        type: tf.type,
       });
     }
   };
@@ -270,7 +298,6 @@ function parseChannelData(data: ArrayBuffer): TransportFormat | ArrayBuffer {
   }
   return data;
 }
-
 function downloadFile(file: File) {
   download(file.name, file);
 }
@@ -287,6 +314,19 @@ function setConnectionState(con: RTCPeerConnection) {
   }
   conn.signalingState = con.signalingState;
   conn.connectionState = con.connectionState;
+}
+function getFileSrc(file?: File) {
+  if (!file) return undefined;
+  return URL.createObjectURL(file);
+}
+function Preview({ file }: { file: File }) {
+  if (!file) return;
+  if (file.type.startsWith('video/')) {
+    return <video src={getFileSrc(file)} controls></video>;
+  }
+  if (file.type.startsWith('image/')) {
+    return <img src={getFileSrc(file)} alt={file.name} />;
+  }
 }
 </script>
 
@@ -307,7 +347,7 @@ function setConnectionState(con: RTCPeerConnection) {
       <section>
         <h2>
           文件传输助手
-          <span v-if="conn.connectionState && conn.signalingState" class="conn-status">
+          <span v-if="conn.connectionState && conn.signalingState">
             连接状态：{{ `${conn.connectionState} | ${conn.signalingState}` }}
           </span>
         </h2>
@@ -354,6 +394,9 @@ function setConnectionState(con: RTCPeerConnection) {
                   </el-button>
                 </template>
               </el-space>
+              <div v-if="file.file" class="preview">
+                <Preview :file="file.file" />
+              </div>
             </li>
           </ul>
           <el-space>
@@ -372,7 +415,9 @@ function setConnectionState(con: RTCPeerConnection) {
           </el-space>
         </section>
         <section class="file-list">
-          <h2>接收列表：</h2>
+          <h2>
+            接收列表： <span>速度：{{ speed }}/s</span>
+          </h2>
           <ul>
             <li v-for="(file, index) in receiveState.files" :key="file.filename">
               <el-space>
@@ -397,6 +442,9 @@ function setConnectionState(con: RTCPeerConnection) {
                   移除
                 </el-button>
               </el-space>
+              <div v-if="file.file" class="preview">
+                <Preview :file="file.file" />
+              </div>
             </li>
           </ul>
           <el-button v-if="receiveState.files.length" type="primary" @click="downloadAll">
@@ -412,6 +460,10 @@ function setConnectionState(con: RTCPeerConnection) {
 .tools-rtc {
   h2 {
     margin-bottom: 1rem;
+    span {
+      margin-left: 0.5rem;
+      font-size: 12px;
+    }
   }
   > section {
     & + section {
@@ -424,12 +476,14 @@ function setConnectionState(con: RTCPeerConnection) {
       margin-top: 0.5rem;
     }
   }
-  .conn-status {
-    margin-left: 0.5rem;
-    font-size: 12px;
-  }
   .filename {
     word-break: break-all;
+  }
+  .preview {
+    video,
+    img {
+      max-width: 380px;
+    }
   }
 }
 </style>
