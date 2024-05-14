@@ -27,9 +27,7 @@ interface SendFile {
 }
 interface SendState {
   status: 'padding' | 'wait' | 'ready';
-  RTCConn: RTCPeerConnection | null;
   files: SendFile[];
-  dataChannel: null | RTCDataChannel;
 }
 interface ReceiveFile {
   filename: string;
@@ -39,7 +37,6 @@ interface ReceiveFile {
   chunks: ArrayBuffer[];
 }
 interface ReceiveState {
-  RTCConn: RTCPeerConnection | null;
   files: ReceiveFile[];
 }
 interface TransportFormat {
@@ -50,33 +47,35 @@ interface TransportFormat {
 const ChunkSize = 1024 * 16;
 // 信令服务器
 const iceServers = [{ urls: 'stun:stun.l.google.com:19302' }];
-const binaryType: BinaryType = 'arraybuffer';
-const status = ref<'send' | 'receive'>();
 const articleAs = ref<ArticleEntity>();
 const token = ref('');
 const sendState = reactive<SendState>({
   status: 'padding',
-  dataChannel: null,
-  RTCConn: null,
   files: [],
 });
 const receiveState = reactive<ReceiveState>({
-  RTCConn: null,
   files: [],
 });
-const connStatus = ref('');
-
-onBeforeRouteLeave(() => {
-  if (sendState.RTCConn) sendState.RTCConn.close();
-  if (receiveState.RTCConn) receiveState.RTCConn.close();
+const conn = reactive<{
+  RTCConn: RTCPeerConnection | null;
+  dataChannel: null | RTCDataChannel;
+  connectionState: string;
+  signalingState: string;
+}>({
+  dataChannel: null,
+  RTCConn: null,
+  connectionState: '',
+  signalingState: '',
 });
+
+onBeforeRouteLeave(disconnection);
 
 async function onClickCreate() {
   if (!token.value) return;
   try {
     // 创建RTCPeerConnection对象
-    const pc = (sendState.RTCConn = new RTCPeerConnection({ iceServers }));
-
+    const pc = new RTCPeerConnection({ iceServers });
+    conn.RTCConn = pc;
     pc.onconnectionstatechange = (e) => {
       setConnectionState(e.target as RTCPeerConnection);
     };
@@ -91,8 +90,8 @@ async function onClickCreate() {
       }
     });
 
-    const sendChannel = (sendState.dataChannel = pc.createDataChannel('sendDataChannel'));
-    sendChannel.binaryType = binaryType;
+    conn.dataChannel = pc.createDataChannel('sendDataChannel');
+    initDataChannel();
 
     // 创建offer并设置本地描述
     const offer = await pc.createOffer();
@@ -102,7 +101,7 @@ async function onClickCreate() {
   }
 }
 async function onClickCheckSendConn() {
-  const pc = sendState.RTCConn;
+  const pc = conn.RTCConn;
   if (!pc) return;
   const answer = await getRTCAnswer(token.value);
   if (!answer) {
@@ -123,7 +122,13 @@ function onClickSelectFile() {
       multiple: true,
       onchange(ev: Event) {
         const { files } = ev.target as HTMLInputElement;
-        files && (sendState.files = Array.from(files).map((file) => ({ file, progress: 0 })));
+        if (files && files.length) {
+          const sendFiles = sendState.files;
+          const fileArr = Array.from(files).filter(
+            (i) => !sendFiles.some((sf) => isSameFile(sf.file, i)),
+          );
+          sendFiles.push(...fileArr.map((file) => ({ file, progress: 0 })));
+        }
         input.remove();
       },
     },
@@ -131,76 +136,68 @@ function onClickSelectFile() {
   );
   input.click();
 }
-async function onClickSend() {
-  const { files, dataChannel } = sendState;
-  if (!files.length || !dataChannel) return;
+function isSameFile(a: File, b: File): boolean {
+  return (
+    a.lastModified === b.lastModified && a.name === b.name && a.size === b.size && a.type === b.type
+  );
+}
+async function onClickSendAll() {
+  const { files } = sendState;
+  if (!files.length) return;
+  for (const fileObj of files) {
+    await sendFile(fileObj);
+  }
+}
+async function sendFile(fileObj: SendFile) {
+  const dc = conn.dataChannel;
+  if (!dc) return;
 
-  if (dataChannel.readyState !== 'open') {
+  if (dc.readyState !== 'open') {
     ElMessage.error('未连接状态无法发送');
     return;
   }
 
-  for (const fileObj of files) {
-    const { file } = fileObj;
-    // 先发一个信息提示这是个新文件;
-    // 主要是 ArrayBuffer 序列化有各种问题，要么中文乱码，要么 Blob slice 一个单数长度的 ArrayBuffer 导致 Uint16Array报错
-    // 还是提示归提示，文件流归文件流，也省的每个都要 encode、decode
-    const data = encodeObjectToArrayBuffer({
-      filename: file.name,
-      size: file.size,
-    });
-    dataChannel.send(data);
-    // 分片传输
-    await sliceBlobAsync({
-      blob: file,
-      chunkSize: ChunkSize,
-      cb: async (slice, _start, end) => {
-        fileObj.progress = end;
-        dataChannel.send(slice);
-        // 如果缓冲的数据大于 5 倍分片大小，则暂停并等待数据发送，
-        // 否则如果 send 停止太久浏览器会停止发送数据
-        while (dataChannel.bufferedAmount > ChunkSize * 5) {
-          await sleep(10);
-        }
-      },
-    });
-  }
+  const { file, progress } = fileObj;
+  if (progress === file.size) return;
+  // 先发一个信息提示这是个新文件;
+  // 主要是 ArrayBuffer 序列化有各种问题，要么中文乱码，要么 Blob slice 一个单数长度的 ArrayBuffer 导致 Uint16Array报错
+  // 还是提示归提示，文件流归文件流，也省的每个都要 encode、decode
+  const data = encodeObjectToArrayBuffer({
+    filename: file.name,
+    size: file.size,
+  });
+  dc.send(data);
+  // 分片传输
+  await sliceBlobAsync({
+    blob: file,
+    chunkSize: ChunkSize,
+    cb: async (slice, _start, end) => {
+      fileObj.progress = end;
+      dc.send(slice);
+      // 如果缓冲的数据大于 5 倍分片大小，则暂停并等待数据发送，
+      // 否则如果 send 停止太久浏览器会停止发送数据
+      while (dc.bufferedAmount > ChunkSize * 5) {
+        await sleep(10);
+      }
+    },
+  });
 }
-
 async function onClickReceive() {
   if (!token.value) return;
-  // 创建RTCPeerConnection对象
-  const pc = (receiveState.RTCConn = new RTCPeerConnection({ iceServers }));
-
-  pc.addEventListener('datachannel', (event) => {
-    const receiveChannel = event.channel;
-    receiveChannel.binaryType = binaryType;
-
-    receiveChannel.onmessage = (event) => {
-      const tf = parseChannelData(event.data);
-      if (tf instanceof ArrayBuffer) {
-        const fileObj = receiveState.files[receiveState.files.length - 1];
-        fileObj.chunks.push(tf);
-        fileObj.progress += tf.byteLength;
-        if (fileObj.progress === fileObj.size) {
-          fileObj.file = new File(fileObj.chunks, fileObj.filename);
-        }
-      } else {
-        receiveState.files.push({
-          filename: tf.filename,
-          progress: 0,
-          size: tf.size,
-          chunks: [],
-        });
-      }
-    };
-  });
-
   const offer = await getRTCOffer(token.value);
+
   if (!offer) {
     ElMessage.error(`token '${token.value}' not found`);
     return;
   }
+
+  // 创建RTCPeerConnection对象
+  const pc = new RTCPeerConnection({ iceServers });
+  conn.RTCConn = pc;
+  pc.addEventListener('datachannel', (event) => {
+    conn.dataChannel = event.channel;
+    initDataChannel();
+  });
 
   const candidates: RTCIceCandidateInit[] = [];
   pc.addEventListener('icecandidate', (event) => {
@@ -224,7 +221,36 @@ async function onClickReceive() {
   const answer = await pc.createAnswer();
   await pc.setLocalDescription(answer);
 }
+function disconnection() {
+  if (conn.dataChannel) conn.dataChannel.close();
+  if (conn.RTCConn) conn.RTCConn.close();
+  conn.dataChannel = conn.RTCConn = null;
+  conn.connectionState = conn.signalingState = '';
+}
+function initDataChannel() {
+  const { dataChannel } = conn;
+  if (!dataChannel) return;
 
+  dataChannel.binaryType = 'arraybuffer';
+  dataChannel.onmessage = (event: MessageEvent) => {
+    const tf = parseChannelData(event.data);
+    if (tf instanceof ArrayBuffer) {
+      const fileObj = receiveState.files[receiveState.files.length - 1];
+      fileObj.chunks.push(tf);
+      fileObj.progress += tf.byteLength;
+      if (fileObj.progress === fileObj.size) {
+        fileObj.file = new File(fileObj.chunks, fileObj.filename);
+      }
+    } else {
+      receiveState.files.push({
+        filename: tf.filename,
+        progress: 0,
+        size: tf.size,
+        chunks: [],
+      });
+    }
+  };
+}
 function parseChannelData(data: ArrayBuffer): TransportFormat | ArrayBuffer {
   if (data.byteLength < ChunkSize) {
     try {
@@ -247,8 +273,13 @@ function downloadAll() {
     download(file.filename, file.file);
   });
 }
-function setConnectionState(conn: RTCPeerConnection) {
-  connStatus.value = `${conn.connectionState} | ${conn.signalingState}`;
+function setConnectionState(con: RTCPeerConnection) {
+  if (con.connectionState === 'disconnected') {
+    disconnection();
+    return;
+  }
+  conn.signalingState = con.signalingState;
+  conn.connectionState = con.connectionState;
 }
 </script>
 
@@ -268,45 +299,39 @@ function setConnectionState(conn: RTCPeerConnection) {
     <section class="tools-rtc board">
       <section>
         <h2>
-          选择发送或接收文件
-          <span v-if="connStatus" class="conn-status">连接状态：{{ connStatus }}</span>
+          文件传输助手
+          <span v-if="conn.connectionState && conn.signalingState" class="conn-status">
+            连接状态：{{ `${conn.connectionState} | ${conn.signalingState}` }}
+          </span>
         </h2>
-        <el-radio-group v-model="status">
-          <el-radio value="send">发送</el-radio>
-          <el-radio value="receive">接收</el-radio>
-        </el-radio-group>
-      </section>
-      <template v-if="status === 'send'">
-        <section>
-          <h2>发送文件</h2>
-          <el-space>
-            <template v-if="sendState.status === 'padding'">
-              <el-input
-                v-model.trim="token"
-                placeholder="口令"
-                autofocus
-                @keydown.enter="onClickCreate" />
-              <el-button type="primary" :disabled="!token" @click="onClickCreate">创建</el-button>
-            </template>
-            <el-button v-else-if="sendState.status === 'wait'" @click="onClickCheckSendConn">
-              检查连接状态
+        <el-space>
+          <template v-if="!conn.RTCConn">
+            <el-input v-model.trim="token" placeholder="口令" autofocus />
+            <el-button type="primary" :disabled="!token" @click="onClickCreate">创建口令</el-button>
+            <el-button type="primary" :disabled="!token" @click="onClickReceive">
+              连接口令
             </el-button>
-            <template v-else-if="sendState.status === 'ready'">
-              <el-button v-if="!sendState.files.length" type="success" @click="onClickSelectFile">
-                选择文件
-              </el-button>
-              <el-button v-else type="warning" @click="() => (sendState.files.length = 0)">
-                清理已选文件
-              </el-button>
-            </template>
-          </el-space>
-        </section>
+          </template>
+          <el-button
+            v-else-if="
+              conn.connectionState === 'connecting' && conn.signalingState === 'have-local-offer'
+            "
+            type="primary"
+            @click="onClickCheckSendConn">
+            检查连接状态(第三次握手)
+          </el-button>
+          <el-button v-if="conn.dataChannel || conn.RTCConn" type="danger" @click="disconnection">
+            断开连接
+          </el-button>
+        </el-space>
+      </section>
+      <template v-if="conn.connectionState === 'connected'">
         <section class="file-list">
-          <h2>文件列表：</h2>
+          <h2>发送列表：</h2>
           <ul>
             <li v-for="(file, index) in sendState.files" :key="file.file.name">
               <el-space>
-                <span>{{ file.file.name }}</span>
+                <span class="filename">{{ file.file.name }}</span>
                 <el-divider direction="vertical" />
                 <span>
                   {{ customFormatBytes(file.progress) }}/{{ customFormatBytes(file.file.size) }}
@@ -316,34 +341,43 @@ function setConnectionState(conn: RTCPeerConnection) {
                   type="warning"
                   size="small"
                   @click="() => sendState.files.splice(index, 1)">
-                  删除
+                  移除
                 </el-button>
+                <template v-if="false">
+                  <!-- 如果有一个发送中，然后点击发送其他文件会导致麻烦问题，所以先不开单个发送 -->
+                  <el-divider direction="vertical" />
+                  <el-button
+                    v-if="file.progress !== file.file.size"
+                    type="success"
+                    size="small"
+                    @click="sendFile(file)">
+                    发送
+                  </el-button>
+                </template>
               </el-space>
             </li>
           </ul>
-          <el-button v-if="sendState.files.length" type="success" @click="onClickSend">
-            发送文件
-          </el-button>
-        </section>
-      </template>
-      <template v-else-if="status === 'receive'">
-        <section v-if="receiveState.RTCConn?.signalingState !== 'stable'">
-          <h2>接收文件</h2>
           <el-space>
-            <el-input
-              v-model.trim="token"
-              placeholder="口令"
-              autofocus
-              @keydown.enter="onClickReceive" />
-            <el-button type="primary" :disabled="!token" @click="onClickReceive">连接</el-button>
+            <el-button type="primary" @click="onClickSelectFile"> 选择文件 </el-button>
+            <template v-if="sendState.files.length">
+              <el-button type="warning" @click="() => (sendState.files.length = 0)">
+                移除全部
+              </el-button>
+              <el-button
+                type="success"
+                :disabled="sendState.files.every((i) => i.progress === i.file.size)"
+                @click="onClickSendAll">
+                发送全部
+              </el-button>
+            </template>
           </el-space>
         </section>
         <section class="file-list">
-          <h2>文件列表：</h2>
+          <h2>接收列表：</h2>
           <ul>
-            <li v-for="file in receiveState.files" :key="file.filename">
+            <li v-for="(file, index) in receiveState.files" :key="file.filename">
               <el-space>
-                <span>{{ file.filename }}</span>
+                <span class="filename">{{ file.filename }}</span>
                 <el-divider direction="vertical" />
                 <span>
                   {{ customFormatBytes(file.progress) }}/{{ customFormatBytes(file.size) }}
@@ -355,6 +389,13 @@ function setConnectionState(conn: RTCPeerConnection) {
                   size="small"
                   @click="downloadFile(file.file)">
                   ⏬ 下载
+                </el-button>
+                <el-divider direction="vertical" />
+                <el-button
+                  type="warning"
+                  size="small"
+                  @click="() => receiveState.files.splice(index, 1)">
+                  移除
                 </el-button>
               </el-space>
             </li>
@@ -380,7 +421,9 @@ function setConnectionState(conn: RTCPeerConnection) {
     margin-bottom: 1rem;
   }
   > section {
-    margin-top: 2rem;
+    & + section {
+      margin-top: 2rem;
+    }
     ul {
       margin-bottom: 1rem;
     }
@@ -391,6 +434,9 @@ function setConnectionState(conn: RTCPeerConnection) {
   .conn-status {
     margin-left: 0.5rem;
     font-size: 12px;
+  }
+  .filename {
+    word-break: break-all;
   }
 }
 </style>
