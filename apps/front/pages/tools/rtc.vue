@@ -76,8 +76,18 @@ async function onClickCreate() {
     // 创建RTCPeerConnection对象
     const pc = new RTCPeerConnection({ iceServers });
     conn.RTCConn = pc;
+    let times = 0;
+    const checkConn = async () => {
+      if (times++ >= 3) return;
+      await sleep(1500);
+      checkSendConn().catch(checkConn);
+    };
     pc.onconnectionstatechange = (e) => {
-      setConnectionState(e.target as RTCPeerConnection);
+      const con = e.target as RTCPeerConnection;
+      setConnectionState(con);
+      if (con.connectionState === 'connecting' && con.signalingState === 'have-local-offer') {
+        checkConn();
+      }
     };
 
     const candidates: RTCIceCandidateInit[] = [];
@@ -100,14 +110,11 @@ async function onClickCreate() {
     ElMessage.error((e as Error).message);
   }
 }
-async function onClickCheckSendConn() {
+async function checkSendConn() {
   const pc = conn.RTCConn;
   if (!pc) return;
   const answer = await getRTCAnswer(token.value);
-  if (!answer) {
-    ElMessage.warning(`尚未有接收端连接，请稍后再试`);
-    return;
-  }
+  if (!answer) return;
   // 设置远程描述
   await pc.setRemoteDescription(answer.description);
   for (const candidate of answer.candidates) {
@@ -312,14 +319,6 @@ function setConnectionState(con: RTCPeerConnection) {
               连接口令
             </el-button>
           </template>
-          <el-button
-            v-else-if="
-              conn.connectionState === 'connecting' && conn.signalingState === 'have-local-offer'
-            "
-            type="primary"
-            @click="onClickCheckSendConn">
-            检查连接状态(第三次握手)
-          </el-button>
           <el-button v-if="conn.dataChannel || conn.RTCConn" type="danger" @click="disconnection">
             断开连接
           </el-button>
