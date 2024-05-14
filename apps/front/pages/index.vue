@@ -1,10 +1,21 @@
 <template>
-  <ArticleAsPage as="index" :comment-block-visible="false">
+  <ArticleAsPage as="index" :comment-block-visible="false" @data="articleAs = $event">
     <template #banner-content>
       <h1 class="page-title">{{ sentence?.hitokoto }}</h1>
       <h2 class="page-desc">{{ SentenceCates[sentence?.type || '_'] }} {{ sentence?.from }}</h2>
     </template>
     <template #aside>
+      <Widget class="notice-widget">
+        <template #title>
+          <div class="_ flex-c-between">
+            <span>公告</span>
+          </div>
+        </template>
+        <div
+          v-if="articleAs?.content"
+          class="record-widget-content"
+          v-html="articleAs.content"></div>
+      </Widget>
       <WidgetLoginUser />
       <WidgetClock />
       <WidgetCountdown />
@@ -31,10 +42,12 @@
 </template>
 
 <script setup lang="ts">
+import type { ArticleEntity } from '@blog/entities';
 import { TODAY_COVER_URL } from '~/config/constants';
 import '~/feature/request/primary/index';
 import useHeaderStore from '~/store/header.store';
 
+const articleAs = ref<ArticleEntity>();
 definePageMeta({ scrollBehavior: false });
 useHeaderStore().useTransparent();
 const { sentence } = useSentence();
