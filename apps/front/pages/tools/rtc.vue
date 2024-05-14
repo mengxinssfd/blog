@@ -64,6 +64,7 @@ const receiveState = reactive<ReceiveState>({
   RTCConn: null,
   files: [],
 });
+const connStatus = ref('');
 
 onBeforeRouteLeave(() => {
   if (sendState.RTCConn) sendState.RTCConn.close();
@@ -77,7 +78,7 @@ async function onClickCreate() {
     const pc = (sendState.RTCConn = new RTCPeerConnection({ iceServers }));
 
     pc.onconnectionstatechange = (e) => {
-      console.log('connectionstatechange', e);
+      setConnectionState(e.target as RTCPeerConnection);
     };
 
     const candidates: RTCIceCandidateInit[] = [];
@@ -214,7 +215,7 @@ async function onClickReceive() {
   });
 
   pc.onconnectionstatechange = (e) => {
-    console.log('connectionstatechange', e);
+    setConnectionState(e.target as RTCPeerConnection);
   };
   await pc.setRemoteDescription(offer.description);
   for (const candidate of offer.candidates) {
@@ -246,6 +247,9 @@ function downloadAll() {
     download(file.filename, file.file);
   });
 }
+function setConnectionState(conn: RTCPeerConnection) {
+  connStatus.value = `${conn.connectionState} | ${conn.signalingState}`;
+}
 </script>
 
 <template>
@@ -263,7 +267,10 @@ function downloadAll() {
     </template>
     <section class="tools-rtc board">
       <section>
-        <h2>选择发送或接收文件</h2>
+        <h2>
+          选择发送或接收文件
+          <span v-if="connStatus" class="conn-status">连接状态：{{ connStatus }}</span>
+        </h2>
         <el-radio-group v-model="status">
           <el-radio value="send">发送</el-radio>
           <el-radio value="receive">接收</el-radio>
@@ -380,6 +387,10 @@ function downloadAll() {
     li {
       margin-top: 0.5rem;
     }
+  }
+  .conn-status {
+    margin-left: 0.5rem;
+    font-size: 12px;
   }
 }
 </style>
