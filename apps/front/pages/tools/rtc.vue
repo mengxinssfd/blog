@@ -410,12 +410,6 @@ function setConnectionState(con: RTCPeerConnection) {
 </template>
 
 <style lang="scss" scoped>
-:deep(.record-widget-content) {
-  ol {
-    padding-left: 1rem;
-  }
-}
-
 .tools-rtc {
   h2 {
     margin-bottom: 1rem;

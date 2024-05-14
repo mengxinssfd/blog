@@ -256,12 +256,6 @@ function addStreamStopListener(stream: MediaStream, callback: FN) {
 </template>
 
 <style lang="scss" scoped>
-:deep(.record-widget-content) {
-  ol {
-    padding-left: 1rem;
-  }
-}
-
 .tools-record {
   h2 {
     margin-bottom: 1rem;
