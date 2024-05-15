@@ -57,6 +57,7 @@ const conn = reactive<{
   connectionState: '',
   signalingState: '',
 });
+const isConnected = computed(() => conn.connectionState === 'connected');
 const [receiveSpeed, setReceiveSpeedProgress, resetReceiveSpeedProgress] = useNetSpeed();
 const [sendSpeed, setSendSpeedProgress, resetSendSpeedProgress] = useNetSpeed();
 
@@ -334,88 +335,89 @@ function Preview({ file }: { file: File }) {
           </el-button>
         </el-space>
       </section>
-      <template v-if="conn.connectionState === 'connected'">
-        <section class="file-list">
-          <h2>
-            发送列表：<span>{{ customFormatBytes(sendSpeed) }}/s</span>
-          </h2>
-          <ul>
-            <li v-for="(file, index) in sendFiles" :key="file.file.name">
-              <el-space>
-                <span class="filename">{{ file.file.name }}</span>
-                <el-divider direction="vertical" />
-                <span>
-                  {{ customFormatBytes(file.progress) }}/{{ customFormatBytes(file.file.size) }}
-                </span>
-                <el-divider direction="vertical" />
-                <el-button type="warning" size="small" @click="() => sendFiles.splice(index, 1)">
-                  移除
-                </el-button>
-                <template v-if="false">
-                  <!-- 如果有一个发送中，然后点击发送其他文件会导致麻烦问题，所以先不开单个发送 -->
-                  <el-divider direction="vertical" />
-                  <el-button
-                    v-if="file.progress !== file.file.size"
-                    type="success"
-                    size="small"
-                    @click="sendFile(file)">
-                    发送
-                  </el-button>
-                </template>
-              </el-space>
-              <div v-if="file.file" class="preview">
-                <Preview :file="file.file" />
-              </div>
-            </li>
-          </ul>
-          <el-space>
-            <el-button type="primary" @click="onClickSelectFile"> 选择文件 </el-button>
-            <template v-if="sendFiles.length">
-              <el-button type="warning" @click="() => (sendFiles.length = 0)"> 移除全部 </el-button>
-              <el-button
-                type="success"
-                :disabled="sendFiles.every((i) => i.progress === i.file.size)"
-                @click="onClickSendAll">
-                发送全部
+      <section v-if="isConnected || sendFiles.length" class="file-list">
+        <h2>
+          发送列表：<span>{{ customFormatBytes(sendSpeed) }}/s</span>
+        </h2>
+        <ul>
+          <li v-for="(file, index) in sendFiles" :key="file.file.name">
+            <el-space>
+              <span class="filename">{{ file.file.name }}</span>
+              <el-divider direction="vertical" />
+              <span>
+                {{ customFormatBytes(file.progress) }}/{{ customFormatBytes(file.file.size) }}
+              </span>
+              <el-divider direction="vertical" />
+              <el-button type="warning" size="small" @click="() => sendFiles.splice(index, 1)">
+                移除
               </el-button>
-            </template>
-          </el-space>
-        </section>
-        <section class="file-list">
-          <h2>
-            接收列表： <span>{{ customFormatBytes(receiveSpeed) }}/s</span>
-          </h2>
-          <ul>
-            <li v-for="(file, index) in receiveFiles" :key="file.filename">
-              <el-space>
-                <span class="filename">{{ file.filename }}</span>
-                <el-divider direction="vertical" />
-                <span>
-                  {{ customFormatBytes(file.progress) }}/{{ customFormatBytes(file.size) }}
-                </span>
+              <template v-if="false">
+                <!-- 如果有一个发送中，然后点击发送其他文件会导致麻烦问题，所以先不开单个发送 -->
                 <el-divider direction="vertical" />
                 <el-button
-                  v-if="file.file"
-                  type="primary"
+                  v-if="file.progress !== file.file.size"
+                  type="success"
                   size="small"
-                  @click="downloadFile(file.file)">
-                  ⏬ 下载
+                  @click="sendFile(file)">
+                  发送
                 </el-button>
-                <el-divider direction="vertical" />
-                <el-button type="warning" size="small" @click="() => receiveFiles.splice(index, 1)">
-                  移除
-                </el-button>
-              </el-space>
-              <div v-if="file.file" class="preview">
-                <Preview :file="file.file" />
-              </div>
-            </li>
-          </ul>
-          <el-button v-if="receiveFiles.length" type="primary" @click="downloadAll">
-            ⏬ 下载全部
+              </template>
+            </el-space>
+            <div v-if="file.file" class="preview">
+              <Preview :file="file.file" />
+            </div>
+          </li>
+        </ul>
+        <el-space>
+          <el-button v-if="isConnected" type="primary" @click="onClickSelectFile">
+            选择文件
           </el-button>
-        </section>
-      </template>
+          <template v-if="sendFiles.length">
+            <el-button type="warning" @click="() => (sendFiles.length = 0)"> 移除全部 </el-button>
+            <el-button
+              v-if="isConnected"
+              type="success"
+              :disabled="sendFiles.every((i) => i.progress === i.file.size)"
+              @click="onClickSendAll">
+              发送全部
+            </el-button>
+          </template>
+        </el-space>
+      </section>
+      <section v-if="receiveFiles.length" class="file-list">
+        <h2>
+          接收列表： <span>{{ customFormatBytes(receiveSpeed) }}/s</span>
+        </h2>
+        <ul>
+          <li v-for="(file, index) in receiveFiles" :key="file.filename">
+            <el-space>
+              <span class="filename">{{ file.filename }}</span>
+              <el-divider direction="vertical" />
+              <span>
+                {{ customFormatBytes(file.progress) }}/{{ customFormatBytes(file.size) }}
+              </span>
+              <el-divider direction="vertical" />
+              <el-button
+                v-if="file.file"
+                type="primary"
+                size="small"
+                @click="downloadFile(file.file)">
+                ⏬ 下载
+              </el-button>
+              <el-divider direction="vertical" />
+              <el-button type="warning" size="small" @click="() => receiveFiles.splice(index, 1)">
+                移除
+              </el-button>
+            </el-space>
+            <div v-if="file.file" class="preview">
+              <Preview :file="file.file" />
+            </div>
+          </li>
+        </ul>
+        <el-button v-if="receiveFiles.length" type="primary" @click="downloadAll">
+          ⏬ 下载全部
+        </el-button>
+      </section>
     </section>
   </ArticleAsPage>
 </template>
