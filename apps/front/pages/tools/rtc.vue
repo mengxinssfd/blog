@@ -25,10 +25,6 @@ interface SendFile {
   progress: number;
   file: File;
 }
-interface SendState {
-  status: 'padding' | 'wait' | 'ready';
-  files: SendFile[];
-}
 interface ReceiveFile {
   filename: string;
   progress: number;
@@ -36,9 +32,6 @@ interface ReceiveFile {
   file?: File;
   chunks: ArrayBuffer[];
   type: string;
-}
-interface ReceiveState {
-  files: ReceiveFile[];
 }
 interface TransportFormat {
   size: number;
@@ -51,13 +44,8 @@ const ChunkSize = 1024 * 16;
 const iceServers = [{ urls: 'stun:stun.l.google.com:19302' }];
 const articleAs = ref<ArticleEntity>();
 const token = ref('');
-const sendState = reactive<SendState>({
-  status: 'padding',
-  files: [],
-});
-const receiveState = reactive<ReceiveState>({
-  files: [],
-});
+const sendFiles = reactive<SendFile[]>([]);
+const receiveFiles = reactive<ReceiveFile[]>([]);
 const conn = reactive<{
   RTCConn: RTCPeerConnection | null;
   dataChannel: null | RTCDataChannel;
@@ -69,18 +57,8 @@ const conn = reactive<{
   connectionState: '',
   signalingState: '',
 });
-const speedState = reactive({
-  progress: 0,
-  time: 0,
-  lastTime: 0,
-  lastProgress: 0,
-});
-const speed = computed(() => {
-  if (!speedState.progress) return '0K';
-  const time = (speedState.time - speedState.lastTime) / 1000;
-  const progress = speedState.progress - speedState.lastProgress;
-  return customFormatBytes(progress / time);
-});
+const [receiveSpeed, setReceiveSpeedProgress, resetReceiveSpeedProgress] = useNetSpeed();
+const [sendSpeed, setSendSpeedProgress, resetSendSpeedProgress] = useNetSpeed();
 
 onBeforeRouteLeave(disconnection);
 
@@ -110,7 +88,6 @@ async function onClickCreate() {
         candidates.push(event.candidate);
         // 发送offer和candidate给服务端
         await debSetRTCOffer({ token: token.value, candidates, description: offer });
-        sendState.status = 'wait';
       }
     });
 
@@ -134,7 +111,6 @@ async function checkSendConn() {
   for (const candidate of answer.candidates) {
     await pc.addIceCandidate(candidate);
   }
-  sendState.status = 'ready';
 }
 function onClickSelectFile() {
   const input = createHiddenHtmlElement(
@@ -144,7 +120,6 @@ function onClickSelectFile() {
       onchange(ev: Event) {
         const { files } = ev.target as HTMLInputElement;
         if (files && files.length) {
-          const sendFiles = sendState.files;
           const fileArr = Array.from(files).filter(
             (i) => !sendFiles.some((sf) => isSameFile(sf.file, i)),
           );
@@ -163,7 +138,7 @@ function isSameFile(a: File, b: File): boolean {
   );
 }
 async function onClickSendAll() {
-  const { files } = sendState;
+  const files = sendFiles;
   if (!files.length) return;
   for (const fileObj of files) {
     await sendFile(fileObj);
@@ -189,12 +164,14 @@ async function sendFile(fileObj: SendFile) {
     type: file.type,
   } as TransportFormat);
   dc.send(data);
+  resetSendSpeedProgress();
   // 分片传输
   await sliceBlobAsync({
     blob: file,
     chunkSize: ChunkSize,
     cb: async (slice, _start, end) => {
       fileObj.progress = end;
+      setSendSpeedProgress(end);
       dc.send(slice);
       // 如果缓冲的数据大于 5 倍分片大小，则暂停并等待数据发送，
       // 否则如果 send 停止太久浏览器会停止发送数据
@@ -203,6 +180,7 @@ async function sendFile(fileObj: SendFile) {
       }
     },
   });
+  resetSendSpeedProgress();
 }
 async function onClickReceive() {
   if (!token.value) return;
@@ -258,25 +236,17 @@ function initDataChannel() {
     const tf = parseChannelData(event.data);
 
     if (tf instanceof ArrayBuffer) {
-      const fileObj = receiveState.files[receiveState.files.length - 1];
+      const fileObj = receiveFiles[receiveFiles.length - 1];
       fileObj.chunks.push(tf);
       fileObj.progress += tf.byteLength;
-
-      const now = Date.now();
-      if (now - speedState.time > 1000) {
-        speedState.lastTime = speedState.time;
-        speedState.time = Date.now();
-        speedState.lastProgress = speedState.progress;
-        speedState.progress = fileObj.progress;
-      }
+      setReceiveSpeedProgress(fileObj.progress);
       if (fileObj.progress === fileObj.size) {
         fileObj.file = new File(fileObj.chunks, fileObj.filename, { type: fileObj.type });
-        speedState.progress = 0;
+        resetReceiveSpeedProgress();
       }
     } else {
-      speedState.progress = 0;
-      speedState.time = Date.now();
-      receiveState.files.push({
+      resetReceiveSpeedProgress();
+      receiveFiles.push({
         filename: tf.filename,
         progress: 0,
         size: tf.size,
@@ -302,7 +272,7 @@ function downloadFile(file: File) {
   download(file.name, file);
 }
 function downloadAll() {
-  receiveState.files.forEach((file) => {
+  receiveFiles.forEach((file) => {
     if (!file.file) return;
     download(file.filename, file.file);
   });
@@ -366,9 +336,11 @@ function Preview({ file }: { file: File }) {
       </section>
       <template v-if="conn.connectionState === 'connected'">
         <section class="file-list">
-          <h2>发送列表：</h2>
+          <h2>
+            发送列表：<span>{{ customFormatBytes(sendSpeed) }}/s</span>
+          </h2>
           <ul>
-            <li v-for="(file, index) in sendState.files" :key="file.file.name">
+            <li v-for="(file, index) in sendFiles" :key="file.file.name">
               <el-space>
                 <span class="filename">{{ file.file.name }}</span>
                 <el-divider direction="vertical" />
@@ -376,10 +348,7 @@ function Preview({ file }: { file: File }) {
                   {{ customFormatBytes(file.progress) }}/{{ customFormatBytes(file.file.size) }}
                 </span>
                 <el-divider direction="vertical" />
-                <el-button
-                  type="warning"
-                  size="small"
-                  @click="() => sendState.files.splice(index, 1)">
+                <el-button type="warning" size="small" @click="() => sendFiles.splice(index, 1)">
                   移除
                 </el-button>
                 <template v-if="false">
@@ -401,13 +370,11 @@ function Preview({ file }: { file: File }) {
           </ul>
           <el-space>
             <el-button type="primary" @click="onClickSelectFile"> 选择文件 </el-button>
-            <template v-if="sendState.files.length">
-              <el-button type="warning" @click="() => (sendState.files.length = 0)">
-                移除全部
-              </el-button>
+            <template v-if="sendFiles.length">
+              <el-button type="warning" @click="() => (sendFiles.length = 0)"> 移除全部 </el-button>
               <el-button
                 type="success"
-                :disabled="sendState.files.every((i) => i.progress === i.file.size)"
+                :disabled="sendFiles.every((i) => i.progress === i.file.size)"
                 @click="onClickSendAll">
                 发送全部
               </el-button>
@@ -416,10 +383,10 @@ function Preview({ file }: { file: File }) {
         </section>
         <section class="file-list">
           <h2>
-            接收列表： <span>速度：{{ speed }}/s</span>
+            接收列表： <span>{{ customFormatBytes(receiveSpeed) }}/s</span>
           </h2>
           <ul>
-            <li v-for="(file, index) in receiveState.files" :key="file.filename">
+            <li v-for="(file, index) in receiveFiles" :key="file.filename">
               <el-space>
                 <span class="filename">{{ file.filename }}</span>
                 <el-divider direction="vertical" />
@@ -435,10 +402,7 @@ function Preview({ file }: { file: File }) {
                   ⏬ 下载
                 </el-button>
                 <el-divider direction="vertical" />
-                <el-button
-                  type="warning"
-                  size="small"
-                  @click="() => receiveState.files.splice(index, 1)">
+                <el-button type="warning" size="small" @click="() => receiveFiles.splice(index, 1)">
                   移除
                 </el-button>
               </el-space>
@@ -447,7 +411,7 @@ function Preview({ file }: { file: File }) {
               </div>
             </li>
           </ul>
-          <el-button v-if="receiveState.files.length" type="primary" @click="downloadAll">
+          <el-button v-if="receiveFiles.length" type="primary" @click="downloadAll">
             ⏬ 下载全部
           </el-button>
         </section>
