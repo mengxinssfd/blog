@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
-import { UserEntity } from '@blog/entities';
+import { SentenceEntity, UserEntity } from '@blog/entities';
 import { getTimePeriodConst, dateAdd } from '@tool-pack/basic';
 import { Logger } from '@/utils/log4js';
 import type { CreateRtcDto } from '@blog/dtos';
@@ -45,9 +45,10 @@ export class AppRedisService {
 
   setRTC({ token, candidates, description }: CreateRtcDto, type: 'offer' | 'answer' = 'offer') {
     // 5 分钟后过期
-    const now = new Date();
-    const end = dateAdd(now, { minutes: 5 });
-    const seconds = ~~((end.getTime() - now.getTime()) / 1000);
+    // const now = new Date();
+    // const end = dateAdd(now, { minutes: 5 });
+    // const seconds = ~~((end.getTime() - now.getTime()) / 1000);
+    const seconds = getRedisSeconds({ minutes: 5 });
     Logger.info(`保存 WebRTC ${type} token(${token}) seconds(${seconds}) :`, candidates);
     return this.redis.set(
       `rtc:${type}:${token}`,
@@ -59,4 +60,27 @@ export class AppRedisService {
   getRTC(token: string, type: 'offer' | 'answer' = 'offer') {
     return this.redis.get(`rtc:${type}:${token}`);
   }
+
+  setRandomSentence(sentence: SentenceEntity) {
+    const seconds = getRedisSeconds({ minutes: 10 });
+    Logger.info(`保存 sentence seconds(${seconds}) :`, sentence);
+    return this.redis.set(`sentence`, JSON.stringify(sentence), 'EX', seconds);
+  }
+  async getRandomSentence(getSentence: () => SentenceEntity) {
+    let sentence: SentenceEntity | null = null;
+    const sentenceStr = await this.redis.get(`sentence`);
+    if (sentenceStr) {
+      sentence = JSON.parse(sentenceStr);
+    } else {
+      sentence = getSentence();
+      this.setRandomSentence(sentence);
+    }
+    return sentence;
+  }
+}
+
+function getRedisSeconds(params: Parameters<typeof dateAdd>[1]): number {
+  const now = new Date();
+  const end = dateAdd(now, params);
+  return ~~((end.getTime() - now.getTime()) / 1000);
 }

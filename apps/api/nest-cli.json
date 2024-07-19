@@ -9,7 +9,11 @@
     "assets": [
       "**/*.env*",
       {
-        "include": "**/mail/templates/*",
+        "include": "**/modules/mail/templates/*",
+        "outDir": "./dist/"
+      },
+      {
+        "include": "**/assets/**",
         "outDir": "./dist/"
       }
     ]

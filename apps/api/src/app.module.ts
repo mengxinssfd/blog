@@ -31,6 +31,7 @@ import { MemoryHelperModule } from '@/routers/memory-helper/memory-helper.module
 import { SaysModule } from '@/routers/says/says.module';
 import { ProjectCategoryModule } from './routers/project-category/project-category.module';
 import { RtcModule } from './routers/rtc/rtc.module';
+import { SentenceModule } from './routers/sentence/sentence.module';
 
 @Module({
   imports: [
@@ -94,6 +95,7 @@ import { RtcModule } from './routers/rtc/rtc.module';
     SaysModule,
     ProjectCategoryModule,
     RtcModule,
+    SentenceModule,
   ],
 })
 export class AppModule {}
