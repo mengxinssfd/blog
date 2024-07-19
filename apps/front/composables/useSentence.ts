@@ -1,6 +1,7 @@
 import { useRequest } from '@request-template/vue3-hooks';
-import { PrimaryRequest } from '~/feature/request/primary';
+// import { PrimaryRequest } from '~/feature/request/primary';
 import { type ResType } from 'request-template';
+import { getRandomSentence } from '@blog/apis';
 
 export const SentenceCates: Record<string, string> = {
   a: '动画',
@@ -33,25 +34,38 @@ interface Res {
   uuid: string;
 }
 
+// export function useSentence() {
+//   function getData(): Promise<ResType<Res>> {
+//     return PrimaryRequest.ins.request(
+//       {
+//         url: 'https://v1.hitokoto.cn',
+//         transformResponse: (r) => {
+//           try {
+//             return { code: 200, data: JSON.parse(r), msg: 'success' };
+//           } catch (e) {
+//             return { code: 0, msg: '一言获取失败' };
+//           }
+//         },
+//       },
+//       { cache: { enable: true, timeout: 1000 * 60 * 5 } },
+//     );
+//   }
+//   const { data, request } = useRequest(getData);
+//
+//   onMounted(request);
+//
+//   return { sentence: data };
+// }
+
 export function useSentence() {
-  function getData(): Promise<ResType<Res>> {
-    return PrimaryRequest.ins.request(
-      {
-        url: 'https://v1.hitokoto.cn',
-        transformResponse: (r) => {
-          try {
-            return { code: 200, data: JSON.parse(r), msg: 'success' };
-          } catch (e) {
-            return { code: 0, msg: '一言获取失败' };
-          }
-        },
-      },
-      { cache: { enable: true, timeout: 1000 * 60 * 5 } },
-    );
-  }
-  const { data, request } = useRequest(getData);
-
-  onMounted(request);
-
+  const { data, request } = useRequest(async function transform() {
+    const data = await getRandomSentence();
+    return {
+      data: { hitokoto: data.data.sentence, from: data.data.from, type: 'i' },
+      code: 200,
+      msg: 'success',
+    } as ResType<Res>;
+  });
+  request();
   return { sentence: data };
 }
