@@ -48,6 +48,7 @@ export default defineComponent({
     const _Methods = {
       getDataByRoute() {
         const q = route.query;
+        console.log('gggggg', q);
         const data: ArticleListDto = {
           keyword: q.query as string,
           sort: q.sort ? Number(q.sort) : 3,
@@ -94,10 +95,13 @@ export default defineComponent({
 
     onMounted(() => {
       // Methods.refreshData();
-      watch(route, () => {
-        Methods.backTop();
-        Methods.getArticleListData();
-      });
+      watch(
+        () => route.query,
+        () => {
+          Methods.backTop();
+          Methods.getArticleListData();
+        },
+      );
     });
 
     await Methods.getArticleListData();

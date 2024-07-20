@@ -289,7 +289,7 @@ export default defineComponent({
       const handler = debounce((form: typeof Data.searchData) => {
         const query = {
           ...route.query,
-          query: form.keyword,
+          query: route.query.query || '',
           cate: form.category,
           sort: form.sort,
           tags: form.tags.join(','),
