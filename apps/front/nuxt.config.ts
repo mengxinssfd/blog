@@ -51,7 +51,12 @@ export default defineNuxtConfig({
           type: 'application/atom+xml',
         },
       ],
-      script: [{ src: '/theme-helper.js' }],
+      script: [
+        { src: '/theme-helper.js' },
+        // eruda debugger
+        // { src: 'https://cdn.jsdelivr.net/npm/eruda' },
+        // { textContent: 'eruda.init();' },
+      ],
       title: env.VITE_SITE_NAME,
       titleTemplate: (title) => `${env.VITE_SITE_NAME} - ${title}`,
     },
