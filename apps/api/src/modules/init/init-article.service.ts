@@ -120,5 +120,11 @@ export class InitArticleService {
 5. 文件接收完毕后选择文件下载        
       `.trim(),
     },
+    {
+      title: '更新日志',
+      description: '博客更新日志',
+      as: 'changelog',
+      content: '无',
+    },
   ];
 }
