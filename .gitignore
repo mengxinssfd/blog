@@ -116,3 +116,4 @@ tmp/
 /docker-compose.yml
 
 deploy/nginx
+*/front/public/changelog.json
