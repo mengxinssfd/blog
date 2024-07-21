@@ -7,6 +7,7 @@ import {
   Mic,
   PictureRounded,
   WindPower,
+  List,
 } from '@element-plus/icons-vue';
 import type { VNode } from '#imports';
 
@@ -62,6 +63,7 @@ const useMenuStore = defineStore('menu', () => {
         ],
       },
       { path: '/about', title: `关于`, icon: <WindPower /> },
+      { path: '/changelog', title: `更新日志`, icon: <List /> },
       {
         path: '/admin',
         title: '后台',
