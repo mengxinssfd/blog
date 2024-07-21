@@ -1,7 +1,7 @@
 {
   "name": "@apps/front",
   "scripts": {
-    "build": "nuxt build --dotenv .env.production",
+    "build": "npm run gen:log && nuxt build --dotenv .env.production",
     "build&oss": "npm run build && npm run upload:oss",
     "build&preview": "npm run build && npm run preview",
     "dev": "nuxt dev --port 8080 --host 0.0.0.0 --dotenv .env.local",
@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "check:ts": "vue-tsc --noEmit -p ./tsconfig.json",
     "upload:oss": "esno ./scripts/uploadToOSS.ts",
-    "up": "nuxi upgrade --force"
+    "up": "nuxi upgrade --force",
+    "gen:log": "esno ./scripts/gen-changelog.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
