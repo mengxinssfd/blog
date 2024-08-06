@@ -20,6 +20,9 @@ const articleAs = ref<ArticleEntity>();
     <section class="tools-rtc board">
       <RtcFile />
     </section>
+    <section class="tools-rtc board">
+      <RtcCamera />
+    </section>
   </ArticleAsPage>
 </template>
 
