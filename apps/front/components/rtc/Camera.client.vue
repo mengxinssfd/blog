@@ -2,6 +2,7 @@
 import { debounce, groupBy, sleep } from '@tool-pack/basic';
 import { getRTCAnswer, getRTCOffer, setRTCAnswer, setRTCOffer } from '@blog/apis';
 import { ElMessage } from 'element-plus';
+import { usePermission } from '@vueuse/core';
 
 const debSetRTCAnswer = debounce(setRTCAnswer, 500);
 const debSetRTCOffer = debounce(setRTCOffer, 500);
@@ -19,16 +20,28 @@ const conn = reactive<{
   signalingState: '',
 });
 const isConnected = computed(() => conn.connectionState === 'connected');
+const { state: permissionState, query: queryPermission } = usePermission('camera', {
+  controls: true,
+});
+const isUpdatedPermission = ref(false);
+const updatePermissionVisible = computed(() => {
+  const state = permissionState.value;
+  const isUpdated = isUpdatedPermission.value;
+  if (!state) return true;
+  if (state === 'prompt') return !isUpdated;
+  return state !== 'denied' && state !== 'granted';
+});
 const localVideoRef = ref<HTMLVideoElement | null>(null);
 const localStream = ref<MediaStream | null>(null);
 const remoteStream = ref<MediaStream | null>(null);
 const remoteVideoRef = ref<HTMLVideoElement | null>(null);
-const showLocalVideo = ref(true);
+const localVisible = ref(true);
 interface DeviceData {
   list: MediaDeviceInfo[];
   selected: undefined | string;
   checked: boolean;
 }
+
 const device = ref<{
   video: DeviceData;
   audio: DeviceData;
@@ -61,7 +74,6 @@ async function onClickCreate() {
       checkSendConn().catch(checkConn);
     };
     pc.onconnectionstatechange = (e) => {
-      console.log('onconnectionstatechange');
       const con = e.target as RTCPeerConnection;
       setConnectionState(con);
       if (con.connectionState === 'connecting' && con.signalingState === 'have-local-offer') {
@@ -71,19 +83,13 @@ async function onClickCreate() {
 
     const candidates: RTCIceCandidateInit[] = [];
     pc.addEventListener('icecandidate', async (event) => {
-      console.log('icecandidate');
       if (event.candidate) {
         candidates.push(event.candidate);
         // 发送offer和candidate给服务端
         await debSetRTCOffer({ token: token.value, candidates, description: offer });
       }
     });
-    // initDataChannel();
-    if (device.value.video.checked) {
-      const ls = (localStream.value = await getUserMedia());
-      localVideoRef.value && (localVideoRef.value.srcObject = ls);
-      ls.getTracks().forEach((track) => pc.addTrack(track, ls));
-    }
+    await getUserMedia();
     pc.addEventListener('track', onTrack);
     // 创建offer并设置本地描述
     const offer = await pc.createOffer({
@@ -121,7 +127,6 @@ async function onClickReceive() {
 
   const candidates: RTCIceCandidateInit[] = [];
   pc.addEventListener('icecandidate', (event) => {
-    console.log('icecandidate');
     if (event.candidate) {
       candidates.push(event.candidate);
       debSetRTCAnswer({
@@ -133,14 +138,9 @@ async function onClickReceive() {
   });
 
   pc.onconnectionstatechange = (e) => {
-    console.log('onconnectionstatechange');
     setConnectionState(e.target as RTCPeerConnection);
   };
-  if (device.value.video.checked) {
-    const ls = (localStream.value = await getUserMedia());
-    localVideoRef.value && (localVideoRef.value.srcObject = ls);
-    ls.getTracks().forEach((track) => pc.addTrack(track, ls));
-  }
+  await getUserMedia();
   pc.addEventListener('track', onTrack);
   await pc.setRemoteDescription(offer.description);
   for (const candidate of offer.candidates) {
@@ -153,7 +153,6 @@ async function onClickReceive() {
   await pc.setLocalDescription(answer);
 }
 function onTrack(e: RTCTrackEvent) {
-  console.log('track');
   const videoEl = remoteVideoRef.value;
   if (!videoEl) return;
   const stream = e.streams[0];
@@ -166,6 +165,7 @@ function disconnection() {
   if (localStream.value) localStream.value.getTracks().forEach((t) => t.stop());
   if (remoteStream.value) remoteStream.value.getTracks().forEach((t) => t.stop());
   conn.connectionState = conn.signalingState = '';
+  conn.RTCConn = null;
 }
 function setConnectionState(con: RTCPeerConnection) {
   if (con.connectionState === 'disconnected') {
@@ -174,6 +174,15 @@ function setConnectionState(con: RTCPeerConnection) {
   }
   conn.signalingState = con.signalingState;
   conn.connectionState = con.connectionState;
+}
+async function updateDevices() {
+  await queryPermission();
+  if (permissionState.value !== 'granted') {
+    isUpdatedPermission.value = true;
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    stream.getTracks().forEach((t) => t.stop());
+    getDevices();
+  }
 }
 async function getDevices() {
   if (!navigator.mediaDevices?.enumerateDevices) {
@@ -197,11 +206,12 @@ async function getDevices() {
       checked: device.value.audio.checked,
     },
   };
-  console.log(_devices, group, device.value);
 }
 async function getUserMedia() {
   const { audio, video } = device.value;
-  return await navigator.mediaDevices.getUserMedia({
+  if (!video.checked && !audio.checked) return;
+
+  const ls = (localStream.value = await navigator.mediaDevices.getUserMedia({
     audio: audio.checked
       ? audio.selected === 'default'
         ? true
@@ -212,75 +222,108 @@ async function getUserMedia() {
         ? true
         : { deviceId: video.selected }
       : false,
-  });
+  }));
+  localVideoRef.value && (localVideoRef.value.srcObject = ls);
+  ls.getTracks().forEach((track) => conn.RTCConn!.addTrack(track, ls));
 }
 </script>
 <template>
-  <section>
+  <section class="rtc-camera">
     <h2>
       视频通话
       <span v-if="conn.connectionState && conn.signalingState">
         连接状态：{{ `${conn.connectionState} | ${conn.signalingState}` }}
       </span>
     </h2>
-    <div>
-      摄像头：
+    <section>
+      <el-space spacer="|" style="flex-wrap: wrap">
+        <el-button
+          v-if="updatePermissionVisible"
+          type="primary"
+          size="small"
+          @click="updateDevices">
+          更新设备列表
+        </el-button>
+        <el-space>
+          摄像头：
+          <input v-model="device.video.checked" type="checkbox" :disabled="isConnected" />
+          <select
+            v-if="device.video.list.length"
+            v-model="device.video.selected"
+            :disabled="isConnected">
+            <option
+              v-for="d in device.video.list"
+              :key="d.deviceId"
+              :value="d.deviceId"
+              :label="d.label" />
+          </select>
+        </el-space>
+        <el-space>
+          麦克风：
+          <input v-model="device.audio.checked" type="checkbox" :disabled="isConnected" />
+          <select
+            v-if="device.audio.list.length"
+            v-model="device.audio.selected"
+            :disabled="isConnected">
+            <option
+              v-for="d in device.audio.list"
+              :key="d.deviceId"
+              :value="d.deviceId"
+              :label="d.label" />
+          </select>
+        </el-space>
+        <el-space> 显示本地视频: <input v-model="localVisible" type="checkbox" /> </el-space>
+      </el-space>
+    </section>
+    <section>
       <el-space>
-        <input v-model="device.video.checked" type="checkbox" />
-        <select v-if="device.video.list.length" v-model="device.video.selected">
-          <option
-            v-for="d in device.video.list"
-            :key="d.deviceId"
-            :value="d.deviceId"
-            :label="d.label" />
-        </select>
-        麦克风：
-        <input v-model="device.audio.checked" type="checkbox" />
-        <select v-if="device.audio.list.length" v-model="device.audio.selected">
-          <option
-            v-for="d in device.audio.list"
-            :key="d.deviceId"
-            :value="d.deviceId"
-            :label="d.label" />
-        </select>
-        <div v-if="device.video.checked">
-          显示本地视频: <input v-model="showLocalVideo" type="checkbox" />
+        <template v-if="!conn.RTCConn">
+          <el-input v-model.trim="token" placeholder="口令" autofocus />
+          <el-button type="primary" :disabled="!token" @click="onClickCreate">创建口令</el-button>
+          <el-button type="primary" :disabled="!token" @click="onClickReceive">
+            连接口令
+          </el-button>
+        </template>
+        <el-button v-if="conn.RTCConn" type="danger" @click="disconnection"> 断开连接 </el-button>
+      </el-space>
+    </section>
+    <section>
+      <el-space>
+        <div v-show="localVisible && (device.video.checked || device.audio.checked)">
+          <div>本地</div>
+          <video ref="localVideoRef" autoplay controls></video>
+        </div>
+        <div>
+          <div>远程</div>
+          <video ref="remoteVideoRef" autoplay controls></video>
         </div>
       </el-space>
-    </div>
-    <el-space>
-      <template v-if="!conn.RTCConn">
-        <el-input v-model.trim="token" placeholder="口令" autofocus />
-        <el-button type="primary" :disabled="!token" @click="onClickCreate">创建口令</el-button>
-        <el-button type="primary" :disabled="!token" @click="onClickReceive"> 连接口令 </el-button>
-      </template>
-      <el-button v-if="conn.RTCConn" type="danger" @click="disconnection"> 断开连接 </el-button>
-    </el-space>
-  </section>
-  <section v-if="showLocalVideo">
-    本地
-    <video ref="localVideoRef" autoplay controls></video>
-  </section>
-  <section>
-    远程
-    <video ref="remoteVideoRef" autoplay controls></video>
+    </section>
   </section>
 </template>
 
 <style lang="scss" scoped>
-.filename {
-  word-break: break-all;
-}
-.preview {
-  video,
-  img {
-    max-width: 380px;
+.rtc-camera {
+  > section {
+    margin-top: 0.8rem;
   }
-}
-ul {
-  margin-bottom: 1rem;
-}
-li {
-  margin-top: 0.5rem;
+  .filename {
+    word-break: break-all;
+  }
+
+  .preview {
+    video,
+    img {
+      max-width: 380px;
+    }
+  }
+
+  ul {
+    margin-bottom: 1rem;
+  }
+
+  li {
+    margin-top: 0.5rem;
+  }
 }
 </style>
