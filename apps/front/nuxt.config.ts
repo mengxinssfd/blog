@@ -38,6 +38,7 @@ export default defineNuxtConfig({
         { name: 'description', content: env.VITE_SITE_DESC },
         { name: 'author', content: 'DYH' },
         { name: 'keyword', content: env.VITE_SITE_KEYWORD },
+        { name: 'theme-color', content: '' },
       ],
       link: [
         {
