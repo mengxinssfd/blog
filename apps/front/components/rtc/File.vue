@@ -60,6 +60,7 @@ const conn = reactive<{
 const isConnected = computed(() => conn.connectionState === 'connected');
 const [receiveSpeed, setReceiveSpeedProgress, resetReceiveSpeedProgress] = useNetSpeed();
 const [sendSpeed, setSendSpeedProgress, resetSendSpeedProgress] = useNetSpeed();
+const textContent = ref('');
 
 onBeforeRouteLeave(disconnection);
 
@@ -326,6 +327,15 @@ function Preview({ file }: { file: File }) {
     return <img src={getFileSrc(file)} alt={file.name} />;
   }
 }
+
+function transformTextToFile() {
+  const fileName = `text-${sendFiles.length + 1}.txt`;
+  const file = new File([textContent.value], fileName, {
+    type: 'text/plain',
+  });
+  sendFiles.push({ file, progress: 0 });
+  textContent.value = '';
+}
 </script>
 <template>
   <section>
@@ -345,6 +355,10 @@ function Preview({ file }: { file: File }) {
         断开连接
       </el-button>
     </el-space>
+  </section>
+  <section v-if="isConnected" class="input-box">
+    <el-input v-model="textContent" type="textarea" placeholder="输入文本" />
+    <el-button type="success" @click="transformTextToFile">文字转换为文本文件</el-button>
   </section>
   <section v-if="isConnected || sendFiles.length" class="file-list">
     <h2>
@@ -424,8 +438,18 @@ function Preview({ file }: { file: File }) {
 </template>
 
 <style lang="scss" scoped>
+.file-list {
+  margin-top: 1.5rem;
+}
 .filename {
   word-break: break-all;
+}
+.input-box {
+  margin: 0.5rem 0;
+  .el-textarea {
+    --el-input-bg-color: rgba(234, 233, 233, 0.35);
+    margin-bottom: 0.2rem;
+  }
 }
 .preview {
   padding: 0.2rem 0;
