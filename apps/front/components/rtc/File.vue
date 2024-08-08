@@ -8,7 +8,8 @@ import {
 } from '@tool-pack/basic';
 import { getRTCAnswer, getRTCOffer, setRTCAnswer, setRTCOffer } from '@blog/apis';
 import { ElMessage } from 'element-plus';
-import { createHiddenHtmlElement, download, sliceBlobAsync } from '@tool-pack/dom';
+import { createHiddenHtmlElement, download, sliceBlobAsync, readFile } from '@tool-pack/dom';
+import { Clipboard } from '@tool-pack/bom';
 
 const debSetRTCAnswer = debounce(setRTCAnswer, 500);
 const debSetRTCOffer = debounce(setRTCOffer, 500);
@@ -289,8 +290,35 @@ function getFileSrc(file?: File) {
   if (!file) return undefined;
   return URL.createObjectURL(file);
 }
+// 函数式组件不能使用 onMounted 等钩子，所以用 defineComponent 代替
+const Text = defineComponent(
+  ({ file }: { file: File }) => {
+    const textContent = ref('');
+    onMounted(async () => {
+      const text = await readFile(file, 'readAsText');
+      textContent.value = text as string;
+    });
+    const onCopy = () => {
+      Clipboard.copy(textContent.value).then(() => {
+        ElMessage.success('Copied to clipboard');
+      });
+    };
+    return () => (
+      <div class="preview-text">
+        <p>{textContent.value}</p>
+        <el-button type="primary" size="small" onclick={onCopy}>
+          复制
+        </el-button>
+      </div>
+    );
+  },
+  {
+    props: ['file'],
+  },
+);
 function Preview({ file }: { file: File }) {
   if (!file) return;
+  if (file.type === 'text/plain') return <Text file={file} />;
   if (file.type.startsWith('video/')) {
     return <video src={getFileSrc(file)} controls></video>;
   }
@@ -400,9 +428,21 @@ function Preview({ file }: { file: File }) {
   word-break: break-all;
 }
 .preview {
+  padding: 0.2rem 0;
   video,
   img {
     max-width: 380px;
+  }
+  :deep(.preview-text) {
+    p {
+      padding: 0.5rem;
+      white-space: pre-wrap;
+      background: rgba(175, 174, 174, 0.2);
+    }
+    .el-button {
+      margin-top: 0.2rem;
+      float: right;
+    }
   }
 }
 ul {
